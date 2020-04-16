@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.*;
 import java.util.stream.*;
+import org.jitsi.protocol.xmpp.colibri.exception.RoomClosedException;
 
 /**
  * Represents a Jitsi Meet conference. Manages the Jingle sessions with the
@@ -566,7 +567,11 @@ public class JitsiMeetConferenceImpl
 
         chatRoom = (ChatRoom2) chatOpSet.findRoom(roomName.toString());
         chatRoom.setConference(this);
-
+        
+        //terminateParticipant
+        if(!chatRoom.getRoomStatus())
+            throw new RoomClosedException("The room is closed to new participant");
+        
         rolesAndPresence = new ChatRoomRoleAndPresence(this, chatRoom);
         rolesAndPresence.init();
 
@@ -1366,6 +1371,12 @@ public class JitsiMeetConferenceImpl
                 try
                 {
                     joinTheRoom();
+                }
+                catch (RoomClosedException e)
+                {
+                    logger.error("Failed to join the room: " + roomName + ", room is closed.", e);
+
+                    stop();
                 }
                 catch (Exception e)
                 {

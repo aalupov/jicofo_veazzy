@@ -242,7 +242,7 @@ public class MeetExtensionsHandler
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
         if (conference == null)
         {
-            logger.debug("Mute error: room not found for JID: " + from);
+            logger.debug("Room status error: room not found for JID: " + from);
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
                 XMPPError.Condition.item_not_found));
         }
