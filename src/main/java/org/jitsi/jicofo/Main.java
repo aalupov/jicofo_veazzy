@@ -31,8 +31,6 @@ import org.jitsi.utils.*;
 public class Main
 {
     
-    //GIT TEST
-    
     /**
      * The name of the command-line argument which specifies the XMPP domain
      * to use for the XMPP client connection.

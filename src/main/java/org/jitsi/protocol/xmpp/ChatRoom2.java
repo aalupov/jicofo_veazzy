@@ -81,4 +81,8 @@ public interface ChatRoom2
                         Collection<ExtensionElement> toAdd);
 
     void setConference(JitsiMeetConference conference);
+    
+    void setRoomStatus(boolean roomStatus);
+    boolean getRoomStatus();
+    
 }

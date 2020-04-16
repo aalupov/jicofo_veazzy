@@ -752,4 +752,14 @@ public class MockMultiUserChat
     {
         return findMember(mucJid.getResourceOrNull());
     }
+
+    @Override
+    public void setRoomStatus(boolean roomStatus) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean getRoomStatus() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

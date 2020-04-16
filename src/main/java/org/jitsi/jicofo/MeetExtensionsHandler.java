@@ -56,6 +56,7 @@ public class MeetExtensionsHandler
     private XmppConnection connection;
 
     private MuteIqHandler muteIqHandler;
+    private RoomStatusIqHandler roomStatusIqHandler;
     private DialIqHandler dialIqHandler;
 
     /**
@@ -69,6 +70,7 @@ public class MeetExtensionsHandler
         this.focusManager = focusManager;
 
         MuteIqProvider.registerMuteIqProvider();
+        RoomStatusIqProvider.registerRoomStatusIqProvider();
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
     }
@@ -83,8 +85,10 @@ public class MeetExtensionsHandler
                     OperationSetDirectSmackXmpp.class).getXmppConnection();
 
         muteIqHandler = new MuteIqHandler();
+        roomStatusIqHandler = new RoomStatusIqHandler();
         dialIqHandler = new DialIqHandler();
         connection.registerIQRequestHandler(muteIqHandler);
+        connection.registerIQRequestHandler(roomStatusIqHandler);
         connection.registerIQRequestHandler(dialIqHandler);
     }
 
@@ -106,6 +110,24 @@ public class MeetExtensionsHandler
         }
     }
 
+    private class RoomStatusIqHandler extends AbstractIqRequestHandler
+    {
+        RoomStatusIqHandler()
+        {
+            super(
+                RoomStatusIq.ELEMENT_NAME,
+                RoomStatusIq.NAMESPACE,
+                IQ.Type.set,
+                IQRequestHandler.Mode.sync);
+        }
+
+        @Override
+        public IQ handleIQRequest(IQ iqRequest)
+        {
+            return handleRoomStatusIq((RoomStatusIq) iqRequest);
+        }
+    }
+    
     private class DialIqHandler extends AbstractIqRequestHandler
     {
         DialIqHandler()
@@ -134,6 +156,7 @@ public class MeetExtensionsHandler
         if (connection != null)
         {
             connection.unregisterIQRequestHandler(muteIqHandler);
+            connection.unregisterIQRequestHandler(roomStatusIqHandler);
             connection.unregisterIQRequestHandler(dialIqHandler);
             connection = null;
         }
@@ -204,6 +227,56 @@ public class MeetExtensionsHandler
         return result;
     }
 
+    private IQ handleRoomStatusIq(RoomStatusIq roomStatusIq)
+    {
+        Boolean doRoomStatusOpen = roomStatusIq.getRoomStatus();
+        Jid jid = roomStatusIq.getJid();
+
+        if (doRoomStatusOpen == null || jid == null)
+        {
+            return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
+                XMPPError.Condition.item_not_found));
+        }
+
+        Jid from = roomStatusIq.getFrom();
+        JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
+        if (conference == null)
+        {
+            logger.debug("Mute error: room not found for JID: " + from);
+            return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
+                XMPPError.Condition.item_not_found));
+        }
+
+        IQ result;
+
+        //if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), jid, doRoomStatusOpen))
+        if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), doRoomStatusOpen))
+        {
+            result = IQ.createResultIQ(roomStatusIq);
+           
+            if (!roomStatusIq.getFrom().equals(jid))
+            {
+            	logger.info(doRoomStatusOpen);
+                RoomStatusIq roomStatusUpdate = new RoomStatusIq();
+                roomStatusUpdate.setActor(from);
+                roomStatusUpdate.setType(IQ.Type.set);
+                roomStatusUpdate.setTo(jid);
+
+                roomStatusUpdate.setRoomStatus(doRoomStatusOpen);
+
+                connection.sendStanza(roomStatusUpdate);
+            }
+        }
+        else
+        {
+            result = IQ.createErrorResponse(
+                roomStatusIq,
+                XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+        }
+
+        return result;
+    }
+    
     /**
      * Checks whether sending the rayo message is ok (checks member, moderators)
      * and sends the message to the selected jigasi (from brewery muc or to the

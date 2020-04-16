@@ -51,6 +51,7 @@ public class ChatRoomImpl
     extends AbstractChatRoom
     implements ChatRoom2, PresenceListener
 {
+
     /**
      * The logger used by this class.
      */
@@ -139,6 +140,8 @@ public class ChatRoomImpl
     /** The conference that is backed by this MUC room. */
     private JitsiMeetConference conference;
 
+    private boolean roomStatus = true;
+    
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.
      *
@@ -851,6 +854,22 @@ public class ChatRoomImpl
     public void revokeVoice(String nickname)
     {
 
+    }
+    
+    /**
+     * @return the roomStatus
+     */
+    @Override
+    public boolean getRoomStatus() {
+        return roomStatus;
+    }
+
+    /**
+     * @param roomStatus the roomStatus to set
+     */
+    @Override
+    public void setRoomStatus(boolean roomStatus) {
+        this.roomStatus = roomStatus;
     }
 
     @Override

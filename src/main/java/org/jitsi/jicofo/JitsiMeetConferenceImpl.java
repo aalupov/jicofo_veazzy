@@ -2353,6 +2353,80 @@ public class JitsiMeetConferenceImpl
     }
 
     /**
+     * Handles mute request sent from participants.
+     * @param fromJid MUC jid of the participant that requested mute status
+     *                change.
+     * @param toBeMutedJid MUC jid of the participant whose mute status will be
+     *                     changed(eventually).
+     * @param doMute the new audio mute status to set.
+     * @return <tt>true</tt> if status has been set successfully.
+     */
+    boolean handleRoomStatusRequest(Jid fromJid,
+                              //Jid toBeMutedJid,
+                              boolean doRoomStatusOpen)
+    {
+        Participant principal = findParticipantForRoomJid(fromJid);
+        if (principal == null)
+        {
+            logger.warn(
+                "Failed to perform roomStatus operation - " + fromJid
+                    + " not exists in the conference.");
+            return false;
+        }
+        // Only moderators can mute others
+        if (//!fromJid.equals(toBeMutedJid) &&
+             ChatRoomMemberRole.MODERATOR.compareTo(
+                principal.getChatMember().getRole()) < 0)
+        {
+            logger.warn(
+                "Permission denied for roomStatus operation from " + fromJid);
+            return false;
+        }
+
+        //Participant participant = findParticipantForRoomJid(toBeMutedJid);
+        //if (participant == null)
+        //{
+        //    logger.warn("Participant for jid: " + toBeMutedJid + " not found");
+        //    return false;
+        //}
+
+        //if (doRoomStatusOpen
+        //    && participant.isSipGateway()
+        //    && !participant.hasAudioMuteSupport())
+        //{
+        //    logger.warn("Blocking mute request to jigasi. " +
+        //        "Muting SIP participants is disabled.");
+        //    return false;
+        //}
+
+        //if (doRoomStatusOpen && participant.isJibri())
+        //{
+        //    logger.warn("Blocking mute request to jibri. ");
+        //    return false;
+        //}
+
+        logger.info(
+            "Will " + (doRoomStatusOpen ? "open room" : "close room")
+                //+ " " + toBeMutedJid 
+                + " on behalf of " + fromJid);
+
+        //BridgeSession bridgeSession = findBridgeSession(participant);
+        //boolean succeeded
+        //    = bridgeSession != null
+        //            && bridgeSession.colibriConference.muteParticipant(
+        //                    participant.getColibriChannelsInfo(), doRoomStatusOpen);
+        
+        //if (succeeded)
+        //{
+            //participant.setMuted(doRoomStatusOpen);
+            chatRoom.setRoomStatus(doRoomStatusOpen);
+            return true;
+        //}
+
+        //return false;
+    }
+    
+    /**
      * Returns current participants count. A participant is chat member who has
      * some videobridge and media state assigned(not just raw chat room member).
      * For example chat member which belongs to the focus never becomes
