@@ -256,7 +256,7 @@ public class MeetExtensionsHandler
            
             if (!roomStatusIq.getFrom().equals(jid))
             {
-            	logger.info(doRoomStatusOpen);
+            	logger.info("Room status is " + doRoomStatusOpen);
                 RoomStatusIq roomStatusUpdate = new RoomStatusIq();
                 roomStatusUpdate.setActor(from);
                 roomStatusUpdate.setType(IQ.Type.set);
