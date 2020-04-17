@@ -1420,13 +1420,13 @@ public class JitsiMeetConferenceImpl
 
     public Participant findParticipantForRoomJidForRoomStatusRequest(Jid roomJid)
     {
-            logger.debug("findParticipantForRoomJidForRoomStatusRequest()"
+            logger.info("findParticipantForRoomJidForRoomStatusRequest()"
                 + " looking for Jid - " + roomJid + ".");
             
         for (Participant participant : participants)
         {
             
-            logger.debug("listOfCurrentOccupantJid() " + participant.getChatMember().getOccupantJid() + ".");
+            logger.info("listOfCurrentOccupantJid() " + participant.getChatMember().getOccupantJid() + ".");
             
             if (participant.getChatMember().getOccupantJid()
                     .equals(roomJid))
@@ -2420,29 +2420,32 @@ public class JitsiMeetConferenceImpl
         else {
             if(participants == null || (participants != null && participants.isEmpty())) {
                 if(participants == null) {
-                    logger.debug(
+                    logger.info(
                         "Participants NULL, nobody in the room - Not looking for " + fromJid);
                 }
                 if(participants != null && participants.isEmpty()) {
-                    logger.debug(
+                    logger.info(
                         "Participants empty, nobody in the room - Not looking for " + fromJid);
                 }
-                logger.debug(
+                logger.info(
                     "Looking for xwpp chat member instead with " + fromJid);
                 XmppChatMember member = findMember(fromJid);
                 if(member != null) {
-                    logger.debug(
+                    logger.info(
                         "Found member " +member.getContactAddress() + " - " + member.getDisplayName());
                     if (ChatRoomMemberRole.MODERATOR.compareTo(
                             member.getRole()) == 0) {
-                        logger.debug(
+                        logger.info(
                                 "This member is MODERATOR");
                     }
                 }
                 else {
-                    logger.debug(
+                    logger.info(
                         "Member not found");
                 }
+            }
+            else  {
+                logger.info("Should not be here");
             }
         }
         
