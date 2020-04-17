@@ -569,8 +569,8 @@ public class JitsiMeetConferenceImpl
         chatRoom.setConference(this);
         
         //terminateParticipant
-        if(!chatRoom.getRoomStatus())
-            throw new RoomClosedException("The room is closed to new participant");
+        //if(!chatRoom.getRoomStatus())
+        //    throw new RoomClosedException("The room is closed to new participant");
         
         rolesAndPresence = new ChatRoomRoleAndPresence(this, chatRoom);
         rolesAndPresence.init();
