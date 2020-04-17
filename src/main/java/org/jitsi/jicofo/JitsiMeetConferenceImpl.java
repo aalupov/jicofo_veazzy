@@ -2433,10 +2433,26 @@ public class JitsiMeetConferenceImpl
                 if(member != null) {
                     logger.info(
                         "Found member " +member.getContactAddress() + " - " + member.getDisplayName());
-                    if (ChatRoomMemberRole.MODERATOR.compareTo(
-                            member.getRole()) == 0) {
-                        logger.info(
-                                "This member is MODERATOR");
+                    if (ChatRoomMemberRole.ADMINISTRATOR.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is ADMINISTRATOR");
+                    }
+                    if (ChatRoomMemberRole.GUEST.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is GUEST");
+                    }
+                    if (ChatRoomMemberRole.MEMBER.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is MEMBER");
+                    }
+                    if (ChatRoomMemberRole.MODERATOR.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is MODERATOR");
+                    }
+                    if (ChatRoomMemberRole.OUTCAST.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is OUTCAST");
+                    }
+                    if (ChatRoomMemberRole.OWNER.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is OWNER");
+                    }
+                    if (ChatRoomMemberRole.SILENT_MEMBER.compareTo(member.getRole()) == 0) {
+                        logger.info("This member is SILENT_MEMBER");
                     }
                 }
                 else {
