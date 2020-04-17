@@ -1418,6 +1418,25 @@ public class JitsiMeetConferenceImpl
         return null;
     }
 
+    public Participant findParticipantForRoomJidForRoomStatusRequest(Jid roomJid)
+    {
+            logger.warn("findParticipantForRoomJidForRoomStatusRequest()"
+                + " looking for Jid - " + roomJid + ".");
+            
+        for (Participant participant : participants)
+        {
+            
+            logger.warn("listOfCurrentOccupantJid() " + participant.getChatMember().getOccupantJid() + ".");
+            
+            if (participant.getChatMember().getOccupantJid()
+                    .equals(roomJid))
+            {
+                return participant;
+            }
+        }
+        return null;
+    }
+
     public Participant findParticipantForRoomJid(Jid roomJid)
     {
         for (Participant participant : participants)
@@ -2306,7 +2325,7 @@ public class JitsiMeetConferenceImpl
         {
             logger.warn(
                 "Failed to perform mute operation - " + fromJid
-                    +" not exists in the conference.");
+                    + " not exists in the conference.");
             return false;
         }
         // Only moderators can mute others
@@ -2376,17 +2395,18 @@ public class JitsiMeetConferenceImpl
                               //Jid toBeMutedJid,
                               boolean doRoomStatusOpen)
     {
-        Participant principal = findParticipantForRoomJid(fromJid);
+        Participant principal = findParticipantForRoomJidForRoomStatusRequest(fromJid);
         if (principal == null)
         {
             logger.warn(
                 "Failed to perform roomStatus operation - " + fromJid
                     + " not exists in the conference.");
+            // fromJid = test2@conference.test.veazzy.com/69dad24b
             return false;
         }
         // Only moderators can mute others
-        if (//!fromJid.equals(toBeMutedJid) &&
-             ChatRoomMemberRole.MODERATOR.compareTo(
+        //if (//!fromJid.equals(toBeMutedJid) &&
+        if (ChatRoomMemberRole.MODERATOR.compareTo(
                 principal.getChatMember().getRole()) < 0)
         {
             logger.warn(
