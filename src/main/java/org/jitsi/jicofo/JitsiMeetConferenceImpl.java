@@ -2418,15 +2418,26 @@ public class JitsiMeetConferenceImpl
             }
         }
         else {
-            if(participants != null && participants.isEmpty()) {
-                logger.debug(
-                    "No participant in the room - Not looking for " + fromJid);
+            if(participants == null || (participants != null && participants.isEmpty())) {
+                if(participants == null) {
+                    logger.debug(
+                        "Participants NULL, nobody in the room - Not looking for " + fromJid);
+                }
+                if(participants != null && participants.isEmpty()) {
+                    logger.debug(
+                        "Participants empty, nobody in the room - Not looking for " + fromJid);
+                }
                 logger.debug(
                     "Looking for xwpp chat member instead with " + fromJid);
                 XmppChatMember member = findMember(fromJid);
                 if(member != null) {
                     logger.debug(
                         "Found member " +member.getContactAddress() + " - " + member.getDisplayName());
+                    if (ChatRoomMemberRole.MODERATOR.compareTo(
+                            member.getRole()) == 0) {
+                        logger.debug(
+                                "This member is MODERATOR");
+                    }
                 }
                 else {
                     logger.debug(
