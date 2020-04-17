@@ -2454,6 +2454,13 @@ public class JitsiMeetConferenceImpl
                     if (ChatRoomMemberRole.SILENT_MEMBER.compareTo(member.getRole()) == 0) {
                         logger.info("This member is SILENT_MEMBER");
                     }
+                    if (ChatRoomMemberRole.MODERATOR.compareTo(
+                        member.getRole()) < 0)
+                    {
+                        logger.warn(
+                            "Permission denied for roomStatus operation from " + fromJid);
+                        return false;
+                    }
                 }
                 else {
                     logger.info(
