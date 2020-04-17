@@ -1420,13 +1420,13 @@ public class JitsiMeetConferenceImpl
 
     public Participant findParticipantForRoomJidForRoomStatusRequest(Jid roomJid)
     {
-            logger.warn("findParticipantForRoomJidForRoomStatusRequest()"
+            logger.debug("findParticipantForRoomJidForRoomStatusRequest()"
                 + " looking for Jid - " + roomJid + ".");
             
         for (Participant participant : participants)
         {
             
-            logger.warn("listOfCurrentOccupantJid() " + participant.getChatMember().getOccupantJid() + ".");
+            logger.debug("listOfCurrentOccupantJid() " + participant.getChatMember().getOccupantJid() + ".");
             
             if (participant.getChatMember().getOccupantJid()
                     .equals(roomJid))
@@ -2395,66 +2395,52 @@ public class JitsiMeetConferenceImpl
                               //Jid toBeMutedJid,
                               boolean doRoomStatusOpen)
     {
-        Participant principal = findParticipantForRoomJidForRoomStatusRequest(fromJid);
-        if (principal == null)
-        {
-            logger.warn(
-                "Failed to perform roomStatus operation - " + fromJid
-                    + " not exists in the conference.");
-            // fromJid = test2@conference.test.veazzy.com/69dad24b
-            return false;
+        if(participants != null 
+                && !participants.isEmpty()) {
+            
+            Participant principal = findParticipantForRoomJidForRoomStatusRequest(fromJid);
+            if (principal == null)
+            {
+                logger.warn(
+                    "Failed to perform roomStatus operation - " + fromJid
+                        + " not exists in the conference.");
+                // fromJid = test2@conference.test.veazzy.com/69dad24b
+                return false;
+            }
+            // Only moderators can mute others
+            //if (//!fromJid.equals(toBeMutedJid) &&
+            if (ChatRoomMemberRole.MODERATOR.compareTo(
+                    principal.getChatMember().getRole()) < 0)
+            {
+                logger.warn(
+                    "Permission denied for roomStatus operation from " + fromJid);
+                return false;
+            }
         }
-        // Only moderators can mute others
-        //if (//!fromJid.equals(toBeMutedJid) &&
-        if (ChatRoomMemberRole.MODERATOR.compareTo(
-                principal.getChatMember().getRole()) < 0)
-        {
-            logger.warn(
-                "Permission denied for roomStatus operation from " + fromJid);
-            return false;
+        else {
+            if(participants != null && participants.isEmpty()) {
+                logger.debug(
+                    "No participant in the room - Not looking for " + fromJid);
+                logger.debug(
+                    "Looking for xwpp chat member instead with " + fromJid);
+                XmppChatMember member = findMember(fromJid);
+                if(member != null) {
+                    logger.debug(
+                        "Found member " +member.getContactAddress() + " - " + member.getDisplayName());
+                }
+                else {
+                    logger.debug(
+                        "Member not found");
+                }
+            }
         }
-
-        //Participant participant = findParticipantForRoomJid(toBeMutedJid);
-        //if (participant == null)
-        //{
-        //    logger.warn("Participant for jid: " + toBeMutedJid + " not found");
-        //    return false;
-        //}
-
-        //if (doRoomStatusOpen
-        //    && participant.isSipGateway()
-        //    && !participant.hasAudioMuteSupport())
-        //{
-        //    logger.warn("Blocking mute request to jigasi. " +
-        //        "Muting SIP participants is disabled.");
-        //    return false;
-        //}
-
-        //if (doRoomStatusOpen && participant.isJibri())
-        //{
-        //    logger.warn("Blocking mute request to jibri. ");
-        //    return false;
-        //}
-
+        
         logger.info(
             "Will " + (doRoomStatusOpen ? "open room" : "close room")
-                //+ " " + toBeMutedJid 
                 + " on behalf of " + fromJid);
 
-        //BridgeSession bridgeSession = findBridgeSession(participant);
-        //boolean succeeded
-        //    = bridgeSession != null
-        //            && bridgeSession.colibriConference.muteParticipant(
-        //                    participant.getColibriChannelsInfo(), doRoomStatusOpen);
-        
-        //if (succeeded)
-        //{
-            //participant.setMuted(doRoomStatusOpen);
-            chatRoom.setRoomStatus(doRoomStatusOpen);
-            return true;
-        //}
-
-        //return false;
+        chatRoom.setRoomStatus(doRoomStatusOpen);
+        return true;
     }
     
     /**
