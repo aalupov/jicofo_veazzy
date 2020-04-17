@@ -2393,91 +2393,95 @@ public class JitsiMeetConferenceImpl
      */
     boolean handleRoomStatusRequest(Jid fromJid,
                               //Jid toBeMutedJid,
-                              boolean doRoomStatusOpen)
-    {
-        if(participants != null 
-                && !participants.isEmpty()) {
+                              boolean doRoomStatusOpen) {
             
-            Participant principal = findParticipantForRoomJidForRoomStatusRequest(fromJid);
-            if (principal == null)
-            {
-                logger.warn(
-                    "Failed to perform roomStatus operation - " + fromJid
-                        + " not exists in the conference.");
-                // fromJid = test2@conference.test.veazzy.com/69dad24b
-                return false;
-            }
-            // Only moderators can mute others
-            //if (//!fromJid.equals(toBeMutedJid) &&
-            if (ChatRoomMemberRole.MODERATOR.compareTo(
-                    principal.getChatMember().getRole()) < 0)
-            {
-                logger.warn(
-                    "Permission denied for roomStatus operation from " + fromJid);
-                return false;
-            }
-        }
-        else {
-            if(participants == null || (participants != null && participants.isEmpty())) {
-                if(participants == null) {
-                    logger.info(
-                        "Participants NULL, nobody in the room - Not looking for " + fromJid);
-                }
-                if(participants != null && participants.isEmpty()) {
-                    logger.info(
-                        "Participants empty, nobody in the room - Not looking for " + fromJid);
-                }
-                logger.info(
-                    "Looking for xwpp chat member instead with " + fromJid);
-                XmppChatMember member = findMember(fromJid);
-                if(member != null) {
-                    logger.info(
-                        "Found member " +member.getContactAddress() + " - " + member.getDisplayName());
-                    if (ChatRoomMemberRole.ADMINISTRATOR.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is ADMINISTRATOR");
-                    }
-                    if (ChatRoomMemberRole.GUEST.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is GUEST");
-                    }
-                    if (ChatRoomMemberRole.MEMBER.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is MEMBER");
-                    }
-                    if (ChatRoomMemberRole.MODERATOR.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is MODERATOR");
-                    }
-                    if (ChatRoomMemberRole.OUTCAST.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is OUTCAST");
-                    }
-                    if (ChatRoomMemberRole.OWNER.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is OWNER");
-                    }
-                    if (ChatRoomMemberRole.SILENT_MEMBER.compareTo(member.getRole()) == 0) {
-                        logger.info("This member is SILENT_MEMBER");
-                    }
-                    if (ChatRoomMemberRole.MODERATOR.compareTo(
-                        member.getRole()) < 0)
-                    {
-                        logger.warn(
-                            "Permission denied for roomStatus operation from " + fromJid);
-                        return false;
-                    }
-                }
-                else {
-                    logger.info(
-                        "Member not found");
-                }
-            }
-            else  {
-                logger.info("Should not be here");
-            }
-        }
-        
-        logger.info(
-            "Will " + (doRoomStatusOpen ? "open room" : "close room")
-                + " on behalf of " + fromJid);
+            if(participants != null 
+                    && !participants.isEmpty()) {
 
-        chatRoom.setRoomStatus(doRoomStatusOpen);
+                Participant principal = findParticipantForRoomJidForRoomStatusRequest(fromJid);
+                if (principal == null)
+                {
+                    logger.warn(
+                        "Failed to perform roomStatus operation - " + fromJid
+                            + " not exists in the conference.");
+                    // fromJid = test2@conference.test.veazzy.com/69dad24b
+                    return false;
+                }
+                // Only moderators can mute others
+                //if (//!fromJid.equals(toBeMutedJid) &&
+                if (ChatRoomMemberRole.MODERATOR.compareTo(
+                        principal.getChatMember().getRole()) < 0)
+                {
+                    logger.warn(
+                        "Permission denied for roomStatus operation from " + fromJid);
+                    return false;
+                }
+            }
+            else {
+                if(participants == null || (participants != null && participants.isEmpty())) {
+                    if(participants == null) {
+                        logger.info(
+                            "Participants NULL, nobody in the room - Not looking for " + fromJid);
+                    }
+                    if(participants != null && participants.isEmpty()) {
+                        logger.info(
+                            "Participants empty, nobody in the room - Not looking for " + fromJid);
+                    }
+                    logger.info(
+                        "Looking for xwpp chat member instead with " + fromJid);
+                    XmppChatMember member = findMember(fromJid);
+                    if(member != null) {
+                        logger.info(
+                            "Found member " +member.getContactAddress() + " - " + member.getDisplayName());
+                        if (ChatRoomMemberRole.ADMINISTRATOR.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is ADMINISTRATOR");
+                        }
+                        if (ChatRoomMemberRole.GUEST.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is GUEST");
+                        }
+                        if (ChatRoomMemberRole.MEMBER.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is MEMBER");
+                        }
+                        if (ChatRoomMemberRole.MODERATOR.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is MODERATOR");
+                        }
+                        if (ChatRoomMemberRole.OUTCAST.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is OUTCAST");
+                        }
+                        if (ChatRoomMemberRole.OWNER.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is OWNER");
+                        }
+                        if (ChatRoomMemberRole.SILENT_MEMBER.compareTo(member.getRole()) == 0) {
+                            logger.info("This member is SILENT_MEMBER");
+                        }
+                        if (ChatRoomMemberRole.MODERATOR.compareTo(
+                            member.getRole()) < 0)
+                        {
+                            logger.warn(
+                                "Permission denied for roomStatus operation from " + fromJid);
+                            return false;
+                        }
+                    }
+                    else {
+                        logger.info(
+                            "Member not found");
+                    }
+                }
+                else  {
+                    logger.info("Should not be here");
+                }
+            }
+
+            logger.info(
+                "Will " + (doRoomStatusOpen ? "open room" : "close room")
+                    + " on behalf of " + fromJid);
+
+            chatRoom.setRoomStatus(doRoomStatusOpen);
         return true;
+    }
+    
+    boolean getChatRoomStatus() {
+        return chatRoom.getRoomStatus();
     }
     
     /**

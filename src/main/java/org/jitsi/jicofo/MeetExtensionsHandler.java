@@ -230,13 +230,24 @@ public class MeetExtensionsHandler
     private IQ handleRoomStatusIq(RoomStatusIq roomStatusIq)
     {
         Boolean doRoomStatusOpen = roomStatusIq.getRoomStatus();
+        Boolean checkRequest = roomStatusIq.getCheckRequest();
+        
         Jid jid = roomStatusIq.getJid();
-
-        if (doRoomStatusOpen == null || jid == null)
+        
+        if (jid == null)
         {
+            logger.debug("jid null");
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
-                XMPPError.Condition.item_not_found));
+                    XMPPError.Condition.item_not_found));
         }
+        
+        if(checkRequest == null && doRoomStatusOpen == null)
+        {
+            logger.debug("checkRequest and doRoomStatusOpen null");
+            return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+        
 
         Jid from = roomStatusIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
@@ -244,34 +255,59 @@ public class MeetExtensionsHandler
         {
             logger.debug("Room status error: room not found for JID: " + from);
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
-                XMPPError.Condition.item_not_found));
+                    XMPPError.Condition.item_not_found));
         }
 
         IQ result;
 
-        //if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), jid, doRoomStatusOpen))
-        if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), doRoomStatusOpen))
-        {
-            result = IQ.createResultIQ(roomStatusIq);
-           
-            if (roomStatusIq.getFrom().equals(jid))
+        boolean check = false;
+        if(checkRequest != null) {
+            check = checkRequest;
+            logger.debug("Asking for checkRequest: " + check);
+        }
+        
+        if(!check) {
+            //if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), jid, doRoomStatusOpen))
+            if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), doRoomStatusOpen))
             {
-            	logger.info("Room status is " + doRoomStatusOpen);
-                RoomStatusIq roomStatusUpdate = new RoomStatusIq();
-                roomStatusUpdate.setActor(from);
-                roomStatusUpdate.setType(IQ.Type.set);
-                roomStatusUpdate.setTo(jid);
+                result = IQ.createResultIQ(roomStatusIq);
 
-                roomStatusUpdate.setRoomStatus(doRoomStatusOpen);
+                if (roomStatusIq.getFrom().equals(jid))
+                {
+                    logger.info("Room check status is " + doRoomStatusOpen);
+                    RoomStatusIq roomStatusUpdate = new RoomStatusIq();
+                    roomStatusUpdate.setActor(from);
+                    roomStatusUpdate.setType(IQ.Type.set);
+                    roomStatusUpdate.setTo(jid);
 
-                connection.sendStanza(roomStatusUpdate);
+                    roomStatusUpdate.setRoomStatus(doRoomStatusOpen);
+
+                    connection.sendStanza(roomStatusUpdate);
+                }
+            }
+            else
+            {
+                result = IQ.createErrorResponse(
+                    roomStatusIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
             }
         }
-        else
-        {
-            result = IQ.createErrorResponse(
-                roomStatusIq,
-                XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+        else {
+            boolean roomStatus = conference.getChatRoomStatus();
+            result = IQ.createResultIQ(roomStatusIq);
+
+                //if (roomStatusIq.getFrom().equals(jid))
+                //{
+                    logger.info("Room check status is " + doRoomStatusOpen);
+                    RoomStatusIq roomStatusUpdate = new RoomStatusIq();
+                    roomStatusUpdate.setActor(from);
+                    roomStatusUpdate.setType(IQ.Type.set);
+                    roomStatusUpdate.setTo(jid);
+
+                    roomStatusUpdate.setRoomStatus(roomStatus);
+
+                    connection.sendStanza(roomStatusUpdate);
+                //}
         }
 
         return result;
