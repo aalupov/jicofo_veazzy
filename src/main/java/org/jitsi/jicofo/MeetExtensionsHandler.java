@@ -59,6 +59,11 @@ public class MeetExtensionsHandler
     private RoomStatusIqHandler roomStatusIqHandler;
     private DialIqHandler dialIqHandler;
 
+    /** The currently used DB connection. */
+    private JDBCPostgreSQL clientSql;
+
+    private Boolean roomStatusFromDb;
+
     /**
      * Creates new instance of {@link MeetExtensionsHandler}.
      * @param focusManager <tt>FocusManager</tt> that will be used by new
@@ -87,6 +92,8 @@ public class MeetExtensionsHandler
         muteIqHandler = new MuteIqHandler();
         roomStatusIqHandler = new RoomStatusIqHandler();
         dialIqHandler = new DialIqHandler();
+        clientSql = new JDBCPostgreSQL();
+        roomStatusFromDb = true;
         connection.registerIQRequestHandler(muteIqHandler);
         connection.registerIQRequestHandler(roomStatusIqHandler);
         connection.registerIQRequestHandler(dialIqHandler);
@@ -172,6 +179,17 @@ public class MeetExtensionsHandler
         return focusManager.getConference(roomName);
     }
 
+    private EntityBareJid getConferenceName(Jid mucJid)
+    {
+        EntityBareJid roomName = mucJid.asEntityBareJidIfPossible();
+        if (roomName == null)
+        {
+            return null;
+        }
+        return roomName;
+    }
+
+
     private IQ handleMuteIq(MuteIq muteIq)
     {
         Boolean doMute = muteIq.getMute();
@@ -227,12 +245,22 @@ public class MeetExtensionsHandler
         return result;
     }
 
+
     private IQ handleRoomStatusIq(RoomStatusIq roomStatusIq)
     {
         Boolean doRoomStatusOpen = roomStatusIq.getRoomStatus();
         Boolean checkRequest = roomStatusIq.getCheckRequest();
         
         Jid jid = roomStatusIq.getJid();
+        
+        String confName = getConferenceName(jid).toString();
+        logger.info("Room Name is " + confName);
+
+        if (confName != null)
+        {
+           roomStatusFromDb = clientSql.getStatusFromDB(confName);
+           logger.info("Room Status From DB is " + roomStatusFromDb);
+        } 
         
         if (jid == null)
         {
@@ -274,7 +302,6 @@ public class MeetExtensionsHandler
 
                 if (roomStatusIq.getFrom().equals(jid))
                 {
-                    logger.info("Room check status is " + doRoomStatusOpen);
                     RoomStatusIq roomStatusUpdate = new RoomStatusIq();
                     roomStatusUpdate.setActor(from);
                     roomStatusUpdate.setType(IQ.Type.set);
@@ -283,6 +310,12 @@ public class MeetExtensionsHandler
                     roomStatusUpdate.setRoomStatus(doRoomStatusOpen);
 
                     connection.sendStanza(roomStatusUpdate);
+
+                   //update DB
+                    if (confName != null)  {
+                       clientSql.setStatusToDB(confName, doRoomStatusOpen);
+                       clientSql.updateStatusToDB(confName, doRoomStatusOpen);
+                    }
                 }
             }
             else
@@ -293,12 +326,9 @@ public class MeetExtensionsHandler
             }
         }
         else {
-            boolean roomStatus = conference.getChatRoomStatus();
+            boolean roomStatus = roomStatusFromDb;
             result = IQ.createResultIQ(roomStatusIq);
 
-                //if (roomStatusIq.getFrom().equals(jid))
-                //{
-                    logger.info("Room check status is " + doRoomStatusOpen);
                     RoomStatusIq roomStatusUpdate = new RoomStatusIq();
                     roomStatusUpdate.setActor(from);
                     roomStatusUpdate.setType(IQ.Type.set);
@@ -307,7 +337,6 @@ public class MeetExtensionsHandler
                     roomStatusUpdate.setRoomStatus(roomStatus);
 
                     connection.sendStanza(roomStatusUpdate);
-                //}
         }
 
         return result;
