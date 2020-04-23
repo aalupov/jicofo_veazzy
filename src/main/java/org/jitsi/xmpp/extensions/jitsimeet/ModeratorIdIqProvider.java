@@ -116,14 +116,14 @@ public class ModeratorIdIqProvider
                 case XmlPullParser.TEXT:
                 {
                     if(parser.getText() != null && parser.getText().length()  > 0) {
-                        if(parser.getText().equals("check")) {
-                            logger.warn("Checking moderatorId request");
-                            iq.setCheckRequest(true);
+                        if(parser.getText().equals("get")) {
+                            logger.warn("Getting moderatorId request");
+                            iq.setModeratorIdRequest(true);
                         }
                         else {
                             String moderatorId = parser.getText();
                             iq.setModeratorId(moderatorId);
-                            iq.setCheckRequest(false);
+                            iq.setModeratorIdRequest(false);
                         }
                     }
                     else {

@@ -313,7 +313,7 @@ public class MeetExtensionsHandler
         boolean check = false;
         if(checkRequest != null) {
             check = checkRequest;
-            logger.debug("Asking for checkRequest: " + check);
+            logger.info("Asking for room status checkRequest: " + check);
         }
         
         if(!check) {
@@ -367,8 +367,8 @@ public class MeetExtensionsHandler
     private IQ handleModeratorIdIq(ModeratorIdIq moderatorIdIq)
     {
         String doModeratorIdOpen = moderatorIdIq.getModeratorId();
-        logger.info("ModeratorId is" + doModeratorIdOpen);
-        Boolean checkRequest = moderatorIdIq.getCheckRequest();
+        logger.info("ModeratorId is " + doModeratorIdOpen);
+        Boolean moderatorIdRequest = moderatorIdIq.getModeratorIdRequest();
         
         Jid jid = moderatorIdIq.getJid();
         
@@ -379,9 +379,9 @@ public class MeetExtensionsHandler
                     XMPPError.Condition.item_not_found));
         }
         
-        if(checkRequest == null && doModeratorIdOpen == null)
+        if(moderatorIdRequest == null && doModeratorIdOpen == null)
         {
-            logger.debug("checkRequest and doModeratorIdOpen null");
+            logger.debug("moderatorIdRequest and doModeratorIdOpen null");
             return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
@@ -399,14 +399,14 @@ public class MeetExtensionsHandler
         IQ result;
 
         boolean check = false;
-        if(checkRequest != null) {
-            check = checkRequest;
-            logger.debug("Asking for checkRequest: " + check);
+        if(moderatorIdRequest != null) {
+            check = moderatorIdRequest;
+            logger.info("Asking for moderator id moderatorIdRequest: " + check);
         }
         
         if(!check) {
 
-            if (doModeratorIdOpen != null)
+            if (conference.handleModeratorIdRequest(moderatorIdIq.getFrom(), doModeratorIdOpen))
             {
                 result = IQ.createResultIQ(moderatorIdIq);
 
@@ -431,7 +431,7 @@ public class MeetExtensionsHandler
             }
         }
         else {
-            String moderatorId = moderatorIdIq.getModeratorId();
+            String moderatorId = conference.getChatModeratorId();
             result = IQ.createResultIQ(moderatorIdIq);
 
             ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();

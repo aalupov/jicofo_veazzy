@@ -141,8 +141,7 @@ public class ChatRoomImpl
     private JitsiMeetConference conference;
 
     private boolean roomStatus = true;
-
-    private String moderatorId = null;
+    private String moderatorId = "00000000";
     
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.

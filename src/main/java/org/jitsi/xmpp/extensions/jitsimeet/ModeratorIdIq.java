@@ -78,9 +78,9 @@ public class ModeratorIdIq
     private String moderatorId;
 
     /**
-     * checkRequest.
+     * ModeratorIdRequest.
      */
-    private Boolean checkRequest;
+    private Boolean moderatorIdRequest;
 
     /**
      * Creates a new instance of this class.
@@ -149,13 +149,13 @@ public class ModeratorIdIq
         return moderatorId;
     }
 
-    public void setCheckRequest(Boolean checkRequest)
+    public void setModeratorIdRequest(Boolean moderatorIdRequest)
     {
-        this.checkRequest = checkRequest;
+        this.moderatorIdRequest = moderatorIdRequest;
     }
-    public Boolean getCheckRequest()
+    public Boolean getModeratorIdRequest()
     {
-        return checkRequest;
+        return moderatorIdRequest;
     }
     /**
      * Returns the peer jid that initiated the moderatorId, if any.
