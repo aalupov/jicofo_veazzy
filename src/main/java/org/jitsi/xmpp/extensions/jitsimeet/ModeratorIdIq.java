@@ -106,7 +106,7 @@ public class ModeratorIdIq
         }
         
         xml.rightAngleBracket()
-            .append(moderatorId.toString());
+            .append(moderatorId);
 
         logger.warn("Building xml ModeratorId " + xml.toString());
         

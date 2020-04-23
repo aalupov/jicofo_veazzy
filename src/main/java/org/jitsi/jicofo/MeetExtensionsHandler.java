@@ -99,6 +99,7 @@ public class MeetExtensionsHandler
         roomStatusFromDb = true;
         connection.registerIQRequestHandler(muteIqHandler);
         connection.registerIQRequestHandler(roomStatusIqHandler);
+        connection.registerIQRequestHandler(moderatorIdIqHandler);
         connection.registerIQRequestHandler(dialIqHandler);
     }
 
