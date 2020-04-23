@@ -84,5 +84,9 @@ public interface ChatRoom2
     
     void setRoomStatus(boolean roomStatus);
     boolean getRoomStatus();
+
+    void setModeratorId(String moderatorId);
+    String getModeratorId();
+
     
 }

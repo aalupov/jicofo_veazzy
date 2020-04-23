@@ -57,6 +57,7 @@ public class MeetExtensionsHandler
 
     private MuteIqHandler muteIqHandler;
     private RoomStatusIqHandler roomStatusIqHandler;
+    private ModeratorIdIqHandler moderatorIdIqHandler;
     private DialIqHandler dialIqHandler;
 
     /** The currently used DB connection. */
@@ -76,6 +77,7 @@ public class MeetExtensionsHandler
 
         MuteIqProvider.registerMuteIqProvider();
         RoomStatusIqProvider.registerRoomStatusIqProvider();
+        ModeratorIdIqProvider.registerModeratorIdIqProvider();
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
     }
@@ -91,6 +93,7 @@ public class MeetExtensionsHandler
 
         muteIqHandler = new MuteIqHandler();
         roomStatusIqHandler = new RoomStatusIqHandler();
+        moderatorIdIqHandler = new ModeratorIdIqHandler();
         dialIqHandler = new DialIqHandler();
         clientSql = new JDBCPostgreSQL();
         roomStatusFromDb = true;
@@ -132,6 +135,24 @@ public class MeetExtensionsHandler
         public IQ handleIQRequest(IQ iqRequest)
         {
             return handleRoomStatusIq((RoomStatusIq) iqRequest);
+        }
+    }
+    
+    private class ModeratorIdIqHandler extends AbstractIqRequestHandler
+    {
+    	ModeratorIdIqHandler()
+        {
+            super(
+            	ModeratorIdIq.ELEMENT_NAME,
+            	ModeratorIdIq.NAMESPACE,
+                IQ.Type.set,
+                IQRequestHandler.Mode.sync);
+        }
+
+        @Override
+        public IQ handleIQRequest(IQ iqRequest)
+        {
+            return handleModeratorIdIq((ModeratorIdIq) iqRequest);
         }
     }
     
@@ -337,6 +358,89 @@ public class MeetExtensionsHandler
                     roomStatusUpdate.setRoomStatus(roomStatus);
 
                     connection.sendStanza(roomStatusUpdate);
+        }
+
+        return result;
+    }
+    
+    private IQ handleModeratorIdIq(ModeratorIdIq moderatorIdIq)
+    {
+        String doModeratorIdOpen = moderatorIdIq.getModeratorId();
+        logger.info("ModeratorId is" + doModeratorIdOpen);
+        Boolean checkRequest = moderatorIdIq.getCheckRequest();
+        
+        Jid jid = moderatorIdIq.getJid();
+        
+        if (jid == null)
+        {
+            logger.debug("jid null");
+            return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+        
+        if(checkRequest == null && doModeratorIdOpen == null)
+        {
+            logger.debug("checkRequest and doModeratorIdOpen null");
+            return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+        
+
+        Jid from = moderatorIdIq.getFrom();
+        JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
+        if (conference == null)
+        {
+            logger.debug("Moderator Id error: ID not found for JID: " + from);
+            return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        IQ result;
+
+        boolean check = false;
+        if(checkRequest != null) {
+            check = checkRequest;
+            logger.debug("Asking for checkRequest: " + check);
+        }
+        
+        if(!check) {
+
+            if (doModeratorIdOpen != null)
+            {
+                result = IQ.createResultIQ(moderatorIdIq);
+
+                if (moderatorIdIq.getFrom().equals(jid))
+                {
+                	ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
+                	moderatorIdUpdate.setActor(from);
+                	moderatorIdUpdate.setType(IQ.Type.set);
+                	moderatorIdUpdate.setTo(jid);
+
+                	moderatorIdUpdate.setModeratorId(doModeratorIdOpen);
+
+                    connection.sendStanza(moderatorIdUpdate);
+
+                }
+            }
+            else
+            {
+                result = IQ.createErrorResponse(
+                		moderatorIdIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+            }
+        }
+        else {
+            String moderatorId = moderatorIdIq.getModeratorId();
+            result = IQ.createResultIQ(moderatorIdIq);
+
+            ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
+                    moderatorIdUpdate.setActor(from);
+                    moderatorIdUpdate.setType(IQ.Type.set);
+                    moderatorIdUpdate.setTo(jid);
+
+                    moderatorIdUpdate.setModeratorId(moderatorId);
+
+                    connection.sendStanza(moderatorIdUpdate);
         }
 
         return result;

@@ -141,6 +141,8 @@ public class ChatRoomImpl
     private JitsiMeetConference conference;
 
     private boolean roomStatus = true;
+
+    private String moderatorId = null;
     
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.
@@ -871,6 +873,23 @@ public class ChatRoomImpl
     public void setRoomStatus(boolean roomStatus) {
         this.roomStatus = roomStatus;
     }
+
+    /**
+     * @return the moderatorId
+     */
+    @Override
+    public String getModeratorId() {
+        return moderatorId;
+    }
+
+    /**
+     * @param moderatorId to set
+     */
+    @Override
+    public void setModeratorId(String moderatorId) {
+        this.moderatorId = moderatorId;
+    }
+
 
     @Override
     public ConferenceDescription publishConference(ConferenceDescription cd,
