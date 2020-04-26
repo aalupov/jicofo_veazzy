@@ -509,7 +509,7 @@ public class MeetExtensionsHandler
             {
                 result = IQ.createResultIQ(participantIdIq);
 
-                if (participantIdIq.getFrom().equals(jid))
+                if (!participantIdIq.getFrom().equals(jid))
                 {
                 	ParticipantIdIq participantIdUpdate = new ParticipantIdIq();
                 	participantIdUpdate.setActor(from);
