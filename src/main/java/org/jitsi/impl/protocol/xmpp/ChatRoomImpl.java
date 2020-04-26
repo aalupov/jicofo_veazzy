@@ -142,6 +142,7 @@ public class ChatRoomImpl
 
     private boolean roomStatus = true;
     private String moderatorId = "00000000";
+    private String participantId = "00000000";
     
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.
@@ -889,6 +890,21 @@ public class ChatRoomImpl
         this.moderatorId = moderatorId;
     }
 
+    /**
+     * @return the participantId
+     */
+    @Override
+    public String getParticipantId() {
+        return participantId;
+    }
+
+    /**
+     * @param participantId to set
+     */
+    @Override
+    public void setParticipantId(String participantId) {
+        this.participantId = participantId;
+    }
 
     @Override
     public ConferenceDescription publishConference(ConferenceDescription cd,

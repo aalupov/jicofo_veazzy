@@ -87,4 +87,8 @@ public interface ChatRoom2
 
     void setModeratorId(String moderatorId);
     String getModeratorId();
+
+    void setParticipantId(String participantId);
+    String getParticipantId();
+
 }

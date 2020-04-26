@@ -58,6 +58,7 @@ public class MeetExtensionsHandler
     private MuteIqHandler muteIqHandler;
     private RoomStatusIqHandler roomStatusIqHandler;
     private ModeratorIdIqHandler moderatorIdIqHandler;
+    private ParticipantIdIqHandler participantIdIqHandler;
     private DialIqHandler dialIqHandler;
 
     /** The currently used DB connection. */
@@ -78,6 +79,7 @@ public class MeetExtensionsHandler
         MuteIqProvider.registerMuteIqProvider();
         RoomStatusIqProvider.registerRoomStatusIqProvider();
         ModeratorIdIqProvider.registerModeratorIdIqProvider();
+        ParticipantIdIqProvider.registerParticipantIdIqProvider();
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
     }
@@ -94,12 +96,14 @@ public class MeetExtensionsHandler
         muteIqHandler = new MuteIqHandler();
         roomStatusIqHandler = new RoomStatusIqHandler();
         moderatorIdIqHandler = new ModeratorIdIqHandler();
+        participantIdIqHandler = new ParticipantIdIqHandler();
         dialIqHandler = new DialIqHandler();
         clientSql = new JDBCPostgreSQL();
         roomStatusFromDb = true;
         connection.registerIQRequestHandler(muteIqHandler);
         connection.registerIQRequestHandler(roomStatusIqHandler);
         connection.registerIQRequestHandler(moderatorIdIqHandler);
+        connection.registerIQRequestHandler(participantIdIqHandler);
         connection.registerIQRequestHandler(dialIqHandler);
     }
 
@@ -157,6 +161,24 @@ public class MeetExtensionsHandler
         }
     }
     
+    private class ParticipantIdIqHandler extends AbstractIqRequestHandler
+    {
+    	ParticipantIdIqHandler()
+        {
+            super(
+            	ParticipantIdIq.ELEMENT_NAME,
+            	ParticipantIdIq.NAMESPACE,
+                IQ.Type.set,
+                IQRequestHandler.Mode.sync);
+        }
+
+        @Override
+        public IQ handleIQRequest(IQ iqRequest)
+        {
+            return handleParticipantIdIq((ParticipantIdIq) iqRequest);
+        }
+    }
+    
     private class DialIqHandler extends AbstractIqRequestHandler
     {
         DialIqHandler()
@@ -186,6 +208,8 @@ public class MeetExtensionsHandler
         {
             connection.unregisterIQRequestHandler(muteIqHandler);
             connection.unregisterIQRequestHandler(roomStatusIqHandler);
+            connection.unregisterIQRequestHandler(moderatorIdIqHandler);
+            connection.unregisterIQRequestHandler(participantIdIqHandler);
             connection.unregisterIQRequestHandler(dialIqHandler);
             connection = null;
         }
@@ -446,6 +470,69 @@ public class MeetExtensionsHandler
 
         return result;
     }
+    
+    private IQ handleParticipantIdIq(ParticipantIdIq participantIdIq)
+    {
+        String doParticipantIdOpen = participantIdIq.getParticipantId();
+        logger.info("ParticipantId is " + doParticipantIdOpen);
+        Boolean withMe = participantIdIq.getWithMe();
+        
+        Jid jid = participantIdIq.getJid();
+        
+        if (jid == null)
+        {
+            logger.debug("jid null");
+            return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+        
+        if(doParticipantIdOpen == null)
+        {
+            logger.debug("doParticipantIdOpen is null");
+            return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+        
+
+        Jid from = participantIdIq.getFrom();
+        JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
+        if (conference == null)
+        {
+            logger.debug("Participant Id error: ID not found for JID: " + from);
+            return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        IQ result;
+
+            if (conference.handleParticipantIdRequest(participantIdIq.getFrom(), doParticipantIdOpen))
+            {
+                result = IQ.createResultIQ(participantIdIq);
+
+                if (participantIdIq.getFrom().equals(jid))
+                {
+                	ParticipantIdIq participantIdUpdate = new ParticipantIdIq();
+                	participantIdUpdate.setActor(from);
+                	participantIdUpdate.setType(IQ.Type.set);
+                	participantIdUpdate.setTo(jid);
+                	participantIdUpdate.setWithMe(withMe);
+
+                	participantIdUpdate.setParticipantId(doParticipantIdOpen);
+
+                    connection.sendStanza(participantIdUpdate);
+
+                }
+            }
+            else
+            {
+                result = IQ.createErrorResponse(
+                		participantIdIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+            }
+
+        return result;
+    }
+    
     
     /**
      * Checks whether sending the rayo message is ok (checks member, moderators)
