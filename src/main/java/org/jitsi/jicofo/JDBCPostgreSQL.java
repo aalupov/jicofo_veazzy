@@ -87,41 +87,62 @@ public class JDBCPostgreSQL {
 
     public PreparedStatement getWriteCreateStatement(Connection connection, String queryString) {
 
-        PreparedStatement statement = null;
+        PreparedStatement pStatement = null;
 
         if (connection != null) {
 
             try {
 
-                statement = connection.prepareStatement(queryString, Statement.RETURN_GENERATED_KEYS);
+                pStatement = connection.prepareStatement(queryString, Statement.RETURN_GENERATED_KEYS);
                 connection.setAutoCommit(false);
 
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return statement;
+        return pStatement;
     }
 
     public PreparedStatement getWriteUpdateStatement(Connection connection, String queryString) {
 
-        PreparedStatement statement = null;
+        PreparedStatement pStatement = null;
 
         if (connection != null) {
 
             try {
 
-                statement = connection.prepareStatement(queryString);
+                pStatement = connection.prepareStatement(queryString);
                 connection.setAutoCommit(false);
 
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return statement;
+        return pStatement;
     }
     
-    public void executeQueryToDb(Connection connection, Statement statement, String queryString) {
+    public void executePreparedQueryToDb(Connection connection, PreparedStatement pStatement) {
+
+        if (pStatement != null) {
+
+            try {
+                int counts[] = pStatement.executeBatch();
+                connection.commit();
+            } catch (SQLException ex) {
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.WARNING, ex1.getMessage(), ex1);
+                    }
+                }
+                Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+    
+    /*public void executeQueryToDb(Connection connection, Statement statement, String queryString) {
 
         if (statement != null) {
 
@@ -141,7 +162,8 @@ public class JDBCPostgreSQL {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-    }
+    }*/
+    
     private static java.sql.Date getCurrentDate() {
         java.util.Date today = new java.util.Date();
         return new java.sql.Date(today.getTime());
@@ -211,17 +233,18 @@ public class JDBCPostgreSQL {
                 + " VALUES (?,?)";
 
         Connection connection = getConnection();
-        PreparedStatement statement = getWriteCreateStatement(connection, queryString);
-        if(statement != null) {
+        PreparedStatement pStatement = getWriteCreateStatement(connection, queryString);
+        if(pStatement != null) {
             try {
-                statement.setString(1, roomStatus.getRoomName());
-                statement.setBoolean(2, roomStatus.getStatus());
+                pStatement.setString(1, roomStatus.getRoomName());
+                pStatement.setBoolean(2, roomStatus.getStatus());
+                pStatement.addBatch();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
-            executeQueryToDb(connection, statement, queryString);
+            executePreparedQueryToDb(connection, pStatement);
             try {
-                statement.close();
+                pStatement.close();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -242,16 +265,17 @@ public class JDBCPostgreSQL {
                 + " WHERE " + RoomStatus.COLUMN_NAME + "=" + getStringValue(roomStatus.getRoomName());
 
         Connection connection = getConnection();
-        PreparedStatement statement = getWriteUpdateStatement(connection, queryString);
-        if(statement != null) {
+        PreparedStatement pStatement = getWriteUpdateStatement(connection, queryString);
+        if(pStatement != null) {
             try {
-                statement.setBoolean(1, roomStatus.getStatus());
+                pStatement.setBoolean(1, roomStatus.getStatus());
+                pStatement.addBatch();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
-            executeQueryToDb(connection, statement, queryString);
+            executePreparedQueryToDb(connection, pStatement);
             try {
-                statement.close();
+                pStatement.close();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -334,21 +358,22 @@ public class JDBCPostgreSQL {
                 + " VALUES (?,?,?,?,?,?)";
 
         Connection connection = getConnection();
-        PreparedStatement statement = getWriteCreateStatement(connection, queryString);
-        if(statement != null) {
+        PreparedStatement pStatement = getWriteCreateStatement(connection, queryString);
+        if(pStatement != null) {
             try {
-                statement.setString(1, participantStatus.getJid());
-                statement.setString(2, participantStatus.getRoomName());
-                statement.setBoolean(3, participantStatus.getActive());
-                statement.setDate(4, participantStatus.getJoinDate() != null ? getCurrentDate(participantStatus.getJoinDate()) : null);
-                statement.setDate(5, participantStatus.getLeaveDate() != null ? getCurrentDate(participantStatus.getLeaveDate()) : null);
-                statement.setString(6, participantStatus.getLeaveReason());
+                pStatement.setString(1, participantStatus.getJid());
+                pStatement.setString(2, participantStatus.getRoomName());
+                pStatement.setBoolean(3, participantStatus.getActive());
+                pStatement.setDate(4, participantStatus.getJoinDate() != null ? getCurrentDate(participantStatus.getJoinDate()) : null);
+                pStatement.setDate(5, participantStatus.getLeaveDate() != null ? getCurrentDate(participantStatus.getLeaveDate()) : null);
+                pStatement.setString(6, participantStatus.getLeaveReason());
+                pStatement.addBatch();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
-            executeQueryToDb(connection, statement, queryString);
+            executePreparedQueryToDb(connection, pStatement);
             try {
-                statement.close();
+                pStatement.close();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -383,19 +408,20 @@ public class JDBCPostgreSQL {
                     + " WHERE " + ParticipantStatus.COLUMN_JID + "=" + getStringValue(participantStatus.getJid());
 
             Connection connection = getConnection();
-            PreparedStatement statement = getWriteUpdateStatement(connection, queryString);
+            PreparedStatement pStatement = getWriteUpdateStatement(connection, queryString);
             
-            if(statement != null) {
+            if(pStatement != null) {
                 try {
-                    statement.setBoolean(1, participantStatus.getActive());
-                    statement.setDate(2, participantStatus.getLeaveDate() != null ? getCurrentDate(participantStatus.getLeaveDate()) : null);
-                    statement.setString(3, participantStatus.getLeaveReason());
+                    pStatement.setBoolean(1, participantStatus.getActive());
+                    pStatement.setDate(2, participantStatus.getLeaveDate() != null ? getCurrentDate(participantStatus.getLeaveDate()) : null);
+                    pStatement.setString(3, participantStatus.getLeaveReason());
+                    pStatement.addBatch();
                 } catch (SQLException ex) {
                     Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                executeQueryToDb(connection, statement, queryString);
+                executePreparedQueryToDb(connection, pStatement);
                 try {
-                    statement.close();
+                    pStatement.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
                 }
