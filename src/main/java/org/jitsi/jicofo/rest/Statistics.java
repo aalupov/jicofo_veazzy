@@ -26,8 +26,8 @@ import javax.ws.rs.core.*;
  * Adds statistics REST endpoint exposes some internal Jicofo stats.
  */
 @Path("/stats")
-public class Statistics
-{
+public class Statistics {
+
     @Inject
     protected FocusManagerProvider focusManagerProvider;
 
@@ -36,12 +36,12 @@ public class Statistics
 
     /**
      * Returns json string with statistics.
+     *
      * @return json string with statistics.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getStats()
-    {
+    public String getStats() {
         JSONObject stats = new JSONObject();
 
         // We want to avoid exposing unnecessary hierarchy levels in the stats,

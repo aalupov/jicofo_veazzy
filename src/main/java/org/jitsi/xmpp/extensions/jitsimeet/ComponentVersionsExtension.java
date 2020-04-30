@@ -26,8 +26,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class ComponentVersionsExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The XML element name of {@link ComponentVersionsExtension}.
      */
@@ -46,14 +46,14 @@ public class ComponentVersionsExtension
     public static final String COMPONENT_FOCUS = "focus";
 
     /**
-     * Constant for {@link Component} name used to signal the version of
-     * XMPP server.
+     * Constant for {@link Component} name used to signal the version of XMPP
+     * server.
      */
     public static final String COMPONENT_XMPP_SERVER = "xmpp";
 
     /**
-     * Constant for {@link Component} name used to signal the version of
-     * the videobridge.
+     * Constant for {@link Component} name used to signal the version of the
+     * videobridge.
      */
     public static final String COMPONENT_VIDEOBRIDGE = "videobridge";
 
@@ -66,21 +66,19 @@ public class ComponentVersionsExtension
      * Creates an {@link AbstractPacketExtension} instance for the specified
      * <tt>namespace</tt> and <tt>elementName</tt>.
      */
-    public ComponentVersionsExtension()
-    {
+    public ComponentVersionsExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Adds component's version to this extension.
      *
-     * @param componentName the name of the component for which
-     *        child {@link Component} extension will be added.
+     * @param componentName the name of the component for which child
+     * {@link Component} extension will be added.
      * @param versionStr human readable string that describes component's
-     *        version.
+     * version.
      */
-    public void addComponentVersion(String componentName, String versionStr)
-    {
+    public void addComponentVersion(String componentName, String versionStr) {
         Component v = new Component();
 
         v.setName(componentName);
@@ -95,8 +93,8 @@ public class ComponentVersionsExtension
      * the text value.
      */
     public class Component
-        extends AbstractPacketExtension
-    {
+            extends AbstractPacketExtension {
+
         /**
          * The name of that attribute that carries component's name.
          */
@@ -105,28 +103,27 @@ public class ComponentVersionsExtension
         /**
          * Creates new instance of {@link Component} packet extension.
          */
-        public Component()
-        {
+        public Component() {
             super(NAMESPACE, COMPONENT_ELEMENT_NAME);
         }
 
         /**
          * Returns the value of the name attribute.
+         *
          * @return <tt>String</tt> which describes the name of video
-         *         conferencing system component.
+         * conferencing system component.
          */
-        public String getName()
-        {
+        public String getName() {
             return getAttributeAsString(NAME_ATTR_NAME);
         }
 
         /**
          * Sets new value for the component's name attribute.
+         *
          * @param name a <tt>String</tt> which describes the name of video
-         *        conferencing system component.
+         * conferencing system component.
          */
-        public void setName(String name)
-        {
+        public void setName(String name) {
             setAttribute(NAME_ATTR_NAME, name);
         }
     }

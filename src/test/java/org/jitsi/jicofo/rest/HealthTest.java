@@ -40,8 +40,8 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class HealthTest extends JerseyTest
-{
+public class HealthTest extends JerseyTest {
+
     private FocusManagerProvider focusManagerProvider;
     private FocusManager focusManager;
     private FakeClock clock;
@@ -49,8 +49,7 @@ public class HealthTest extends JerseyTest
     private BridgeSelector bridgeSelector;
 
     @Override
-    protected Application configure()
-    {
+    protected Application configure() {
         focusManagerProvider = mock(FocusManagerProvider.class);
         focusManager = mock(FocusManager.class);
         when(focusManagerProvider.get()).thenReturn(focusManager);
@@ -66,11 +65,9 @@ public class HealthTest extends JerseyTest
         enable(TestProperties.DUMP_ENTITY);
         return new ResourceConfig() {
             {
-                register(new AbstractBinder()
-                {
+                register(new AbstractBinder() {
                     @Override
-                    protected void configure()
-                    {
+                    protected void configure() {
                         bind(focusManagerProvider).to(FocusManagerProvider.class);
                         bind(clock).to(Clock.class);
                     }
@@ -81,8 +78,7 @@ public class HealthTest extends JerseyTest
     }
 
     @Test
-    public void noCachedResponse() throws Exception
-    {
+    public void noCachedResponse() throws Exception {
         setupSuccessfulHealthCheck();
         Response resp = target("/about/health").request().get();
         verify(focusManager).conferenceRequest(any(), any(), any(), eq(false));
@@ -90,8 +86,7 @@ public class HealthTest extends JerseyTest
     }
 
     @Test
-    public void cachedResponse() throws Exception
-    {
+    public void cachedResponse() throws Exception {
         setupSuccessfulHealthCheck();
         target("/about/health").request().get();
         clock.elapse(Duration.ofSeconds(5));
@@ -102,8 +97,7 @@ public class HealthTest extends JerseyTest
     }
 
     @Test
-    public void cachedResponseExpired() throws Exception
-    {
+    public void cachedResponseExpired() throws Exception {
         setupSuccessfulHealthCheck();
         target("/about/health").request().get();
         // Long enough for the cached response to expire
@@ -114,8 +108,7 @@ public class HealthTest extends JerseyTest
     }
 
     @Test
-    public void healthCheckTimeout() throws XmppStringprepException
-    {
+    public void healthCheckTimeout() throws XmppStringprepException {
         when(focusManager.isHealthChecksDebugEnabled()).thenReturn(true);
         setupHealthCheckTimeout();
         Response resp = target("/about/health").request().get();
@@ -123,8 +116,7 @@ public class HealthTest extends JerseyTest
     }
 
     @Test
-    public void requestActiveJvbs() throws Exception
-    {
+    public void requestActiveJvbs() throws Exception {
         setupActiveJvbs("one@one.com/jvb", "two@two.com/jvb");
         setupSuccessfulHealthCheck();
         Response resp = target("/about/health").queryParam("list_jvb", true).request().get();
@@ -132,74 +124,62 @@ public class HealthTest extends JerseyTest
         verify(focusManager).conferenceRequest(any(), any(), any(), eq(false));
         assertEquals(HttpServletResponse.SC_OK, resp.getStatus());
         JSONObject respJson
-            = (JSONObject)new JSONParser().parse(resp.readEntity(String.class));
+                = (JSONObject) new JSONParser().parse(resp.readEntity(String.class));
         assertNotNull(respJson.get("jvbs"));
-        List jvbs = (List)respJson.get("jvbs");
+        List jvbs = (List) respJson.get("jvbs");
         assertEquals(2, jvbs.size());
     }
 
     @Test
-    public void requestActiveJvbsHealthCheckError() throws Exception
-    {
+    public void requestActiveJvbsHealthCheckError() throws Exception {
         setupActiveJvbs("one@one.com/jvb", "two@two.com/jvb");
         setupHealthCheckError();
         Response resp = target("/about/health").queryParam("list_jvb", true).request().get();
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, resp.getStatus());
         JSONObject respJson
-            = (JSONObject)new JSONParser().parse(resp.readEntity(String.class));
+                = (JSONObject) new JSONParser().parse(resp.readEntity(String.class));
         assertNotNull(respJson.get("jvbs"));
-        List jvbs = (List)respJson.get("jvbs");
+        List jvbs = (List) respJson.get("jvbs");
         assertEquals(2, jvbs.size());
     }
 
-    private void setupActiveJvbs(String... ids) throws XmppStringprepException
-    {
+    private void setupActiveJvbs(String... ids) throws XmppStringprepException {
         List<Jid> activeJvbs = new ArrayList<>();
-        for (String id : ids)
-        {
+        for (String id : ids) {
             activeJvbs.add(JidCreate.from(id));
         }
 
         when(bridgeSelector.listActiveJVBs()).thenReturn(activeJvbs);
     }
 
-    private void setupHealthCheckError()
-    {
+    private void setupHealthCheckError() {
         when(jitsiMeetServices.getMucService()).thenThrow(new RuntimeException());
     }
 
-    private void setupSuccessfulHealthCheck()
-    {
+    private void setupSuccessfulHealthCheck() {
         Jid mucService = null;
-        try
-        {
+        try {
             mucService = JidCreate.from("test@domain.com");
-        } catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             e.printStackTrace();
         }
         when(jitsiMeetServices.getMucService()).thenReturn(mucService);
         when(focusManager.getConference(any())).thenReturn(null);
-        try
-        {
+        try {
             when(focusManager.conferenceRequest(any(), any(), any(), eq(false))).thenReturn(true);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void setupHealthCheckTimeout() throws XmppStringprepException
-    {
+    private void setupHealthCheckTimeout() throws XmppStringprepException {
         final Jid mucService = JidCreate.from("test@domain.com");
         when(jitsiMeetServices.getMucService())
-            .thenAnswer(new AnswersWithDelay(4000L, new Returns(mucService)));
+                .thenAnswer(new AnswersWithDelay(4000L, new Returns(mucService)));
         when(focusManager.getConference(any())).thenReturn(null);
-        try
-        {
+        try {
             when(focusManager.conferenceRequest(any(), any(), any(), eq(false))).thenReturn(true);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

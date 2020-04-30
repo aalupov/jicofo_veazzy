@@ -30,8 +30,8 @@ import org.osgi.framework.*;
  *
  * @author Pawel Domas
  */
-public class OSGiHandler
-{
+public class OSGiHandler {
+
     /**
      * OSGi bundle context instance.
      */
@@ -47,32 +47,29 @@ public class OSGiHandler
 
     private boolean deadlocked;
 
-    private OSGiHandler() { }
+    private OSGiHandler() {
+    }
 
-    public static OSGiHandler getInstance()
-    {
+    public static OSGiHandler getInstance() {
         return instance;
     }
 
-    public void setDeadlocked(boolean deadlocked)
-    {
+    public void setDeadlocked(boolean deadlocked) {
         this.deadlocked = deadlocked;
-        if (deadlocked)        {
+        if (deadlocked) {
 
-            ((FailureAwareBundleContext)bc)
-                .setFailureMessage("OSGi stack is blocked by a deadlock");
-        }
-        else
-        {
-            ((FailureAwareBundleContext)bc).setFailureMessage(null);
+            ((FailureAwareBundleContext) bc)
+                    .setFailureMessage("OSGi stack is blocked by a deadlock");
+        } else {
+            ((FailureAwareBundleContext) bc).setFailureMessage(null);
         }
     }
 
     public void init()
-        throws Exception
-    {
-        if (deadlocked)
+            throws Exception {
+        if (deadlocked) {
             throw new RuntimeException("Running on deadlocked stack");
+        }
 
         System.setProperty("org.jitsi.jicofo.PING_INTERVAL", "0");
         System.setProperty(FocusManager.HOSTNAME_PNAME, "test.domain.net");
@@ -82,26 +79,21 @@ public class OSGiHandler
         System.setProperty(ConfigurationActivator.PNAME_USE_PROPFILE_CONFIG,
                 "true");
 
-        this.bundleActivator = new BundleActivator()
-        {
+        this.bundleActivator = new BundleActivator() {
             @Override
             public void start(BundleContext bundleContext)
-                throws Exception
-            {
+                    throws Exception {
                 bc = new FailureAwareBundleContext(bundleContext);
-                synchronized (syncRoot)
-                {
+                synchronized (syncRoot) {
                     syncRoot.notifyAll();
                 }
             }
 
             @Override
             public void stop(BundleContext bundleContext)
-                throws Exception
-            {
+                    throws Exception {
                 bc = null;
-                synchronized (syncRoot)
-                {
+                synchronized (syncRoot) {
                     syncRoot.notifyAll();
                 }
             }
@@ -118,16 +110,15 @@ public class OSGiHandler
 
         OSGi.start(mockMain);
 
-        if (bc == null)
-        {
-            synchronized (syncRoot)
-            {
+        if (bc == null) {
+            synchronized (syncRoot) {
                 syncRoot.wait(5000);
             }
         }
 
-        if (bc == null)
+        if (bc == null) {
             throw new RuntimeException("Failed to start OSGI");
+        }
 
         // Activators are executed asynchronously,
         // so a hack to wait for the last activator is used
@@ -135,32 +126,29 @@ public class OSGiHandler
     }
 
     public void shutdown()
-        throws Exception
-    {
-        if (deadlocked)
+            throws Exception {
+        if (deadlocked) {
             return;
+        }
 
-        if (bc != null)
-        {
-            if (mockMain != null)
-            {
+        if (bc != null) {
+            if (mockMain != null) {
                 OSGi.stop(mockMain);
             }
 
             OSGi.stop(bundleActivator);
         }
 
-        if (bc != null)
+        if (bc != null) {
             throw new RuntimeException("Failed to stop OSGI");
+        }
     }
 
-    public BundleContext bc()
-    {
+    public BundleContext bc() {
         return bc;
     }
 
-    public boolean isDeadlocked()
-    {
+    public boolean isDeadlocked() {
         return deadlocked;
     }
 }

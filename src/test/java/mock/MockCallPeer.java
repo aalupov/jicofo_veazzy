@@ -28,9 +28,8 @@ import org.jitsi.utils.*;
  * @author Pawel Domas
  */
 public class MockCallPeer
-    extends MediaAwareCallPeer<MockCall, MockPeerMediaHandler,
-                               MockProtocolProvider>
-{
+        extends MediaAwareCallPeer<MockCall, MockPeerMediaHandler, MockProtocolProvider> {
+
     /**
      * The logger.
      */
@@ -40,8 +39,7 @@ public class MockCallPeer
 
     private final MockCall call;
 
-    public MockCallPeer(String address, MockCall call)
-    {
+    public MockCallPeer(String address, MockCall call) {
         super(call);
 
         this.address = address;
@@ -52,120 +50,98 @@ public class MockCallPeer
 
     @Override
     public void addConferenceMembersSoundLevelListener(
-        ConferenceMembersSoundLevelListener listener)
-    {
+            ConferenceMembersSoundLevelListener listener) {
 
     }
 
     @Override
-    public void addStreamSoundLevelListener(SoundLevelListener listener)
-    {
+    public void addStreamSoundLevelListener(SoundLevelListener listener) {
 
     }
 
     @Override
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
     @Override
-    public MockCall getCall()
-    {
+    public MockCall getCall() {
         return call;
     }
 
     @Override
-    public Contact getContact()
-    {
+    public Contact getContact() {
         return null;
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return null;
     }
 
     @Override
-    public byte[] getImage()
-    {
+    public byte[] getImage() {
         return new byte[0];
     }
 
     @Override
-    public String getPeerID()
-    {
+    public String getPeerID() {
         return null;
     }
 
     @Override
-    public String getURI()
-    {
+    public String getURI() {
         return null;
     }
 
     @Override
     public void removeConferenceMembersSoundLevelListener(
-        ConferenceMembersSoundLevelListener listener)
-    {
+            ConferenceMembersSoundLevelListener listener) {
 
     }
 
     @Override
-    public void removeStreamSoundLevelListener(SoundLevelListener listener)
-    {
+    public void removeStreamSoundLevelListener(SoundLevelListener listener) {
 
     }
 
     private CallPeerState lastState;
 
     @Override
-    public void setState(CallPeerState newState, String reason, int reasonCode)
-    {
+    public void setState(CallPeerState newState, String reason, int reasonCode) {
         this.lastState = getState();
 
         super.setState(newState, reason, reasonCode);
     }
 
     @Override
-    public String getEntity()
-    {
+    public String getEntity() {
         throw new UnsupportedOperationException("getEntity");
     }
 
     @Override
-    public MediaDirection getDirection(MediaType mediaType)
-    {
+    public MediaDirection getDirection(MediaType mediaType) {
         throw new UnsupportedOperationException("getDirection");
     }
 
-    public void putOnHold()
-    {
+    public void putOnHold() {
         logger.info(this + " is now on hold, last state: " + lastState);
 
-        try
-        {
+        try {
             getMediaHandler().setLocallyOnHold(true);
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             throw new RuntimeException(e);
         }
 
         setState(CallPeerState.ON_HOLD_LOCALLY);
     }
 
-    public void putOffHold()
-    {
+    public void putOffHold() {
         logger.info(this + " is now off hold, switch to: " + lastState);
 
-        try
-        {
+        try {
             getMediaHandler().setLocallyOnHold(false);
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             throw new RuntimeException(e);
         }
 

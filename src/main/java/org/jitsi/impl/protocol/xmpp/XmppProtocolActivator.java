@@ -41,8 +41,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class XmppProtocolActivator
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     private ServiceRegistration<?> focusRegistration;
 
     static BundleContext bundleContext;
@@ -50,8 +50,7 @@ public class XmppProtocolActivator
     /**
      * Registers PacketExtension providers used by Jicofo
      */
-    static public void registerXmppExtensions()
-    {
+    static public void registerXmppExtensions() {
         // Constructors called to register extension providers
         new ConferenceIqProvider();
         new LoginUrlIqProvider();
@@ -101,18 +100,18 @@ public class XmppProtocolActivator
 
         //Add the extensions used for handling the inviting of transcriber
         ProviderManager.addExtensionProvider(
-            TranscriptionRequestExtension.ELEMENT_NAME,
-            TranscriptionRequestExtension.NAMESPACE,
-            new DefaultPacketExtensionProvider<>(
-                TranscriptionRequestExtension.class
-            )
+                TranscriptionRequestExtension.ELEMENT_NAME,
+                TranscriptionRequestExtension.NAMESPACE,
+                new DefaultPacketExtensionProvider<>(
+                        TranscriptionRequestExtension.class
+                )
         );
         ProviderManager.addExtensionProvider(
-            TranscriptionStatusExtension.ELEMENT_NAME,
-            TranscriptionStatusExtension.NAMESPACE,
-            new DefaultPacketExtensionProvider<>(
-                TranscriptionStatusExtension.class
-            )
+                TranscriptionStatusExtension.ELEMENT_NAME,
+                TranscriptionStatusExtension.NAMESPACE,
+                new DefaultPacketExtensionProvider<>(
+                        TranscriptionStatusExtension.class
+                )
         );
 
         // Override original Smack Version IQ class
@@ -124,8 +123,7 @@ public class XmppProtocolActivator
 
     @Override
     public void start(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         XmppProtocolActivator.bundleContext = bundleContext;
 
         SmackConfiguration.setDefaultReplyTimeout(15000);
@@ -133,32 +131,32 @@ public class XmppProtocolActivator
         // the server(the default behaviour) as we need it for
         // the other conferences
         SmackConfiguration.setDefaultParsingExceptionCallback(
-            new ExceptionLoggingCallback());
+                new ExceptionLoggingCallback());
 
         Socks5Proxy.setLocalSocks5ProxyEnabled(false);
 
         registerXmppExtensions();
 
         XmppProviderFactory focusFactory
-            = new XmppProviderFactory(
-                    bundleContext, ProtocolNames.JABBER);
+                = new XmppProviderFactory(
+                        bundleContext, ProtocolNames.JABBER);
         Hashtable<String, String> hashtable = new Hashtable<>();
 
         // Register XMPP
         hashtable.put(ProtocolProviderFactory.PROTOCOL,
-                      ProtocolNames.JABBER);
+                ProtocolNames.JABBER);
 
         focusRegistration = bundleContext.registerService(
-            ProtocolProviderFactory.class.getName(),
-            focusFactory,
-            hashtable);
+                ProtocolProviderFactory.class.getName(),
+                focusFactory,
+                hashtable);
     }
 
     @Override
     public void stop(BundleContext bundleContext)
-        throws Exception
-    {
-        if (focusRegistration != null)
+            throws Exception {
+        if (focusRegistration != null) {
             focusRegistration.unregister();
+        }
     }
 }

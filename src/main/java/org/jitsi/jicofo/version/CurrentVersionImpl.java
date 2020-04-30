@@ -28,8 +28,8 @@ import java.util.regex.*;
  * @author Pawel Domas
  * @author Boris Grozev
  */
-public class CurrentVersionImpl
-{
+public class CurrentVersionImpl {
+
     /**
      * Default version values can be overwritten by the manifest Implementation
      * Version in the format 2.1-build-id.
@@ -40,24 +40,20 @@ public class CurrentVersionImpl
 
     static {
         String version = CurrentVersionImpl.class.getPackage()
-            .getImplementationVersion();
-        if (version != null)
-        {
+                .getImplementationVersion();
+        if (version != null) {
             Matcher m
-                = Pattern.compile("(\\d*)\\.(\\d*)-(.*)").matcher(version);
-            if (m.find())
-            {
-                try
-                {
+                    = Pattern.compile("(\\d*)\\.(\\d*)-(.*)").matcher(version);
+            if (m.find()) {
+                try {
                     parsedMajor = Integer.parseInt(m.group(1));
+                } catch (NumberFormatException nfe) {
                 }
-                catch (NumberFormatException nfe) {}
 
-                try
-                {
+                try {
                     parsedMinor = Integer.parseInt(m.group(2));
+                } catch (NumberFormatException nfe) {
                 }
-                catch (NumberFormatException nfe) {}
 
                 parsedBuildId = m.group(3);
             }
@@ -65,9 +61,9 @@ public class CurrentVersionImpl
     }
 
     /**
-     * The version major of the current application version. In an example
-     * 2.3.1 version string 2 is the version major. The version major number
-     * changes when a relatively extensive set of new features and possibly
+     * The version major of the current application version. In an example 2.3.1
+     * version string 2 is the version major. The version major number changes
+     * when a relatively extensive set of new features and possibly
      * rearchitecturing have been applied to the Jicofo.
      */
     public static final int VERSION_MAJOR = parsedMajor;
@@ -89,13 +85,13 @@ public class CurrentVersionImpl
      * The nightly build ID. This file is auto-updated by build.xml.
      */
     public static final String NIGHTLY_BUILD_ID
-        = parsedBuildId != null ? parsedBuildId : "build.git";
+            = parsedBuildId != null ? parsedBuildId : "build.git";
 
     static final Version VERSION
-        = new VersionImpl(
-                "JiCoFo",
-                VERSION_MAJOR,
-                VERSION_MINOR,
-                NIGHTLY_BUILD_ID,
-                PRE_RELEASE_ID);
+            = new VersionImpl(
+                    "JiCoFo",
+                    VERSION_MAJOR,
+                    VERSION_MINOR,
+                    NIGHTLY_BUILD_ID,
+                    PRE_RELEASE_ID);
 }

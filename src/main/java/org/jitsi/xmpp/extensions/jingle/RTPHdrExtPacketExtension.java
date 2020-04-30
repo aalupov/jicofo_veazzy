@@ -27,19 +27,19 @@ import org.jivesoftware.smack.packet.*;
  *
  * <rtp-hdrext xmlns="urn:xmpp:jingle:apps:rtp:rtp-hdrext:0"
  *   id="id" senders="both" uri="abcd">
- *       <parameter name="attributes" value="attributes-value"/>
+ * <parameter name="attributes" value="attributes-value"/>
  * </rtp-hdrext>
  *
  * @author Sebastien Vincent
  */
 public class RTPHdrExtPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace.
      */
-    public static final String NAMESPACE =
-        "urn:xmpp:jingle:apps:rtp:rtp-hdrext:0";
+    public static final String NAMESPACE
+            = "urn:xmpp:jingle:apps:rtp:rtp-hdrext:0";
 
     /**
      * The name of the "candidate" element.
@@ -70,39 +70,35 @@ public class RTPHdrExtPacketExtension
     /**
      * Constructor.
      */
-    public RTPHdrExtPacketExtension()
-    {
+    public RTPHdrExtPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Creates a deep copy of a {@link PayloadTypePacketExtension}.
+     *
      * @param source the {@link PayloadTypePacketExtension} to copy.
      * @return the copy.
      */
     public static RTPHdrExtPacketExtension clone(
-        RTPHdrExtPacketExtension source)
-    {
+            RTPHdrExtPacketExtension source) {
         RTPHdrExtPacketExtension destination
-            = AbstractPacketExtension.clone(source);
+                = AbstractPacketExtension.clone(source);
 
         // Note that this has no relation to the XML attributes of the extension.
         // It is a value transported in a "parameter" child extension.
         String attributes = source.getAttributes();
-        if (attributes != null)
-        {
+        if (attributes != null) {
             destination.setAttributes(attributes);
         }
 
         return destination;
     }
 
-    public RTPHdrExtPacketExtension(RTPHdrExtPacketExtension ext)
-    {
+    public RTPHdrExtPacketExtension(RTPHdrExtPacketExtension ext) {
         this();
         String attributes = ext.getAttributes();
-        if (attributes != null)
-        {
+        if (attributes != null) {
             setAttributes(attributes);
         }
         setID(ext.getID());
@@ -115,8 +111,7 @@ public class RTPHdrExtPacketExtension
      *
      * @param id ID to set
      */
-    public void setID(String id)
-    {
+    public void setID(String id) {
         setAttribute(ID_ATTR_NAME, id);
     }
 
@@ -125,8 +120,7 @@ public class RTPHdrExtPacketExtension
      *
      * @return the ID
      */
-    public String getID()
-    {
+    public String getID() {
         return getAttributeAsString(ID_ATTR_NAME);
     }
 
@@ -135,8 +129,7 @@ public class RTPHdrExtPacketExtension
      *
      * @param senders the direction
      */
-    public void setSenders(SendersEnum senders)
-    {
+    public void setSenders(SendersEnum senders) {
         setAttribute(SENDERS_ATTR_NAME, senders);
     }
 
@@ -145,12 +138,11 @@ public class RTPHdrExtPacketExtension
      *
      * @return the direction
      */
-    public SendersEnum getSenders()
-    {
+    public SendersEnum getSenders() {
         String attributeVal = getAttributeAsString(SENDERS_ATTR_NAME);
 
         return attributeVal == null
-            ? null : SendersEnum.valueOf( attributeVal.toString() );
+                ? null : SendersEnum.valueOf(attributeVal.toString());
     }
 
     /**
@@ -158,8 +150,7 @@ public class RTPHdrExtPacketExtension
      *
      * @param uri URI to set
      */
-    public void setURI(URI uri)
-    {
+    public void setURI(URI uri) {
         setAttribute(URI_ATTR_NAME, uri.toString());
     }
 
@@ -168,8 +159,7 @@ public class RTPHdrExtPacketExtension
      *
      * @return the URI
      */
-    public URI getURI()
-    {
+    public URI getURI() {
         return getAttributeAsURI(URI_ATTR_NAME);
     }
 
@@ -178,10 +168,9 @@ public class RTPHdrExtPacketExtension
      *
      * @param attributes attributes value
      */
-    public void setAttributes(String attributes)
-    {
-        ParameterPacketExtension paramExt =
-            new ParameterPacketExtension();
+    public void setAttributes(String attributes) {
+        ParameterPacketExtension paramExt
+                = new ParameterPacketExtension();
 
         paramExt.setName(ATTRIBUTES_ATTR_NAME);
         paramExt.setValue(attributes);
@@ -196,16 +185,12 @@ public class RTPHdrExtPacketExtension
      *
      * @return "attributes" value
      */
-    public String getAttributes()
-    {
-        for (ExtensionElement ext : getChildExtensions())
-        {
-            if (ext instanceof ParameterPacketExtension)
-            {
-                ParameterPacketExtension p = (ParameterPacketExtension)ext;
+    public String getAttributes() {
+        for (ExtensionElement ext : getChildExtensions()) {
+            if (ext instanceof ParameterPacketExtension) {
+                ParameterPacketExtension p = (ParameterPacketExtension) ext;
 
-                if (p.getName().equals(ATTRIBUTES_ATTR_NAME))
-                {
+                if (p.getName().equals(ATTRIBUTES_ATTR_NAME)) {
                     return p.getValue();
                 }
             }

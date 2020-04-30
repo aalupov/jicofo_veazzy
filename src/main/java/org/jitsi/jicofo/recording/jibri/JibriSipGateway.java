@@ -40,24 +40,25 @@ import static org.jitsi.jicofo.recording.jibri.JibriSession.StartException;
  * @author Pawel Domas
  */
 public class JibriSipGateway
-    extends CommonJibriStuff
-    implements JibriSession.Owner
-{
+        extends CommonJibriStuff
+        implements JibriSession.Owner {
+
     /**
      * The class logger which can be used to override logging level inherited
      * from {@link JitsiMeetConference}.
      */
     static private final Logger classLogger
-        = Logger.getLogger(JibriSipGateway.class);
+            = Logger.getLogger(JibriSipGateway.class);
 
     /**
-     * Map of SIP {@link JibriSession}s mapped per SIP address which
-     * identifies a SIP Jibri session.
+     * Map of SIP {@link JibriSession}s mapped per SIP address which identifies
+     * a SIP Jibri session.
      */
     private Map<String, JibriSession> sipSessions = new HashMap<>();
 
     /**
      * Creates new instance of {@link JibriSipGateway}.
+     *
      * @param bundleContext OSGi context.
      * @param conference parent conference for which the new instance will be
      * managing Jibri SIP sessions.
@@ -67,30 +68,27 @@ public class JibriSipGateway
      * @param globalConfig the global config that provides some values required
      * by {@link JibriSession} to work.
      */
-    public JibriSipGateway( BundleContext                   bundleContext,
-                            JitsiMeetConferenceImpl         conference,
-                            XmppConnection                  xmppConnection,
-                            ScheduledExecutorService        scheduledExecutor,
-                            JitsiMeetGlobalConfig           globalConfig)
-    {
+    public JibriSipGateway(BundleContext bundleContext,
+            JitsiMeetConferenceImpl conference,
+            XmppConnection xmppConnection,
+            ScheduledExecutorService scheduledExecutor,
+            JitsiMeetGlobalConfig globalConfig) {
         super(
-            bundleContext,
-            true /* handles SIP Jibri events */,
-            conference,
-            xmppConnection,
-            scheduledExecutor,
-            globalConfig,
-            Logger.getLogger(classLogger, conference.getLogger()));
+                bundleContext,
+                true /* handles SIP Jibri events */,
+                conference,
+                xmppConnection,
+                scheduledExecutor,
+                globalConfig,
+                Logger.getLogger(classLogger, conference.getLogger()));
 
     }
 
     /**
-     * Accepts only {@link JibriIq} with a SIP address.
-     * {@inheritDoc}
+     * Accepts only {@link JibriIq} with a SIP address. {@inheritDoc}
      */
     @Override
-    protected boolean acceptType(JibriIq packet)
-    {
+    protected boolean acceptType(JibriIq packet) {
         // the packet must contain a SIP address (otherwise it will be handled
         // by JibriRecorder)
         return !StringUtils.isNullOrEmpty(packet.getSipAddress());
@@ -99,18 +97,13 @@ public class JibriSipGateway
     /**
      * {@inheritDoc}
      */
-    public void dispose()
-    {
-        try
-        {
+    public void dispose() {
+        try {
             List<JibriSession> sessions = new ArrayList<>(sipSessions.values());
-            for (JibriSession session : sessions)
-            {
+            for (JibriSession session : sessions) {
                 session.stop(null);
             }
-        }
-        finally
-        {
+        } finally {
             sipSessions.clear();
         }
 
@@ -118,63 +111,54 @@ public class JibriSipGateway
     }
 
     @Override
-    protected JibriSession getJibriSessionForMeetIq(JibriIq iq)
-    {
+    protected JibriSession getJibriSessionForMeetIq(JibriIq iq) {
         String sipAddress = iq.getSipAddress();
 
         return sipSessions.get(sipAddress);
     }
 
     @Override
-    protected IQ handleStartRequest(JibriIq iq)
-    {
+    protected IQ handleStartRequest(JibriIq iq) {
         String sipAddress = iq.getSipAddress();
         String displayName = iq.getDisplayName();
 
         // Proceed if not empty
-        if (!StringUtils.isNullOrEmpty(sipAddress))
-        {
+        if (!StringUtils.isNullOrEmpty(sipAddress)) {
             String sessionId = generateSessionId();
             JibriSession jibriSession
-                = new JibriSession(
-                        bundleContext,
-                        this,
-                        conference.getRoomName(),
-                        iq.getFrom(),
-                        globalConfig.getJibriPendingTimeout(),
-                        globalConfig.getNumJibriRetries(),
-                        connection,
-                        scheduledExecutor,
-                        jibriDetector,
-                        false,
-                        sipAddress,
-                        displayName, null, null, sessionId, null,
-                        classLogger);
+                    = new JibriSession(
+                            bundleContext,
+                            this,
+                            conference.getRoomName(),
+                            iq.getFrom(),
+                            globalConfig.getJibriPendingTimeout(),
+                            globalConfig.getNumJibriRetries(),
+                            connection,
+                            scheduledExecutor,
+                            jibriDetector,
+                            false,
+                            sipAddress,
+                            displayName, null, null, sessionId, null,
+                            classLogger);
             sipSessions.put(sipAddress, jibriSession);
 
-            try
-            {
+            try {
                 jibriSession.start();
                 logger.info("Started Jibri session");
 
                 return JibriIq.createResult(iq, sessionId);
-            }
-            catch (StartException exc)
-            {
+            } catch (StartException exc) {
                 String reason = exc.getReason();
                 logger.info(
-                    "Failed to start a Jibri session: "  +  reason, exc);
+                        "Failed to start a Jibri session: " + reason, exc);
                 sipSessions.remove(sipAddress);
                 ErrorIQ errorIq;
-                if (StartException.ALL_BUSY.equals(reason))
-                {
+                if (StartException.ALL_BUSY.equals(reason)) {
                     errorIq = ErrorResponse.create(
                             iq,
                             XMPPError.Condition.resource_constraint,
                             "all Jibris are busy");
-                }
-                else if(StartException.NOT_AVAILABLE.equals(reason))
-                {
+                } else if (StartException.NOT_AVAILABLE.equals(reason)) {
                     errorIq = ErrorResponse.create(
                             iq,
                             XMPPError.Condition.service_unavailable,
@@ -187,9 +171,7 @@ public class JibriSipGateway
                 }
                 return errorIq;
             }
-        }
-        else
-        {
+        } else {
             // Bad request - no SIP address
             return ErrorResponse.create(
                     iq,
@@ -200,19 +182,16 @@ public class JibriSipGateway
 
     @Override
     public void onSessionStateChanged(
-        JibriSession jibriSession, JibriIq.Status newStatus, JibriIq.FailureReason failureReason)
-    {
-        if (!sipSessions.values().contains(jibriSession))
-        {
+            JibriSession jibriSession, JibriIq.Status newStatus, JibriIq.FailureReason failureReason) {
+        if (!sipSessions.values().contains(jibriSession)) {
             logger.error(
-                "onSessionStateChanged for unknown session: " + jibriSession);
+                    "onSessionStateChanged for unknown session: " + jibriSession);
             return;
         }
 
         publishJibriSipCallState(jibriSession, newStatus, failureReason);
 
-        if (JibriIq.Status.OFF.equals(newStatus))
-        {
+        if (JibriIq.Status.OFF.equals(newStatus)) {
             String sipAddress = jibriSession.getSipAddress();
             sipSessions.remove(sipAddress);
 
@@ -224,13 +203,13 @@ public class JibriSipGateway
      * Updates status of specific {@link JibriSession}. Jicofo adds multiple
      * {@link SipCallState} MUC presence extensions to it's presence. One for
      * each active SIP Jibri session.
+     *
      * @param session the session for which the new status will be set
      * @param newStatus the new status
      * @param failureReason option error for OFF state
      */
     private void publishJibriSipCallState(JibriSession session,
-                                          JibriIq.Status newStatus, JibriIq.FailureReason failureReason)
-    {
+            JibriIq.Status newStatus, JibriIq.FailureReason failureReason) {
         SipCallState sipCallState = new SipCallState();
         sipCallState.setState(newStatus);
         sipCallState.setFailureReason(failureReason);
@@ -238,22 +217,19 @@ public class JibriSipGateway
         sipCallState.setSessionId(session.getSessionId());
 
         logger.info(
-            "Publishing new jibri-sip-call-state: " + session.getSipAddress()
+                "Publishing new jibri-sip-call-state: " + session.getSipAddress()
                 + sipCallState.toXML() + " in: " + conference.getRoomName());
 
         ChatRoom2 chatRoom2 = conference.getChatRoom();
 
         // Publish that in the presence
-        if (chatRoom2 != null)
-        {
+        if (chatRoom2 != null) {
             LinkedList<ExtensionElement> toRemove = new LinkedList<>();
-            for (ExtensionElement ext : chatRoom2.getPresenceExtensions())
-            {
+            for (ExtensionElement ext : chatRoom2.getPresenceExtensions()) {
                 // Exclude all that do not match
-                if (ext instanceof  SipCallState
+                if (ext instanceof SipCallState
                         && session.getSipAddress().equals(
-                                ((SipCallState)ext).getSipAddress()))
-                {
+                                ((SipCallState) ext).getSipAddress())) {
                     toRemove.add(ext);
                 }
             }

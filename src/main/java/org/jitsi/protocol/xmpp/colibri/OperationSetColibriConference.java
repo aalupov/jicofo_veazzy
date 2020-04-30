@@ -27,13 +27,14 @@ import net.java.sip.communicator.service.protocol.*;
  * @author Pawel Domas
  */
 public interface OperationSetColibriConference
-    extends OperationSet
-{
+        extends OperationSet {
+
     /**
      * Creates new colibri conference. It provides Colibri protocol operations
      * on single conference.
-     * @return new instance of <tt>ColibriConference</tt> without any
-     *         channels allocated nor conference ID on the bridge.
+     *
+     * @return new instance of <tt>ColibriConference</tt> without any channels
+     * allocated nor conference ID on the bridge.
      */
     ColibriConference createNewConference();
 }

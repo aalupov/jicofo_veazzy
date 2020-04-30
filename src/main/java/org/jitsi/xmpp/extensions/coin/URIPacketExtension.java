@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class URIPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that URI belongs to.
      */
@@ -62,8 +62,7 @@ public class URIPacketExtension
      *
      * @param elementName element name
      */
-    public URIPacketExtension(String elementName)
-    {
+    public URIPacketExtension(String elementName) {
         super(NAMESPACE, elementName);
     }
 
@@ -72,8 +71,7 @@ public class URIPacketExtension
      *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -82,8 +80,7 @@ public class URIPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
@@ -92,8 +89,7 @@ public class URIPacketExtension
      *
      * @param purpose purpose
      */
-    public void setPurpose(String purpose)
-    {
+    public void setPurpose(String purpose) {
         this.purpose = purpose;
     }
 
@@ -102,18 +98,17 @@ public class URIPacketExtension
      *
      * @return purpose
      */
-    public String getPurpose()
-    {
+    public String getPurpose() {
         return purpose;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

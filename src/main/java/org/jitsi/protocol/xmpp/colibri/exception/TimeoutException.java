@@ -21,21 +21,18 @@ package org.jitsi.protocol.xmpp.colibri.exception;
  * A {@link ColibriException} indicating we reached a timeout waiting for a
  * response to our request.
  */
-public class TimeoutException extends ColibriException
-{
-    public TimeoutException()
-    {
+public class TimeoutException extends ColibriException {
+
+    public TimeoutException() {
         super("Timed out waiting for a response.");
     }
 
-    public TimeoutException(String message)
-    {
+    public TimeoutException(String message) {
         super(message);
     }
 
     @Override
-    public ColibriException clone(String prefix)
-    {
+    public ColibriException clone(String prefix) {
         return new TimeoutException(prefix + getMessage());
     }
 }

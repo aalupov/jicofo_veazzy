@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class UserLanguagesPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that user languages belongs to.
      */
@@ -50,8 +50,7 @@ public class UserLanguagesPacketExtension
     /**
      * Constructor.
      */
-    public UserLanguagesPacketExtension()
-    {
+    public UserLanguagesPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -60,8 +59,7 @@ public class UserLanguagesPacketExtension
      *
      * @param languages list of languages
      */
-    public void setLanguages(String languages)
-    {
+    public void setLanguages(String languages) {
         this.languages = languages;
     }
 
@@ -70,18 +68,17 @@ public class UserLanguagesPacketExtension
      *
      * @return languages
      */
-    public String getLanguages()
-    {
+    public String getLanguages() {
         return languages;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_LANGUAGES, languages);

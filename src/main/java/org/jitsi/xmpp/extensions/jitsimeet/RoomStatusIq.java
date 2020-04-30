@@ -26,22 +26,21 @@ import org.jxmpp.jid.*;
  * @author Pawel Domas
  */
 public class RoomStatusIq
-    extends IQ
-{
-    
+        extends IQ {
+
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-        = Logger.getLogger(RoomStatusIq.class);
+            = Logger.getLogger(RoomStatusIq.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
-     * {@link #classLogger} or the one passed to the constructor, whichever
-     * is higher.
+     * {@link #classLogger} or the one passed to the constructor, whichever is
+     * higher.
      */
     private final Logger logger = Logger.getLogger(classLogger, null);
-    
+
     /**
      * Name space of roomStatus packet extension.
      */
@@ -85,40 +84,36 @@ public class RoomStatusIq
     /**
      * Creates a new instance of this class.
      */
-    public RoomStatusIq()
-    {
+    public RoomStatusIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(
-            IQChildElementXmlStringBuilder xml)
-    {
-        
-        if (jid != null)
-        {
+            IQChildElementXmlStringBuilder xml) {
+
+        if (jid != null) {
             xml.attribute(JID_ATTR_NAME, jid);
         }
 
-        if (actor != null)
-        {
+        if (actor != null) {
             xml.attribute(ACTOR_ATTR_NAME, actor);
         }
-        
+
         xml.rightAngleBracket()
-            .append(roomStatus.toString());
+                .append(roomStatus.toString());
 
         logger.warn("Building xml roomStatus " + xml.toString());
-        
+
         return xml;
     }
 
     /**
      * Sets the MUC jid of the user to be roomStatusd/unroomStatusd.
+     *
      * @param jid muc jid in the form of room_name@muc.server.net/nickname.
      */
-    public void setJid(Jid jid)
-    {
+    public void setJid(Jid jid) {
         this.jid = jid;
     }
 
@@ -126,53 +121,52 @@ public class RoomStatusIq
      * Returns MUC jid of the participant in the form of
      * "room_name@muc.server.net/nickname".
      */
-    public Jid getJid()
-    {
+    public Jid getJid() {
         return jid;
     }
 
     /**
      * The action contained in the text part of 'roomStatus' XML element body.
-     * @param roomStatus <tt>true</tt> to roomStatus the participant. <tt>null</tt> means no
-     *             action is included in result XML.
+     *
+     * @param roomStatus <tt>true</tt> to roomStatus the participant.
+     * <tt>null</tt> means no action is included in result XML.
      */
-    public void setRoomStatus(Boolean roomStatus)
-    {
+    public void setRoomStatus(Boolean roomStatus) {
         this.roomStatus = roomStatus;
     }
 
     /**
-     * Returns <tt>true</tt> to roomStatus the participant, <tt>false</tt> to unroomStatus
-     * or <tt>null</tt> if the action has not been specified(which is invalid).
+     * Returns <tt>true</tt> to roomStatus the participant, <tt>false</tt> to
+     * unroomStatus or <tt>null</tt> if the action has not been specified(which
+     * is invalid).
      */
-    public Boolean getRoomStatus()
-    {
+    public Boolean getRoomStatus() {
         return roomStatus;
     }
 
-    public void setCheckRequest(Boolean checkRequest)
-    {
+    public void setCheckRequest(Boolean checkRequest) {
         this.checkRequest = checkRequest;
     }
-    public Boolean getCheckRequest()
-    {
+
+    public Boolean getCheckRequest() {
         return checkRequest;
     }
+
     /**
      * Returns the peer jid that initiated the roomStatus, if any.
+     *
      * @return the peer jid that initiated the roomStatus.
      */
-    public Jid getActor()
-    {
+    public Jid getActor() {
         return actor;
     }
 
     /**
      * Sets jid for the peer that initiated the roomStatus.
+     *
      * @param actor the jid of the peer doing the roomStatus.
      */
-    public void setActor(Jid actor)
-    {
+    public void setActor(Jid actor) {
         this.actor = actor;
     }
 }

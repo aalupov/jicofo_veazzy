@@ -28,41 +28,41 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public interface JingleRequestHandler
-{
+public interface JingleRequestHandler {
+
     /**
      * Callback fired when 'source-add' proprietary Jingle notification is
      * received.
      *
      * @param jingleSession the session that has received the notification.
-     * @param contents contents list that describe media SSRCs. We expect
-     *                 to find {@link net.java.sip.communicator.impl.protocol
-     *                 .jabber.extensions.colibri.SourcePacketExtension} inside
-     *                 of <tt>RtpDescriptionPacketExtension</tt> or in the
-     *                 <tt>ContentPacketExtension</tt> directly.
+     * @param contents contents list that describe media SSRCs. We expect to
+     * find {@link net.java.sip.communicator.impl.protocol
+     *                 .jabber.extensions.colibri.SourcePacketExtension} inside of
+     * <tt>RtpDescriptionPacketExtension</tt> or in the
+     * <tt>ContentPacketExtension</tt> directly.
      *
      * @return <tt>XMPPError</tt> if an error should be returned as response to
      * the original request or <tt>null</tt> if the processing was successful.
      */
     XMPPError onAddSource(JingleSession jingleSession,
-                     List<ContentPacketExtension> contents);
+            List<ContentPacketExtension> contents);
 
     /**
      * Callback fired when 'source-remove' proprietary Jingle notification is
      * received.
      *
      * @param jingleSession the session that has received the notification.
-     * @param contents contents list that describe media SSRCs. We expect
-     *                 to find {@link net.java.sip.communicator.impl.protocol
-     *                 .jabber.extensions.colibri.SourcePacketExtension} inside
-     *                 of <tt>RtpDescriptionPacketExtension</tt> or in the
-     *                 <tt>ContentPacketExtension</tt> directly.
+     * @param contents contents list that describe media SSRCs. We expect to
+     * find {@link net.java.sip.communicator.impl.protocol
+     *                 .jabber.extensions.colibri.SourcePacketExtension} inside of
+     * <tt>RtpDescriptionPacketExtension</tt> or in the
+     * <tt>ContentPacketExtension</tt> directly.
      *
      * @return <tt>XMPPError</tt> if an error should be returned as response to
      * the original request or <tt>null</tt> if the processing was successful.
      */
     XMPPError onRemoveSource(JingleSession jingleSession,
-                             List<ContentPacketExtension> contents);
+            List<ContentPacketExtension> contents);
 
     /**
      * Callback fired when 'session-accept' is received from the client.
@@ -74,7 +74,7 @@ public interface JingleRequestHandler
      * the original request or <tt>null</tt> if the processing was successful.
      */
     XMPPError onSessionAccept(JingleSession jingleSession,
-                         List<ContentPacketExtension> answer);
+            List<ContentPacketExtension> answer);
 
     /**
      * Callback fired when 'session-info' is received from the client.
@@ -94,7 +94,7 @@ public interface JingleRequestHandler
      * @param contents content list that contains media transport description.
      */
     void onTransportInfo(JingleSession jingleSession,
-                         List<ContentPacketExtension> contents);
+            List<ContentPacketExtension> contents);
 
     /**
      * Called when 'transport-accept' IQ is received from the client.
@@ -106,7 +106,7 @@ public interface JingleRequestHandler
      * the original request or <tt>null</tt> if the processing was successful.
      */
     XMPPError onTransportAccept(JingleSession jingleSession,
-                           List<ContentPacketExtension> contents);
+            List<ContentPacketExtension> contents);
 
     /**
      * Called when 'transport-reject' IQ is received from the client.

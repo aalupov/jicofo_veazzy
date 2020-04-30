@@ -25,8 +25,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class SessionInvalidPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML namespace of this packet extension.
      */
@@ -40,8 +40,7 @@ public class SessionInvalidPacketExtension
     /**
      * Creates new instance of <tt>SessionInvalidPacketExtension</tt>
      */
-    public SessionInvalidPacketExtension()
-    {
+    public SessionInvalidPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

@@ -25,14 +25,13 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class BridgeNotAvailablePacketExt
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     public final static String ELEMENT_NAME = "bridgeNotAvailable";
 
     public final static String NAMESPACE = ConferenceIq.NAMESPACE;
 
-    public BridgeNotAvailablePacketExt()
-    {
+    public BridgeNotAvailablePacketExt() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

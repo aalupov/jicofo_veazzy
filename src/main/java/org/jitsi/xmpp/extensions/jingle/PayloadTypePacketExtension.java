@@ -24,8 +24,8 @@ import org.jitsi.xmpp.extensions.*;
  *
  * @author Emil Ivov
  */
-public class PayloadTypePacketExtension extends AbstractPacketExtension
-{
+public class PayloadTypePacketExtension extends AbstractPacketExtension {
+
     /**
      * The name of the "payload-type" element.
      */
@@ -68,22 +68,20 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
 
     /**
      * Creates a deep copy of a {@link PayloadTypePacketExtension}.
+     *
      * @param source the {@link PayloadTypePacketExtension} to copy.
      * @return the copy.
      */
     public static PayloadTypePacketExtension clone(
-        PayloadTypePacketExtension source)
-    {
+            PayloadTypePacketExtension source) {
         PayloadTypePacketExtension destination
-            = AbstractPacketExtension.clone(source);
+                = AbstractPacketExtension.clone(source);
 
-        for (RtcpFbPacketExtension rtcpFb : source.getRtcpFeedbackTypeList())
-        {
+        for (RtcpFbPacketExtension rtcpFb : source.getRtcpFeedbackTypeList()) {
             destination.addRtcpFeedbackType(RtcpFbPacketExtension.clone(rtcpFb));
         }
 
-        for (ParameterPacketExtension parameter : source.getParameters())
-        {
+        for (ParameterPacketExtension parameter : source.getParameters()) {
             destination.addParameter(ParameterPacketExtension.clone(parameter));
         }
 
@@ -93,8 +91,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
     /**
      * Creates a new {@link PayloadTypePacketExtension} instance.
      */
-    public PayloadTypePacketExtension()
-    {
+    public PayloadTypePacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -104,8 +101,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param channels the number of channels in this payload type.
      */
-    public void setChannels(int channels)
-    {
+    public void setChannels(int channels) {
         super.setAttribute(CHANNELS_ATTR_NAME, channels);
     }
 
@@ -114,8 +110,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @return the number of channels in this payload type.
      */
-    public int getChannels()
-    {
+    public int getChannels() {
         /*
          * XEP-0167: Jingle RTP Sessions says: if omitted, it MUST be assumed
          * to contain one channel.
@@ -128,8 +123,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param clockrate the sampling frequency in Hertz used by this encoding.
      */
-    public void setClockrate(int clockrate)
-    {
+    public void setClockrate(int clockrate) {
         super.setAttribute(CLOCKRATE_ATTR_NAME, clockrate);
     }
 
@@ -138,8 +132,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @return the sampling frequency in Hertz used by this encoding.
      */
-    public int getClockrate()
-    {
+    public int getClockrate() {
         return getAttributeAsInt(CLOCKRATE_ATTR_NAME);
     }
 
@@ -148,8 +141,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param id the payload type id
      */
-    public void setId(int id)
-    {
+    public void setId(int id) {
         super.setAttribute(ID_ATTR_NAME, id);
     }
 
@@ -160,8 +152,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      * @return the payload identifier for this encoding (as specified by RFC
      * 3551 or a dynamic one).
      */
-    public int getID()
-    {
+    public int getID() {
         return getAttributeAsInt(ID_ATTR_NAME);
     }
 
@@ -170,8 +161,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param maxptime the maximum packet time as specified in RFC 4566
      */
-    public void setMaxptime(int maxptime)
-    {
+    public void setMaxptime(int maxptime) {
         setAttribute(MAXPTIME_ATTR_NAME, maxptime);
     }
 
@@ -180,8 +170,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @return maximum packet time as specified in RFC 4566
      */
-    public int getMaxptime()
-    {
+    public int getMaxptime() {
         return getAttributeAsInt(MAXPTIME_ATTR_NAME);
     }
 
@@ -190,8 +179,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param ptime the packet time as specified in RFC 4566
      */
-    public void setPtime(int ptime)
-    {
+    public void setPtime(int ptime) {
         super.setAttribute(PTIME_ATTR_NAME, ptime);
     }
 
@@ -200,8 +188,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @return packet time as specified in RFC 4566
      */
-    public int getPtime()
-    {
+    public int getPtime() {
         return getAttributeAsInt(PTIME_ATTR_NAME);
     }
 
@@ -212,8 +199,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param name the name of this encoding.
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         setAttribute(NAME_ATTR_NAME, name);
     }
 
@@ -226,19 +212,17 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      * subtype of the MIME type. Setting this field is RECOMMENDED for static
      * payload types, REQUIRED for dynamic payload types.
      */
-    public String getName()
-    {
+    public String getName() {
         return getAttributeAsString(NAME_ATTR_NAME);
     }
 
     /**
-     * Adds an SDP parameter to the list that we already have registered for this
-     * payload type.
+     * Adds an SDP parameter to the list that we already have registered for
+     * this payload type.
      *
      * @param parameter an SDP parameter for this encoding.
      */
-    public void addParameter(ParameterPacketExtension parameter)
-    {
+    public void addParameter(ParameterPacketExtension parameter) {
         //parameters are the only extensions we can have so let's use
         //super's list.
         addChildExtension(parameter);
@@ -251,8 +235,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      * @return a <b>reference</b> to the the list of parameters currently
      * registered for this payload type.
      */
-    public List<ParameterPacketExtension> getParameters()
-    {
+    public List<ParameterPacketExtension> getParameters() {
         return getChildExtensionsOfType(ParameterPacketExtension.class);
     }
 
@@ -262,8 +245,7 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      *
      * @param rtcpFbPacketExtension RTCP feedback type for this encoding.
      */
-    public void addRtcpFeedbackType(RtcpFbPacketExtension rtcpFbPacketExtension)
-    {
+    public void addRtcpFeedbackType(RtcpFbPacketExtension rtcpFbPacketExtension) {
         addChildExtension(rtcpFbPacketExtension);
     }
 
@@ -272,10 +254,9 @@ public class PayloadTypePacketExtension extends AbstractPacketExtension
      * payload type.
      *
      * @return the list of RTCP feedback types currently registered for this
-     *         payload type.
+     * payload type.
      */
-    public List<RtcpFbPacketExtension> getRtcpFeedbackTypeList()
-    {
+    public List<RtcpFbPacketExtension> getRtcpFeedbackTypeList() {
         return getChildExtensionsOfType(RtcpFbPacketExtension.class);
     }
 }

@@ -26,8 +26,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class GroupPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "group" element.
      */
@@ -52,8 +52,7 @@ public class GroupPacketExtension
      * Creates a new {@link GroupPacketExtension} instance with the proper
      * element name and namespace.
      */
-    public GroupPacketExtension()
-    {
+    public GroupPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -64,11 +63,10 @@ public class GroupPacketExtension
      * @param contents the list that contains the contents to be bundled.
      *
      * @return new <tt>GroupPacketExtension</tt> for BUNDLE semantics
-     *         initialized with given <tt>contents</tt> list.
+     * initialized with given <tt>contents</tt> list.
      */
     public static GroupPacketExtension createBundleGroup(
-            List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         GroupPacketExtension group = new GroupPacketExtension();
 
         group.setSemantics(SEMANTICS_BUNDLE);
@@ -83,16 +81,14 @@ public class GroupPacketExtension
      *
      * @return the semantics of this group.
      */
-    public String getSemantics()
-    {
+    public String getSemantics() {
         return getAttributeAsString(SEMANTICS_ATTR_NAME);
     }
 
     /**
      * Sets the semantics of this group.
      */
-    public void setSemantics(String semantics)
-    {
+    public void setSemantics(String semantics) {
         this.setAttribute(SEMANTICS_ATTR_NAME, semantics);
     }
 
@@ -101,8 +97,7 @@ public class GroupPacketExtension
      *
      * @return the contents of this group.
      */
-    public List<ContentPacketExtension> getContents()
-    {
+    public List<ContentPacketExtension> getContents() {
         return getChildExtensionsOfType(ContentPacketExtension.class);
     }
 
@@ -112,10 +107,8 @@ public class GroupPacketExtension
      *
      * @param contents the contents of this group.
      */
-    public void addContents(List<ContentPacketExtension> contents)
-    {
-        for (ContentPacketExtension content : contents)
-        {
+    public void addContents(List<ContentPacketExtension> contents) {
+        for (ContentPacketExtension content : contents) {
             ContentPacketExtension copy = new ContentPacketExtension();
 
             copy.setName(content.getName());
@@ -126,41 +119,39 @@ public class GroupPacketExtension
 
     /**
      * Parses group extension content.
+     *
      * @param parser an XML parser positioned at the packet's starting element.
      * @return new <tt>GroupPacketExtension</tt> initialized with parsed
      * contents list.
      * @throws java.lang.Exception if an error occurs parsing the XML.
      */
     public static GroupPacketExtension parseExtension(XmlPullParser parser)
-        throws Exception
-    {
+            throws Exception {
         GroupPacketExtension group = new GroupPacketExtension();
 
         String semantics = parser.getAttributeValue("", SEMANTICS_ATTR_NAME);
-        if (semantics != null)
+        if (semantics != null) {
             group.setSemantics(semantics);
+        }
 
         boolean done = false;
         int eventType;
         String elementName;
         DefaultPacketExtensionProvider<ContentPacketExtension> contentProvider
-            = new DefaultPacketExtensionProvider<ContentPacketExtension>(
-            ContentPacketExtension.class);
-        while (!done)
-        {
+                = new DefaultPacketExtensionProvider<ContentPacketExtension>(
+                        ContentPacketExtension.class);
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (elementName.equals(ContentPacketExtension.ELEMENT_NAME))
-            {
+            if (elementName.equals(ContentPacketExtension.ELEMENT_NAME)) {
                 ContentPacketExtension content
-                    = contentProvider.parse(parser, 0);
+                        = contentProvider.parse(parser, 0);
                 group.addChildExtension(content);
             }
 
             if ((eventType == XmlPullParser.END_TAG)
-                && parser.getName().equals(ELEMENT_NAME))
-            {
+                    && parser.getName().equals(ELEMENT_NAME)) {
                 done = true;
             }
         }

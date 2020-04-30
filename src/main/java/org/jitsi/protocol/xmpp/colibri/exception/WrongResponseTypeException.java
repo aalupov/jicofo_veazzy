@@ -18,19 +18,17 @@
 package org.jitsi.protocol.xmpp.colibri.exception;
 
 /**
- * An exception indicating the remote Colibri endpoint responded to our
- * request with a response of the wrong type (not a ColibriConferenceIQ).
+ * An exception indicating the remote Colibri endpoint responded to our request
+ * with a response of the wrong type (not a ColibriConferenceIQ).
  */
-public class WrongResponseTypeException extends ColibriException
-{
-    public WrongResponseTypeException(String message)
-    {
+public class WrongResponseTypeException extends ColibriException {
+
+    public WrongResponseTypeException(String message) {
         super(message);
     }
 
     @Override
-    public ColibriException clone(String prefix)
-    {
+    public ColibriException clone(String prefix) {
         return new WrongResponseTypeException(prefix + getMessage());
     }
 }

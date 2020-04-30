@@ -30,16 +30,16 @@ import java.util.*;
 
 /**
  * Represents a jitsi-videobridge instance, reachable at a certain JID, which
- * can be used by jicofo for hosting conferences. Contains the state related
- * to the jitsi-videobridge instance, such as numbers of channels and streams,
- * the region in which the instance resides, etc.
+ * can be used by jicofo for hosting conferences. Contains the state related to
+ * the jitsi-videobridge instance, such as numbers of channels and streams, the
+ * region in which the instance resides, etc.
  *
  * @author Pawel Domas
  * @author Boris Grozev
  */
 public class Bridge
-    implements Comparable<Bridge>
-{
+        implements Comparable<Bridge> {
+
     /**
      * The {@link Logger} used by the {@link Bridge} class and its instances.
      */
@@ -49,11 +49,11 @@ public class Bridge
      * A {@link ColibriStatsExtension} instance with no stats.
      */
     private static final ColibriStatsExtension EMPTY_STATS
-        = new ColibriStatsExtension();
+            = new ColibriStatsExtension();
 
     /**
-     * We assume that each recently added participant contributes this much
-     * to the bridge's packet rate.
+     * We assume that each recently added participant contributes this much to
+     * the bridge's packet rate.
      */
     private static int AVG_PARTICIPANT_PACKET_RATE_PPS;
 
@@ -62,31 +62,28 @@ public class Bridge
      */
     private static double MAX_TOTAL_PACKET_RATE_PPS;
 
-    static
-    {
+    static {
         MaxPacketRateCalculator packetRateCalculator = new MaxPacketRateCalculator(
-            4 /* numberOfConferenceBridges */,
-            20 /* numberOfGlobalSenders */,
-            2 /* numberOfSpeakers */,
-            20 /* numberOfLocalSenders */,
-            5 /* numberOfLocalReceivers */
+                4 /* numberOfConferenceBridges */,
+                20 /* numberOfGlobalSenders */,
+                2 /* numberOfSpeakers */,
+                20 /* numberOfLocalSenders */,
+                5 /* numberOfLocalReceivers */
         );
 
         setMaxTotalPacketRatePps(
-            packetRateCalculator.computeIngressPacketRatePps()
+                packetRateCalculator.computeIngressPacketRatePps()
                 + packetRateCalculator.computeEgressPacketRatePps());
 
         setAvgParticipantPacketRatePps(500);
     }
 
-    static void setMaxTotalPacketRatePps(int maxTotalPacketRatePps)
-    {
+    static void setMaxTotalPacketRatePps(int maxTotalPacketRatePps) {
         MAX_TOTAL_PACKET_RATE_PPS = maxTotalPacketRatePps;
         logger.info("Setting max total packet rate of " + MAX_TOTAL_PACKET_RATE_PPS);
     }
 
-    static void setAvgParticipantPacketRatePps(int avgParticipantPacketRatePps)
-    {
+    static void setAvgParticipantPacketRatePps(int avgParticipantPacketRatePps) {
         AVG_PARTICIPANT_PACKET_RATE_PPS = avgParticipantPacketRatePps;
         logger.info("Setting average participant packet rate of " + AVG_PARTICIPANT_PACKET_RATE_PPS);
     }
@@ -131,13 +128,12 @@ public class Bridge
     /**
      * Stores the {@code operational} status of the bridge, which is
      * {@code true} if the bridge has been successfully used by the focus to
-     * allocate channels. It is reset to {@code false} when the focus fails
-     * to allocate channels, but it gets another chance when all currently
-     * working bridges go down and might eventually get elevated back to
-     * {@code true}.
+     * allocate channels. It is reset to {@code false} when the focus fails to
+     * allocate channels, but it gets another chance when all currently working
+     * bridges go down and might eventually get elevated back to {@code true}.
      */
     private volatile boolean isOperational
-        = true /* we assume it is operational */;
+            = true /* we assume it is operational */;
 
     /**
      * The time when this instance has failed.
@@ -152,17 +148,14 @@ public class Bridge
     /**
      * Notifies this instance that a new {@link ColibriStatsExtension} was
      * received for this instance.
+     *
      * @param stats the {@link ColibriStatsExtension} instance which was
      * received.
      */
-    void setStats(ColibriStatsExtension stats)
-    {
-        if (stats == null)
-        {
+    void setStats(ColibriStatsExtension stats) {
+        if (stats == null) {
             this.stats = EMPTY_STATS;
-        }
-        else
-        {
+        } else {
             this.stats = ColibriStatsExtension.clone(stats);
         }
         stats = this.stats;
@@ -173,8 +166,7 @@ public class Bridge
         Integer octoSendBitrate = null;
         Integer packetRateDown = null;
         Integer packetRateUp = null;
-        try
-        {
+        try {
             bitrateUpKbps = stats.getValueAsInt(BITRATE_UPLOAD);
             bitrateDownKbps = stats.getValueAsInt(BITRATE_DOWNLOAD);
             octoReceiveBitrate
@@ -182,75 +174,62 @@ public class Bridge
             octoSendBitrate = stats.getValueAsInt(OCTO_SEND_BITRATE);
             packetRateDown = stats.getValueAsInt(PACKET_RATE_DOWNLOAD);
             packetRateUp = stats.getValueAsInt(PACKET_RATE_UPLOAD);
-        }
-        catch (NumberFormatException nfe)
-        {
+        } catch (NumberFormatException nfe) {
         }
 
-        if (bitrateUpKbps != null && bitrateDownKbps != null)
-        {
+        if (bitrateUpKbps != null && bitrateDownKbps != null) {
             int bitrate = bitrateDownKbps + bitrateUpKbps;
-            if (octoReceiveBitrate != null)
-            {
+            if (octoReceiveBitrate != null) {
                 bitrate += octoReceiveBitrate;
             }
-            if (octoSendBitrate != null)
-            {
+            if (octoSendBitrate != null) {
                 bitrate += octoSendBitrate;
             }
 
             lastReportedBitrateKbps = bitrate;
         }
 
-        if (packetRateDown != null && packetRateUp != null)
-        {
+        if (packetRateDown != null && packetRateUp != null) {
             lastReportedPacketRatePps = packetRateDown + packetRateUp;
         }
 
         setIsOperational(!Boolean.parseBoolean(stats.getValueAsString(
-            SHUTDOWN_IN_PROGRESS)));
+                SHUTDOWN_IN_PROGRESS)));
 
         String newVersion = stats.getValueAsString(VERSION);
-        if (newVersion != null)
-        {
+        if (newVersion != null) {
             version = newVersion;
         }
     }
 
     Bridge(BridgeSelector bridgeSelector,
-           Jid jid,
-           Version version)
-    {
+            Jid jid,
+            Version version) {
         this.bridgeSelector = bridgeSelector;
         this.jid = Objects.requireNonNull(jid, "jid");
-        if (version != null)
-        {
+        if (version != null) {
             this.version = version.getVersion();
         }
     }
 
     /**
-     * @return the relay ID advertised by the bridge, or {@code null} if
-     * none was advertised.
+     * @return the relay ID advertised by the bridge, or {@code null} if none
+     * was advertised.
      */
-    public String getRelayId()
-    {
+    public String getRelayId() {
         return stats.getValueAsString(RELAY_ID);
     }
 
-    public void setIsOperational(boolean isOperational)
-    {
+    public void setIsOperational(boolean isOperational) {
         this.isOperational = isOperational;
 
-        if (!isOperational)
-        {
+        if (!isOperational) {
             // Remember when the bridge has last failed
             failureTimestamp = System.currentTimeMillis();
         }
     }
 
-    public boolean isOperational()
-    {
+    public boolean isOperational() {
         // Check if we should give this bridge another try
         verifyFailureThreshold();
 
@@ -258,52 +237,43 @@ public class Bridge
     }
 
     /**
-     * Verifies if it has been long enough since last bridge failure to give
-     * it another try(reset isOperational flag).
+     * Verifies if it has been long enough since last bridge failure to give it
+     * another try(reset isOperational flag).
      */
-    private void verifyFailureThreshold()
-    {
-        if (isOperational)
-        {
+    private void verifyFailureThreshold() {
+        if (isOperational) {
             return;
         }
 
         if (System.currentTimeMillis() - failureTimestamp
-                > bridgeSelector.getFailureResetThreshold())
-        {
+                > bridgeSelector.getFailureResetThreshold()) {
             logger.info("Resetting operational status for " + jid);
             isOperational = true;
         }
     }
 
     /**
-     * The least value is returned the least the bridge is loaded. Currently
-     * we use the bitrate to estimate load.
+     * The least value is returned the least the bridge is loaded. Currently we
+     * use the bitrate to estimate load.
      * <p>
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(Bridge o)
-    {
+    public int compareTo(Bridge o) {
         boolean meOperational = isOperational();
         boolean otherOperational = o.isOperational();
 
-        if (meOperational && !otherOperational)
-        {
+        if (meOperational && !otherOperational) {
             return -1;
-        }
-        else if (!meOperational && otherOperational)
-        {
+        } else if (!meOperational && otherOperational) {
             return 1;
         }
 
         return Double.compare(this.getStress(), o.getStress());
     }
 
-    void onVideoChannelsChanged(Integer diff)
-    {
-        if (diff == null)
-        {
+    void onVideoChannelsChanged(Integer diff) {
+        if (diff == null) {
             logger.error("diff is null");
             return;
         }
@@ -315,26 +285,22 @@ public class Bridge
      * Returns the net number of video channels recently allocated or removed
      * from this bridge.
      */
-    private long getRecentVideoChannelChange()
-    {
+    private long getRecentVideoChannelChange() {
         return videoChannelsRate.getAccumulatedCount();
     }
 
-    public Jid getJid()
-    {
+    public Jid getJid() {
         return jid;
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
     /**
      * @return the region of this {@link Bridge}.
      */
-    public String getRegion()
-    {
+    public String getRegion() {
         return stats.getValueAsString(REGION);
     }
 
@@ -342,14 +308,13 @@ public class Bridge
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format(
                 "Bridge[jid=%s, relayId=%s, region=%s, stress=%.2f]",
-                     jid.toString(),
-                     getRelayId(),
-                     getRegion(),
-                     getStress());
+                jid.toString(),
+                getRelayId(),
+                getRegion(),
+                getStress());
     }
 
     /**
@@ -358,16 +323,16 @@ public class Bridge
      * estimation since the last update from the bridge.
      *
      * @return the sum of the last total reported packet rate (in pps) and an
-     * estimation of the packet rate of the streams that we estimate that the bridge
-     * hasn't reported to Jicofo yet. The estimation is the product of the
-     * number of unreported streams and a constant C (which we set to 500 pps).
+     * estimation of the packet rate of the streams that we estimate that the
+     * bridge hasn't reported to Jicofo yet. The estimation is the product of
+     * the number of unreported streams and a constant C (which we set to 500
+     * pps).
      */
-    public double getStress()
-    {
-        double stress =
-            (lastReportedPacketRatePps
+    public double getStress() {
+        double stress
+                = (lastReportedPacketRatePps
                 + Math.max(0, getRecentVideoChannelChange()) * AVG_PARTICIPANT_PACKET_RATE_PPS)
-            / MAX_TOTAL_PACKET_RATE_PPS;
+                / MAX_TOTAL_PACKET_RATE_PPS;
         return Math.min(1, stress);
     }
 
@@ -375,13 +340,11 @@ public class Bridge
      * @return true if the stress of the bridge is greater-than-or-equal to
      * {@link #OVERSTRESSED_THRESHOLD}.
      */
-    public boolean isOverloaded()
-    {
+    public boolean isOverloaded() {
         return getStress() >= OVERSTRESSED_THRESHOLD;
     }
 
-    public int getLastReportedPacketRatePps()
-    {
+    public int getLastReportedPacketRatePps() {
         return lastReportedPacketRatePps;
     }
 

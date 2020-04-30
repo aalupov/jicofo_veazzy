@@ -34,8 +34,8 @@ import java.util.concurrent.*;
  * @author Pawel Domas
  */
 public class FocusBundleActivator
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     /**
      * The number of threads available in the thread pool shared through OSGi.
      */
@@ -84,46 +84,42 @@ public class FocusBundleActivator
 
     @Override
     public void start(BundleContext context)
-        throws Exception
-    {
+            throws Exception {
         bundleContext = context;
 
         // Make threads daemon, so that they won't prevent from doing shutdown
         sharedThreadPool
-            = Executors.newScheduledThreadPool(
-                    SHARED_POOL_SIZE, new DaemonThreadFactory());
+                = Executors.newScheduledThreadPool(
+                        SHARED_POOL_SIZE, new DaemonThreadFactory());
 
         eventAdminRef = new OSGIServiceRef<>(context, EventAdmin.class);
 
         configServiceRef
-            = new OSGIServiceRef<>(context, ConfigurationService.class);
+                = new OSGIServiceRef<>(context, ConfigurationService.class);
 
         jingleOfferFactory = new JingleOfferFactory(configServiceRef.get());
 
         context.registerService(
-            ExecutorService.class, sharedThreadPool, null);
+                ExecutorService.class, sharedThreadPool, null);
         context.registerService(
-            ScheduledExecutorService.class, sharedThreadPool, null);
+                ScheduledExecutorService.class, sharedThreadPool, null);
 
         globalConfig = JitsiMeetGlobalConfig.startGlobalConfigService(context);
 
         focusManager = new FocusManager();
         focusManager.start();
         focusManagerRegistration
-            = context.registerService(FocusManager.class, focusManager, null);
+                = context.registerService(FocusManager.class, focusManager, null);
     }
 
     @Override
     public void stop(BundleContext context)
-        throws Exception
-    {
-        if (focusManagerRegistration != null)
-        {
+            throws Exception {
+        if (focusManagerRegistration != null) {
             focusManagerRegistration.unregister();
             focusManagerRegistration = null;
         }
-        if (focusManager != null)
-        {
+        if (focusManager != null) {
             focusManager.stop();
             focusManager = null;
         }
@@ -134,8 +130,7 @@ public class FocusBundleActivator
         configServiceRef = null;
         eventAdminRef = null;
 
-        if (globalConfig != null)
-        {
+        if (globalConfig != null) {
             globalConfig.stopGlobalConfigService();
             globalConfig = null;
         }
@@ -144,8 +139,7 @@ public class FocusBundleActivator
     /**
      * Returns the instance of <tt>ConfigurationService</tt>.
      */
-    public static ConfigurationService getConfigService()
-    {
+    public static ConfigurationService getConfigService() {
         return configServiceRef.get();
     }
 
@@ -154,25 +148,23 @@ public class FocusBundleActivator
      *
      * @return the Jingle offer factory to use in this bundle
      */
-    public static JingleOfferFactory getJingleOfferFactory()
-    {
+    public static JingleOfferFactory getJingleOfferFactory() {
         return jingleOfferFactory;
     }
 
     /**
      * Returns the <tt>EventAdmin</tt> instance, if any.
+     *
      * @return the <tt>EventAdmin</tt> instance, if any.
      */
-    public static EventAdmin getEventAdmin()
-    {
+    public static EventAdmin getEventAdmin() {
         return eventAdminRef.get();
     }
 
     /**
      * Returns shared thread pool service.
      */
-    public static ScheduledExecutorService getSharedThreadPool()
-    {
+    public static ScheduledExecutorService getSharedThreadPool() {
         return sharedThreadPool;
     }
 }

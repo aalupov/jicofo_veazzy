@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class DescriptionPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that description belongs to.
      */
@@ -55,8 +55,8 @@ public class DescriptionPacketExtension
     /**
      * Max user count element name.
      */
-    public static final String ELEMENT_MAX_USER_COUNT =
-        "maximum-user-count";
+    public static final String ELEMENT_MAX_USER_COUNT
+            = "maximum-user-count";
 
     /**
      * The subject.
@@ -81,8 +81,7 @@ public class DescriptionPacketExtension
     /**
      * Constructor.
      */
-    public DescriptionPacketExtension()
-    {
+    public DescriptionPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -91,8 +90,7 @@ public class DescriptionPacketExtension
      *
      * @param subject subject
      */
-    public void setSubject(String subject)
-    {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 
@@ -101,8 +99,7 @@ public class DescriptionPacketExtension
      *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -111,8 +108,7 @@ public class DescriptionPacketExtension
      *
      * @param freeText free text
      */
-    public void setFreeText(String freeText)
-    {
+    public void setFreeText(String freeText) {
         this.freeText = freeText;
     }
 
@@ -121,8 +117,7 @@ public class DescriptionPacketExtension
      *
      * @return subject
      */
-    public String getSubject()
-    {
+    public String getSubject() {
         return subject;
     }
 
@@ -131,8 +126,7 @@ public class DescriptionPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
@@ -141,25 +135,23 @@ public class DescriptionPacketExtension
      *
      * @return free text
      */
-    public String getFreeText()
-    {
+    public String getFreeText() {
         return freeText;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_SUBJECT, subject);
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);
         xml.optElement(ELEMENT_FREE_TEXT, freeText);
-        if(maximumUserCount != 0)
-        {
+        if (maximumUserCount != 0) {
             xml.optElement(ELEMENT_MAX_USER_COUNT, maximumUserCount);
         }
 

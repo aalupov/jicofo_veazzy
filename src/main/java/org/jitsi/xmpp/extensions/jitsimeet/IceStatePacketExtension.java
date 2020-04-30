@@ -18,14 +18,14 @@ package org.jitsi.xmpp.extensions.jitsimeet;
 import org.jitsi.xmpp.extensions.*;
 
 /**
- * A packet extension which carries the ICE connection state signaled by
- * the Jitsi Meet's Jingle session in a 'session-info' message.
+ * A packet extension which carries the ICE connection state signaled by the
+ * Jitsi Meet's Jingle session in a 'session-info' message.
  *
  * @author Pawel Domas
  */
 public class IceStatePacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML namespace of this packet extension.
      */
@@ -39,8 +39,7 @@ public class IceStatePacketExtension
     /**
      * Creates new instance of <tt>IceStatePacketExtension</tt>
      */
-    public IceStatePacketExtension()
-    {
+    public IceStatePacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

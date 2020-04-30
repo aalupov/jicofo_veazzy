@@ -25,8 +25,8 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class UserLanguagesProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a UserLanguages extension sub-packet and creates a {@link
      * UserLanguagesPacketExtension} instance. At the beginning of the method
@@ -43,32 +43,25 @@ public class UserLanguagesProvider
      */
     @Override
     public ExtensionElement parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
 
         UserLanguagesPacketExtension ext = new UserLanguagesPacketExtension();
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(
-                        UserLanguagesPacketExtension.ELEMENT_LANGUAGES))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(
+                        UserLanguagesPacketExtension.ELEMENT_LANGUAGES)) {
                     ext.setLanguages(CoinIQProvider.parseText(parser));
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        UserLanguagesPacketExtension.ELEMENT_NAME))
-                {
+                        UserLanguagesPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }

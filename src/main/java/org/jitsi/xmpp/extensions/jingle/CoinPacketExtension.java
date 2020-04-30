@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class CoinPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * Name of the XML element representing the extension.
      */
@@ -44,8 +44,7 @@ public class CoinPacketExtension
      * Constructs a new <tt>coin</tt> extension.
      *
      */
-    public CoinPacketExtension()
-    {
+    public CoinPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -55,8 +54,7 @@ public class CoinPacketExtension
      * @param isFocus <tt>true</tt> if the peer is a conference focus;
      * otherwise, <tt>false</tt>
      */
-    public CoinPacketExtension(boolean isFocus)
-    {
+    public CoinPacketExtension(boolean isFocus) {
         super(NAMESPACE, ELEMENT_NAME);
         setAttribute(ISFOCUS_ATTR_NAME, isFocus);
     }

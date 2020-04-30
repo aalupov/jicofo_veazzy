@@ -38,47 +38,43 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(JUnit4.class)
-public class XmppTest
-{
+public class XmppTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
     @Test
     public void testAllocateConference()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testRoom@example.com");
 
         FocusComponent focusComponent
-            = MockMainMethodActivator.getFocusComponent();
+                = MockMainMethodActivator.getFocusComponent();
 
         ConferenceIq conferenceIq = new ConferenceIq();
 
         conferenceIq.setRoom(roomName);
 
         IQ result
-            = focusComponent.handleIQSetImpl(
-                IQUtils.convert(conferenceIq));
+                = focusComponent.handleIQSetImpl(
+                        IQUtils.convert(conferenceIq));
 
         assertNotNull(result);
 
-        org.jivesoftware.smack.packet.IQ response =  IQUtils.convert(result);
+        org.jivesoftware.smack.packet.IQ response = IQUtils.convert(result);
         assertTrue(response instanceof ConferenceIq);
-
 
     }
 }

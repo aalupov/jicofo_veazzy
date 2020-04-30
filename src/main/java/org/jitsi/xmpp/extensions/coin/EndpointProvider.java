@@ -27,14 +27,14 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class EndpointProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a endpoint extension sub-packet and creates a {@link
-     * EndpointPacketExtension} instance. At the beginning of the method
-     * call, the xml parser will be positioned on the opening element of the
-     * packet extension. As required by the smack API, at the end of the method
-     * call, the parser will be positioned on the closing element of the packet
+     * EndpointPacketExtension} instance. At the beginning of the method call,
+     * the xml parser will be positioned on the opening element of the packet
+     * extension. As required by the smack API, at the end of the method call,
+     * the parser will be positioned on the closing element of the packet
      * extension.
      *
      * @param parser an XML parser positioned at the opening
@@ -45,8 +45,7 @@ public class EndpointProvider
      */
     @Override
     public ExtensionElement parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
@@ -56,70 +55,53 @@ public class EndpointProvider
         String stateStr = parser.getAttributeValue("",
                 EndpointPacketExtension.STATE_ATTR_NAME);
 
-        if(stateStr != null)
-        {
+        if (stateStr != null) {
             state = StateType.parseString(stateStr);
         }
 
         EndpointPacketExtension ext
-            = new EndpointPacketExtension(entity);
+                = new EndpointPacketExtension(entity);
 
         ext.setAttribute(EndpointPacketExtension.STATE_ATTR_NAME, state);
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(
-                        EndpointPacketExtension.ELEMENT_DISPLAY_TEXT))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(
+                        EndpointPacketExtension.ELEMENT_DISPLAY_TEXT)) {
                     ext.setDisplayText(CoinIQProvider.parseText(parser));
-                }
-                else if(elementName.equals(
-                        EndpointPacketExtension.ELEMENT_DISCONNECTION))
-                {
+                } else if (elementName.equals(
+                        EndpointPacketExtension.ELEMENT_DISCONNECTION)) {
                     ext.setDisconnectionType(
                             DisconnectionType.parseString(parser.getText()));
-                }
-                else if(elementName.equals(
-                        EndpointPacketExtension.ELEMENT_JOINING))
-                {
+                } else if (elementName.equals(
+                        EndpointPacketExtension.ELEMENT_JOINING)) {
                     ext.setJoiningType(JoiningType.parseString(
                             CoinIQProvider.parseText(parser)));
-                }
-                else if(elementName.equals(
-                        EndpointPacketExtension.ELEMENT_STATUS))
-                {
+                } else if (elementName.equals(
+                        EndpointPacketExtension.ELEMENT_STATUS)) {
                     ext.setStatus(EndpointStatusType.parseString(
                             CoinIQProvider.parseText(parser)));
-                }
-                else if(elementName.equals(
-                        CallInfoPacketExtension.ELEMENT_NAME))
-                {
+                } else if (elementName.equals(
+                        CallInfoPacketExtension.ELEMENT_NAME)) {
                     ExtensionElementProvider provider
-                        = new DefaultPacketExtensionProvider<
+                            = new DefaultPacketExtensionProvider<
                         CallInfoPacketExtension>(CallInfoPacketExtension.class);
-                    ExtensionElement childExtension = (ExtensionElement)provider.parse(
+                    ExtensionElement childExtension = (ExtensionElement) provider.parse(
                             parser);
                     ext.addChildExtension(childExtension);
-                }
-                else if(elementName.equals(MediaPacketExtension.ELEMENT_NAME))
-                {
+                } else if (elementName.equals(MediaPacketExtension.ELEMENT_NAME)) {
                     ExtensionElementProvider provider
-                        = new MediaProvider();
-                    ExtensionElement childExtension = (ExtensionElement)provider.parse(
+                            = new MediaProvider();
+                    ExtensionElement childExtension = (ExtensionElement) provider.parse(
                             parser);
                     ext.addChildExtension(childExtension);
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        EndpointPacketExtension.ELEMENT_NAME))
-                {
+                        EndpointPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }

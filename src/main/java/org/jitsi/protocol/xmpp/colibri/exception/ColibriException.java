@@ -20,15 +20,13 @@ package org.jitsi.protocol.xmpp.colibri.exception;
 /**
  * An exception in Colibri channel allocation.
  */
-public class ColibriException extends Exception
-{
-    public ColibriException(String message)
-    {
+public class ColibriException extends Exception {
+
+    public ColibriException(String message) {
         super(message);
     }
 
-    public ColibriException clone(String prefix)
-    {
+    public ColibriException clone(String prefix) {
         return new ColibriException(prefix + getMessage());
     }
 }

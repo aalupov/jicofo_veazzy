@@ -34,21 +34,20 @@ import static org.junit.Assert.*;
  *
  * @author Pawel Domas
  */
-public class ConferenceJsonTest
-{
+public class ConferenceJsonTest {
+
     @Test
     public void testParseConference()
-        throws Exception
-    {
+            throws Exception {
         // ConferenceIq
-        String confJson =
-            "{\n" +
-                    "\"id\": 1234,\n" +
-                    "\"url\": \"http://conference.net/1234\",\n" +
-                    "\"pin\": \"1231\",\n" +
-                    "\"sip_id\": 23,\n" +
-                    "\"start_time\": \"2015-02-23T09:03:34.000Z\"" +
-            "}";
+        String confJson
+                = "{\n"
+                + "\"id\": 1234,\n"
+                + "\"url\": \"http://conference.net/1234\",\n"
+                + "\"pin\": \"1231\",\n"
+                + "\"sip_id\": 23,\n"
+                + "\"start_time\": \"2015-02-23T09:03:34.000Z\""
+                + "}";
 
         JSONParser parser = new JSONParser();
         ConferenceJsonHandler handler = new ConferenceJsonHandler();
@@ -66,14 +65,13 @@ public class ConferenceJsonTest
 
     @Test
     public void testParseError()
-            throws Exception
-    {
+            throws Exception {
         // Error JSon
-        String errorJson =
-                "{\n" +
-                    "\"error\": \"404\"\n" +
-                    "\"message\": \"not found\"\n" +
-                "}";
+        String errorJson
+                = "{\n"
+                + "\"error\": \"404\"\n"
+                + "\"message\": \"not found\"\n"
+                + "}";
 
         JSONParser parser = new JSONParser();
         ErrorJsonHandler handler = new ErrorJsonHandler();
@@ -89,8 +87,7 @@ public class ConferenceJsonTest
 
     @Test
     public void testToJson()
-            throws XmppStringprepException
-    {
+            throws XmppStringprepException {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, 2014);
         c.set(Calendar.MONTH, Calendar.JANUARY);
@@ -107,16 +104,14 @@ public class ConferenceJsonTest
 
         Map<String, Object> objects = conf.createJSonMap();
 
-        assertEquals("test1" ,objects.get(ConferenceJsonHandler.CONF_NAME_KEY));
-        assertEquals("pawel.gawel", objects.get(ConferenceJsonHandler
-                .CONF_OWNER_KEY));
+        assertEquals("test1", objects.get(ConferenceJsonHandler.CONF_NAME_KEY));
+        assertEquals("pawel.gawel", objects.get(ConferenceJsonHandler.CONF_OWNER_KEY));
 
         // FIXME: This will fail in different time zone
         //assertEquals(
         //    "2014-01-08T09:02:00.000+01",
         //    objects.get(ConferenceJsonHandler.CONF_START_TIME_KEY));
-
         //assertEquals("00:05" ,objects.get(ConferenceJsonHandler
-          //  .CONF_DURATION_KEY));
+        //  .CONF_DURATION_KEY));
     }
 }

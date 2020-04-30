@@ -24,8 +24,8 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class InputEvtIQProvider
-    extends IQProvider<InputEvtIQ>
-{
+        extends IQProvider<InputEvtIQ> {
+
     /**
      * Parse the Input IQ sub-document and returns the corresponding
      * <tt>InputEvtIQ</tt>.
@@ -35,40 +35,36 @@ public class InputEvtIQProvider
      * @throws Exception if something goes wrong during parsing
      */
     @Override
-    public InputEvtIQ parse(XmlPullParser parser, int depth) throws Exception
-    {
+    public InputEvtIQ parse(XmlPullParser parser, int depth) throws Exception {
         InputEvtIQ inputEvtIQ = new InputEvtIQ();
         InputEvtAction action
-            = InputEvtAction.parseString(
-                    parser.getAttributeValue("", InputEvtIQ.ACTION_ATTR_NAME));
+                = InputEvtAction.parseString(
+                        parser.getAttributeValue("", InputEvtIQ.ACTION_ATTR_NAME));
 
         inputEvtIQ.setAction(action);
 
         boolean done = false;
 
-        while (!done)
-        {
-            switch (parser.next())
-            {
-            case XmlPullParser.START_TAG:
-                // <remote-control>
-                if (RemoteControlExtensionProvider.ELEMENT_REMOTE_CONTROL
-                        .equals(parser.getName()))
-                {
-                    RemoteControlExtensionProvider provider
-                        = new RemoteControlExtensionProvider();
-                    RemoteControlExtension item
-                        = (RemoteControlExtension)
-                            provider.parse(parser);
+        while (!done) {
+            switch (parser.next()) {
+                case XmlPullParser.START_TAG:
+                    // <remote-control>
+                    if (RemoteControlExtensionProvider.ELEMENT_REMOTE_CONTROL
+                            .equals(parser.getName())) {
+                        RemoteControlExtensionProvider provider
+                                = new RemoteControlExtensionProvider();
+                        RemoteControlExtension item
+                                = (RemoteControlExtension) provider.parse(parser);
 
-                    inputEvtIQ.addRemoteControl(item);
-                }
-                break;
+                        inputEvtIQ.addRemoteControl(item);
+                    }
+                    break;
 
-            case XmlPullParser.END_TAG:
-                if (InputEvtIQ.ELEMENT_NAME.equals(parser.getName()))
-                    done = true;
-                break;
+                case XmlPullParser.END_TAG:
+                    if (InputEvtIQ.ELEMENT_NAME.equals(parser.getName())) {
+                        done = true;
+                    }
+                    break;
             }
         }
 

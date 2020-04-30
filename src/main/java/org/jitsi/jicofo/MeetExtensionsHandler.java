@@ -22,6 +22,7 @@ import net.java.sip.communicator.service.protocol.*;
 
 import org.jitsi.xmpp.extensions.jitsimeet.*;
 import org.jitsi.jicofo.jigasi.*;
+import org.jitsi.jicofo.db.RoomStatus;
 import org.jitsi.protocol.xmpp.*;
 import org.jitsi.utils.logging.*;
 import org.jivesoftware.smack.iqrequest.*;
@@ -38,13 +39,13 @@ import java.util.stream.*;
  * @author Pawel Domas
  * @author Boris Grozev
  */
-public class MeetExtensionsHandler
-{
+public class MeetExtensionsHandler {
+
     /**
      * The logger
      */
     private final static Logger logger
-        = Logger.getLogger(MeetExtensionsHandler.class);
+            = Logger.getLogger(MeetExtensionsHandler.class);
 
     /**
      * <tt>FocusManager</tt> instance for accessing info about all active
@@ -52,7 +53,9 @@ public class MeetExtensionsHandler
      */
     private final FocusManager focusManager;
 
-    /** The currently used XMPP connection. */
+    /**
+     * The currently used XMPP connection.
+     */
     private XmppConnection connection;
 
     private MuteIqHandler muteIqHandler;
@@ -61,19 +64,20 @@ public class MeetExtensionsHandler
     private ParticipantIdIqHandler participantIdIqHandler;
     private DialIqHandler dialIqHandler;
 
-    /** The currently used DB connection. */
+    /**
+     * The currently used DB connection.
+     */
     private JDBCPostgreSQL clientSql;
 
     private Boolean roomStatusFromDb;
 
     /**
      * Creates new instance of {@link MeetExtensionsHandler}.
+     *
      * @param focusManager <tt>FocusManager</tt> that will be used by new
-     *                     instance to access active conferences and focus
-     *                     XMPP connection.
+     * instance to access active conferences and focus XMPP connection.
      */
-    public MeetExtensionsHandler(FocusManager focusManager)
-    {
+    public MeetExtensionsHandler(FocusManager focusManager) {
         this.focusManager = focusManager;
 
         MuteIqProvider.registerMuteIqProvider();
@@ -87,11 +91,10 @@ public class MeetExtensionsHandler
     /**
      * Initializes this instance and bind packet listeners.
      */
-    public void init()
-    {
+    public void init() {
         this.connection
-            = focusManager.getOperationSet(
-                    OperationSetDirectSmackXmpp.class).getXmppConnection();
+                = focusManager.getOperationSet(
+                        OperationSetDirectSmackXmpp.class).getXmppConnection();
 
         muteIqHandler = new MuteIqHandler();
         roomStatusIqHandler = new RoomStatusIqHandler();
@@ -107,91 +110,81 @@ public class MeetExtensionsHandler
         connection.registerIQRequestHandler(dialIqHandler);
     }
 
-    private class MuteIqHandler extends AbstractIqRequestHandler
-    {
-        MuteIqHandler()
-        {
+    private class MuteIqHandler extends AbstractIqRequestHandler {
+
+        MuteIqHandler() {
             super(
-                MuteIq.ELEMENT_NAME,
-                MuteIq.NAMESPACE,
-                IQ.Type.set,
-                Mode.sync);
+                    MuteIq.ELEMENT_NAME,
+                    MuteIq.NAMESPACE,
+                    IQ.Type.set,
+                    Mode.sync);
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
+        public IQ handleIQRequest(IQ iqRequest) {
             return handleMuteIq((MuteIq) iqRequest);
         }
     }
 
-    private class RoomStatusIqHandler extends AbstractIqRequestHandler
-    {
-        RoomStatusIqHandler()
-        {
+    private class RoomStatusIqHandler extends AbstractIqRequestHandler {
+
+        RoomStatusIqHandler() {
             super(
-                RoomStatusIq.ELEMENT_NAME,
-                RoomStatusIq.NAMESPACE,
-                IQ.Type.set,
-                IQRequestHandler.Mode.sync);
+                    RoomStatusIq.ELEMENT_NAME,
+                    RoomStatusIq.NAMESPACE,
+                    IQ.Type.set,
+                    IQRequestHandler.Mode.sync);
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
+        public IQ handleIQRequest(IQ iqRequest) {
             return handleRoomStatusIq((RoomStatusIq) iqRequest);
         }
     }
-    
-    private class ModeratorIdIqHandler extends AbstractIqRequestHandler
-    {
-    	ModeratorIdIqHandler()
-        {
+
+    private class ModeratorIdIqHandler extends AbstractIqRequestHandler {
+
+        ModeratorIdIqHandler() {
             super(
-            	ModeratorIdIq.ELEMENT_NAME,
-            	ModeratorIdIq.NAMESPACE,
-                IQ.Type.set,
-                IQRequestHandler.Mode.sync);
+                    ModeratorIdIq.ELEMENT_NAME,
+                    ModeratorIdIq.NAMESPACE,
+                    IQ.Type.set,
+                    IQRequestHandler.Mode.sync);
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
+        public IQ handleIQRequest(IQ iqRequest) {
             return handleModeratorIdIq((ModeratorIdIq) iqRequest);
         }
     }
-    
-    private class ParticipantIdIqHandler extends AbstractIqRequestHandler
-    {
-    	ParticipantIdIqHandler()
-        {
+
+    private class ParticipantIdIqHandler extends AbstractIqRequestHandler {
+
+        ParticipantIdIqHandler() {
             super(
-            	ParticipantIdIq.ELEMENT_NAME,
-            	ParticipantIdIq.NAMESPACE,
-                IQ.Type.set,
-                IQRequestHandler.Mode.sync);
+                    ParticipantIdIq.ELEMENT_NAME,
+                    ParticipantIdIq.NAMESPACE,
+                    IQ.Type.set,
+                    IQRequestHandler.Mode.sync);
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
+        public IQ handleIQRequest(IQ iqRequest) {
             return handleParticipantIdIq((ParticipantIdIq) iqRequest);
         }
     }
-    
-    private class DialIqHandler extends AbstractIqRequestHandler
-    {
-        DialIqHandler()
-        {
+
+    private class DialIqHandler extends AbstractIqRequestHandler {
+
+        DialIqHandler() {
             super(RayoIqProvider.DialIq.ELEMENT_NAME,
-                RayoIqProvider.NAMESPACE,
-                IQ.Type.set,
-                Mode.sync);
+                    RayoIqProvider.NAMESPACE,
+                    IQ.Type.set,
+                    Mode.sync);
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
+        public IQ handleIQRequest(IQ iqRequest) {
             // let's retry 2 times sending the rayo
             // by default we have 15 seconds timeout waiting for reply
             // 3 timeouts will give us 45 seconds to reply to user with an error
@@ -202,10 +195,8 @@ public class MeetExtensionsHandler
     /**
      * Disposes this instance and stop listening for extensions packets.
      */
-    public void dispose()
-    {
-        if (connection != null)
-        {
+    public void dispose() {
+        if (connection != null) {
             connection.unregisterIQRequestHandler(muteIqHandler);
             connection.unregisterIQRequestHandler(roomStatusIqHandler);
             connection.unregisterIQRequestHandler(moderatorIdIqHandler);
@@ -215,60 +206,50 @@ public class MeetExtensionsHandler
         }
     }
 
-    private JitsiMeetConferenceImpl getConferenceForMucJid(Jid mucJid)
-    {
+    private JitsiMeetConferenceImpl getConferenceForMucJid(Jid mucJid) {
         EntityBareJid roomName = mucJid.asEntityBareJidIfPossible();
-        if (roomName == null)
-        {
+        if (roomName == null) {
             return null;
         }
         return focusManager.getConference(roomName);
     }
 
-    private EntityBareJid getConferenceName(Jid mucJid)
-    {
+    private EntityBareJid getConferenceName(Jid mucJid) {
         EntityBareJid roomName = mucJid.asEntityBareJidIfPossible();
-        if (roomName == null)
-        {
+        if (roomName == null) {
             return null;
         }
         return roomName;
     }
 
-
-    private IQ handleMuteIq(MuteIq muteIq)
-    {
+    private IQ handleMuteIq(MuteIq muteIq) {
         Boolean doMute = muteIq.getMute();
-        Boolean blockStatus = muteIq.getBlock(); 
+        Boolean blockStatus = muteIq.getBlock();
         logger.info("Block status is " + blockStatus);
         Boolean videoMute = muteIq.getVideo();
         logger.info("video to mute is " + videoMute);
         Jid jid = muteIq.getJid();
 
-        if (doMute == null || jid == null)
-        {
+        if (doMute == null || jid == null) {
             return IQ.createErrorResponse(muteIq, XMPPError.getBuilder(
-                XMPPError.Condition.item_not_found));
+                    XMPPError.Condition.item_not_found));
         }
 
         Jid from = muteIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
-        if (conference == null)
-        {
+        if (conference == null) {
             logger.debug("Mute error: room not found for JID: " + from);
             return IQ.createErrorResponse(muteIq, XMPPError.getBuilder(
-                XMPPError.Condition.item_not_found));
+                    XMPPError.Condition.item_not_found));
         }
 
         IQ result;
 
-        if (conference.handleMuteRequest(muteIq.getFrom(), jid, doMute))
-        {
+        if (conference.handleMuteRequest(muteIq.getFrom(), jid, doMute)) {
             result = IQ.createResultIQ(muteIq);
-           
-            if (!muteIq.getFrom().equals(jid))
-            {
-            	logger.info(doMute);
+
+            if (!muteIq.getFrom().equals(jid)) {
+                logger.info(doMute);
                 MuteIq muteStatusUpdate = new MuteIq();
                 muteStatusUpdate.setActor(from);
                 muteStatusUpdate.setType(IQ.Type.set);
@@ -280,53 +261,51 @@ public class MeetExtensionsHandler
 
                 connection.sendStanza(muteStatusUpdate);
             }
-        }
-        else
-        {
+        } else {
             result = IQ.createErrorResponse(
-                muteIq,
-                XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+                    muteIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
         }
 
         return result;
     }
 
-
-    private IQ handleRoomStatusIq(RoomStatusIq roomStatusIq)
-    {
+    private IQ handleRoomStatusIq(RoomStatusIq roomStatusIq) {
+        
         Boolean doRoomStatusOpen = roomStatusIq.getRoomStatus();
         Boolean checkRequest = roomStatusIq.getCheckRequest();
-        
+
         Jid jid = roomStatusIq.getJid();
-        
+
         String confName = getConferenceName(jid).toString();
         logger.info("Room Name is " + confName);
 
-        if (confName != null)
-        {
-           roomStatusFromDb = clientSql.getStatusFromDB(confName);
-           logger.info("Room Status From DB is " + roomStatusFromDb);
-        } 
-        
-        if (jid == null)
-        {
+        if (confName != null) {
+            RoomStatus roomStatus = clientSql.getRoomStatusFromDB(confName);
+            if(roomStatus != null) {
+                roomStatusFromDb = roomStatus.getStatus();
+                logger.info("Room Status From DB is " + roomStatusFromDb);
+            }
+            else {
+                logger.info("Room Status From DB not found");
+            }
+        }
+
+        if (jid == null) {
             logger.debug("jid null");
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
-        
-        if(checkRequest == null && doRoomStatusOpen == null)
-        {
+
+        if (checkRequest == null && doRoomStatusOpen == null) {
             logger.debug("checkRequest and doRoomStatusOpen null");
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
-        
 
         Jid from = roomStatusIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
-        if (conference == null)
-        {
+        if (conference == null) {
             logger.debug("Room status error: room not found for JID: " + from);
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
@@ -335,19 +314,17 @@ public class MeetExtensionsHandler
         IQ result;
 
         boolean check = false;
-        if(checkRequest != null) {
+        if (checkRequest != null) {
             check = checkRequest;
             logger.info("Asking for room status checkRequest: " + check);
         }
-        
-        if(!check) {
+
+        if (!check) {
             //if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), jid, doRoomStatusOpen))
-            if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), doRoomStatusOpen))
-            {
+            if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), doRoomStatusOpen)) {
                 result = IQ.createResultIQ(roomStatusIq);
 
-                if (roomStatusIq.getFrom().equals(jid))
-                {
+                if (roomStatusIq.getFrom().equals(jid)) {
                     RoomStatusIq roomStatusUpdate = new RoomStatusIq();
                     roomStatusUpdate.setActor(from);
                     roomStatusUpdate.setType(IQ.Type.set);
@@ -357,64 +334,67 @@ public class MeetExtensionsHandler
 
                     connection.sendStanza(roomStatusUpdate);
 
-                   //update DB
-                    if (confName != null)  {
-                       clientSql.setStatusToDB(confName, doRoomStatusOpen);
-                       clientSql.updateStatusToDB(confName, doRoomStatusOpen);
+                    //update DB
+                    if (confName != null) {
+                        RoomStatus roomStatus = clientSql.getRoomStatusFromDB(confName);
+                        if(roomStatus != null) {
+                            //update
+                            roomStatus.setStatus(doRoomStatusOpen);
+                            clientSql.updateRoomStatusToDB(roomStatus);
+                            logger.info("Room Status updated for room " + roomStatus.getRoomName());
+                        }
+                        else {
+                            //create
+                            roomStatus = new RoomStatus(confName, doRoomStatusOpen);
+                            clientSql.insertRoomStatusToDB(roomStatus);
+                            logger.info("Room Status created for room " + roomStatus.getRoomName());
+                        }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 result = IQ.createErrorResponse(
-                    roomStatusIq,
-                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+                        roomStatusIq,
+                        XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
             }
-        }
-        else {
+        } else {
             boolean roomStatus = roomStatusFromDb;
             result = IQ.createResultIQ(roomStatusIq);
 
-                    RoomStatusIq roomStatusUpdate = new RoomStatusIq();
-                    roomStatusUpdate.setActor(from);
-                    roomStatusUpdate.setType(IQ.Type.set);
-                    roomStatusUpdate.setTo(jid);
+            RoomStatusIq roomStatusUpdate = new RoomStatusIq();
+            roomStatusUpdate.setActor(from);
+            roomStatusUpdate.setType(IQ.Type.set);
+            roomStatusUpdate.setTo(jid);
 
-                    roomStatusUpdate.setRoomStatus(roomStatus);
+            roomStatusUpdate.setRoomStatus(roomStatus);
 
-                    connection.sendStanza(roomStatusUpdate);
+            connection.sendStanza(roomStatusUpdate);
         }
 
         return result;
     }
-    
-    private IQ handleModeratorIdIq(ModeratorIdIq moderatorIdIq)
-    {
+
+    private IQ handleModeratorIdIq(ModeratorIdIq moderatorIdIq) {
         String doModeratorIdOpen = moderatorIdIq.getModeratorId();
         logger.info("ModeratorId is " + doModeratorIdOpen);
         Boolean moderatorIdRequest = moderatorIdIq.getModeratorIdRequest();
-        
+
         Jid jid = moderatorIdIq.getJid();
-        
-        if (jid == null)
-        {
+
+        if (jid == null) {
             logger.debug("jid null");
             return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
-        
-        if(moderatorIdRequest == null && doModeratorIdOpen == null)
-        {
+
+        if (moderatorIdRequest == null && doModeratorIdOpen == null) {
             logger.debug("moderatorIdRequest and doModeratorIdOpen null");
             return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
-        
 
         Jid from = moderatorIdIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
-        if (conference == null)
-        {
+        if (conference == null) {
             logger.debug("Moderator Id error: ID not found for JID: " + from);
             return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
@@ -423,81 +403,71 @@ public class MeetExtensionsHandler
         IQ result;
 
         boolean check = false;
-        if(moderatorIdRequest != null) {
+        if (moderatorIdRequest != null) {
             check = moderatorIdRequest;
             logger.info("Asking for moderator id moderatorIdRequest: " + check);
         }
-        
-        if(!check) {
 
-            if (conference.handleModeratorIdRequest(moderatorIdIq.getFrom(), doModeratorIdOpen))
-            {
+        if (!check) {
+
+            if (conference.handleModeratorIdRequest(moderatorIdIq.getFrom(), doModeratorIdOpen)) {
                 result = IQ.createResultIQ(moderatorIdIq);
 
-                if (moderatorIdIq.getFrom().equals(jid))
-                {
-                	ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
-                	moderatorIdUpdate.setActor(from);
-                	moderatorIdUpdate.setType(IQ.Type.set);
-                	moderatorIdUpdate.setTo(jid);
-
-                	moderatorIdUpdate.setModeratorId(doModeratorIdOpen);
-
-                    connection.sendStanza(moderatorIdUpdate);
-
-                }
-            }
-            else
-            {
-                result = IQ.createErrorResponse(
-                		moderatorIdIq,
-                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
-            }
-        }
-        else {
-            String moderatorId = conference.getChatModeratorId();
-            result = IQ.createResultIQ(moderatorIdIq);
-
-            ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
+                if (moderatorIdIq.getFrom().equals(jid)) {
+                    ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
                     moderatorIdUpdate.setActor(from);
                     moderatorIdUpdate.setType(IQ.Type.set);
                     moderatorIdUpdate.setTo(jid);
 
-                    moderatorIdUpdate.setModeratorId(moderatorId);
+                    moderatorIdUpdate.setModeratorId(doModeratorIdOpen);
 
                     connection.sendStanza(moderatorIdUpdate);
+
+                }
+            } else {
+                result = IQ.createErrorResponse(
+                        moderatorIdIq,
+                        XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+            }
+        } else {
+            String moderatorId = conference.getChatModeratorId();
+            result = IQ.createResultIQ(moderatorIdIq);
+
+            ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
+            moderatorIdUpdate.setActor(from);
+            moderatorIdUpdate.setType(IQ.Type.set);
+            moderatorIdUpdate.setTo(jid);
+
+            moderatorIdUpdate.setModeratorId(moderatorId);
+
+            connection.sendStanza(moderatorIdUpdate);
         }
 
         return result;
     }
-    
-    private IQ handleParticipantIdIq(ParticipantIdIq participantIdIq)
-    {
+
+    private IQ handleParticipantIdIq(ParticipantIdIq participantIdIq) {
         String doParticipantIdOpen = participantIdIq.getParticipantId();
         logger.info("ParticipantId is " + doParticipantIdOpen);
         Boolean withMe = participantIdIq.getWithMe();
-        
+
         Jid jid = participantIdIq.getJid();
-        
-        if (jid == null)
-        {
+
+        if (jid == null) {
             logger.debug("jid null");
             return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
-        
-        if(doParticipantIdOpen == null)
-        {
+
+        if (doParticipantIdOpen == null) {
             logger.debug("doParticipantIdOpen is null");
             return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
-        
 
         Jid from = participantIdIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
-        if (conference == null)
-        {
+        if (conference == null) {
             logger.debug("Participant Id error: ID not found for JID: " + from);
             return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
@@ -505,148 +475,129 @@ public class MeetExtensionsHandler
 
         IQ result;
 
-            if (conference.handleParticipantIdRequest(participantIdIq.getFrom(), doParticipantIdOpen))
-            {
-                result = IQ.createResultIQ(participantIdIq);
+        if (conference.handleParticipantIdRequest(participantIdIq.getFrom(), doParticipantIdOpen)) {
+            result = IQ.createResultIQ(participantIdIq);
 
-                if (!participantIdIq.getFrom().equals(jid))
-                {
-                	ParticipantIdIq participantIdUpdate = new ParticipantIdIq();
-                	participantIdUpdate.setActor(from);
-                	participantIdUpdate.setType(IQ.Type.set);
-                	participantIdUpdate.setTo(jid);
-                	participantIdUpdate.setWithMe(withMe);
+            if (!participantIdIq.getFrom().equals(jid)) {
+                ParticipantIdIq participantIdUpdate = new ParticipantIdIq();
+                participantIdUpdate.setActor(from);
+                participantIdUpdate.setType(IQ.Type.set);
+                participantIdUpdate.setTo(jid);
+                participantIdUpdate.setWithMe(withMe);
 
-                	participantIdUpdate.setParticipantId(doParticipantIdOpen);
+                participantIdUpdate.setParticipantId(doParticipantIdOpen);
 
-                    connection.sendStanza(participantIdUpdate);
+                connection.sendStanza(participantIdUpdate);
 
-                }
             }
-            else
-            {
-                result = IQ.createErrorResponse(
-                		participantIdIq,
+        } else {
+            result = IQ.createErrorResponse(
+                    participantIdIq,
                     XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
-            }
+        }
 
         return result;
     }
-    
-    
+
     /**
      * Checks whether sending the rayo message is ok (checks member, moderators)
      * and sends the message to the selected jigasi (from brewery muc or to the
      * component service).
+     *
      * @param dialIq the iq to send.
      * @param retryCount the number of attempts to be made for sending this iq,
      * if no reply is received from the remote side.
-     * @param exclude <tt>null</tt> or a list of jigasi Jids which
-     * we already tried sending in attempt to retry.
+     * @param exclude <tt>null</tt> or a list of jigasi Jids which we already
+     * tried sending in attempt to retry.
      *
      * @return the iq to be sent as a reply.
      */
     private IQ handleRayoIQ(RayoIqProvider.DialIq dialIq, int retryCount,
-                            List<Jid> exclude)
-    {
+            List<Jid> exclude) {
         Jid from = dialIq.getFrom();
 
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
 
-        if (conference == null)
-        {
+        if (conference == null) {
             logger.debug("Dial error: room not found for JID: " + from);
             return IQ.createErrorResponse(dialIq, XMPPError.getBuilder(
-                XMPPError.Condition.item_not_found));
+                    XMPPError.Condition.item_not_found));
         }
 
         ChatRoomMemberRole role = conference.getRoleForMucJid(from);
 
-        if (role == null)
-        {
+        if (role == null) {
             // Only room members are allowed to send requests
             return IQ.createErrorResponse(
-                dialIq, XMPPError.getBuilder(XMPPError.Condition.forbidden));
+                    dialIq, XMPPError.getBuilder(XMPPError.Condition.forbidden));
         }
 
-        if (ChatRoomMemberRole.MODERATOR.compareTo(role) < 0)
-        {
+        if (ChatRoomMemberRole.MODERATOR.compareTo(role) < 0) {
             // Moderator permission is required
             return IQ.createErrorResponse(
-                dialIq, XMPPError.getBuilder(XMPPError.Condition.not_allowed));
+                    dialIq, XMPPError.getBuilder(XMPPError.Condition.not_allowed));
         }
 
-
         Set<String> bridgeRegions = conference.getBridges().keySet().stream()
-            .map(b -> b.getRegion())
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+                .map(b -> b.getRegion())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
         // Check if Jigasi is available
         Jid jigasiJid;
         JigasiDetector detector = conference.getServices().getJigasiDetector();
         if (detector == null
-            || (jigasiJid = detector.selectJigasi(
-                    exclude, bridgeRegions)) == null)
-        {
+                || (jigasiJid = detector.selectJigasi(
+                        exclude, bridgeRegions)) == null) {
             jigasiJid = conference.getServices().getSipGateway();
         }
 
-        if (jigasiJid == null)
-        {
+        if (jigasiJid == null) {
             // Not available
             return IQ.createErrorResponse(
-                dialIq,
-                XMPPError.getBuilder(
-                        XMPPError.Condition.service_unavailable).build());
+                    dialIq,
+                    XMPPError.getBuilder(
+                            XMPPError.Condition.service_unavailable).build());
         }
 
         // Redirect original request to Jigasi component
         RayoIqProvider.DialIq forwardDialIq = new RayoIqProvider.DialIq(dialIq);
-        forwardDialIq.setFrom((Jid)null);
+        forwardDialIq.setFrom((Jid) null);
         forwardDialIq.setTo(jigasiJid);
         forwardDialIq.setStanzaId(StanzaIdUtil.newStanzaId());
 
-        try
-        {
+        try {
             IQ reply = connection.sendPacketAndGetReply(forwardDialIq);
 
-            if (reply == null)
-            {
-                if (retryCount > 0)
-                {
-                    if (exclude == null)
-                    {
+            if (reply == null) {
+                if (retryCount > 0) {
+                    if (exclude == null) {
                         exclude = new ArrayList<>();
                     }
                     exclude.add(jigasiJid);
 
                     // let's retry lowering the number of attempts
                     return this.handleRayoIQ(dialIq, retryCount - 1, exclude);
-                }
-                else
-                {
+                } else {
                     return IQ.createErrorResponse(
-                        dialIq,
-                        XMPPError.getBuilder(
-                            XMPPError.Condition.remote_server_timeout));
+                            dialIq,
+                            XMPPError.getBuilder(
+                                    XMPPError.Condition.remote_server_timeout));
                 }
             }
 
             // Send Jigasi response back to the client
-            reply.setFrom((Jid)null);
+            reply.setFrom((Jid) null);
             reply.setTo(from);
             reply.setStanzaId(dialIq.getStanzaId());
             return reply;
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             logger.error("Failed to send DialIq - XMPP disconnected", e);
             return IQ.createErrorResponse(
-                dialIq,
-                XMPPError.getBuilder(
-                        XMPPError.Condition.internal_server_error)
-                    .setDescriptiveEnText("Failed to forward DialIq"));
+                    dialIq,
+                    XMPPError.getBuilder(
+                            XMPPError.Condition.internal_server_error)
+                            .setDescriptiveEnText("Failed to forward DialIq"));
         }
     }
 }

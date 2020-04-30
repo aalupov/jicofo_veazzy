@@ -25,8 +25,8 @@ import java.io.*;
 
 /**
  * An extension to the Presence used in jitsi-meet when deployed in an
- * authenticated environment (such as Stride),
- * which stores information about an user and the group of an user
+ * authenticated environment (such as Stride), which stores information about an
+ * user and the group of an user
  *
  * The extension looks like the following:
  * <pre>
@@ -45,14 +45,13 @@ import java.io.*;
  * @author Nik Vaessen
  */
 public class IdentityPacketExtension
-    implements ExtensionElement
-{
+        implements ExtensionElement {
 
     /**
      * The Logger of this class
      */
     public static final Logger logger
-        = Logger.getLogger(IdentityPacketExtension.class);
+            = Logger.getLogger(IdentityPacketExtension.class);
 
     /**
      * The namespace (xmlns attribute) of this identity presence element
@@ -70,8 +69,7 @@ public class IdentityPacketExtension
     public static final String USER_ELEMENT_NAME = "user";
 
     /**
-     * The child element of this identity storing information about the group
-     * id
+     * The child element of this identity storing information about the group id
      */
     public static final String GROUP_ELEMENT_NAME = "group";
 
@@ -120,10 +118,9 @@ public class IdentityPacketExtension
      * @param groupId the group id of group the user belongs to
      */
     public IdentityPacketExtension(String userId,
-                                   String userName,
-                                   String userAvatarUrl,
-                                   String groupId)
-    {
+            String userName,
+            String userAvatarUrl,
+            String groupId) {
         this.userId = userId;
         this.userName = userName;
         this.userAvatarUrl = userAvatarUrl;
@@ -134,8 +131,7 @@ public class IdentityPacketExtension
      * {@inheritDoc}
      */
     @Override
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return NAME_SPACE;
     }
 
@@ -143,8 +139,7 @@ public class IdentityPacketExtension
      * {@inheritDoc}
      */
     @Override
-    public String getElementName()
-    {
+    public String getElementName() {
         return ELEMENT_NAME;
     }
 
@@ -152,8 +147,7 @@ public class IdentityPacketExtension
      * {@inheritDoc}
      */
     @Override
-    public CharSequence toXML()
-    {
+    public CharSequence toXML() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         // begin identity
@@ -183,8 +177,7 @@ public class IdentityPacketExtension
      *
      * @return the user ID
      */
-    public String getUserId()
-    {
+    public String getUserId() {
         return userId;
     }
 
@@ -193,8 +186,7 @@ public class IdentityPacketExtension
      *
      * @return the user's name
      */
-    public String getUserName()
-    {
+    public String getUserName() {
         return userName;
     }
 
@@ -203,8 +195,7 @@ public class IdentityPacketExtension
      *
      * @return the avatar-url
      */
-    public String getUserAvatarUrl()
-    {
+    public String getUserAvatarUrl() {
         return userAvatarUrl;
     }
 
@@ -213,34 +204,29 @@ public class IdentityPacketExtension
      *
      * @return the group id
      */
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return groupId;
     }
 
     /**
      * The {@link ExtensionElementProvider} which can create an instance of a
-     * {@link IdentityPacketExtension} when given the
-     * {@link XmlPullParser} of an identity element
+     * {@link IdentityPacketExtension} when given the {@link XmlPullParser} of
+     * an identity element
      */
     public static class Provider
-        extends ExtensionElementProvider<IdentityPacketExtension>
-    {
+            extends ExtensionElementProvider<IdentityPacketExtension> {
+
         /**
          * {@inheritDoc}
          */
         @Override
         public IdentityPacketExtension parse(XmlPullParser parser,
-                                             int depth)
-        {
+                int depth) {
             String currentTag = parser.getName();
 
-            if (!NAME_SPACE.equals(parser.getNamespace()))
-            {
+            if (!NAME_SPACE.equals(parser.getNamespace())) {
                 return null;
-            }
-            else if (!ELEMENT_NAME.equals(currentTag))
-            {
+            } else if (!ELEMENT_NAME.equals(currentTag)) {
                 return null;
             }
 
@@ -249,20 +235,14 @@ public class IdentityPacketExtension
             String userAvatarUrl = null;
             String groupId = null;
 
-            try
-            {
-                do
-                {
+            try {
+                do {
                     parser.next();
 
-                    if (parser.getEventType() == XmlPullParser.START_TAG)
-                    {
+                    if (parser.getEventType() == XmlPullParser.START_TAG) {
                         currentTag = parser.getName();
-                    }
-                    else if (parser.getEventType() == XmlPullParser.TEXT)
-                    {
-                        switch (currentTag)
-                        {
+                    } else if (parser.getEventType() == XmlPullParser.TEXT) {
+                        switch (currentTag) {
                             case USER_AVATAR_URL_ELEMENT_NAME:
                                 userAvatarUrl = parser.getText();
                                 break;
@@ -277,35 +257,24 @@ public class IdentityPacketExtension
                                 break;
                             default:
                                 break;
-                            }
-                    }
-                    else if (parser.getEventType() == XmlPullParser.END_TAG)
-                    {
+                        }
+                    } else if (parser.getEventType() == XmlPullParser.END_TAG) {
                         currentTag = parser.getName();
                     }
-                }
-                while (!ELEMENT_NAME.equals(currentTag));
-            }
-            catch (XmlPullParserException | IOException e)
-            {
-                if(logger.isDebugEnabled())
-                {
+                } while (!ELEMENT_NAME.equals(currentTag));
+            } catch (XmlPullParserException | IOException e) {
+                if (logger.isDebugEnabled()) {
                     logger.debug("failed to parse IdentityExtension", e);
                 }
             }
 
-
-            if (userAvatarUrl != null && userId != null && userName != null &&
-                groupId != null)
-            {
+            if (userAvatarUrl != null && userId != null && userName != null
+                    && groupId != null) {
                 return new IdentityPacketExtension(userId, userName,
-                                                   userAvatarUrl, groupId);
-            }
-            else
-            {
+                        userAvatarUrl, groupId);
+            } else {
                 return null;
             }
         }
     }
 }
-

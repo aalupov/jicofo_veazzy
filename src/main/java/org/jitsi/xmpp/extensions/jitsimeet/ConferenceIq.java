@@ -30,8 +30,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class ConferenceIq
-    extends IQ
-{
+        extends IQ {
+
     /**
      * Focus namespace.
      */
@@ -55,8 +55,8 @@ public class ConferenceIq
     public static final String READY_ATTR_NAME = "ready";
 
     /**
-     * The name of the attribute that tells to the user what is
-     * the jid of the focus user.
+     * The name of the attribute that tells to the user what is the jid of the
+     * focus user.
      */
     public static final String FOCUS_JID_ATTR_NAME = "focusjid";
 
@@ -110,23 +110,20 @@ public class ConferenceIq
     /**
      * Creates new instance of <tt>ConferenceIq</tt>.
      */
-    public ConferenceIq()
-    {
+    public ConferenceIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(
-            IQChildElementXmlStringBuilder xml)
-    {
+            IQChildElementXmlStringBuilder xml) {
         xml.optAttribute(ROOM_ATTR_NAME, room)
-            .optAttribute(FOCUS_JID_ATTR_NAME, focusJid)
-            .optAttribute(SESSION_ID_ATTR_NAME, sessionId)
-            .optAttribute(MACHINE_UID_ATTR_NAME, machineUID)
-            .optAttribute(IDENTITY_ATTR_NAME, identity);
+                .optAttribute(FOCUS_JID_ATTR_NAME, focusJid)
+                .optAttribute(SESSION_ID_ATTR_NAME, sessionId)
+                .optAttribute(MACHINE_UID_ATTR_NAME, machineUID)
+                .optAttribute(IDENTITY_ATTR_NAME, identity);
 
-        if (ready != null)
-        {
+        if (ready != null) {
             xml.attribute(READY_ATTR_NAME, ready);
         }
 
@@ -137,17 +134,16 @@ public class ConferenceIq
     /**
      * Returns the value of {@link #ready} attribute.
      */
-    public Boolean isReady()
-    {
+    public Boolean isReady() {
         return ready;
     }
 
     /**
      * Sets the value of {@link #ready} attribute of this <tt>ConferenceIq</tt>.
+     *
      * @param ready the value to be set as {@link #ready} attribute value.
      */
-    public void setReady(Boolean ready)
-    {
+    public void setReady(Boolean ready) {
         this.ready = ready;
     }
 
@@ -155,53 +151,51 @@ public class ConferenceIq
      * Returns the value of {@link #room} attribute of this
      * <tt>ConferenceIq</tt>.
      */
-    public EntityBareJid getRoom()
-    {
+    public EntityBareJid getRoom() {
         return room;
     }
 
     /**
      * Sets the {@link #room} attribute of this <tt>ConferenceIq</tt>.
+     *
      * @param room the value to be set as {@link #room} attribute value.
      */
-    public void setRoom(EntityBareJid room)
-    {
+    public void setRoom(EntityBareJid room) {
         this.room = room;
     }
 
     /**
      * Returns the value of {@link #FOCUS_JID_ATTR_NAME} held by this IQ.
      */
-    public String getFocusJid()
-    {
+    public String getFocusJid() {
         return focusJid;
     }
 
     /**
      * Sets the value for the focus JID attribute.
+     *
      * @param focusJid a string with the JID of focus user('username@domain').
      */
-    public void setFocusJid(String focusJid)
-    {
+    public void setFocusJid(String focusJid) {
         this.focusJid = focusJid;
     }
 
     /**
      * Adds property packet extension to this IQ.
+     *
      * @param property the instance <tt>Property</tt> to be added to this IQ.
      */
-    public void addProperty(Property property)
-    {
+    public void addProperty(Property property) {
         addExtension(property);
     }
 
     /**
      * Returns the list of properties contained in this IQ.
+     *
      * @return list of <tt>Property</tt> contained in this IQ.
      */
-    public List<Property> getProperties()
-    {
-        return (List)getExtensions(
+    public List<Property> getProperties() {
+        return (List) getExtensions(
                 Property.ELEMENT_NAME,
                 ConferenceIq.NAMESPACE);
     }
@@ -209,13 +203,12 @@ public class ConferenceIq
     /**
      * Converts list of properties contained in this IQ into the name to value
      * mapping.
+     *
      * @return the map of property names to values as strings.
      */
-    public Map<String, String> getPropertiesMap()
-    {
+    public Map<String, String> getPropertiesMap() {
         Map<String, String> propertiesMap = new HashMap<>();
-        for (Property property : getProperties())
-        {
+        for (Property property : getProperties()) {
             propertiesMap.put(property.getName(), property.getValue());
         }
 
@@ -223,21 +216,20 @@ public class ConferenceIq
     }
 
     /**
-     * Returns the value of {@link ConferenceIq#SESSION_ID_ATTR_NAME}
-     * attribute which corresponds to the ID of client authentication
-     * session. <tt>null</tt> if not specified.
+     * Returns the value of {@link ConferenceIq#SESSION_ID_ATTR_NAME} attribute
+     * which corresponds to the ID of client authentication session.
+     * <tt>null</tt> if not specified.
      */
-    public String getSessionId()
-    {
+    public String getSessionId() {
         return sessionId;
     }
 
     /**
      * Sets the value of {@link ConferenceIq#SESSION_ID_ATTR_NAME} attribute.
+     *
      * @param sessionId the ID of client's authentication session.
      */
-    public void setSessionId(String sessionId)
-    {
+    public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -245,52 +237,50 @@ public class ConferenceIq
      * Returns the value of {@link #MACHINE_UID_ATTR_NAME} carried by this IQ
      * instance(if any).
      */
-    public String getMachineUID()
-    {
+    public String getMachineUID() {
         return machineUID;
     }
 
     /**
      * Sets new value for {@link #MACHINE_UID_ATTR_NAME} attribute.
+     *
      * @param machineUID machine unique identifier to set.
      */
-    public void setMachineUID(String machineUID)
-    {
+    public void setMachineUID(String machineUID) {
         this.machineUID = machineUID;
     }
 
     /**
      * Returns the value of {@link #IDENTITY_ATTR_NAME} stored in this IQ.
      */
-    public String getIdentity()
-    {
+    public String getIdentity() {
         return identity;
     }
 
     /**
      * Sets new value for {@link #IDENTITY_ATTR_NAME} attribute.
+     *
      * @param identity the user's authenticated identity name to set.
      */
-    public void setIdentity(String identity)
-    {
+    public void setIdentity(String identity) {
         this.identity = identity;
     }
 
     /**
      * Adds property to this conference IQ.
+     *
      * @param name the property name
      * @param value the property value
      */
-    public void addProperty(String name, String value)
-    {
+    public void addProperty(String name, String value) {
         addExtension(new Property(name, value));
     }
 
     /**
      * Packet extension for configuration properties.
      */
-    public static class Property extends AbstractPacketExtension
-    {
+    public static class Property extends AbstractPacketExtension {
+
         /**
          * The name of property XML element.
          */
@@ -309,8 +299,7 @@ public class ConferenceIq
         /**
          * Creates new empty <tt>Property</tt> instance.
          */
-        public Property()
-        {
+        public Property() {
             super(ConferenceIq.NAMESPACE, ELEMENT_NAME);
         }
 
@@ -321,8 +310,7 @@ public class ConferenceIq
          * @param name a string that will be the name of new property.
          * @param value a string value for new property.
          */
-        public Property(String name, String value)
-        {
+        public Property(String name, String value) {
             this();
 
             setName(name);
@@ -331,35 +319,33 @@ public class ConferenceIq
 
         /**
          * Sets the name of this property.
+         *
          * @param name a string that will be the name of this property.
          */
-        public void setName(String name)
-        {
+        public void setName(String name) {
             setAttribute(NAME_ATTR_NAME, name);
         }
 
         /**
          * Returns the name of this property.
          */
-        public String getName()
-        {
+        public String getName() {
             return getAttributeAsString(NAME_ATTR_NAME);
         }
 
         /**
          * Sets the value of this property.
+         *
          * @param value a string value for new property.
          */
-        public void setValue(String value)
-        {
+        public void setValue(String value) {
             setAttribute(VALUE_ATTR_NAME, value);
         }
 
         /**
          * Returns the value of this property.
          */
-        public String getValue()
-        {
+        public String getValue() {
             return getAttributeAsString(VALUE_ATTR_NAME);
         }
     }

@@ -19,11 +19,12 @@ import org.jitsi.xmpp.extensions.*;
 
 /**
  * An 'rtcp-mux' extension.
+ *
  * @author Boris Grozev
  */
 public class RtcpmuxPacketExtension
-        extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "encryption" element.
      */
@@ -32,9 +33,7 @@ public class RtcpmuxPacketExtension
     /**
      * Creates a new instance of <tt>RtcpmuxPacketExtension</tt>.
      */
-    public RtcpmuxPacketExtension()
-    {
+    public RtcpmuxPacketExtension() {
         super(null, ELEMENT_NAME);
     }
 }
-

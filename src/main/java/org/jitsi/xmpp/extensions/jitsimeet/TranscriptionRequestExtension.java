@@ -22,8 +22,7 @@ import org.jitsi.xmpp.extensions.*;
  * want a transcriber in the conference.
  */
 public class TranscriptionRequestExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
 
     /**
      * The namespace of this packet extension.
@@ -39,8 +38,7 @@ public class TranscriptionRequestExtension
     /**
      * Default constructor for this extension.
      */
-    public TranscriptionRequestExtension()
-    {
+    public TranscriptionRequestExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

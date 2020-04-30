@@ -34,8 +34,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockRoomMember
-    implements XmppChatMember
-{
+        implements XmppChatMember {
+
     private final Resourcepart name;
 
     private final EntityFullJid address;
@@ -44,154 +44,131 @@ public class MockRoomMember
 
     private ChatRoomMemberRole role = ChatRoomMemberRole.MEMBER;
 
-    MockRoomMember(EntityFullJid address, MockMultiUserChat chatRoom)
-    {
+    MockRoomMember(EntityFullJid address, MockMultiUserChat chatRoom) {
         this.address = address;
         this.name = address.getResourceOrThrow();
         this.room = chatRoom;
     }
 
-    public void setupFeatures(boolean useBundle)
-    {
+    public void setupFeatures(boolean useBundle) {
         OperationSetSimpleCaps caps
                 = room.getParentProvider()
-                .getOperationSet(OperationSetSimpleCaps.class);
+                        .getOperationSet(OperationSetSimpleCaps.class);
 
         MockSetSimpleCapsOpSet mockCaps = (MockSetSimpleCapsOpSet) caps;
 
         List<String> features = DiscoveryUtil.getDefaultParticipantFeatureSet();
-        if (!useBundle)
-        {
+        if (!useBundle) {
             features.remove(DiscoveryUtil.FEATURE_RTCP_MUX);
             features.remove(DiscoveryUtil.FEATURE_RTP_BUNDLE);
         }
 
         MockCapsNode myNode
-            = new MockCapsNode(
-                address, features.toArray(new String[features.size()]));
+                = new MockCapsNode(
+                        address, features.toArray(new String[features.size()]));
 
         mockCaps.addChildNode(myNode);
     }
 
     @Override
-    public ChatRoom getChatRoom()
-    {
+    public ChatRoom getChatRoom() {
         return room;
     }
 
     @Override
-    public ProtocolProviderService getProtocolProvider()
-    {
+    public ProtocolProviderService getProtocolProvider() {
         return room.getParentProvider();
     }
 
     @Override
-    public String getContactAddress()
-    {
+    public String getContactAddress() {
         return address.toString();
     }
 
     @Override
-    public EntityFullJid getOccupantJid()
-    {
+    public EntityFullJid getOccupantJid() {
         return address;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name.toString();
     }
 
     @Override
-    public byte[] getAvatar()
-    {
+    public byte[] getAvatar() {
         return new byte[0];
     }
 
     @Override
-    public Contact getContact()
-    {
+    public Contact getContact() {
         return null;
     }
 
     @Override
-    public ChatRoomMemberRole getRole()
-    {
+    public ChatRoomMemberRole getRole() {
         return role;
     }
 
-    public void leave()
-    {
+    public void leave() {
         room.mockLeave(getName());
     }
 
     @Override
-    public void setRole(ChatRoomMemberRole role)
-    {
+    public void setRole(ChatRoomMemberRole role) {
         this.role = role;
     }
 
     @Override
-    public PresenceStatus getPresenceStatus()
-    {
+    public PresenceStatus getPresenceStatus() {
         return GlobalStatusEnum.ONLINE;
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return null;
     }
 
     @Override
-    public String toString()
-    {
-        return "Member@" + hashCode() + "[" + address +"]";
+    public String toString() {
+        return "Member@" + hashCode() + "[" + address + "]";
     }
 
     @Override
-    public Jid getJid()
-    {
+    public Jid getJid() {
         return address;
     }
 
     @Override
-    public int getJoinOrderNumber()
-    {
+    public int getJoinOrderNumber() {
         //FIXME: implement in order to test start muted feature
         return 0;
     }
 
     @Override
-    public Boolean hasVideoMuted()
-    {
+    public Boolean hasVideoMuted() {
         // FIXME: not implemented
         return null;
     }
 
     @Override
-    public boolean isRobot()
-    {
+    public boolean isRobot() {
         return false;
     }
 
     @Override
-    public Presence getPresence()
-    {
+    public Presence getPresence() {
         // FIXME: not implemented
         return null;
     }
 
     @Override
-    public String getRegion()
-    {
+    public String getRegion() {
         return null;
     }
 
     @Override
-    public String getStatsId()
-    {
+    public String getStatsId() {
         return null;
     }
 }

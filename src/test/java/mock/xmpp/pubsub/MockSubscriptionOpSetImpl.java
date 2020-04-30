@@ -30,46 +30,40 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockSubscriptionOpSetImpl
-    implements OperationSetSubscription
-{
+        implements OperationSetSubscription {
+
     // FIXME: supports single subscriber per node
     private Map<String, SubscriptionListener> listenerMap
-        = new HashMap<String, SubscriptionListener>();
+            = new HashMap<String, SubscriptionListener>();
 
     private Map<String, List<PayloadItem>> nodeItems
-        = new HashMap<String, List<PayloadItem>>();
+            = new HashMap<String, List<PayloadItem>>();
 
     @Override
-    public void subscribe(String node, SubscriptionListener listener)
-    {
+    public void subscribe(String node, SubscriptionListener listener) {
         listenerMap.put(node, listener);
     }
 
     public void fireSubscriptionNotification(String node,
-                                             String itemId,
-                                             ExtensionElement payload)
-    {
+            String itemId,
+            ExtensionElement payload) {
         SubscriptionListener l = listenerMap.get(node);
-        if (l != null)
-        {
+        if (l != null) {
             l.onSubscriptionUpdate(node, itemId, payload);
         }
     }
 
     @Override
-    public void unSubscribe(String node, SubscriptionListener l)
-    {
+    public void unSubscribe(String node, SubscriptionListener l) {
         listenerMap.remove(node);
     }
 
-    public void setNodeItems(String nodeName, List<PayloadItem> items)
-    {
+    public void setNodeItems(String nodeName, List<PayloadItem> items) {
         nodeItems.put(nodeName, items);
     }
 
     @Override
-    public List<PayloadItem> getItems(String node)
-    {
+    public List<PayloadItem> getItems(String node) {
         return nodeItems.get(node);
     }
 }

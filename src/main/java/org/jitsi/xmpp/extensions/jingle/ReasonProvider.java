@@ -24,13 +24,12 @@ import org.xmlpull.v1.*;
  *
  * @author Emil Ivov
  */
-public class ReasonProvider extends ExtensionElementProvider<ReasonPacketExtension>
-{
+public class ReasonProvider extends ExtensionElementProvider<ReasonPacketExtension> {
 
     /**
      * Parses a reason extension sub-packet and creates a {@link
-     * ReasonPacketExtension} instance. At the beginning of the method call,
-     * the xml parser will be positioned on the opening element of the packet
+     * ReasonPacketExtension} instance. At the beginning of the method call, the
+     * xml parser will be positioned on the opening element of the packet
      * extension. As required by the smack API, at the end of the method call,
      * the parser will be positioned on the closing element of the packet
      * extension.
@@ -43,8 +42,7 @@ public class ReasonProvider extends ExtensionElementProvider<ReasonPacketExtensi
      */
     @Override
     public ReasonPacketExtension parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         String text = null;
         Reason reason = null;
 
@@ -53,40 +51,30 @@ public class ReasonProvider extends ExtensionElementProvider<ReasonPacketExtensi
         int eventType;
         String elementName;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
+            if (eventType == XmlPullParser.START_TAG) {
                 // the reason itself.
-                if( reason == null)
-                {
+                if (reason == null) {
                     //let the parse exception fly as it would mean we have
                     //some weird element first in the list.
                     reason = Reason.parseString(elementName);
-                }
-                else if (elementName.equals(
-                                ReasonPacketExtension.TEXT_ELEMENT_NAME))
-                {
+                } else if (elementName.equals(
+                        ReasonPacketExtension.TEXT_ELEMENT_NAME)) {
                     text = parseText(parser);
-                }
-                else
-                {
+                } else {
                     //this is an element that we don't currently support.
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
-                if (parser.getName().equals(ReasonPacketExtension.ELEMENT_NAME))
-                {
+            } else if (eventType == XmlPullParser.END_TAG) {
+                if (parser.getName().equals(ReasonPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }
         }
         ReasonPacketExtension reasonExt
-            = new ReasonPacketExtension(reason, text, null);
+                = new ReasonPacketExtension(reason, text, null);
 
         return reasonExt;
 
@@ -104,23 +92,18 @@ public class ReasonProvider extends ExtensionElementProvider<ReasonPacketExtensi
      * @throws java.lang.Exception if an error occurs parsing the XML.
      */
     public String parseText(XmlPullParser parser)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
 
         int eventType;
         String text = null;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
 
-            if (eventType == XmlPullParser.TEXT)
-            {
+            if (eventType == XmlPullParser.TEXT) {
                 text = parser.getText();
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 done = true;
             }
         }

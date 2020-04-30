@@ -19,17 +19,17 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Stanza;
 
 public class VCardTempXUpdateInterceptor
-    implements StanzaListener
-{
+        implements StanzaListener {
+
     private VCardTempXUpdatePresenceExtension presenceExtension;
 
     /**
      * Creates a new instance of this class.
+     *
      * @param extension the extension to add to the presence packets.
      */
     public VCardTempXUpdateInterceptor(
-        VCardTempXUpdatePresenceExtension extension)
-    {
+            VCardTempXUpdatePresenceExtension extension) {
         this.presenceExtension = extension;
     }
 
@@ -39,13 +39,12 @@ public class VCardTempXUpdateInterceptor
      * @param packet The sent presence packet.
      */
     @Override
-    public void processStanza(Stanza packet)
-    {
+    public void processStanza(Stanza packet) {
         // remove the current if any, to no accumulate extensions
         // when updating presence
         packet.removeExtension(
-            presenceExtension.getElementName(),
-            presenceExtension.getNamespace());
+                presenceExtension.getElementName(),
+                presenceExtension.getNamespace());
 
         packet.addExtension(presenceExtension);
     }

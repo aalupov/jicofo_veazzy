@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class BundlePacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The XML element name of {@link BundlePacketExtension}.
      */
@@ -40,8 +40,7 @@ public class BundlePacketExtension
      * <tt>namespace</tt> and <tt>elementName</tt>.
      *
      */
-    public BundlePacketExtension()
-    {
+    public BundlePacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

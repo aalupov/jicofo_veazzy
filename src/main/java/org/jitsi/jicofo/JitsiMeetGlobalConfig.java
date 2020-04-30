@@ -27,13 +27,13 @@ import org.osgi.framework.*;
  *
  * @author Pawel Domas
  */
-public class JitsiMeetGlobalConfig
-{
+public class JitsiMeetGlobalConfig {
+
     /**
      * The logger instance used by this class.
      */
     private final static Logger logger
-        = Logger.getLogger(JitsiMeetGlobalConfig.class);
+            = Logger.getLogger(JitsiMeetGlobalConfig.class);
 
     /**
      * The name of the property which controls whether jicofo will inject a
@@ -47,20 +47,20 @@ public class JitsiMeetGlobalConfig
      * The name of configuration property that disable auto owner role granting.
      */
     private final static String DISABLE_AUTO_OWNER_PNAME
-        = "org.jitsi.jicofo.DISABLE_AUTO_OWNER";
+            = "org.jitsi.jicofo.DISABLE_AUTO_OWNER";
 
     /**
      * The name of configuration property that sets {@link #maxSourcesPerUser}.
      */
     private final static String MAX_SSRC_PER_USER_CONFIG_PNAME
-        = "org.jitsi.jicofo.MAX_SSRC_PER_USER";
+            = "org.jitsi.jicofo.MAX_SSRC_PER_USER";
 
     /**
      * The name of configuration property that sets
      * {@link #singleParticipantTimeout}.
      */
     private final static String SINGLE_PARTICIPANT_TIMEOUT_CONFIG_PNAME
-        = "org.jitsi.jicofo.SINGLE_PARTICIPANT_TIMEOUT";
+            = "org.jitsi.jicofo.SINGLE_PARTICIPANT_TIMEOUT";
 
     /**
      * The default value for {@link #maxSourcesPerUser}.
@@ -77,7 +77,7 @@ public class JitsiMeetGlobalConfig
      * wait for Jibri to start recording from the time it accepted START request
      */
     private static final String JIBRI_PENDING_TIMEOUT_PROP_NAME
-        = "org.jitsi.jicofo.jibri.PENDING_TIMEOUT";
+            = "org.jitsi.jicofo.jibri.PENDING_TIMEOUT";
 
     /**
      * The default value for {@link #JIBRI_PENDING_TIMEOUT_PROP_NAME}.
@@ -85,9 +85,9 @@ public class JitsiMeetGlobalConfig
     private static final int JIBRI_DEFAULT_PENDING_TIMEOUT = 90;
 
     /**
-     * The name of the config property which specifies how many times
-     * we'll retry a given Jibri request before giving up.  Set to
-     * -1 to allow infinite retries.
+     * The name of the config property which specifies how many times we'll
+     * retry a given Jibri request before giving up. Set to -1 to allow infinite
+     * retries.
      */
     public static final String NUM_JIBRI_RETRIES_PNAME
             = "org.jitsi.jicofo.NUM_JIBRI_RETRIES";
@@ -96,7 +96,6 @@ public class JitsiMeetGlobalConfig
      * The default value for {@link #NUM_JIBRI_RETRIES_PNAME}
      */
     private static final int DEFAULT_NUM_JIBRI_RETRIES = 5;
-
 
     /**
      * Flag indicates whether auto owner feature is active. First participant to
@@ -119,8 +118,8 @@ public class JitsiMeetGlobalConfig
     private int numJibriRetries;
 
     /**
-     * Maximal amount of sources per media that can be advertised by
-     * conference participant.
+     * Maximal amount of sources per media that can be advertised by conference
+     * participant.
      */
     private int maxSourcesPerUser;
 
@@ -148,21 +147,22 @@ public class JitsiMeetGlobalConfig
 
     /**
      * Runs <tt>JitsiMeetGlobalConfig</tt> service on given OSGi context.
+     *
      * @param ctx the OSGi context to which new service instance will be bound.
      * @return an instance of newly created and registered global config service
      */
-    static JitsiMeetGlobalConfig startGlobalConfigService(BundleContext ctx)
-    {
+    static JitsiMeetGlobalConfig startGlobalConfigService(BundleContext ctx) {
         JitsiMeetGlobalConfig config = new JitsiMeetGlobalConfig();
 
         config.serviceRegistration
-            = ctx.registerService(JitsiMeetGlobalConfig.class, config, null);
+                = ctx.registerService(JitsiMeetGlobalConfig.class, config, null);
 
         ConfigurationService configService
-            = ServiceUtils.getService(ctx, ConfigurationService.class);
+                = ServiceUtils.getService(ctx, ConfigurationService.class);
 
-        if (configService == null)
+        if (configService == null) {
             throw new RuntimeException("ConfigService not found !");
+        }
 
         config.init(configService);
 
@@ -173,18 +173,16 @@ public class JitsiMeetGlobalConfig
      * Obtains <tt>JitsiMeetGlobalConfig</tt> from given OSGi instance.
      *
      * @param bc the context for which we're going to obtain global config
-     *           instance.
+     * instance.
      *
      * @return <tt>JitsiMeetGlobalConfig</tt> if one is currently registered as
-     *         a service in given OSGi context or <tt>null</tt> otherwise.
+     * a service in given OSGi context or <tt>null</tt> otherwise.
      */
-    public static JitsiMeetGlobalConfig getGlobalConfig(BundleContext bc)
-    {
+    public static JitsiMeetGlobalConfig getGlobalConfig(BundleContext bc) {
         return ServiceUtils.getService(bc, JitsiMeetGlobalConfig.class);
     }
 
-    private JitsiMeetGlobalConfig()
-    {
+    private JitsiMeetGlobalConfig() {
 
     }
 
@@ -192,59 +190,51 @@ public class JitsiMeetGlobalConfig
      * Initializes this instance.
      *
      * @param configService <tt>ConfigService</tt> the configuration service
-     *        which will be used to obtain values.
+     * which will be used to obtain values.
      */
-    private void init(ConfigurationService configService)
-    {
+    private void init(ConfigurationService configService) {
         if (FocusBundleActivator.getConfigService()
-                .getBoolean(DISABLE_AUTO_OWNER_PNAME, false))
-        {
+                .getBoolean(DISABLE_AUTO_OWNER_PNAME, false)) {
             autoOwner = false;
         }
 
         logger.info("Automatically grant 'owner' role: " + autoOwner);
 
         this.maxSourcesPerUser
-            = configService.getInt(
-                    MAX_SSRC_PER_USER_CONFIG_PNAME, DEFAULT_MAX_SSRC_PER_USER);
+                = configService.getInt(
+                        MAX_SSRC_PER_USER_CONFIG_PNAME, DEFAULT_MAX_SSRC_PER_USER);
 
         jibriPendingTimeout
-            = configService.getInt(
-                    JIBRI_PENDING_TIMEOUT_PROP_NAME,
-                    JIBRI_DEFAULT_PENDING_TIMEOUT);
+                = configService.getInt(
+                        JIBRI_PENDING_TIMEOUT_PROP_NAME,
+                        JIBRI_DEFAULT_PENDING_TIMEOUT);
 
-        if (jibriPendingTimeout > 0)
-        {
+        if (jibriPendingTimeout > 0) {
             logger.info(
                     "Jibri requests in PENDING state will be timed out after: "
-                        + jibriPendingTimeout + " seconds");
-        }
-        else
-        {
+                    + jibriPendingTimeout + " seconds");
+        } else {
             logger.warn("Jibri PENDING timeouts are disabled");
         }
 
         numJibriRetries = configService.getInt(
-            NUM_JIBRI_RETRIES_PNAME, DEFAULT_NUM_JIBRI_RETRIES);
-        if (numJibriRetries >= 0)
-        {
-            logger.info("Will attempt a maximum of " + numJibriRetries +
-                    " Jibri retries after failure");
-        }
-        else
-        {
+                NUM_JIBRI_RETRIES_PNAME, DEFAULT_NUM_JIBRI_RETRIES);
+        if (numJibriRetries >= 0) {
+            logger.info("Will attempt a maximum of " + numJibriRetries
+                    + " Jibri retries after failure");
+        } else {
             logger.info("Will retry Jibri requests infinitely "
-                + "(if a Jibri is available)");
+                    + "(if a Jibri is available)");
         }
 
         singleParticipantTimeout
-            = configService.getLong(
-                    SINGLE_PARTICIPANT_TIMEOUT_CONFIG_PNAME,
-                    DEFAULT_SINGLE_PARTICIPANT_TIMEOUT);
+                = configService.getLong(
+                        SINGLE_PARTICIPANT_TIMEOUT_CONFIG_PNAME,
+                        DEFAULT_SINGLE_PARTICIPANT_TIMEOUT);
 
         logger.info(
                 "Lonely participants will be \"terminated\" after "
-                    + singleParticipantTimeout +" milliseconds");
+                + singleParticipantTimeout + " milliseconds");
 
         injectSsrcForRecvOnlyEndpoints
                 = configService.getBoolean(
@@ -254,10 +244,8 @@ public class JitsiMeetGlobalConfig
     /**
      * Unregisters this service instance from OSGi context.
      */
-    void stopGlobalConfigService()
-    {
-        if (serviceRegistration != null)
-        {
+    void stopGlobalConfigService() {
+        if (serviceRegistration != null) {
             serviceRegistration.unregister();
             serviceRegistration = null;
         }
@@ -269,18 +257,17 @@ public class JitsiMeetGlobalConfig
      *
      * @return <tt>int</tt> value - see above.
      */
-    public int getMaxSourcesPerUser()
-    {
+    public int getMaxSourcesPerUser() {
         return maxSourcesPerUser;
     }
 
     /**
      * Gets the value for "single participant timeout".
+     *
      * @return the value in milliseconds.
      * @see #singleParticipantTimeout
      */
-    public long getSingleParticipantTimeout()
-    {
+    public long getSingleParticipantTimeout() {
         return singleParticipantTimeout;
     }
 
@@ -290,21 +277,20 @@ public class JitsiMeetGlobalConfig
      * disabled in the current session.
      *
      * @return <tt>int</tt> which is the number of seconds we wait for the Jibri
-     *         to start recording after it accepted our request.
+     * to start recording after it accepted our request.
      */
-    public int getJibriPendingTimeout()
-    {
+    public int getJibriPendingTimeout() {
         return jibriPendingTimeout;
     }
 
     /**
-     * Tells how many retry attempts we'll make for a Jibri request when
-     * a Jibri fails
+     * Tells how many retry attempts we'll make for a Jibri request when a Jibri
+     * fails
+     *
      * @return the amount of retry attempts we'll make for a Jibri request when
      * a Jibri fails
      */
-    public int getNumJibriRetries()
-    {
+    public int getNumJibriRetries() {
         return numJibriRetries;
     }
 
@@ -316,8 +302,7 @@ public class JitsiMeetGlobalConfig
      * @return <tt>true</tt> if the auto-owner feature is enabled or
      * <tt>false</tt> otherwise.
      */
-    public boolean isAutoOwnerEnabled()
-    {
+    public boolean isAutoOwnerEnabled() {
         return this.autoOwner;
     }
 }

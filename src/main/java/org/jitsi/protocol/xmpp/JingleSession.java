@@ -27,8 +27,8 @@ import java.util.*;
  * @author Pawel Domas
  * @author Lyubomir Marinov
  */
-public class JingleSession
-{
+public class JingleSession {
+
     /**
      * Jingle session identifier.
      */
@@ -60,17 +60,16 @@ public class JingleSession
      *
      * @param sid Jingle session identifier of new instance.
      * @param address remote peer XMPP address.
-     * @param requestHandler request handler that will be associated with
-     *                       newly created instance.
+     * @param requestHandler request handler that will be associated with newly
+     * created instance.
      */
     public JingleSession(String sid, Jid address,
-                         JingleRequestHandler requestHandler)
-    {
+            JingleRequestHandler requestHandler) {
 
         this.sid = sid;
         this.address = address;
         this.requestHandler
-            = Objects.requireNonNull(requestHandler, "requestHandler");
+                = Objects.requireNonNull(requestHandler, "requestHandler");
     }
 
     /**
@@ -78,8 +77,7 @@ public class JingleSession
      *
      * @return Jingle session identifier
      */
-    public String getSessionID()
-    {
+    public String getSessionID() {
         return sid;
     }
 
@@ -88,8 +86,7 @@ public class JingleSession
      *
      * @return remote peer's full XMPP address
      */
-    public Jid getAddress()
-    {
+    public Jid getAddress() {
         return address;
     }
 
@@ -100,8 +97,7 @@ public class JingleSession
      * @return <tt>JingleRequestHandler</tt> that is responsible for handling
      * request for this Jingle session
      */
-    public JingleRequestHandler getRequestHandler()
-    {
+    public JingleRequestHandler getRequestHandler() {
         return requestHandler;
     }
 
@@ -114,8 +110,7 @@ public class JingleSession
      * remote peer in response to our {@code session-initiate} which initialized
      * this instance; otherwise, {@code false}
      */
-    public boolean isAccepted()
-    {
+    public boolean isAccepted() {
         return _accepted;
     }
 
@@ -128,8 +123,7 @@ public class JingleSession
      * from the remote peer in response to our {@code session-initiate} which
      * initialized this instance; otherwise, {@code false}
      */
-    public void setAccepted(boolean accepted)
-    {
+    public void setAccepted(boolean accepted) {
         _accepted = accepted;
     }
 }

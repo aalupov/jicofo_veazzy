@@ -26,32 +26,30 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class JingleInfoQueryIQProvider
-    extends IQProvider<JingleInfoQueryIQ>
-{
+        extends IQProvider<JingleInfoQueryIQ> {
+
     /**
      * STUN packet extension provider.
      */
-    private final ExtensionElementProvider stunProvider =
-        new StunProvider();
+    private final ExtensionElementProvider stunProvider
+            = new StunProvider();
 
     /**
      * Relay packet extension provider.
      */
-    private final ExtensionElementProvider relayProvider =
-        new RelayProvider();
+    private final ExtensionElementProvider relayProvider
+            = new RelayProvider();
 
     /**
      * Creates a new instance of the <tt>JingleInfoQueryIQProvider</tt> and
      * register all related extension providers. It is the responsibility of the
      * application to register the <tt>JingleInfoQueryIQProvider</tt> itself.
      */
-    public JingleInfoQueryIQProvider()
-    {
+    public JingleInfoQueryIQProvider() {
         ProviderManager.addExtensionProvider(
                 ServerPacketExtension.ELEMENT_NAME,
                 ServerPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider
-                    <ServerPacketExtension>(ServerPacketExtension.class));
+                new DefaultPacketExtensionProvider<ServerPacketExtension>(ServerPacketExtension.class));
     }
 
     /**
@@ -63,32 +61,24 @@ public class JingleInfoQueryIQProvider
      */
     @Override
     public JingleInfoQueryIQ parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         JingleInfoQueryIQ iq = new JingleInfoQueryIQ();
 
         // Now go on and parse the session element's content.
-        while (!done)
-        {
+        while (!done) {
             int eventType = parser.next();
             String elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(StunPacketExtension.ELEMENT_NAME))
-                {
-                    iq.addExtension((StunPacketExtension)stunProvider.parse(parser));
-                }
-                else if(elementName.equals(RelayPacketExtension.ELEMENT_NAME))
-                {
-                    iq.addExtension((RelayPacketExtension)relayProvider.parse(parser));
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(StunPacketExtension.ELEMENT_NAME)) {
+                    iq.addExtension((StunPacketExtension) stunProvider.parse(parser));
+                } else if (elementName.equals(RelayPacketExtension.ELEMENT_NAME)) {
+                    iq.addExtension((RelayPacketExtension) relayProvider.parse(parser));
                 }
             }
-            if (eventType == XmlPullParser.END_TAG)
-            {
-                if (parser.getName().equals(JingleInfoQueryIQ.ELEMENT_NAME))
-                {
+            if (eventType == XmlPullParser.END_TAG) {
+                if (parser.getName().equals(JingleInfoQueryIQ.ELEMENT_NAME)) {
                     done = true;
                 }
             }

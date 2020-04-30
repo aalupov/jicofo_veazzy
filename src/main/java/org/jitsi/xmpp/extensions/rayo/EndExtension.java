@@ -25,8 +25,8 @@ import org.jxmpp.jid.Jid;
  * @author Pawel Domas
  */
 public class EndExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML element name of this extension.
      */
@@ -40,45 +40,42 @@ public class EndExtension
     /**
      * Creates new instance.
      */
-    protected EndExtension()
-    {
+    protected EndExtension() {
         super(RayoIqProvider.NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Checks if given <tt>elementName</tt> is valid end reason element.
+     *
      * @param elementName the XML element name to check.
      * @return <tt>true</tt> if given <tt>elementName</tt> is valid end reason
-     *         element.
+     * element.
      */
-    public static boolean isValidReason(String elementName)
-    {
+    public static boolean isValidReason(String elementName) {
         return ReasonExtension.BUSY.equals(elementName)
-            || ReasonExtension.ERROR.equals(elementName)
-            || ReasonExtension.HANGUP.equals(elementName)
-            || ReasonExtension.HANGUP_COMMND.equals(elementName)
-            || ReasonExtension.REJECTED.equals(elementName)
-            || ReasonExtension.TIMEOUT.equals(elementName);
+                || ReasonExtension.ERROR.equals(elementName)
+                || ReasonExtension.HANGUP.equals(elementName)
+                || ReasonExtension.HANGUP_COMMND.equals(elementName)
+                || ReasonExtension.REJECTED.equals(elementName)
+                || ReasonExtension.TIMEOUT.equals(elementName);
     }
-
 
     /**
      * Returns {@link ReasonExtension} associated with this instance.
+     *
      * @return {@link ReasonExtension} associated with this instance.
      */
-    public ReasonExtension getReason()
-    {
+    public ReasonExtension getReason() {
         return reason;
     }
 
     /**
      * Sets new {@link ReasonExtension} for this <tt>EndExtension</tt> instance.
+     *
      * @param newReason the new {@link ReasonExtension} to set.
      */
-    public void setReason(ReasonExtension newReason)
-    {
-        if (this.reason != null)
-        {
+    public void setReason(ReasonExtension newReason) {
+        if (this.reason != null) {
             getChildExtensions().remove(this.reason);
         }
 
@@ -90,14 +87,14 @@ public class EndExtension
     /**
      * Creates 'Presence' packet containing call ended Rayo notification that
      * contains specified end <tt>reason</tt>.
+     *
      * @param from source JID of this event.
      * @param to destination JID.
      * @param reason call end reason string. One of {@link ReasonExtension}
-     *               static constants.
+     * static constants.
      * @return 'Presence' packet containing call ended Rayo notification.
      */
-    public static Presence createEnd(Jid from, Jid to, String reason)
-    {
+    public static Presence createEnd(Jid from, Jid to, String reason) {
         Presence presence = new Presence(Presence.Type.unavailable);
         presence.setFrom(from);
         presence.setTo(to);

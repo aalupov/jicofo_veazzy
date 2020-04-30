@@ -36,8 +36,8 @@ import java.util.*;
 /**
  *
  */
-public class TestConference
-{
+public class TestConference {
+
     private final BundleContext bc;
 
     private String serverName;
@@ -59,9 +59,8 @@ public class TestConference
     private MockMultiUserChat chat;
 
     static public TestConference allocate(
-        BundleContext ctx, String serverName, EntityBareJid roomName)
-        throws Exception
-    {
+            BundleContext ctx, String serverName, EntityBareJid roomName)
+            throws Exception {
         TestConference newConf = new TestConference(ctx);
 
         newConf.createJvbAndConference(serverName, roomName);
@@ -70,10 +69,9 @@ public class TestConference
     }
 
     static public TestConference allocate(
-        BundleContext ctx, String serverName, EntityBareJid roomName,
-        MockVideobridge mockBridge)
-        throws Exception
-    {
+            BundleContext ctx, String serverName, EntityBareJid roomName,
+            MockVideobridge mockBridge)
+            throws Exception {
         TestConference newConf = new TestConference(ctx);
 
         newConf.createConferenceRoom(serverName, roomName, mockBridge);
@@ -81,23 +79,21 @@ public class TestConference
         return newConf;
     }
 
-    public TestConference(BundleContext osgi)
-    {
+    public TestConference(BundleContext osgi) {
         this.bc = osgi;
         this.meetServicesRef
-            = new OSGIServiceRef<>(osgi, JitsiMeetServices.class);
+                = new OSGIServiceRef<>(osgi, JitsiMeetServices.class);
         this.focusManagerRef = new OSGIServiceRef<>(osgi, FocusManager.class);
     }
 
     private void createJvbAndConference(String serverName, EntityBareJid roomName)
-        throws Exception
-    {
+            throws Exception {
         this.mockBridgeJid = JidCreate.from("mockjvb." + serverName);
 
         MockVideobridge mockBridge
-            = new MockVideobridge(
-                    new MockXmppConnection(mockBridgeJid),
-                    mockBridgeJid);
+                = new MockVideobridge(
+                        new MockXmppConnection(mockBridgeJid),
+                        mockBridgeJid);
 
         mockBridge.start(bc);
 
@@ -107,91 +103,79 @@ public class TestConference
     }
 
     public void stop()
-        throws Exception
-    {
+            throws Exception {
         mockBridge.stop(bc);
     }
 
     private void createConferenceRoom(String serverName, EntityBareJid roomName,
-                                      MockVideobridge mockJvb)
-        throws Exception
-    {
+            MockVideobridge mockJvb)
+            throws Exception {
         this.serverName = serverName;
         this.roomName = roomName;
         this.mockBridge = mockJvb;
         this.mockBridgeJid = mockJvb.getBridgeJid();
 
-        HashMap<String,String> properties = new HashMap<>();
+        HashMap<String, String> properties = new HashMap<>();
 
         focusManagerRef.get().conferenceRequest(roomName, properties);
 
         this.conference = focusManagerRef.get().getConference(roomName);
 
         MockMultiUserChatOpSet mucOpSet
-            = getFocusProtocolProvider().getMockChatOpSet();
+                = getFocusProtocolProvider().getMockChatOpSet();
 
         this.chat = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
     }
 
-    public MockProtocolProvider getFocusProtocolProvider()
-    {
-        if (focusProtocolProvider == null)
-        {
+    public MockProtocolProvider getFocusProtocolProvider() {
+        if (focusProtocolProvider == null) {
             focusProtocolProvider
-                = (MockProtocolProvider) focusManagerRef
-                        .get().getProtocolProvider();
+                    = (MockProtocolProvider) focusManagerRef
+                            .get().getProtocolProvider();
         }
         return focusProtocolProvider;
     }
 
-    public MockVideobridge getMockVideoBridge()
-    {
+    public MockVideobridge getMockVideoBridge() {
         return mockBridge;
     }
 
-    public void addParticipant(MockParticipant user)
-    {
+    public void addParticipant(MockParticipant user) {
         user.join(chat);
     }
 
-    public MockParticipant addParticipant()
-    {
+    public MockParticipant addParticipant() {
         MockParticipant newParticipant
-            = new MockParticipant(StringGenerator.nextRandomStr());
+                = new MockParticipant(StringGenerator.nextRandomStr());
 
         newParticipant.join(chat);
 
         return newParticipant;
     }
 
-    public ConferenceUtility getConferenceUtility()
-    {
+    public ConferenceUtility getConferenceUtility() {
         return new ConferenceUtility(conference);
     }
 
-    public long[] getSimulcastLayersSSRCs(Jid peerJid)
-    {
+    public long[] getSimulcastLayersSSRCs(Jid peerJid) {
         String conferenceId = conference.getJvbConferenceId();
         String endpointId = peerJid.getResourceOrEmpty().toString();
         List<RTPEncodingDesc> layers
-            = mockBridge.getSimulcastLayers(conferenceId, endpointId);
+                = mockBridge.getSimulcastLayers(conferenceId, endpointId);
 
         long[] ssrcs = new long[layers.size()];
         int idx = 0;
-        for (RTPEncodingDesc layer : layers)
-        {
+        for (RTPEncodingDesc layer : layers) {
             ssrcs[idx++] = layer.getPrimarySSRC();
         }
         return ssrcs;
     }
 
-    public int getParticipantCount()
-    {
+    public int getParticipantCount() {
         return conference.getParticipantCount();
     }
 
-    public EntityBareJid getRoomName()
-    {
+    public EntityBareJid getRoomName() {
         return roomName;
     }
 }

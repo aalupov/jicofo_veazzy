@@ -21,8 +21,7 @@ package org.jitsi.xmpp.extensions.colibri;
  *
  * @author Lyubomir Marinov
  */
-public enum RTPLevelRelayType
-{
+public enum RTPLevelRelayType {
     /**
      * The type of RTP-level relay which performs content mixing on the received
      * media. In order to mix the received content, the relay will usually
@@ -31,7 +30,6 @@ public enum RTPLevelRelayType
      * which represents the mix of the received content.
      */
     MIXER,
-
     /**
      * The type of RTP-level relay which does not perform content mixing on the
      * received media and rather forwards the received RTP and RTCP packets. The
@@ -53,14 +51,14 @@ public enum RTPLevelRelayType
      * when <tt>toString()</tt> is invoked on them
      * @throws NullPointerException if <tt>s</tt> is <tt>null</tt>
      */
-    public static RTPLevelRelayType parseRTPLevelRelayType(String s)
-    {
-        if (s == null)
+    public static RTPLevelRelayType parseRTPLevelRelayType(String s) {
+        if (s == null) {
             throw new NullPointerException("s");
-        for (RTPLevelRelayType v : values())
-        {
-            if (v.toString().equalsIgnoreCase(s))
+        }
+        for (RTPLevelRelayType v : values()) {
+            if (v.toString().equalsIgnoreCase(s)) {
                 return v;
+            }
         }
         throw new IllegalArgumentException(s);
     }
@@ -69,8 +67,7 @@ public enum RTPLevelRelayType
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name().toLowerCase();
     }
 }

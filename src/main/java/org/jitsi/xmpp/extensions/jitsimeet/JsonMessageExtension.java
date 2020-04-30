@@ -18,16 +18,16 @@ package org.jitsi.xmpp.extensions.jitsimeet;
 import org.jitsi.xmpp.extensions.*;
 
 /**
- * An extension of the message stanza for sending json messages.
- * The extension looks like follows:
+ * An extension of the message stanza for sending json messages. The extension
+ * looks like follows:
  *
- *  <pre>{@code <json-message>json_content_here</json-message>}</pre>
+ * <pre>{@code <json-message>json_content_here</json-message>}</pre>
  *
  * @author Praveen Kumar Gupta
  */
 public class JsonMessageExtension
-        extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace (xmlns attribute) of this json-message packet.
      */
@@ -41,19 +41,17 @@ public class JsonMessageExtension
     /**
      * Creates a {@link JsonMessageExtension} instance.
      */
-    public JsonMessageExtension()
-    {
+    public JsonMessageExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
-     * Initializes a {@link JsonMessageExtension} instance with a given
-     * string value for its json content.
+     * Initializes a {@link JsonMessageExtension} instance with a given string
+     * value for its json content.
      *
      * @param json the string value of the json content.
      */
-    public JsonMessageExtension(String json)
-    {
+    public JsonMessageExtension(String json) {
         super(NAMESPACE, ELEMENT_NAME);
 
         setText(json);
@@ -61,10 +59,10 @@ public class JsonMessageExtension
 
     /**
      * Returns the content of the json-message packet.
+     *
      * @return the json string.
      */
-    public String getJson()
-    {
+    public String getJson() {
         return getText();
     }
 }

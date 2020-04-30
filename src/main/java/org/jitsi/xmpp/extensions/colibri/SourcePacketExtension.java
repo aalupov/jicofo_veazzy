@@ -32,10 +32,10 @@ import org.jivesoftware.smack.packet.*;
  * @author Pawel Domas
  */
 public class SourcePacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     private final static Logger logger
-        = Logger.getLogger(SourcePacketExtension.class);
+            = Logger.getLogger(SourcePacketExtension.class);
 
     /**
      * The XML name of the <tt>setup</tt> element defined by Source-Specific
@@ -61,9 +61,10 @@ public class SourcePacketExtension
      */
     public static final String RID_ATTR_NAME = "rid";
 
-    /** Initializes a new <tt>SourcePacketExtension</tt> instance. */
-    public SourcePacketExtension()
-    {
+    /**
+     * Initializes a new <tt>SourcePacketExtension</tt> instance.
+     */
+    public SourcePacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -74,8 +75,7 @@ public class SourcePacketExtension
      * @param parameter the <tt>ParameterPacketExtension</tt> to add to this
      * source
      */
-    public void addParameter(ParameterPacketExtension parameter)
-    {
+    public void addParameter(ParameterPacketExtension parameter) {
         addChildExtension(parameter);
     }
 
@@ -85,22 +85,21 @@ public class SourcePacketExtension
      *
      * @return the <tt>ParameterPacketExtension</tt>s of this source
      */
-    public List<ParameterPacketExtension> getParameters()
-    {
+    public List<ParameterPacketExtension> getParameters() {
         return getChildExtensionsOfType(ParameterPacketExtension.class);
     }
 
     /**
      * Finds the value of SSRC parameter identified by given name.
+     *
      * @param name the name of SSRC parameter to find.
      * @return value of SSRC parameter
      */
-    public String getParameter(String name)
-    {
-        for (ParameterPacketExtension param : getParameters())
-        {
-            if (name.equals(param.getName()))
+    public String getParameter(String name) {
+        for (ParameterPacketExtension param : getParameters()) {
+            if (name.equals(param.getName())) {
                 return param.getValue();
+            }
         }
         return null;
     }
@@ -110,8 +109,7 @@ public class SourcePacketExtension
      *
      * @return the synchronization source (SSRC) ID of this source
      */
-    public long getSSRC()
-    {
+    public long getSSRC() {
         String s = getAttributeAsString(SSRC_ATTR_NAME);
 
         return (s == null) ? -1 : Long.parseLong(s);
@@ -122,14 +120,10 @@ public class SourcePacketExtension
      *
      * @param ssrc the synchronization source (SSRC) ID to be set on this source
      */
-    public void setSSRC(long ssrc)
-    {
-        if (ssrc == -1)
-        {
+    public void setSSRC(long ssrc) {
+        if (ssrc == -1) {
             removeAttribute(SSRC_ATTR_NAME);
-        }
-        else
-        {
+        } else {
             setAttribute(SSRC_ATTR_NAME, Long.toString(0xffffffffL & ssrc));
         }
     }
@@ -139,8 +133,7 @@ public class SourcePacketExtension
      *
      * @return true if it has an ssrc, false otherwise
      */
-    public boolean hasSSRC()
-    {
+    public boolean hasSSRC() {
         return getAttributeAsString(SSRC_ATTR_NAME) != null;
     }
 
@@ -149,8 +142,7 @@ public class SourcePacketExtension
      *
      * @return the rid of the source or null
      */
-    public String getRid()
-    {
+    public String getRid() {
         return getAttributeAsString(RID_ATTR_NAME);
     }
 
@@ -159,14 +151,10 @@ public class SourcePacketExtension
      *
      * @param rid the rid to be set (or null to clear the existing rid)
      */
-    public void setRid(String rid)
-    {
-        if (rid == null)
-        {
+    public void setRid(String rid) {
+        if (rid == null) {
             removeAttribute(RID_ATTR_NAME);
-        }
-        else
-        {
+        } else {
             setAttribute(RID_ATTR_NAME, rid);
         }
     }
@@ -176,29 +164,23 @@ public class SourcePacketExtension
      *
      * @return true if it has an rid, false otherwise
      */
-    public boolean hasRid()
-    {
+    public boolean hasRid() {
         return getAttribute(RID_ATTR_NAME) != null;
     }
 
     /**
-     * Check if this source matches the given one with regards to
-     * matching source identifiers (ssrc or rid)
+     * Check if this source matches the given one with regards to matching
+     * source identifiers (ssrc or rid)
      *
      * @param other the other SourcePacketExtension to compare to
-     * @return true if this SourcePacketExtension and the one
-     * given have matching source identifiers.  NOTE: will return
-     * false if neither SourcePacketExtension has any source
-     * identifier set
+     * @return true if this SourcePacketExtension and the one given have
+     * matching source identifiers. NOTE: will return false if neither
+     * SourcePacketExtension has any source identifier set
      */
-    public boolean sourceEquals(SourcePacketExtension other)
-    {
-        if (hasSSRC() && other.hasSSRC())
-        {
+    public boolean sourceEquals(SourcePacketExtension other) {
+        if (hasSSRC() && other.hasSSRC()) {
             return getSSRC() == other.getSSRC();
-        }
-        else if (hasRid() && other.hasRid())
-        {
+        } else if (hasRid() && other.hasRid()) {
             return getRid().equals(other.getRid());
         }
         return false;
@@ -207,21 +189,16 @@ public class SourcePacketExtension
     /**
      * Returns deep copy of this <tt>SourcePacketExtension</tt>.
      */
-    public SourcePacketExtension copy()
-    {
+    public SourcePacketExtension copy() {
         SourcePacketExtension copy
-            = AbstractPacketExtension.clone(this);
+                = AbstractPacketExtension.clone(this);
 
-        for (ExtensionElement ppe : getChildExtensions())
-        {
-            if (ppe instanceof AbstractPacketExtension)
-            {
+        for (ExtensionElement ppe : getChildExtensions()) {
+            if (ppe instanceof AbstractPacketExtension) {
                 copy.addChildExtension(
-                    AbstractPacketExtension.clone(
-                        (AbstractPacketExtension) ppe));
-            }
-            else
-            {
+                        AbstractPacketExtension.clone(
+                                (AbstractPacketExtension) ppe));
+            } else {
                 logger.error("Failed to clone " + ppe);
             }
         }
@@ -229,18 +206,12 @@ public class SourcePacketExtension
         return copy;
     }
 
-    public String toString()
-    {
-        if (hasRid())
-        {
+    public String toString() {
+        if (hasRid()) {
             return "rid=" + getRid();
-        }
-        else if (hasSSRC())
-        {
+        } else if (hasSSRC()) {
             return "ssrc=" + getAttributeAsString(SSRC_ATTR_NAME);
-        }
-        else
-        {
+        } else {
             return "[no identifier]";
         }
     }

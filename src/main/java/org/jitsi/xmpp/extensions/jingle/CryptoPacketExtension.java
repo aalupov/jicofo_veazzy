@@ -27,8 +27,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Vincent Lucas
  */
 public class CryptoPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "crypto" element.
      */
@@ -63,8 +63,7 @@ public class CryptoPacketExtension
      * Creates a new {@link CryptoPacketExtension} instance with the proper
      * element name and namespace.
      */
-    public CryptoPacketExtension()
-    {
+    public CryptoPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -83,19 +82,17 @@ public class CryptoPacketExtension
      * parameters for SRTP negotiation.
      */
     public CryptoPacketExtension(
-        int tag,
-        String cryptoSuite,
-        String keyParams,
-        String sessionParams)
-    {
+            int tag,
+            String cryptoSuite,
+            String keyParams,
+            String sessionParams) {
         this();
 
         this.setTag(Integer.toString(tag));
         this.setCryptoSuite(cryptoSuite);
         this.setKeyParams(keyParams);
 
-        if (sessionParams != null)
-        {
+        if (sessionParams != null) {
             this.setSessionParams(sessionParams);
         }
     }
@@ -107,8 +104,7 @@ public class CryptoPacketExtension
      * @param cryptoSuite a <tt>String</tt> that describes the encryption and
      * authentication algorithms.
      */
-    public void setCryptoSuite(String cryptoSuite)
-    {
+    public void setCryptoSuite(String cryptoSuite) {
         super.setAttribute(CRYPTO_SUITE_ATTR_NAME, cryptoSuite);
     }
 
@@ -118,8 +114,7 @@ public class CryptoPacketExtension
      * @return a <tt>String</tt> that describes the encryption and
      * authentication algorithms.
      */
-    public String getCryptoSuite()
-    {
+    public String getCryptoSuite() {
         return getAttributeAsString(CRYPTO_SUITE_ATTR_NAME);
     }
 
@@ -132,8 +127,7 @@ public class CryptoPacketExtension
      * @return True if the current crypto suite equals the one given in
      * parameter. False, otherwise.
      */
-    public boolean equalsCryptoSuite(String cryptoSuite)
-    {
+    public boolean equalsCryptoSuite(String cryptoSuite) {
         String currentCryptoSuite = this.getCryptoSuite();
         return CryptoPacketExtension.equalsStrings(
                 currentCryptoSuite,
@@ -147,8 +141,7 @@ public class CryptoPacketExtension
      * @param keyParams a <tt>String</tt> that provides one or more sets of
      * keying material for the crypto-suite in question.
      */
-    public void setKeyParams(String keyParams)
-    {
+    public void setKeyParams(String keyParams) {
         super.setAttribute(KEY_PARAMS_ATTR_NAME, keyParams);
     }
 
@@ -158,8 +151,7 @@ public class CryptoPacketExtension
      * @return a <tt>String</tt> that provides one or more sets of keying
      * material for the crypto-suite in question).
      */
-    public String getKeyParams()
-    {
+    public String getKeyParams() {
         return getAttributeAsString(KEY_PARAMS_ATTR_NAME);
     }
 
@@ -169,11 +161,10 @@ public class CryptoPacketExtension
      * @param keyParams a <tt>String</tt> that provides one or more sets of
      * keying material for the crypto-suite in question.
      *
-     * @return True if the current key params equals the one given in
-     * parameter. False, otherwise.
+     * @return True if the current key params equals the one given in parameter.
+     * False, otherwise.
      */
-    public boolean equalsKeyParams(String keyParams)
-    {
+    public boolean equalsKeyParams(String keyParams) {
         String currentKeyParams = this.getKeyParams();
         return CryptoPacketExtension.equalsStrings(
                 currentKeyParams,
@@ -187,19 +178,17 @@ public class CryptoPacketExtension
      * @param sessionParams a <tt>String</tt> that provides transport-specific
      * parameters for SRTP negotiation.
      */
-    public void setSessionParams(String sessionParams)
-    {
+    public void setSessionParams(String sessionParams) {
         super.setAttribute(SESSION_PARAMS_ATTR_NAME, sessionParams);
     }
 
     /**
      * Returns the value of the <tt>session-params</tt> attribute.
      *
-     * @return a <tt>String</tt> that provides transport-specific parameters
-     * for SRTP negotiation.
+     * @return a <tt>String</tt> that provides transport-specific parameters for
+     * SRTP negotiation.
      */
-    public String getSessionParams()
-    {
+    public String getSessionParams() {
         return getAttributeAsString(SESSION_PARAMS_ATTR_NAME);
     }
 
@@ -212,8 +201,7 @@ public class CryptoPacketExtension
      * @return True if the current session params equals the one given in
      * parameter. False, otherwise.
      */
-    public boolean equalsSessionParams(String sessionParams)
-    {
+    public boolean equalsSessionParams(String sessionParams) {
         String currentSessionParams = this.getSessionParams();
         return CryptoPacketExtension.equalsStrings(
                 currentSessionParams,
@@ -221,14 +209,13 @@ public class CryptoPacketExtension
     }
 
     /**
-     * Sets the value of the <tt>tag</tt> attribute: a decimal number used as
-     * an identifier for a particular crypto element.
+     * Sets the value of the <tt>tag</tt> attribute: a decimal number used as an
+     * identifier for a particular crypto element.
      *
      * @param tag a <tt>String</tt> containing a decimal number used as an
      * identifier for a particular crypto element.
      */
-    public void setTag(String tag)
-    {
+    public void setTag(String tag) {
         super.setAttribute(TAG_ATTR_NAME, tag);
     }
 
@@ -238,8 +225,7 @@ public class CryptoPacketExtension
      * @return a <tt>String</tt> containing a decimal number used as an
      * identifier for a particular crypto element.
      */
-    public String getTag()
-    {
+    public String getTag() {
         return getAttributeAsString(TAG_ATTR_NAME);
     }
 
@@ -252,8 +238,7 @@ public class CryptoPacketExtension
      * @return True if the current tag equals the one given in parameter. False,
      * otherwise.
      */
-    public boolean equalsTag(String tag)
-    {
+    public boolean equalsTag(String tag) {
         String currentTag = this.getTag();
         return CryptoPacketExtension.equalsStrings(
                 currentTag,
@@ -269,12 +254,9 @@ public class CryptoPacketExtension
      * @return True if both strings are null, or if they represent the same
      * sequane of characters. False, otherwise.
      */
-    private static boolean equalsStrings(String string1, String string2)
-    {
-        return (
-                ((string1 == null) && (string2 == null))
-                || string1.equals(string2)
-               );
+    private static boolean equalsStrings(String string1, String string2) {
+        return (((string1 == null) && (string2 == null))
+                || string1.equals(string2));
     }
 
     /**
@@ -288,29 +270,24 @@ public class CryptoPacketExtension
      * corresponding to the current one. False, otherwsise.
      */
     @Override
-    public boolean equals(Object obj)
-    {
-        if(obj instanceof CryptoPacketExtension)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof CryptoPacketExtension) {
             CryptoPacketExtension crypto = (CryptoPacketExtension) obj;
 
-            return (
-                    crypto.equalsCryptoSuite(this.getCryptoSuite())
+            return (crypto.equalsCryptoSuite(this.getCryptoSuite())
                     && crypto.equalsKeyParams(this.getKeyParams())
                     && crypto.equalsSessionParams(this.getSessionParams())
-                    && crypto.equalsTag(this.getTag())
-                   );
+                    && crypto.equalsTag(this.getTag()));
         }
         return false;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(
-            getCryptoSuite(),
-            getKeyParams(),
-            getSessionParams(),
-            getTag());
+                getCryptoSuite(),
+                getKeyParams(),
+                getSessionParams(),
+                getTag());
     }
 }

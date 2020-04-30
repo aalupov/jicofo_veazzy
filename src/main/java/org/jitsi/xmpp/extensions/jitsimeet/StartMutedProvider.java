@@ -24,64 +24,56 @@ import org.xmlpull.v1.*;
  * @author Hristo Terezov
  */
 public class StartMutedProvider
-    extends ExtensionElementProvider<StartMutedPacketExtension>
-{
+        extends ExtensionElementProvider<StartMutedPacketExtension> {
+
     /**
      * Registers this extension provider into the <tt>ProviderManager</tt>.
      */
-    public static void registerStartMutedProvider()
-    {
+    public static void registerStartMutedProvider() {
         ProviderManager.addExtensionProvider(
-            StartMutedPacketExtension.ELEMENT_NAME,
-            StartMutedPacketExtension.NAMESPACE,
-            new StartMutedProvider());
+                StartMutedPacketExtension.ELEMENT_NAME,
+                StartMutedPacketExtension.NAMESPACE,
+                new StartMutedProvider());
     }
 
     @Override
     public StartMutedPacketExtension parse(XmlPullParser parser, int depth)
-            throws Exception
-    {
+            throws Exception {
         StartMutedPacketExtension packetExtension
-            = new StartMutedPacketExtension();
+                = new StartMutedPacketExtension();
 
         //now parse the sub elements
         boolean done = false;
         String elementName;
-        while (!done)
-        {
-            switch (parser.getEventType())
-            {
-            case XmlPullParser.START_TAG:
-            {
-                elementName = parser.getName();
-                if (StartMutedPacketExtension.ELEMENT_NAME.equals(
-                    elementName))
-                {
-                    boolean audioMute = Boolean.parseBoolean(
-                        parser.getAttributeValue("",
-                            StartMutedPacketExtension.AUDIO_ATTRIBUTE_NAME));
-                    boolean videoMute = Boolean.parseBoolean(
-                        parser.getAttributeValue("",
-                            StartMutedPacketExtension.VIDEO_ATTRIBUTE_NAME));
+        while (!done) {
+            switch (parser.getEventType()) {
+                case XmlPullParser.START_TAG: {
+                    elementName = parser.getName();
+                    if (StartMutedPacketExtension.ELEMENT_NAME.equals(
+                            elementName)) {
+                        boolean audioMute = Boolean.parseBoolean(
+                                parser.getAttributeValue("",
+                                        StartMutedPacketExtension.AUDIO_ATTRIBUTE_NAME));
+                        boolean videoMute = Boolean.parseBoolean(
+                                parser.getAttributeValue("",
+                                        StartMutedPacketExtension.VIDEO_ATTRIBUTE_NAME));
 
-                    packetExtension.setAudioMute(audioMute);
-                    packetExtension.setVideoMute(videoMute);
+                        packetExtension.setAudioMute(audioMute);
+                        packetExtension.setVideoMute(videoMute);
+                    }
+                    parser.next();
+                    break;
                 }
-                parser.next();
-                break;
-            }
-            case XmlPullParser.END_TAG:
-            {
-                elementName = parser.getName();
-                if (StartMutedPacketExtension.ELEMENT_NAME.equals(
-                    elementName))
-                {
-                    done = true;
+                case XmlPullParser.END_TAG: {
+                    elementName = parser.getName();
+                    if (StartMutedPacketExtension.ELEMENT_NAME.equals(
+                            elementName)) {
+                        done = true;
+                    }
+                    break;
                 }
-                break;
-            }
-            default:
-                parser.next();
+                default:
+                    parser.next();
             }
         }
         return packetExtension;

@@ -36,25 +36,24 @@ import java.util.*;
 /**
  * An {@link AbstractChannelAllocator} which invites an actual participant to
  * the conference (as opposed to e.g. allocating Colibri channels for
- * bridge-to-bridge
- * communication).
+ * bridge-to-bridge communication).
  *
  * @author Pawel Domas
  * @author Boris Grozev
  */
-public class ParticipantChannelAllocator extends AbstractChannelAllocator
-{
+public class ParticipantChannelAllocator extends AbstractChannelAllocator {
+
     /**
      * The class logger which can be used to override logging level inherited
      * from {@link JitsiMeetConference}.
      */
     private final static Logger classLogger
-        = Logger.getLogger(ParticipantChannelAllocator.class);
+            = Logger.getLogger(ParticipantChannelAllocator.class);
 
     /**
      * The logger for this instance. Uses the logging level either of the
-     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()}
-     * whichever is higher.
+     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()} whichever
+     * is higher.
      */
     private final Logger logger;
 
@@ -71,8 +70,7 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
             JitsiMeetConferenceImpl.BridgeSession bridgeSession,
             Participant participant,
             boolean[] startMuted,
-            boolean reInvite)
-    {
+            boolean reInvite) {
         super(meetConference, bridgeSession, participant, startMuted, reInvite);
         this.participant = participant;
         this.logger = Logger.getLogger(classLogger, meetConference.getLogger());
@@ -82,15 +80,13 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
      * {@inheritDoc}
      */
     @Override
-    protected List<ContentPacketExtension> createOffer()
-    {
+    protected List<ContentPacketExtension> createOffer() {
         EntityFullJid address = participant.getMucJid();
 
         // Feature discovery
         List<String> features = DiscoveryUtil.discoverParticipantFeatures(
-            meetConference.getXmppProvider(), address);
+                meetConference.getXmppProvider(), address);
         participant.setSupportedFeatures(features);
-
 
         List<ContentPacketExtension> contents = new ArrayList<>();
 
@@ -99,37 +95,34 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
         boolean disableIce = !participant.hasIceSupport();
         boolean useDtls = participant.hasDtlsSupport();
         boolean useRtx
-            = config.isRtxEnabled() && participant.hasRtxSupport();
+                = config.isRtxEnabled() && participant.hasRtxSupport();
         boolean enableRemb = config.isRembEnabled();
         boolean enableTcc = config.isTccEnabled();
 
         JingleOfferFactory jingleOfferFactory
-            = FocusBundleActivator.getJingleOfferFactory();
+                = FocusBundleActivator.getJingleOfferFactory();
 
-        if (participant.hasAudioSupport())
-        {
+        if (participant.hasAudioSupport()) {
             contents.add(
-                jingleOfferFactory.createAudioContent(
-                    disableIce, useDtls, config.stereoEnabled(),
-                    enableRemb, enableTcc));
+                    jingleOfferFactory.createAudioContent(
+                            disableIce, useDtls, config.stereoEnabled(),
+                            enableRemb, enableTcc));
         }
 
-        if (participant.hasVideoSupport())
-        {
+        if (participant.hasVideoSupport()) {
             contents.add(
-                jingleOfferFactory.createVideoContent(
-                    disableIce, useDtls, useRtx,
-                    enableRemb, enableTcc,
-                    config.getMinBitrate(),
-                    config.getStartBitrate()));
+                    jingleOfferFactory.createVideoContent(
+                            disableIce, useDtls, useRtx,
+                            enableRemb, enableTcc,
+                            config.getMinBitrate(),
+                            config.getStartBitrate()));
         }
 
         // Is SCTP enabled ?
         boolean openSctp = config.openSctp() == null || config.openSctp();
-        if (openSctp && participant.hasSctpSupport())
-        {
+        if (openSctp && participant.hasSctpSupport()) {
             contents.add(
-                jingleOfferFactory.createDataContent(disableIce, useDtls));
+                    jingleOfferFactory.createDataContent(disableIce, useDtls));
         }
 
         return contents;
@@ -140,15 +133,14 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
      */
     @Override
     protected ColibriConferenceIQ doAllocateChannels(
-        List<ContentPacketExtension> offer)
-        throws ColibriException
-    {
+            List<ContentPacketExtension> offer)
+            throws ColibriException {
         return bridgeSession.colibriConference.createColibriChannels(
-            participant.hasBundleSupport(),
-            participant.getEndpointId(),
-            participant.getStatId(),
-            true /* initiator */,
-            offer);
+                participant.hasBundleSupport(),
+                participant.getEndpointId(),
+                participant.getStatId(),
+                true /* initiator */,
+                offer);
     }
 
     /**
@@ -156,8 +148,7 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
      */
     @Override
     protected void invite(List<ContentPacketExtension> offer)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         /*
            This check makes sure that when we're trying to invite
            new participant:
@@ -167,44 +158,35 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
            We usually expire channels when participant leaves the MUC, but we
            may not have channel information set, so we have to expire it
            here.
-        */
+         */
         boolean expireChannels = false;
         Jid address = participant.getMucJid();
 
         ChatRoom chatRoom = meetConference.getChatRoom();
-        if (chatRoom == null)
-        {
+        if (chatRoom == null) {
             // Conference disposed
             logger.info(
                     "Expiring " + address + " channels - conference disposed");
 
             expireChannels = true;
-        }
-        else if (meetConference.findMember(address) == null)
-        {
+        } else if (meetConference.findMember(address) == null) {
             // Participant has left the room
             logger.info(
                     "Expiring " + address + " channels - participant has left");
 
             expireChannels = true;
-        }
-        else if (!canceled)
-        {
-            if (!doInviteOrReinvite(address, offer))
-            {
+        } else if (!canceled) {
+            if (!doInviteOrReinvite(address, offer)) {
                 expireChannels = true;
             }
         }
 
-        if (expireChannels || canceled)
-        {
+        if (expireChannels || canceled) {
             // Whether another thread intentionally canceled us, or there was
             // a failure to invite the participant on the jingle level, we will
             // not trigger a retry here.
             meetConference.onInviteFailed(this);
-        }
-        else if (reInvite)
-        {
+        } else if (reInvite) {
             // Update channels info
             // FIXME we should include this stuff in the offer
             bridgeSession.colibriConference.updateChannelsInfo(
@@ -217,10 +199,10 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
 
     /**
      * Invites or re-invites (based on the value of {@link #reInvite}) the
-     * {@code participant} to the jingle session.
-     * Creates and sends the appropriate Jingle IQ ({@code session-initiate} for
-     * and invite or {@code transport-replace} for a re-invite) and sends it to
-     * the {@code participant}. Blocks until a response is received or a timeout
+     * {@code participant} to the jingle session. Creates and sends the
+     * appropriate Jingle IQ ({@code session-initiate} for and invite or
+     * {@code transport-replace} for a re-invite) and sends it to the
+     * {@code participant}. Blocks until a response is received or a timeout
      * occurs.
      *
      * @param address the destination JID.
@@ -230,59 +212,49 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
      * because the XMPP connection is broken.
      */
     private boolean doInviteOrReinvite(
-        Jid address, List<ContentPacketExtension> contents)
-        throws OperationFailedException
-    {
+            Jid address, List<ContentPacketExtension> contents)
+            throws OperationFailedException {
         OperationSetJingle jingle = meetConference.getJingle();
         JingleSession jingleSession = participant.getJingleSession();
         boolean initiateSession = !reInvite || jingleSession == null;
         boolean ack;
         JingleIQ jingleIQ;
 
-        if (initiateSession)
-        {
+        if (initiateSession) {
             // will throw OperationFailedExc if XMPP connection is broken
             jingleIQ = jingle.createSessionInitiate(address, contents);
-        }
-        else
-        {
+        } else {
             jingleIQ = jingle.createTransportReplace(jingleSession, contents);
         }
 
-        if (participant.hasBundleSupport())
-        {
+        if (participant.hasBundleSupport()) {
             JicofoJingleUtils.addBundleExtensions(jingleIQ);
         }
-        if (startMuted[0] || startMuted[1])
-        {
+        if (startMuted[0] || startMuted[1]) {
             JicofoJingleUtils.addStartMutedExtension(
-                jingleIQ, startMuted[0], startMuted[1]);
+                    jingleIQ, startMuted[0], startMuted[1]);
         }
 
         // Include info about the BridgeSession which provides the transport
         jingleIQ.addExtension(
-            new BridgeSessionPacketExtension(
-                    bridgeSession.id, bridgeSession.bridge.getRegion()));
+                new BridgeSessionPacketExtension(
+                        bridgeSession.id, bridgeSession.bridge.getRegion()));
 
-        if (initiateSession)
-        {
+        if (initiateSession) {
             logger.info("Sending session-initiate to: " + address);
             ack = jingle.initiateSession(jingleIQ, meetConference);
-        }
-        else
-        {
+        } else {
             logger.info("Sending transport-replace to: " + address);
             // will throw OperationFailedExc if XMPP connection is broken
             ack = jingle.replaceTransport(jingleIQ, jingleSession);
         }
 
-        if (!ack)
-        {
+        if (!ack) {
             // Failed to invite
             logger.info(
-                "Expiring " + address + " channels - no RESULT for "
+                    "Expiring " + address + " channels - no RESULT for "
                     + (initiateSession ? "session-initiate"
-                    : "transport-replace"));
+                            : "transport-replace"));
             return false;
         }
 
@@ -295,111 +267,95 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
     @Override
     protected List<ContentPacketExtension> updateOffer(
             List<ContentPacketExtension> offer,
-            ColibriConferenceIQ colibriChannels)
-    {
+            ColibriConferenceIQ colibriChannels) {
         boolean useBundle = participant.hasBundleSupport();
 
         MediaSourceMap conferenceSSRCs
-            = meetConference.getAllSources(reInvite ? participant : null);
+                = meetConference.getAllSources(reInvite ? participant : null);
 
         MediaSourceGroupMap conferenceSSRCGroups
-            = meetConference.getAllSourceGroups(reInvite ? participant : null);
+                = meetConference.getAllSourceGroups(reInvite ? participant : null);
 
-        for (ContentPacketExtension cpe : offer)
-        {
+        for (ContentPacketExtension cpe : offer) {
             String contentName = cpe.getName();
             ColibriConferenceIQ.Content colibriContent
-                = colibriChannels.getContent(contentName);
+                    = colibriChannels.getContent(contentName);
 
-            if (colibriContent == null)
+            if (colibriContent == null) {
                 continue;
+            }
 
             // Channels
             for (ColibriConferenceIQ.Channel channel
-                    : colibriContent.getChannels())
-            {
+                    : colibriContent.getChannels()) {
                 IceUdpTransportPacketExtension transport;
 
-                if (useBundle)
-                {
+                if (useBundle) {
                     ColibriConferenceIQ.ChannelBundle bundle
-                        = colibriChannels.getChannelBundle(
-                                channel.getChannelBundleId());
+                            = colibriChannels.getChannelBundle(
+                                    channel.getChannelBundleId());
 
-                    if (bundle == null)
-                    {
+                    if (bundle == null) {
                         logger.error(
-                            "No bundle for " + channel.getChannelBundleId());
+                                "No bundle for " + channel.getChannelBundleId());
                         continue;
                     }
 
                     transport = bundle.getTransport();
 
-                    if (!transport.isRtcpMux())
-                    {
+                    if (!transport.isRtcpMux()) {
                         transport.addChildExtension(
                                 new RtcpmuxPacketExtension());
                     }
-                }
-                else
-                {
+                } else {
                     transport = channel.getTransport();
                 }
 
-                try
-                {
+                try {
                     // Remove empty transport PE
                     IceUdpTransportPacketExtension empty
-                        = cpe.getFirstChildOfType(
-                                IceUdpTransportPacketExtension.class);
+                            = cpe.getFirstChildOfType(
+                                    IceUdpTransportPacketExtension.class);
                     cpe.getChildExtensions().remove(empty);
 
                     cpe.addChildExtension(
                             IceUdpTransportPacketExtension
-                                .cloneTransportAndCandidates(transport, true));
-                }
-                catch (Exception e)
-                {
+                                    .cloneTransportAndCandidates(transport, true));
+                } catch (Exception e) {
                     logger.error(e, e);
                 }
             }
             // SCTP connections
             for (ColibriConferenceIQ.SctpConnection sctpConn
-                    : colibriContent.getSctpConnections())
-            {
+                    : colibriContent.getSctpConnections()) {
                 IceUdpTransportPacketExtension transport;
 
-                if (useBundle)
-                {
+                if (useBundle) {
                     ColibriConferenceIQ.ChannelBundle bundle
-                        = colibriChannels.getChannelBundle(
-                                sctpConn.getChannelBundleId());
+                            = colibriChannels.getChannelBundle(
+                                    sctpConn.getChannelBundleId());
 
-                    if (bundle == null)
-                    {
+                    if (bundle == null) {
                         logger.error(
-                            "No bundle for " + sctpConn.getChannelBundleId());
+                                "No bundle for " + sctpConn.getChannelBundleId());
                         continue;
                     }
 
                     transport = bundle.getTransport();
-                }
-                else
-                {
+                } else {
                     transport = sctpConn.getTransport();
                 }
 
-                try
-                {
+                try {
                     // Remove empty transport
                     IceUdpTransportPacketExtension empty
-                        = cpe.getFirstChildOfType(
-                                IceUdpTransportPacketExtension.class);
+                            = cpe.getFirstChildOfType(
+                                    IceUdpTransportPacketExtension.class);
                     cpe.getChildExtensions().remove(empty);
 
                     IceUdpTransportPacketExtension copy
-                        = IceUdpTransportPacketExtension
-                            .cloneTransportAndCandidates(transport, true);
+                            = IceUdpTransportPacketExtension
+                                    .cloneTransportAndCandidates(transport, true);
 
                     // FIXME: hardcoded
                     SctpMapExtension sctpMap = new SctpMapExtension();
@@ -411,19 +367,15 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
                     copy.addChildExtension(sctpMap);
 
                     cpe.addChildExtension(copy);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     logger.error(e, e);
                 }
             }
             // Existing peers SSRCs
             RtpDescriptionPacketExtension rtpDescPe
-                = JingleUtils.getRtpDescription(cpe);
-            if (rtpDescPe != null)
-            {
-                if (useBundle)
-                {
+                    = JingleUtils.getRtpDescription(cpe);
+            if (rtpDescPe != null) {
+                if (useBundle) {
                     // rtcp-mux
                     rtpDescPe.addChildExtension(
                             new RtcpmuxPacketExtension());
@@ -431,21 +383,20 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
 
                 // Copy SSRC sent from the bridge(only the first one)
                 for (ColibriConferenceIQ.Channel channel
-                        : colibriContent.getChannels())
-                {
+                        : colibriContent.getChannels()) {
                     SourcePacketExtension ssrcPe
-                        = channel.getSources().size() > 0
+                            = channel.getSources().size() > 0
                             ? channel.getSources().get(0) : null;
-                    if (ssrcPe == null)
+                    if (ssrcPe == null) {
                         continue;
+                    }
 
-                    try
-                    {
+                    try {
                         SourcePacketExtension ssrcCopy = ssrcPe.copy();
 
                         // FIXME: not all parameters are used currently
                         ssrcCopy.addParameter(
-                                new ParameterPacketExtension("cname","mixed"));
+                                new ParameterPacketExtension("cname", "mixed"));
                         ssrcCopy.addParameter(
                                 new ParameterPacketExtension(
                                         "label",
@@ -454,47 +405,40 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
                                 new ParameterPacketExtension(
                                         "msid",
                                         "mixedmslabel mixedlabel"
-                                            + contentName + "0"));
+                                        + contentName + "0"));
                         ssrcCopy.addParameter(
                                 new ParameterPacketExtension(
                                         "mslabel", "mixedmslabel"));
 
                         // Mark 'jvb' as SSRC owner
                         SSRCInfoPacketExtension ssrcInfo
-                            = new SSRCInfoPacketExtension();
+                                = new SSRCInfoPacketExtension();
                         ssrcInfo.setOwner(SSRCSignaling.SSRC_OWNER_JVB);
                         ssrcCopy.addChildExtension(ssrcInfo);
 
                         rtpDescPe.addChildExtension(ssrcCopy);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         logger.error("Copy SSRC error", e);
                     }
                 }
 
                 // Include all peers SSRCs
                 List<SourcePacketExtension> mediaSources
-                    = conferenceSSRCs.getSourcesForMedia(contentName);
+                        = conferenceSSRCs.getSourcesForMedia(contentName);
 
-                for (SourcePacketExtension ssrc : mediaSources)
-                {
-                    try
-                    {
+                for (SourcePacketExtension ssrc : mediaSources) {
+                    try {
                         rtpDescPe.addChildExtension(ssrc.copy());
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         logger.error("Copy SSRC error", e);
                     }
                 }
 
                 // Include SSRC groups
                 List<SourceGroup> sourceGroups
-                    = conferenceSSRCGroups.getSourceGroupsForMedia(contentName);
+                        = conferenceSSRCGroups.getSourceGroupsForMedia(contentName);
 
-                for(SourceGroup sourceGroup : sourceGroups)
-                {
+                for (SourceGroup sourceGroup : sourceGroups) {
                     rtpDescPe.addChildExtension(sourceGroup.getPacketExtension());
                 }
             }
@@ -508,8 +452,7 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator
      * {@link ParticipantChannelAllocator}.
      */
     @Override
-    public Participant getParticipant()
-    {
+    public Participant getParticipant() {
         return participant;
     }
 }

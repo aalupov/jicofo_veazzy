@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class EndpointPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that endpoint belongs to.
      */
@@ -92,8 +92,7 @@ public class EndpointPacketExtension
      *
      * @param entity entity
      */
-    public EndpointPacketExtension(String entity)
-    {
+    public EndpointPacketExtension(String entity) {
         super(NAMESPACE, ELEMENT_NAME);
         setAttribute("entity", entity);
     }
@@ -103,8 +102,7 @@ public class EndpointPacketExtension
      *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -113,8 +111,7 @@ public class EndpointPacketExtension
      *
      * @param status status
      */
-    public void setStatus(EndpointStatusType status)
-    {
+    public void setStatus(EndpointStatusType status) {
         this.status = status;
     }
 
@@ -123,8 +120,7 @@ public class EndpointPacketExtension
      *
      * @param disconnectionType disconnection type.
      */
-    public void setDisconnectionType(DisconnectionType disconnectionType)
-    {
+    public void setDisconnectionType(DisconnectionType disconnectionType) {
         this.disconnectionType = disconnectionType;
     }
 
@@ -133,8 +129,7 @@ public class EndpointPacketExtension
      *
      * @param joiningType joining type.
      */
-    public void setJoiningType(JoiningType joiningType)
-    {
+    public void setJoiningType(JoiningType joiningType) {
         this.joiningType = joiningType;
     }
 
@@ -143,8 +138,7 @@ public class EndpointPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
@@ -153,8 +147,7 @@ public class EndpointPacketExtension
      *
      * @return status.
      */
-    public EndpointStatusType getStatus()
-    {
+    public EndpointStatusType getStatus() {
         return status;
     }
 
@@ -163,8 +156,7 @@ public class EndpointPacketExtension
      *
      * @return disconnection type.
      */
-    public DisconnectionType getDisconnectionType()
-    {
+    public DisconnectionType getDisconnectionType() {
         return disconnectionType;
     }
 
@@ -173,18 +165,17 @@ public class EndpointPacketExtension
      *
      * @return joining type.
      */
-    public JoiningType getJoiningType()
-    {
+    public JoiningType getJoiningType() {
         return joiningType;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

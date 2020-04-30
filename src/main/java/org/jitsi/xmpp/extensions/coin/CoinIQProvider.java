@@ -27,13 +27,12 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class CoinIQProvider
-    extends IQProvider<CoinIQ>
-{
+        extends IQProvider<CoinIQ> {
+
     /**
      * Provider for description packet extension.
      */
-    private final ExtensionElementProvider descriptionProvider = new
-        DescriptionProvider();
+    private final ExtensionElementProvider descriptionProvider = new DescriptionProvider();
 
     /**
      * Provider for users packet extension.
@@ -48,40 +47,34 @@ public class CoinIQProvider
     /**
      * Provider for URIs packet extension.
      */
-    private final DefaultPacketExtensionProvider<URIsPacketExtension>
-       urisProvider = new DefaultPacketExtensionProvider<>(
-               URIsPacketExtension.class);
+    private final DefaultPacketExtensionProvider<URIsPacketExtension> urisProvider = new DefaultPacketExtensionProvider<>(
+            URIsPacketExtension.class);
 
     /**
      * Provider for sidbars by val packet extension.
      */
-    private final DefaultPacketExtensionProvider<SidebarsByValPacketExtension>
-       sidebarsByValProvider =
-           new DefaultPacketExtensionProvider<>(
-                   SidebarsByValPacketExtension.class);
+    private final DefaultPacketExtensionProvider<SidebarsByValPacketExtension> sidebarsByValProvider
+            = new DefaultPacketExtensionProvider<>(
+                    SidebarsByValPacketExtension.class);
 
     /**
      * Constructor.
      */
-    public CoinIQProvider()
-    {
+    public CoinIQProvider() {
         ProviderManager.addExtensionProvider(
                 UserRolesPacketExtension.ELEMENT_NAME,
                 UserRolesPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider
-                    <>(UserRolesPacketExtension.class));
+                new DefaultPacketExtensionProvider<>(UserRolesPacketExtension.class));
 
         ProviderManager.addExtensionProvider(
                 URIPacketExtension.ELEMENT_NAME,
                 URIPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider
-                    <>(URIPacketExtension.class));
+                new DefaultPacketExtensionProvider<>(URIPacketExtension.class));
 
         ProviderManager.addExtensionProvider(
                 SIPDialogIDPacketExtension.ELEMENT_NAME,
                 SIPDialogIDPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider
-                    <>(SIPDialogIDPacketExtension.class));
+                new DefaultPacketExtensionProvider<>(SIPDialogIDPacketExtension.class));
 
         ProviderManager.addExtensionProvider(
                 ConferenceMediumPacketExtension.ELEMENT_NAME,
@@ -91,14 +84,12 @@ public class CoinIQProvider
         ProviderManager.addExtensionProvider(
                 ConferenceMediaPacketExtension.ELEMENT_NAME,
                 ConferenceMediaPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider
-                        <>(ConferenceMediaPacketExtension.class));
+                new DefaultPacketExtensionProvider<>(ConferenceMediaPacketExtension.class));
 
         ProviderManager.addExtensionProvider(
                 CallInfoPacketExtension.ELEMENT_NAME,
                 CallInfoPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider
-                        <>(CallInfoPacketExtension.class));
+                new DefaultPacketExtensionProvider<>(CallInfoPacketExtension.class));
     }
 
     /**
@@ -111,20 +102,18 @@ public class CoinIQProvider
      */
     @Override
     public CoinIQ parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         CoinIQ coinIQ = new CoinIQ();
 
         String entity = parser
-            .getAttributeValue("", CoinIQ.ENTITY_ATTR_NAME);
+                .getAttributeValue("", CoinIQ.ENTITY_ATTR_NAME);
         String version = parser.getAttributeValue("", CoinIQ.VERSION_ATTR_NAME);
         StateType state = StateType.full;
         String stateStr = parser.getAttributeValue("",
                 EndpointPacketExtension.STATE_ATTR_NAME);
         String sid = parser.getAttributeValue("", CoinIQ.SID_ATTR_NAME);
 
-        if(stateStr != null)
-        {
+        if (stateStr != null) {
             state = StateType.parseString(stateStr);
         }
 
@@ -138,50 +127,37 @@ public class CoinIQProvider
         String elementName;
         boolean done = false;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(DescriptionPacketExtension.ELEMENT_NAME))
-                {
-                    ExtensionElement childExtension =
-                            (ExtensionElement)descriptionProvider.parse(parser);
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(DescriptionPacketExtension.ELEMENT_NAME)) {
+                    ExtensionElement childExtension
+                            = (ExtensionElement) descriptionProvider.parse(parser);
                     coinIQ.addExtension(childExtension);
-                }
-                else if(elementName.equals(UsersPacketExtension.ELEMENT_NAME))
-                {
-                    ExtensionElement childExtension =
-                            (ExtensionElement)usersProvider.parse(parser);
+                } else if (elementName.equals(UsersPacketExtension.ELEMENT_NAME)) {
+                    ExtensionElement childExtension
+                            = (ExtensionElement) usersProvider.parse(parser);
                     coinIQ.addExtension(childExtension);
-                }
-                else if(elementName.equals(StatePacketExtension.ELEMENT_NAME))
-                {
-                    ExtensionElement childExtension =
-                            (ExtensionElement)stateProvider.parse(parser);
+                } else if (elementName.equals(StatePacketExtension.ELEMENT_NAME)) {
+                    ExtensionElement childExtension
+                            = (ExtensionElement) stateProvider.parse(parser);
                     coinIQ.addExtension(childExtension);
-                }
-                else if(elementName.equals(URIsPacketExtension.ELEMENT_NAME))
-                {
-                    ExtensionElement childExtension =
-                            (ExtensionElement)urisProvider.parse(parser);
+                } else if (elementName.equals(URIsPacketExtension.ELEMENT_NAME)) {
+                    ExtensionElement childExtension
+                            = (ExtensionElement) urisProvider.parse(parser);
                     coinIQ.addExtension(childExtension);
-                }
-                else if(elementName.equals(
-                        SidebarsByValPacketExtension.ELEMENT_NAME))
-                {
-                    ExtensionElement childExtension =
-                            (ExtensionElement)sidebarsByValProvider.parse(parser);
+                } else if (elementName.equals(
+                        SidebarsByValPacketExtension.ELEMENT_NAME)) {
+                    ExtensionElement childExtension
+                            = (ExtensionElement) sidebarsByValProvider.parse(parser);
                     coinIQ.addExtension(childExtension);
                 }
             }
 
-            if (eventType == XmlPullParser.END_TAG)
-            {
-                if (parser.getName().equals(CoinIQ.ELEMENT_NAME))
-                {
+            if (eventType == XmlPullParser.END_TAG) {
+                if (parser.getName().equals(CoinIQ.ELEMENT_NAME)) {
                     done = true;
                 }
             }
@@ -202,23 +178,18 @@ public class CoinIQProvider
      * @throws java.lang.Exception if an error occurs parsing the XML.
      */
     public static String parseText(XmlPullParser parser)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
 
         int eventType;
         String text = null;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
 
-            if (eventType == XmlPullParser.TEXT)
-            {
+            if (eventType == XmlPullParser.TEXT) {
                 text = parser.getText();
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 done = true;
             }
         }

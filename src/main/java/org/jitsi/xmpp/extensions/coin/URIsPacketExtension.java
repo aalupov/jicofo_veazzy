@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class URIsPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that URIs belongs to.
      */
@@ -38,8 +38,7 @@ public class URIsPacketExtension
     /**
      * Constructor.
      */
-     public URIsPacketExtension()
-     {
-         super(NAMESPACE, ELEMENT_NAME);
-     }
+    public URIsPacketExtension() {
+        super(NAMESPACE, ELEMENT_NAME);
+    }
 }

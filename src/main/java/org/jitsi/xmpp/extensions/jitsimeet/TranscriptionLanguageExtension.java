@@ -19,20 +19,19 @@ import org.jitsi.xmpp.extensions.*;
 
 /**
  * An extension of the presence stanza for sending the source language for
- * transcription to Jigasi.
- * The extension looks like follows:
+ * transcription to Jigasi. The extension looks like follows:
  *
- *  <pre>
+ * <pre>
  *  {@code <jitsi_participant_transcription_language>
  *      source_language_code
  *  </jitsi_participant_transcription_language>}
- *  </pre>
+ * </pre>
  *
  * @author Praveen Kumar Gupta
  */
 public class TranscriptionLanguageExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -42,13 +41,12 @@ public class TranscriptionLanguageExtension
      * XML element name of this packet extension.
      */
     public static final String ELEMENT_NAME
-        = "jitsi_participant_transcription_language";
+            = "jitsi_participant_transcription_language";
 
     /**
      * Creates a {@link TranscriptionLanguageExtension} instance.
      */
-    public TranscriptionLanguageExtension()
-    {
+    public TranscriptionLanguageExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -57,8 +55,7 @@ public class TranscriptionLanguageExtension
      *
      * @return source language code for transcription.
      */
-    public String getTranscriptionLanguage()
-    {
+    public String getTranscriptionLanguage() {
         return getText();
     }
 }

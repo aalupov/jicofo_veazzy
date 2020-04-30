@@ -24,8 +24,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Lyubomir Marinov
  */
 public class TransferredPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "transfer" element.
      */
@@ -39,8 +39,7 @@ public class TransferredPacketExtension
     /**
      * Initializes a new <tt>TransferredPacketExtension</tt> instance.
      */
-    public TransferredPacketExtension()
-    {
+    public TransferredPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

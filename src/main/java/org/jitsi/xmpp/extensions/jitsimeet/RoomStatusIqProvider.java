@@ -28,30 +28,28 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class RoomStatusIqProvider
-    extends IQProvider<RoomStatusIq>
-{
-    
+        extends IQProvider<RoomStatusIq> {
+
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-        = Logger.getLogger(RoomStatusIqProvider.class);
+            = Logger.getLogger(RoomStatusIqProvider.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
-     * {@link #classLogger} or the one passed to the constructor, whichever
-     * is higher.
+     * {@link #classLogger} or the one passed to the constructor, whichever is
+     * higher.
      */
     private final Logger logger = Logger.getLogger(classLogger, null);
-    
+
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerRoomStatusIqProvider()
-    {
+    public static void registerRoomStatusIqProvider() {
         ProviderManager.addIQProvider(RoomStatusIq.ELEMENT_NAME,
-            RoomStatusIq.NAMESPACE,
-            new RoomStatusIqProvider());
+                RoomStatusIq.NAMESPACE,
+                new RoomStatusIqProvider());
     }
 
     /**
@@ -59,13 +57,11 @@ public class RoomStatusIqProvider
      */
     @Override
     public RoomStatusIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!RoomStatusIq.NAMESPACE.equals(namespace))
-        {
+        if (!RoomStatusIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
@@ -73,60 +69,48 @@ public class RoomStatusIqProvider
 
         RoomStatusIq iq;
 
-        if (RoomStatusIq.ELEMENT_NAME.equals(rootElement))
-        {
+        if (RoomStatusIq.ELEMENT_NAME.equals(rootElement)) {
             iq = new RoomStatusIq();
             String jidStr = parser.getAttributeValue("", RoomStatusIq.JID_ATTR_NAME);
-            if (jidStr != null)
-            {
+            if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                = parser.getAttributeValue("", RoomStatusIq.ACTOR_ATTR_NAME);
-            if (actorStr != null)
-            {
+                    = parser.getAttributeValue("", RoomStatusIq.ACTOR_ATTR_NAME);
+            if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
 
         boolean done = false;
 
-        while (!done)
-        {
-            switch (parser.next())
-            {
-                case XmlPullParser.END_TAG:
-                {
+        while (!done) {
+            switch (parser.next()) {
+                case XmlPullParser.END_TAG: {
                     String name = parser.getName();
 
-                    if (rootElement.equals(name))
-                    {
+                    if (rootElement.equals(name)) {
                         done = true;
                     }
                     break;
                 }
 
-                case XmlPullParser.TEXT:
-                {
-                    if(parser.getText() != null && parser.getText().length()  > 0) {
-                        if(parser.getText().equals("check")) {
+                case XmlPullParser.TEXT: {
+                    if (parser.getText() != null && parser.getText().length() > 0) {
+                        if (parser.getText().equals("check")) {
                             logger.warn("Checking roomStatus request");
                             iq.setCheckRequest(true);
-                        }
-                        else {
+                        } else {
                             Boolean roomStatus = Boolean.parseBoolean(parser.getText());
                             iq.setRoomStatus(roomStatus);
                             iq.setCheckRequest(false);
                         }
-                    }
-                    else {
+                    } else {
                         logger.warn("Getting roomStatus request without value");
                     }
                     break;

@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class SidebarsByValPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that sidebars by val belongs to.
      */
@@ -38,8 +38,7 @@ public class SidebarsByValPacketExtension
     /**
      * Constructor.
      */
-    public SidebarsByValPacketExtension()
-    {
+    public SidebarsByValPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

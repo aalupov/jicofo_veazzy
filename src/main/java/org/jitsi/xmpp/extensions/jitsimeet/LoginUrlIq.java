@@ -29,8 +29,8 @@ import java.net.*;
  * @author Pawel Domas
  */
 public class LoginUrlIq
-    extends IQ
-{
+        extends IQ {
+
     public static final String NAMESPACE = ConferenceIq.NAMESPACE;
 
     public static final String ELEMENT_NAME = "login-url";
@@ -41,8 +41,8 @@ public class LoginUrlIq
     public static final String URL_ATTRIBUTE_NAME = "url";
 
     /**
-     * The name of the attribute that carries the name of conference room
-     * which will be used as authentication context.
+     * The name of the attribute that carries the name of conference room which
+     * will be used as authentication context.
      */
     public static final String ROOM_NAME_ATTR_NAME = "room";
 
@@ -53,9 +53,8 @@ public class LoginUrlIq
     public static final String POPUP_ATTR_NAME = "popup";
 
     /**
-     * The name of the property that holds machine unique identifier.
-     * It is used to distinguish sessions for the same user on different
-     * machines.
+     * The name of the property that holds machine unique identifier. It is used
+     * to distinguish sessions for the same user on different machines.
      */
     public static final String MACHINE_UID_ATTR_NAME = "machine-uid";
 
@@ -71,8 +70,8 @@ public class LoginUrlIq
     private EntityBareJid room;
 
     /**
-     * Machine unique identifier used to distinguish sessions for the same
-     * user on different machines.
+     * Machine unique identifier used to distinguish sessions for the same user
+     * on different machines.
      */
     private String machineUID;
 
@@ -84,24 +83,18 @@ public class LoginUrlIq
     /**
      * Creates new instance of {@link LoginUrlIq}.
      */
-    public LoginUrlIq()
-    {
+    public LoginUrlIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(
-            IQChildElementXmlStringBuilder xml)
-    {
-        if (StringUtils.isNotEmpty(url))
-        {
-            try
-            {
+            IQChildElementXmlStringBuilder xml) {
+        if (StringUtils.isNotEmpty(url)) {
+            try {
                 String value = URLEncoder.encode(url, "UTF-8");
                 xml.attribute(URL_ATTRIBUTE_NAME, value);
-            }
-            catch (UnsupportedEncodingException e)
-            {
+            } catch (UnsupportedEncodingException e) {
                 // If this happens will never work, so it's ok to crash the app
                 throw new RuntimeException(e);
             }
@@ -114,8 +107,7 @@ public class LoginUrlIq
         xml.optAttribute(MACHINE_UID_ATTR_NAME, machineUID);
 
         // Is it popup URL ?
-        if (popup != null)
-        {
+        if (popup != null) {
             xml.attribute(POPUP_ATTR_NAME, popup);
         }
 
@@ -126,23 +118,19 @@ public class LoginUrlIq
     /**
      * Returns the value of {@link #URL_ATTRIBUTE_NAME} attribute.
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
     /**
      * Sets the value of {@link #URL_ATTRIBUTE_NAME} attribute.
+     *
      * @param url authentication URL value to be set on this IQ instance.
      */
-    public void setUrl(String url)
-    {
-        try
-        {
+    public void setUrl(String url) {
+        try {
             this.url = URLDecoder.decode(url, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -150,17 +138,16 @@ public class LoginUrlIq
     /**
      * Returns the value of {@link #ROOM_NAME_ATTR_NAME} attribute.
      */
-    public EntityBareJid getRoom()
-    {
+    public EntityBareJid getRoom() {
         return room;
     }
 
     /**
      * Sets the value of {@link #ROOM_NAME_ATTR_NAME} attribute.
+     *
      * @param room the name of MUC room to be set on this instance.
      */
-    public void setRoom(EntityBareJid room)
-    {
+    public void setRoom(EntityBareJid room) {
         this.room = room;
     }
 
@@ -168,38 +155,35 @@ public class LoginUrlIq
      * Returns nullable, <tt>Boolean</tt> value of
      * {@link LoginUrlIq#POPUP_ATTR_NAME} attribute.
      */
-    public Boolean getPopup()
-    {
+    public Boolean getPopup() {
         return popup;
     }
 
     /**
      * Sets the value of {@link LoginUrlIq#POPUP_ATTR_NAME}.
-     * @param popup <tt>Boolean</tt> value for the popup attribute to be set
-     *              or <tt>null</tt> if should be left unspecified.
+     *
+     * @param popup <tt>Boolean</tt> value for the popup attribute to be set or
+     * <tt>null</tt> if should be left unspecified.
      */
-    public void setPopup(Boolean popup)
-    {
+    public void setPopup(Boolean popup) {
         this.popup = popup;
     }
 
     /**
-     * Returns machine unique identifier attribute value carried by this IQ
-     * (if any).
+     * Returns machine unique identifier attribute value carried by this IQ (if
+     * any).
      */
-    public String getMachineUID()
-    {
+    public String getMachineUID() {
         return machineUID;
     }
 
     /**
      * Sets {@link #MACHINE_UID_ATTR_NAME} attribute value.
+     *
      * @param machineUID machine unique identifier value to set. It's used to
-     *                   distinguish session for the same user on different
-     *                   machines.
+     * distinguish session for the same user on different machines.
      */
-    public void setMachineUID(String machineUID)
-    {
+    public void setMachineUID(String machineUID) {
         this.machineUID = machineUID;
     }
 }

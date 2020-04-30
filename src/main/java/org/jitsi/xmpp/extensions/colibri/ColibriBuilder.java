@@ -27,30 +27,28 @@ import java.util.*;
 
 /**
  * Utility class for building Colibri queries. It can be used to allocate,
- * expire Colibri channels and update it's ICE transport info on the bridge.
- * The flow is as follows:<br/>
+ * expire Colibri channels and update it's ICE transport info on the bridge. The
+ * flow is as follows:<br/>
  * <ol>
- *     <li>
- * Add one or multiple requests of the same type by calling
- * {@link #addAllocateChannelsReq(
- *              boolean, String, String, boolean, java.util.List)}}
- * or {@link #addExpireChannelsReq(ColibriConferenceIQ)}
- * or {@link #addRtpDescription(RtpDescriptionPacketExtension, String,
- * ColibriConferenceIQ.Channel)}
- * and {@link #addSourceGroupsInfo(Map, ColibriConferenceIQ)}
- * and {@link #addSourceInfo(Map, ColibriConferenceIQ)}.
- *     </li>
- *     <li>
- * Compile the request by calling {@link #getRequest(Jid)}. Then send it to
- * the bridge.
- *     </li>
- *     <li>
+ * <li>
+ * Add one or multiple requests of the same type by calling null {@link #addAllocateChannelsReq(
+ *              boolean, String, String, boolean, java.util.List)}} or
+ * {@link #addExpireChannelsReq(ColibriConferenceIQ)} or {@link #addRtpDescription(RtpDescriptionPacketExtension, String,
+ * ColibriConferenceIQ.Channel)} and
+ * {@link #addSourceGroupsInfo(Map, ColibriConferenceIQ)} and
+ * {@link #addSourceInfo(Map, ColibriConferenceIQ)}.
+ * </li>
+ * <li>
+ * Compile the request by calling {@link #getRequest(Jid)}. Then send it to the
+ * bridge.
+ * </li>
+ * <li>
  * Use {@link ColibriAnalyser} to extract particular channels info or create
  * response to the client.
- *     </li>
- *     <li>
+ * </li>
+ * <li>
  * Call {@link #reset()} and start next query.
- *     </li>
+ * </li>
  * </ol>
  * The important thing is to share the same {@link ColibriConferenceIQ} instance
  * between the {@link ColibriAnalyser} and {@link ColibriBuilder}. The builder
@@ -62,8 +60,8 @@ import java.util.*;
  * @author Pawel Domas
  * @author Boris Grozev
  */
-public class ColibriBuilder
-{
+public class ColibriBuilder {
+
     /**
      * The logger used by this instance.
      */
@@ -72,37 +70,37 @@ public class ColibriBuilder
     /**
      * Copies the transport info from a {@link ContentPacketExtension} to a
      * {@link ColibriConferenceIQ.ChannelCommon}.
+     *
      * @param content the {@link ContentPacketExtension} from which to copy.
-     * @param channel the {@link ColibriConferenceIQ.ChannelCommon} to which to copy.
+     * @param channel the {@link ColibriConferenceIQ.ChannelCommon} to which to
+     * copy.
      */
     private static void copyTransport(
-        ContentPacketExtension content,
-        ColibriConferenceIQ.ChannelCommon channel)
-    {
+            ContentPacketExtension content,
+            ColibriConferenceIQ.ChannelCommon channel) {
         IceUdpTransportPacketExtension transport
-            = content.getFirstChildOfType(
-            IceUdpTransportPacketExtension.class);
+                = content.getFirstChildOfType(
+                        IceUdpTransportPacketExtension.class);
 
         channel.setTransport(
-            IceUdpTransportPacketExtension
-                .cloneTransportAndCandidates(transport, true));
+                IceUdpTransportPacketExtension
+                        .cloneTransportAndCandidates(transport, true));
     }
 
     /**
      * Copies the contents of the description element from a
      * {@link ContentPacketExtension} to a {@link ColibriConferenceIQ.Channel}.
+     *
      * @param content the {@link ContentPacketExtension} from which to copy.
      * @param channel the {@link ColibriConferenceIQ.Channel} to which to copy.
      */
     private static boolean copyDescription(
-        ContentPacketExtension content,
-        ColibriConferenceIQ.Channel channel)
-    {
+            ContentPacketExtension content,
+            ColibriConferenceIQ.Channel channel) {
         RtpDescriptionPacketExtension description
-            = content.getFirstChildOfType(
-            RtpDescriptionPacketExtension.class);
-        if (description != null)
-        {
+                = content.getFirstChildOfType(
+                        RtpDescriptionPacketExtension.class);
+        if (description != null) {
             return copyDescription(description, channel);
         }
         return false;
@@ -111,25 +109,23 @@ public class ColibriBuilder
     /**
      * Copies the contents of a {@link RtpDescriptionPacketExtension} to a
      * {@link ColibriConferenceIQ.Channel}.
+     *
      * @param description the {@link RtpDescriptionPacketExtension} from which
      * to copy.
      * @param channel the {@link ColibriConferenceIQ.Channel} to which to copy.
      */
     private static boolean copyDescription(
-        RtpDescriptionPacketExtension description,
-        ColibriConferenceIQ.Channel channel)
-    {
+            RtpDescriptionPacketExtension description,
+            ColibriConferenceIQ.Channel channel) {
         boolean added = false;
-        for (PayloadTypePacketExtension payloadType : description.getPayloadTypes())
-        {
+        for (PayloadTypePacketExtension payloadType : description.getPayloadTypes()) {
             channel.addPayloadType(PayloadTypePacketExtension.clone(payloadType));
             added = true;
         }
 
-        for (RTPHdrExtPacketExtension rtpHdrExt : description.getExtmapList())
-        {
+        for (RTPHdrExtPacketExtension rtpHdrExt : description.getExtmapList()) {
             channel
-                .addRtpHeaderExtension(RTPHdrExtPacketExtension.clone(rtpHdrExt));
+                    .addRtpHeaderExtension(RTPHdrExtPacketExtension.clone(rtpHdrExt));
             added = true;
         }
 
@@ -139,21 +135,19 @@ public class ColibriBuilder
     /**
      * Sets the {@link SourcePacketExtension}s of a particular
      * {@link ColibriConferenceIQ.Channel}.
+     *
      * @param channel the channel to which to add sources.
      * @param sources the list of sources to add.
      */
     private static void addSources(
-        ColibriConferenceIQ.Channel channel,
-        List<SourcePacketExtension> sources)
-    {
-        for (SourcePacketExtension source : sources)
-        {
+            ColibriConferenceIQ.Channel channel,
+            List<SourcePacketExtension> sources) {
+        for (SourcePacketExtension source : sources) {
             channel.addSource(source.copy());
         }
 
         if (channel.getSources() == null
-            || channel.getSources().isEmpty())
-        {
+                || channel.getSources().isEmpty()) {
             // Put an empty source to remove all sources
             SourcePacketExtension emptySource = new SourcePacketExtension();
             emptySource.setSSRC(-1L);
@@ -164,6 +158,7 @@ public class ColibriBuilder
     /**
      * Adds a list of {@link SourceGroupPacketExtension}s to a particular
      * {@link ColibriConferenceIQ.Channel}.
+     *
      * @param channel the channel to which to add source groups.
      * @param sourceGroups the source groups to add.
      * @param video whether the channel's media type is video or not.
@@ -171,23 +166,20 @@ public class ColibriBuilder
      * @return {@code true} iff any source groups we added to the channel.
      */
     private static boolean addSourceGroups(
-        ColibriConferenceIQ.Channel channel,
-        List<SourceGroupPacketExtension> sourceGroups,
-        boolean video)
-    {
+            ColibriConferenceIQ.Channel channel,
+            List<SourceGroupPacketExtension> sourceGroups,
+            boolean video) {
         boolean hasAnyChanges = false;
 
-        if (sourceGroups.isEmpty() && video)
-        {
+        if (sourceGroups.isEmpty() && video) {
             hasAnyChanges = true;
 
             // Put an empty source group to turn off simulcast layers
             channel.addSourceGroup(
-                SourceGroupPacketExtension.createSimulcastGroup());
+                    SourceGroupPacketExtension.createSimulcastGroup());
         }
 
-        for (SourceGroupPacketExtension sourceGroup : sourceGroups)
-        {
+        for (SourceGroupPacketExtension sourceGroup : sourceGroups) {
             hasAnyChanges = true;
 
             channel.addSourceGroup(sourceGroup);
@@ -203,8 +195,8 @@ public class ColibriBuilder
 
     /**
      * The type of the request currently being build.
-     * {@link RequestType#UNDEFINED} if this instance is in the "zero" state.
-     * To get into the "zero" state call {@link #reset()}.
+     * {@link RequestType#UNDEFINED} if this instance is in the "zero" state. To
+     * get into the "zero" state call {@link #reset()}.
      */
     private RequestType requestType = RequestType.UNDEFINED;
 
@@ -219,15 +211,14 @@ public class ColibriBuilder
     private boolean hasAnyChannelsToExpire = false;
 
     /**
-     * Channel 'last-n' option that will be added when channels are created.
-     * Set to <tt>null</tt> in order to omit.
+     * Channel 'last-n' option that will be added when channels are created. Set
+     * to <tt>null</tt> in order to omit.
      */
     private Integer channelLastN;
 
     /**
      * Channel 'simulcast-mode' option that will be added when channels are
-     * created.
-     * Set to <tt>null</tt> in order to omit.
+     * created. Set to <tt>null</tt> in order to omit.
      */
     private SimulcastMode simulcastMode;
 
@@ -235,7 +226,8 @@ public class ColibriBuilder
      * Specifies the audio packet delay that will be set on all created audio
      * channels. When set to <tt>null</tt> the builder will clear the attribute
      * which stands for 'undefined'.
-     **/
+     *
+     */
     private Integer audioPacketDelay;
 
     /**
@@ -252,10 +244,9 @@ public class ColibriBuilder
      * account when constructing specific requests (the need to allocate new
      * conference or re-use the one currently in progress).
      */
-    public ColibriBuilder(ColibriConferenceIQ conferenceState)
-    {
+    public ColibriBuilder(ColibriConferenceIQ conferenceState) {
         this.conferenceState
-            = Objects.requireNonNull(conferenceState, "conferenceState");
+                = Objects.requireNonNull(conferenceState, "conferenceState");
 
         reset();
     }
@@ -264,8 +255,7 @@ public class ColibriBuilder
      * Resets this builder state to the "zero" state when no request info is
      * stored.
      */
-    public void reset()
-    {
+    public void reset() {
         requestType = RequestType.UNDEFINED;
 
         // Copy conference ID if any
@@ -283,8 +273,8 @@ public class ColibriBuilder
      * Adds next channel allocation request to
      * {@link RequestType#ALLOCATE_CHANNELS} query currently being built.
      *
-     * @param useBundle <tt>true</tt> if allocated channels should all use
-     * the same bundle.
+     * @param useBundle <tt>true</tt> if allocated channels should all use the
+     * same bundle.
      * @param endpointId name of the endpoint for which Colibri channels will
      * @param peerIsInitiator the value that will be set in 'initiator'
      * attribute ({@link ColibriConferenceIQ.Channel#INITIATOR_ATTR_NAME}).
@@ -293,31 +283,30 @@ public class ColibriBuilder
      *
      * @return {@code true} if the request yields any changes in Colibri
      * channels state on the bridge or {@code false} otherwise. In general when
-     * {@code false} is returned for all combined requests it makes no sense
-     * to send it.
+     * {@code false} is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addAllocateChannelsReq(
-        boolean useBundle,
-        String endpointId,
-        String statsId,
-        boolean peerIsInitiator,
-        List<ContentPacketExtension> contents)
-    {
+            boolean useBundle,
+            String endpointId,
+            String statsId,
+            boolean peerIsInitiator,
+            List<ContentPacketExtension> contents) {
         return addAllocateChannelsReq(
-            useBundle,
-            endpointId,
-            statsId,
-            peerIsInitiator,
-            contents,
-            null, null, null);
+                useBundle,
+                endpointId,
+                statsId,
+                peerIsInitiator,
+                contents,
+                null, null, null);
     }
 
     /**
      * Adds next channel allocation request to
      * {@link RequestType#ALLOCATE_CHANNELS} query currently being built.
      *
-     * @param useBundle <tt>true</tt> if allocated channels should all use
-     * the same bundle.
+     * @param useBundle <tt>true</tt> if allocated channels should all use the
+     * same bundle.
      * @param endpointId name of the endpoint for which Colibri channels will
      * @param statsId the stats ID of the endpoint for which channels are to be
      * allocated.
@@ -337,8 +326,8 @@ public class ColibriBuilder
      *
      * @return {@code true} if the request yields any changes in Colibri
      * channels state on the bridge or {@code false} otherwise. In general when
-     * {@code false} is returned for all combined requests it makes no sense
-     * to send it.
+     * {@code false} is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addAllocateChannelsReq(
             boolean useBundle,
@@ -348,134 +337,113 @@ public class ColibriBuilder
             List<ContentPacketExtension> contents,
             Map<String, List<SourcePacketExtension>> sourceMap,
             Map<String, List<SourceGroupPacketExtension>> sourceGroupMap,
-            List<String> octoRelayIds)
-    {
+            List<String> octoRelayIds) {
         Objects.requireNonNull(contents, "contents");
         assertRequestType(RequestType.ALLOCATE_CHANNELS);
 
         boolean hasAnyChanges = false;
 
-        for (ContentPacketExtension content : contents)
-        {
+        for (ContentPacketExtension content : contents) {
             MediaType mediaType = JingleUtils.getMediaType(content);
             String contentName = mediaType.toString();
             ColibriConferenceIQ.Content requestContent
-                = request.getOrCreateContent(contentName);
+                    = request.getOrCreateContent(contentName);
 
             ColibriConferenceIQ.ChannelCommon requestChannel;
-            if (mediaType == MediaType.DATA)
-            {
+            if (mediaType == MediaType.DATA) {
                 requestChannel = new ColibriConferenceIQ.SctpConnection();
-            }
-            else if (octoRelayIds != null)
-            {
+            } else if (octoRelayIds != null) {
                 requestChannel = new ColibriConferenceIQ.OctoChannel();
-            }
-            else
-            {
+            } else {
                 requestChannel = new ColibriConferenceIQ.Channel();
             }
 
-            if (endpointId != null)
-            {
+            if (endpointId != null) {
                 requestChannel.setEndpoint(endpointId);
             }
             requestChannel.setInitiator(peerIsInitiator);
 
-            if (useBundle && endpointId != null)
-            {
+            if (useBundle && endpointId != null) {
                 requestChannel.setChannelBundleId(endpointId);
             }
 
-            if (requestChannel instanceof ColibriConferenceIQ.Channel)
-            {
+            if (requestChannel instanceof ColibriConferenceIQ.Channel) {
                 ColibriConferenceIQ.Channel requestRtpChannel
-                    = (ColibriConferenceIQ.Channel) requestChannel;
+                        = (ColibriConferenceIQ.Channel) requestChannel;
 
                 copyDescription(content, requestRtpChannel);
 
                 // Config options
                 requestRtpChannel.setLastN(channelLastN);
                 requestRtpChannel.setSimulcastMode(simulcastMode);
-                if (MediaType.AUDIO.equals(mediaType))
-                {
+                if (MediaType.AUDIO.equals(mediaType)) {
                     // When audioPacketDelay is null it will clear the attribute
                     requestRtpChannel.setPacketDelay(audioPacketDelay);
                     // Set rtp packet relay type for this channel
                     requestRtpChannel
-                        .setRTPLevelRelayType(rtpLevelRelayType);
+                            .setRTPLevelRelayType(rtpLevelRelayType);
                 }
 
                 // Copy the sources and source groups
                 if (sourceMap != null
-                    && sourceMap.get(contentName) != null)
-                {
+                        && sourceMap.get(contentName) != null) {
                     addSources(requestRtpChannel, sourceMap.get(contentName));
                 }
                 if (sourceGroupMap != null
-                    && sourceGroupMap.get(contentName) != null)
-                {
+                        && sourceGroupMap.get(contentName) != null) {
                     addSourceGroups(
-                        requestRtpChannel,
-                        sourceGroupMap.get(contentName),
-                        MediaType.VIDEO.equals(mediaType));
+                            requestRtpChannel,
+                            sourceGroupMap.get(contentName),
+                            MediaType.VIDEO.equals(mediaType));
                 }
             }
 
-            if (requestChannel instanceof ColibriConferenceIQ.OctoChannel)
-            {
+            if (requestChannel instanceof ColibriConferenceIQ.OctoChannel) {
                 ((ColibriConferenceIQ.OctoChannel) requestChannel)
-                    .setRelays(octoRelayIds);
+                        .setRelays(octoRelayIds);
             }
 
             // Copy transport
-            if (!useBundle)
-            {
+            if (!useBundle) {
                 copyTransport(content, requestChannel);
             }
 
-            if (requestChannel instanceof ColibriConferenceIQ.Channel)
-            {
+            if (requestChannel instanceof ColibriConferenceIQ.Channel) {
                 requestContent.addChannel(
-                    (ColibriConferenceIQ.Channel) requestChannel);
-            }
-            else
-            {
+                        (ColibriConferenceIQ.Channel) requestChannel);
+            } else {
                 requestContent.addSctpConnection(
-                    (ColibriConferenceIQ.SctpConnection) requestChannel);
+                        (ColibriConferenceIQ.SctpConnection) requestChannel);
             }
 
             hasAnyChanges = true;
         }
 
-        if (useBundle && endpointId != null && contents.size() >= 1)
-        {
+        if (useBundle && endpointId != null && contents.size() >= 1) {
             // Copy first transport to bundle
             ColibriConferenceIQ.ChannelBundle bundle
-                = new ColibriConferenceIQ.ChannelBundle(endpointId);
+                    = new ColibriConferenceIQ.ChannelBundle(endpointId);
 
             ContentPacketExtension firstContent = contents.get(0);
 
             IceUdpTransportPacketExtension transport
-                = firstContent.getFirstChildOfType(
-                        IceUdpTransportPacketExtension.class);
-            if (transport != null)
-            {
+                    = firstContent.getFirstChildOfType(
+                            IceUdpTransportPacketExtension.class);
+            if (transport != null) {
                 hasAnyChanges = true;
 
                 bundle.setTransport(
-                    IceUdpTransportPacketExtension
-                        .cloneTransportAndCandidates(transport, true));
+                        IceUdpTransportPacketExtension
+                                .cloneTransportAndCandidates(transport, true));
             }
 
             request.addChannelBundle(bundle);
         }
 
-        if (endpointId != null)
-        {
+        if (endpointId != null) {
             // Set the endpoint
             ColibriConferenceIQ.Endpoint endpoint
-                = new ColibriConferenceIQ.Endpoint(endpointId, statsId, null);
+                    = new ColibriConferenceIQ.Endpoint(endpointId, statsId, null);
 
             request.addEndpoint(endpoint);
         }
@@ -484,26 +452,25 @@ public class ColibriBuilder
     }
 
     /**
-     * Adds a {@link ColibriConferenceIQ.ChannelBundle} with a specific
-     * ID and a specific {@code transport} element to a
+     * Adds a {@link ColibriConferenceIQ.ChannelBundle} with a specific ID and a
+     * specific {@code transport} element to a
      * {@link RequestType#CHANNEL_INFO_UPDATE} query.
+     *
      * @param transport the transport element to add to the bundle.
      * @param channelBundleId the ID of the bundle
      * @return {@code true} if the request yields any changes in Colibri
      * channels state on the bridge or {@code false} otherwise. In general when
-     * {@code false} is returned for all combined requests it makes no sense
-     * to send it.
+     * {@code false} is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addBundleTransportUpdateReq(
-        IceUdpTransportPacketExtension transport,
-        String channelBundleId)
-        throws IllegalArgumentException
-    {
+            IceUdpTransportPacketExtension transport,
+            String channelBundleId)
+            throws IllegalArgumentException {
         Objects.requireNonNull(transport, "transport");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet.
 
             // XXX by returning false we silently indicate that there is no
@@ -517,12 +484,12 @@ public class ColibriBuilder
         assertRequestType(RequestType.CHANNEL_INFO_UPDATE);
 
         ColibriConferenceIQ.ChannelBundle channelBundleRequest
-            = new ColibriConferenceIQ.ChannelBundle(channelBundleId);
+                = new ColibriConferenceIQ.ChannelBundle(channelBundleId);
 
         channelBundleRequest
-            .setTransport(
-                IceUdpTransportPacketExtension
-                    .cloneTransportAndCandidates(transport, true));
+                .setTransport(
+                        IceUdpTransportPacketExtension
+                                .cloneTransportAndCandidates(transport, true));
 
         request.addChannelBundle(channelBundleRequest);
 
@@ -537,48 +504,43 @@ public class ColibriBuilder
     /**
      * Adds next expire channel request to {@link RequestType#EXPIRE_CHANNELS}
      * query currently being built.
+     *
      * @param channelInfo the {@link ColibriConferenceIQ} instance that contains
      * info about the channels to be expired.
      * @return <tt>true</tt> if the request yields any changes in Colibri
      * channels state on the bridge or <tt>false</tt> otherwise. In general when
-     * <tt>false</tt> is returned for all combined requests it makes no sense
-     * to send it.
+     * <tt>false</tt> is returned for all combined requests it makes no sense to
+     * send it.
      */
-    public boolean addExpireChannelsReq(ColibriConferenceIQ channelInfo)
-    {
+    public boolean addExpireChannelsReq(ColibriConferenceIQ channelInfo) {
         Objects.requireNonNull(channelInfo, "channelInfo");
 
         // Formulate the ColibriConferenceIQ request which is to be sent.
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             return false;
         }
 
         assertRequestType(RequestType.EXPIRE_CHANNELS);
 
         for (ColibriConferenceIQ.Content expiredContent
-            : channelInfo.getContents())
-        {
+                : channelInfo.getContents()) {
             ColibriConferenceIQ.Content stateContent
-                = conferenceState.getContent(expiredContent.getName());
+                    = conferenceState.getContent(expiredContent.getName());
 
-            if (stateContent != null)
-            {
+            if (stateContent != null) {
                 ColibriConferenceIQ.Content requestContent
-                    = request.getOrCreateContent(
-                            stateContent.getName());
+                        = request.getOrCreateContent(
+                                stateContent.getName());
 
                 for (ColibriConferenceIQ.Channel expiredChannel
-                    : expiredContent.getChannels())
-                {
+                        : expiredContent.getChannels()) {
                     ColibriConferenceIQ.Channel stateChannel
-                        = stateContent.getChannel(expiredChannel.getID());
+                            = stateContent.getChannel(expiredChannel.getID());
 
-                    if (stateChannel != null)
-                    {
+                    if (stateChannel != null) {
                         ColibriConferenceIQ.Channel requestChannel
-                            = new ColibriConferenceIQ.Channel();
+                                = new ColibriConferenceIQ.Channel();
 
                         requestChannel.setExpire(0);
                         requestChannel.setID(stateChannel.getID());
@@ -588,15 +550,13 @@ public class ColibriBuilder
                     }
                 }
                 for (ColibriConferenceIQ.SctpConnection expiredConn
-                    : expiredContent.getSctpConnections())
-                {
+                        : expiredContent.getSctpConnections()) {
                     ColibriConferenceIQ.SctpConnection stateConn
-                        = stateContent.getSctpConnection(expiredConn.getID());
+                            = stateContent.getSctpConnection(expiredConn.getID());
 
-                    if (stateConn != null)
-                    {
+                    if (stateConn != null) {
                         ColibriConferenceIQ.SctpConnection requestConn
-                            = new ColibriConferenceIQ.SctpConnection();
+                                = new ColibriConferenceIQ.SctpConnection();
 
                         requestConn.setID(stateConn.getID());
                         requestConn.setExpire(0);
@@ -618,16 +578,14 @@ public class ColibriBuilder
          * state of the conference managed by this ColibriBuilder.
          */
         for (ColibriConferenceIQ.Content requestContent
-            : request.getContents())
-        {
+                : request.getContents()) {
             ColibriConferenceIQ.Content stateContent
-                = conferenceState.getContent(requestContent.getName());
+                    = conferenceState.getContent(requestContent.getName());
 
             for (ColibriConferenceIQ.Channel requestChannel
-                    : requestContent.getChannels())
-            {
+                    : requestContent.getChannels()) {
                 ColibriConferenceIQ.Channel stateChannel
-                    = stateContent.getChannel(requestChannel.getID());
+                        = stateContent.getChannel(requestChannel.getID());
 
                 stateContent.removeChannel(stateChannel);
 
@@ -635,7 +593,7 @@ public class ColibriBuilder
                  * If the last remote channel is to be expired, expire
                  * the local channel as well.
                  */
-                /*if (stateContent.getChannelCount() == 1)
+ /*if (stateContent.getChannelCount() == 1)
                 {
                     stateChannel = stateContent.getRtpChannel(0);
 
@@ -652,11 +610,10 @@ public class ColibriBuilder
                 }*/
             }
             for (ColibriConferenceIQ.SctpConnection requestConn
-                : requestContent.getSctpConnections())
-            {
+                    : requestContent.getSctpConnections()) {
                 ColibriConferenceIQ.SctpConnection stateConn
-                    = stateContent.getSctpConnection(
-                            requestConn.getID());
+                        = stateContent.getSctpConnection(
+                                requestConn.getID());
 
                 stateContent.removeSctpConnection(stateConn);
 
@@ -664,7 +621,7 @@ public class ColibriBuilder
                  * If the last remote channel is to be expired, expire
                  * the local channel as well.
                  */
-                /*if (stateContent.getSctpConnections().size() == 1)
+ /*if (stateContent.getSctpConnections().size() == 1)
                 {
                     stateConn = stateContent.getSctpConnections().get(0);
 
@@ -689,8 +646,8 @@ public class ColibriBuilder
 
     /**
      * Adds an {@link RtpDescriptionPacketExtension} to a specific channel in
-     * the request which is currently being built. The channel in the request
-     * is identified by the content name and the ID of {@code channel}.
+     * the request which is currently being built. The channel in the request is
+     * identified by the content name and the ID of {@code channel}.
      *
      * @param description the {@link RtpDescriptionPacketExtension} to add.
      * @param contentName the name of the content to which the channel belongs.
@@ -699,21 +656,19 @@ public class ColibriBuilder
      *
      * @return {@code true} if the request yields any changes in Colibri
      * channels state on the bridge or {@code false} otherwise. In general when
-     * {@code false} is returned for all combined requests it makes no sense
-     * to send it.
+     * {@code false} is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addRtpDescription(
-        RtpDescriptionPacketExtension description,
-        String contentName,
-        ColibriConferenceIQ.Channel channel)
-    {
+            RtpDescriptionPacketExtension description,
+            String contentName,
+            ColibriConferenceIQ.Channel channel) {
         Objects.requireNonNull(description, "description");
         Objects.requireNonNull(contentName, "contentName");
         Objects.requireNonNull(channel, "channel");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet
 
             // XXX by returning false we silently indicate that there is no
@@ -727,7 +682,7 @@ public class ColibriBuilder
         assertRequestType(RequestType.CHANNEL_INFO_UPDATE);
 
         ColibriConferenceIQ.Channel requestChannel
-            = getRequestChannel(contentName, channel);
+                = getRequestChannel(contentName, channel);
         return copyDescription(description, requestChannel);
     }
 
@@ -742,19 +697,17 @@ public class ColibriBuilder
      *
      * @return <tt>true</tt> if the request yields any changes in Colibri
      * channels state on the bridge or <tt>false</tt> otherwise. In general when
-     * <tt>false</tt> is returned for all combined requests it makes no sense
-     * to send it.
+     * <tt>false</tt> is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addSourceInfo(
-        Map<String, List<SourcePacketExtension>> sourceMap,
-        ColibriConferenceIQ localChannelsInfo)
-    {
+            Map<String, List<SourcePacketExtension>> sourceMap,
+            ColibriConferenceIQ localChannelsInfo) {
         Objects.requireNonNull(sourceMap, "sourceMap");
         Objects.requireNonNull(localChannelsInfo, "localChannelsInfo");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet
             return false;
         }
@@ -764,13 +717,11 @@ public class ColibriBuilder
         boolean hasAnyChanges = false;
 
         // Go over sources
-        for (String contentName : sourceMap.keySet())
-        {
+        for (String contentName : sourceMap.keySet()) {
             // Get channel from local channel info
             ColibriConferenceIQ.Channel channel
-                = getChannel(localChannelsInfo, contentName);
-            if (channel == null)
-            {
+                    = getChannel(localChannelsInfo, contentName);
+            if (channel == null) {
                 // There's no channel for this content name in localChannelsInfo
                 continue;
             }
@@ -779,7 +730,7 @@ public class ColibriBuilder
 
             // Ok we have channel for this content, let's add sources
             ColibriConferenceIQ.Channel requestChannel
-                = getRequestChannel(contentName, channel);
+                    = getRequestChannel(contentName, channel);
 
             addSources(requestChannel, sourceMap.get(contentName));
         }
@@ -798,19 +749,17 @@ public class ColibriBuilder
      *
      * @return <tt>true</tt> if the request yields any changes in Colibri
      * channels state on the bridge or <tt>false</tt> otherwise. In general when
-     * <tt>false</tt> is returned for all combined requests it makes no sense
-     * to send it.
+     * <tt>false</tt> is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addOctoRelays(
-        List<String> octoRelays,
-        ColibriConferenceIQ localChannelsInfo)
-    {
+            List<String> octoRelays,
+            ColibriConferenceIQ localChannelsInfo) {
         Objects.requireNonNull(octoRelays, "octoRelays");
         Objects.requireNonNull(localChannelsInfo, "localChannelsInfo");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet
             return false;
         }
@@ -820,23 +769,21 @@ public class ColibriBuilder
         boolean hasAnyChanges = false;
 
         for (ColibriConferenceIQ.Content content
-            : conferenceState.getContents())
-        {
+                : conferenceState.getContents()) {
             String contentName = content.getName();
             // Get channel from local channel info
             ColibriConferenceIQ.Channel channel
-                = getChannel(localChannelsInfo, contentName);
-            if (channel == null ||
-                !(channel instanceof ColibriConferenceIQ.OctoChannel))
-            {
+                    = getChannel(localChannelsInfo, contentName);
+            if (channel == null
+                    || !(channel instanceof ColibriConferenceIQ.OctoChannel)) {
                 // There's no channel for this content name in localChannelsInfo
                 continue;
             }
 
             ColibriConferenceIQ.OctoChannel requestChannel
-                = getRequestChannel(
-                    contentName,
-                    (ColibriConferenceIQ.OctoChannel) channel);
+                    = getRequestChannel(
+                            contentName,
+                            (ColibriConferenceIQ.OctoChannel) channel);
 
             requestChannel.setRelays(octoRelays);
             hasAnyChanges = true;
@@ -856,19 +803,17 @@ public class ColibriBuilder
      *
      * @return <tt>true</tt> if the request yields any changes in Colibri
      * channels state on the bridge or <tt>false</tt> otherwise. In general when
-     * <tt>false</tt> is returned for all combined requests it makes no sense
-     * to send it.
+     * <tt>false</tt> is returned for all combined requests it makes no sense to
+     * send it.
      */
     public boolean addSourceGroupsInfo(
-        Map<String, List<SourceGroupPacketExtension>>    sourceGroupMap,
-        ColibriConferenceIQ                              localChannelsInfo)
-    {
+            Map<String, List<SourceGroupPacketExtension>> sourceGroupMap,
+            ColibriConferenceIQ localChannelsInfo) {
         Objects.requireNonNull(sourceGroupMap, "sourceGroupMap");
         Objects.requireNonNull(localChannelsInfo, "localChannelsInfo");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet
             return false;
         }
@@ -878,26 +823,24 @@ public class ColibriBuilder
         boolean hasAnyChanges = false;
 
         // Go over source groups
-        for (String contentName : sourceGroupMap.keySet())
-        {
+        for (String contentName : sourceGroupMap.keySet()) {
             // Get channel from local channel info
             ColibriConferenceIQ.Channel channel
-                = getChannel(localChannelsInfo, contentName);
-            if (channel == null)
-            {
+                    = getChannel(localChannelsInfo, contentName);
+            if (channel == null) {
                 // There's no channel for this content name in localChannelsInfo
                 continue;
             }
 
             // Ok we have channel for this content, let's add sources
             ColibriConferenceIQ.Channel requestChannel
-                = getRequestChannel(contentName, channel);
+                    = getRequestChannel(contentName, channel);
 
             hasAnyChanges
-                |= addSourceGroups(
-                    requestChannel,
-                    sourceGroupMap.get(contentName),
-                    "video".equalsIgnoreCase(contentName));
+                    |= addSourceGroups(
+                            requestChannel,
+                            sourceGroupMap.get(contentName),
+                            "video".equalsIgnoreCase(contentName));
         }
 
         return hasAnyChanges;
@@ -910,8 +853,8 @@ public class ColibriBuilder
      * Note that this should only be used for channels which do NOT use bundle.
      * For the bundle case use {@link #addBundleTransportUpdateReq} instead.
      *
-     * @param transportMap the transportMap of content name to transport extensions. Maps
-     * transport to media types.
+     * @param transportMap the transportMap of content name to transport
+     * extensions. Maps transport to media types.
      * @param localChannelsInfo {@link ColibriConferenceIQ} holding info about
      * Colibri channels to be updated.
      *
@@ -921,15 +864,13 @@ public class ColibriBuilder
      * send it.
      */
     public boolean addTransportUpdateReq(
-            Map<String, IceUdpTransportPacketExtension>    transportMap,
-            ColibriConferenceIQ                            localChannelsInfo)
-    {
+            Map<String, IceUdpTransportPacketExtension> transportMap,
+            ColibriConferenceIQ localChannelsInfo) {
         Objects.requireNonNull(transportMap, "transportMap");
         Objects.requireNonNull(localChannelsInfo, "localChannelsInfo");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet
             return false;
         }
@@ -938,36 +879,35 @@ public class ColibriBuilder
 
         assertRequestType(RequestType.CHANNEL_INFO_UPDATE);
 
-        for (Map.Entry<String,IceUdpTransportPacketExtension> e
-            : transportMap.entrySet())
-        {
+        for (Map.Entry<String, IceUdpTransportPacketExtension> e
+                : transportMap.entrySet()) {
             String contentName = e.getKey();
             ColibriConferenceIQ.ChannelCommon channel
-                = getChannelCommon(localChannelsInfo, contentName);
+                    = getChannelCommon(localChannelsInfo, contentName);
 
-            if (channel != null)
-            {
+            if (channel != null) {
                 IceUdpTransportPacketExtension transport
-                    = IceUdpTransportPacketExtension
-                        .cloneTransportAndCandidates(e.getValue(), true);
+                        = IceUdpTransportPacketExtension
+                                .cloneTransportAndCandidates(e.getValue(), true);
 
                 ColibriConferenceIQ.ChannelCommon requestChannel
-                    = channel instanceof ColibriConferenceIQ.Channel
-                        ? new ColibriConferenceIQ.Channel()
-                        : new ColibriConferenceIQ.SctpConnection();
+                        = channel instanceof ColibriConferenceIQ.Channel
+                                ? new ColibriConferenceIQ.Channel()
+                                : new ColibriConferenceIQ.SctpConnection();
 
                 requestChannel.setID(channel.getID());
                 requestChannel.setEndpoint(channel.getEndpoint());
                 requestChannel.setTransport(transport);
 
                 request.getOrCreateContent(contentName)
-                       .addChannelCommon(requestChannel);
+                        .addChannelCommon(requestChannel);
 
                 hasAnyChanges = true;
             }
         }
         return hasAnyChanges;
     }
+
     /**
      * Adds next request to {@link RequestType#CHANNEL_INFO_UPDATE} query.
      *
@@ -985,14 +925,12 @@ public class ColibriBuilder
      */
     public boolean addDirectionUpdateReq(
             Map<String, ?> mediaDirectionMap,
-            ColibriConferenceIQ         localChannelsInfo)
-    {
+            ColibriConferenceIQ localChannelsInfo) {
         Objects.requireNonNull(mediaDirectionMap, "mediaDirectionMap");
         Objects.requireNonNull(localChannelsInfo, "localChannelsInfo");
 
         if (conferenceState == null
-            || StringUtils.isEmpty(conferenceState.getID()))
-        {
+                || StringUtils.isEmpty(conferenceState.getID())) {
             // We are not initialized yet
             return false;
         }
@@ -1001,21 +939,18 @@ public class ColibriBuilder
 
         assertRequestType(RequestType.CHANNEL_INFO_UPDATE);
 
-        for (String contentName : mediaDirectionMap.keySet())
-        {
+        for (String contentName : mediaDirectionMap.keySet()) {
             ColibriConferenceIQ.Content content
-                = localChannelsInfo.getContent(contentName);
-            if (content != null)
-            {
-                for (ColibriConferenceIQ.Channel channel : content.getChannels())
-                {
+                    = localChannelsInfo.getContent(contentName);
+            if (content != null) {
+                for (ColibriConferenceIQ.Channel channel : content.getChannels()) {
                     ColibriConferenceIQ.Channel requestChannel
-                        = getRequestChannel(contentName, channel);
+                            = getRequestChannel(contentName, channel);
 
                     Object directionValue = mediaDirectionMap.get(contentName);
                     requestChannel.setDirection(
-                        directionValue != null
-                            ? directionValue.toString() : null);
+                            directionValue != null
+                                    ? directionValue.toString() : null);
 
                     hasAnyChanges = true;
                 }
@@ -1027,30 +962,27 @@ public class ColibriBuilder
     /**
      * Finds the first {@link ColibriConferenceIQ.ChannelCommon} with a given
      * content name in a specific {@link ColibriConferenceIQ}.
-     * @param colibriConferenceIQ the {@link ColibriConferenceIQ} from which
-     * to find a channel.
+     *
+     * @param colibriConferenceIQ the {@link ColibriConferenceIQ} from which to
+     * find a channel.
      * @param contentName the name of the content.
      * @return the first {@link ColibriConferenceIQ.ChannelCommon} in the
      * content with name {@code contentName} in {@code colibriConferenceIQ}.
      */
     private ColibriConferenceIQ.ChannelCommon getChannelCommon(
-            ColibriConferenceIQ colibriConferenceIQ, String contentName)
-    {
+            ColibriConferenceIQ colibriConferenceIQ, String contentName) {
         ColibriConferenceIQ.Content content
-            = colibriConferenceIQ.getContent(contentName);
+                = colibriConferenceIQ.getContent(contentName);
 
-        if (content == null)
-        {
+        if (content == null) {
             return null;
         }
 
-        if (content.getChannelCount() > 0)
-        {
+        if (content.getChannelCount() > 0) {
             return content.getChannel(0);
         }
 
-        if (content.getSctpConnections().size() > 0)
-        {
+        if (content.getSctpConnections().size() > 0) {
             return content.getSctpConnections().get(0);
         }
 
@@ -1060,46 +992,41 @@ public class ColibriBuilder
     /**
      * Finds the first {@link ColibriConferenceIQ.Channel} with a given content
      * name in a specific {@link ColibriConferenceIQ}.
-     * @param localChannelsInfo the {@link ColibriConferenceIQ} from which
-     * to find a channel.
+     *
+     * @param localChannelsInfo the {@link ColibriConferenceIQ} from which to
+     * find a channel.
      * @param contentName the name of the content.
-     * @return the first {@link ColibriConferenceIQ.Channel} in the
-     * content with name {@code contentName} in {@code colibriConferenceIQ}.
+     * @return the first {@link ColibriConferenceIQ.Channel} in the content with
+     * name {@code contentName} in {@code colibriConferenceIQ}.
      */
     private ColibriConferenceIQ.Channel getChannel(
-        ColibriConferenceIQ    localChannelsInfo,
-        String                 contentName)
-    {
+            ColibriConferenceIQ localChannelsInfo,
+            String contentName) {
         ColibriConferenceIQ.ChannelCommon channel
-            = getChannelCommon(localChannelsInfo, contentName);
-        return
-            channel instanceof ColibriConferenceIQ.Channel
+                = getChannelCommon(localChannelsInfo, contentName);
+        return channel instanceof ColibriConferenceIQ.Channel
                 ? (ColibriConferenceIQ.Channel) channel : null;
     }
-
 
     /**
      * Finishes query construction and returns it. It does not reset this
      * instance state and {@link #reset()} must be called to start new query.
      * Otherwise we can continue adding next requests into current query.
+     *
      * @param videobridge the JID of videobridge to which this query is
-     *                    directed.
+     * directed.
      * @return constructed query directed to given <tt>videobridge</tt>. If
-     *         request type of current query is
-     *         {@link RequestType#EXPIRE_CHANNELS} and there are no channels to
-     *         be expired then <tt>null</tt> is returned which signals that
-     *         there's nothing to be done.
+     * request type of current query is {@link RequestType#EXPIRE_CHANNELS} and
+     * there are no channels to be expired then <tt>null</tt> is returned which
+     * signals that there's nothing to be done.
      */
-    public ColibriConferenceIQ getRequest(Jid videobridge)
-    {
+    public ColibriConferenceIQ getRequest(Jid videobridge) {
         Objects.requireNonNull(videobridge);
 
         request.setTo(videobridge);
 
-        if (requestType == RequestType.EXPIRE_CHANNELS)
-        {
-            if (!hasAnyChannelsToExpire)
-            {
+        if (requestType == RequestType.EXPIRE_CHANNELS) {
+            if (!hasAnyChannelsToExpire) {
                 return null;
             }
 
@@ -1114,8 +1041,7 @@ public class ColibriBuilder
      * constructed or {@link RequestType#UNDEFINED} if no query construction has
      * been started yet.
      */
-    public RequestType getRequestType()
-    {
+    public RequestType getRequestType() {
         return requestType;
     }
 
@@ -1125,16 +1051,13 @@ public class ColibriBuilder
      *
      * @param currentReqType the current request type to be used.
      */
-    private void assertRequestType(RequestType currentReqType)
-    {
-        if (requestType == RequestType.UNDEFINED)
-        {
+    private void assertRequestType(RequestType currentReqType) {
+        if (requestType == RequestType.UNDEFINED) {
             requestType = currentReqType;
         }
-        if (requestType != currentReqType)
-        {
+        if (requestType != currentReqType) {
             throw new IllegalStateException(
-                "Request type already set to " + requestType
+                    "Request type already set to " + requestType
                     + ", can not change to " + currentReqType);
         }
     }
@@ -1143,77 +1066,72 @@ public class ColibriBuilder
      * Returns <tt>true</tt> if {@link RequestType#EXPIRE_CHANNELS} request is
      * being constructed and there are valid channels to be expired.
      */
-    public boolean hasAnyChannelsToExpire()
-    {
+    public boolean hasAnyChannelsToExpire() {
         return hasAnyChannelsToExpire;
     }
 
     /**
-     * Channel 'last-n' option that will be added when channels are created.
-     * Set to <tt>null</tt> in order to omit. Value is reset after
-     * {@link #reset} is called.
+     * Channel 'last-n' option that will be added when channels are created. Set
+     * to <tt>null</tt> in order to omit. Value is reset after {@link #reset} is
+     * called.
      *
      * @return an integer value or <tt>null</tt> if option is unspecified.
      */
-    public Integer getChannelLastN()
-    {
+    public Integer getChannelLastN() {
         return channelLastN;
     }
 
     /**
      * Sets channel 'last-n' option that will be added to the request when
      * channels are created.
+     *
      * @param channelLastN an integer value to specify 'last-n' option or
-     *        <tt>null</tt> in order to omit in requests.
+     * <tt>null</tt> in order to omit in requests.
      */
-    public void setChannelLastN(Integer channelLastN)
-    {
+    public void setChannelLastN(Integer channelLastN) {
         this.channelLastN = channelLastN;
     }
 
     /**
-     * Returns an <tt>Integer</tt> which stands for the audio packet delay
-     * that will be set on all created audio channels or <tt>null</tt> if
-     * the builder should leave not include the XML attribute at all.
+     * Returns an <tt>Integer</tt> which stands for the audio packet delay that
+     * will be set on all created audio channels or <tt>null</tt> if the builder
+     * should leave not include the XML attribute at all.
      */
-    public Integer getAudioPacketDelay()
-    {
+    public Integer getAudioPacketDelay() {
         return audioPacketDelay;
     }
 
     /**
      * Configures audio channels packet delay.
-     * @param audioPacketDelay an <tt>Integer</tt> value which stands for
-     * the audio packet delay that will be set on all created audio channels or
+     *
+     * @param audioPacketDelay an <tt>Integer</tt> value which stands for the
+     * audio packet delay that will be set on all created audio channels or
      * <tt>null</tt> if the builder should not set that channel property to any
      * value.
      */
-    public void setAudioPacketDelay(Integer audioPacketDelay)
-    {
+    public void setAudioPacketDelay(Integer audioPacketDelay) {
         this.audioPacketDelay = audioPacketDelay;
     }
 
     /**
-     * Sets channel 'simulcast-mode' option that will be added to the
-     * request when channels are created.
+     * Sets channel 'simulcast-mode' option that will be added to the request
+     * when channels are created.
+     *
      * @param simulcastMode a <tt>SimulcastMode</tt> value to specify
-     *        'simulcast-mode' option or <tt>null</tt> in order to omit in
-     *        requests.
+     * 'simulcast-mode' option or <tt>null</tt> in order to omit in requests.
      */
-    public void setSimulcastMode(SimulcastMode simulcastMode)
-    {
+    public void setSimulcastMode(SimulcastMode simulcastMode) {
         this.simulcastMode = simulcastMode;
     }
 
     /**
      * Returns the channel from {@link #request} which matches a particular
      * content name and a particular {@link ColibriConferenceIQ.ChannelCommon}
-     * instance (i.e. their IDs match).
-     * If the request does not contain such a channel, a new instance is created
-     * and added to {@link #request}, and it is initialized only with the fields
-     * required to identify the particular Colibri channel on the bridge (i.e.
-     * just the ID is specified). The exact run-time type of the instance (
-     * {@link ColibriConferenceIQ.Channel},
+     * instance (i.e. their IDs match). If the request does not contain such a
+     * channel, a new instance is created and added to {@link #request}, and it
+     * is initialized only with the fields required to identify the particular
+     * Colibri channel on the bridge (i.e. just the ID is specified). The exact
+     * run-time type of the instance ( null null     {@link ColibriConferenceIQ.Channel},
      * {@link ColibriConferenceIQ.SctpConnection}, or
      * {@link ColibriConferenceIQ.OctoChannel}) depends on the type of
      * {@code channel}.
@@ -1223,33 +1141,25 @@ public class ColibriBuilder
      * @param contentName the name of the content.
      * @param channel the channel to match.
      *
-     * @return the channel from {@link #request} with the specified content
-     * name and ID and run-time type matching this of {@code channel}.
+     * @return the channel from {@link #request} with the specified content name
+     * and ID and run-time type matching this of {@code channel}.
      */
     private <T extends ColibriConferenceIQ.ChannelCommon> T getRequestChannel(
-        String contentName, T channel)
-    {
+            String contentName, T channel) {
         ColibriConferenceIQ.Content requestContent
-            = request.getOrCreateContent(contentName);
+                = request.getOrCreateContent(contentName);
         ColibriConferenceIQ.ChannelCommon requestChannel
-            = requestContent.getChannel(channel.getID());
-        if (requestChannel == null)
-        {
+                = requestContent.getChannel(channel.getID());
+        if (requestChannel == null) {
             requestChannel = requestContent.getSctpConnection(channel.getID());
         }
 
-        if (requestChannel == null)
-        {
-            if (channel instanceof ColibriConferenceIQ.SctpConnection)
-            {
+        if (requestChannel == null) {
+            if (channel instanceof ColibriConferenceIQ.SctpConnection) {
                 requestChannel = new ColibriConferenceIQ.SctpConnection();
-            }
-            else if (channel instanceof ColibriConferenceIQ.OctoChannel)
-            {
+            } else if (channel instanceof ColibriConferenceIQ.OctoChannel) {
                 requestChannel = new ColibriConferenceIQ.OctoChannel();
-            }
-            else
-            {
+            } else {
                 requestChannel = new ColibriConferenceIQ.Channel();
             }
 
@@ -1257,14 +1167,11 @@ public class ColibriBuilder
             requestContent.addChannelCommon(requestChannel);
         }
 
-        try
-        {
+        try {
             return (T) requestChannel;
-        }
-        catch (ClassCastException cce)
-        {
+        } catch (ClassCastException cce) {
             throw new IllegalStateException(
-                "Channel type mismatch: requested "
+                    "Channel type mismatch: requested "
                     + channel.getClass().getSimpleName()
                     + ", found a channel of class "
                     + requestChannel.getClass().getSimpleName());
@@ -1273,48 +1180,42 @@ public class ColibriBuilder
 
     /**
      * Configures RTP-level relay (RFC 3550, section 2.3).
-     * @param rtpLevelRelayType an <tt>RTPLevelRelayType</tt> value which
-     * stands for the rtp level relay type that will be set on all created
-     * audio channels.
+     *
+     * @param rtpLevelRelayType an <tt>RTPLevelRelayType</tt> value which stands
+     * for the rtp level relay type that will be set on all created audio
+     * channels.
      */
-    public void setRTPLevelRelayType(RTPLevelRelayType rtpLevelRelayType)
-    {
+    public void setRTPLevelRelayType(RTPLevelRelayType rtpLevelRelayType) {
         this.rtpLevelRelayType = rtpLevelRelayType;
     }
 
     /**
      * Configures RTP-level relay (RFC 3550, section 2.3).
-     * @param rtpLevelRelayType a <tt>String</tt> value which
-     * stands for the rtp level relay type that will be set on all created
-     * audio channels.
+     *
+     * @param rtpLevelRelayType a <tt>String</tt> value which stands for the rtp
+     * level relay type that will be set on all created audio channels.
      */
-    public void setRTPLevelRelayType(String rtpLevelRelayType)
-    {
-        setRTPLevelRelayType
-                (RTPLevelRelayType.parseRTPLevelRelayType(rtpLevelRelayType));
+    public void setRTPLevelRelayType(String rtpLevelRelayType) {
+        setRTPLevelRelayType(RTPLevelRelayType.parseRTPLevelRelayType(rtpLevelRelayType));
     }
 
     /**
      * The types of request that can be built with {@link ColibriBuilder}.
      */
-    public enum RequestType
-    {
+    public enum RequestType {
         /**
          * Allocates new channels on the bridge request.
          */
         ALLOCATE_CHANNELS,
-
         /**
          * An update request which is meant to modify some values of existing
          * Colibri channels on the bridge.
          */
         CHANNEL_INFO_UPDATE,
-
         /**
          * Expires specified Colibri channels.
          */
         EXPIRE_CHANNELS,
-
         /**
          * Undefined means {@link ColibriBuilder} "zero" state. The point where
          * builder instance can be used to start next query.

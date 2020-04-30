@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class CallInfoPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that call info belongs to.
      */
@@ -38,8 +38,7 @@ public class CallInfoPacketExtension
     /**
      * Constructor.
      */
-    public CallInfoPacketExtension()
-    {
+    public CallInfoPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

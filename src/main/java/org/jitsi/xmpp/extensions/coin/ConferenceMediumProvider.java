@@ -25,8 +25,8 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class ConferenceMediumProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a ConferenceMedium extension sub-packet and creates a {@link
      * ConferenceMediumPacketExtension} instance. At the beginning of the method
@@ -43,8 +43,7 @@ public class ConferenceMediumProvider
      */
     @Override
     public ExtensionElement parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
@@ -52,43 +51,32 @@ public class ConferenceMediumProvider
                 "",
                 ConferenceMediumPacketExtension.LABEL_ATTR_NAME);
 
-        if(label == null)
-        {
+        if (label == null) {
             throw new Exception(
                     "Coin medium element must contain entity attribute");
         }
 
-        ConferenceMediumPacketExtension ext =
-            new ConferenceMediumPacketExtension("entry", label);
+        ConferenceMediumPacketExtension ext
+                = new ConferenceMediumPacketExtension("entry", label);
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(
-                        MediaPacketExtension.ELEMENT_DISPLAY_TEXT))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(
+                        MediaPacketExtension.ELEMENT_DISPLAY_TEXT)) {
                     ext.setDisplayText(CoinIQProvider.parseText(parser));
-                }
-                else if(elementName.equals(
-                        MediaPacketExtension.ELEMENT_STATUS))
-                {
+                } else if (elementName.equals(
+                        MediaPacketExtension.ELEMENT_STATUS)) {
                     ext.setStatus(CoinIQProvider.parseText(parser));
-                }
-                else if(elementName.equals(
-                        MediaPacketExtension.ELEMENT_TYPE))
-                {
+                } else if (elementName.equals(
+                        MediaPacketExtension.ELEMENT_TYPE)) {
                     ext.setType(CoinIQProvider.parseText(parser));
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        ConferenceMediumPacketExtension.ELEMENT_NAME))
-                {
+                        ConferenceMediumPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }

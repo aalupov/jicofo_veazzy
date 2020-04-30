@@ -32,13 +32,13 @@ import java.text.*;
  * @author Pawel Domas
  */
 public class ConferenceJsonHandler
-    extends AbstractJsonHandler<Conference>
-{
+        extends AbstractJsonHandler<Conference> {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(ConferenceJsonHandler.class);
+            = Logger.getLogger(ConferenceJsonHandler.class);
 
     /**
      * The key for conference identifier.
@@ -90,8 +90,7 @@ public class ConferenceJsonHandler
      * {@inheritDoc}
      */
     @Override
-    protected Conference createNewObject()
-    {
+    protected Conference createNewObject() {
         return new Conference();
     }
 
@@ -100,79 +99,55 @@ public class ConferenceJsonHandler
      */
     @Override
     public boolean primitive(Object primitive)
-            throws ParseException, IOException
-    {
-        if (CONF_ID_KEY.equals(currentKey))
-        {
+            throws ParseException, IOException {
+        if (CONF_ID_KEY.equals(currentKey)) {
             assertNumber(primitive);
 
-            editedInstance.setId((Number)primitive);
-        }
-        else if (CONF_NAME_KEY.equals(currentKey))
-        {
+            editedInstance.setId((Number) primitive);
+        } else if (CONF_NAME_KEY.equals(currentKey)) {
             assertString(primitive);
 
             if (checkImmutableString(
                     editedInstance.getName().toString(),
-                    (String) primitive, CONF_NAME_KEY))
-            {
-                editedInstance.setName(Localpart.from((String)primitive));
+                    (String) primitive, CONF_NAME_KEY)) {
+                editedInstance.setName(Localpart.from((String) primitive));
             }
-        }
-        else if (CONF_OWNER_KEY.equals(currentKey))
-        {
+        } else if (CONF_OWNER_KEY.equals(currentKey)) {
             if (checkImmutableString(
                     editedInstance.getOwner(),
-                    (String) primitive, CONF_OWNER_KEY))
-            {
+                    (String) primitive, CONF_OWNER_KEY)) {
                 editedInstance.setOwner((String) primitive);
             }
-        }
-        else if (CONF_URL_KEY.equals(currentKey))
-        {
+        } else if (CONF_URL_KEY.equals(currentKey)) {
             assertString(primitive);
 
-            editedInstance.setUrl((String)primitive);
-        }
-        else if (CONF_PIN_KEY.equals(currentKey))
-        {
+            editedInstance.setUrl((String) primitive);
+        } else if (CONF_PIN_KEY.equals(currentKey)) {
             assertString(primitive);
 
-            editedInstance.setPin((String)primitive);
-        }
-        else if (CONF_START_TIME_KEY.equals(currentKey))
-        {
+            editedInstance.setPin((String) primitive);
+        } else if (CONF_START_TIME_KEY.equals(currentKey)) {
             assertString(primitive);
 
-            try
-            {
+            try {
                 editedInstance.setStartTime(
                         DATE_FORMAT.parse((String) primitive));
-            }
-            catch (java.text.ParseException e)
-            {
+            } catch (java.text.ParseException e) {
                 logger.error(e, e);
 
                 throw new ParseException(
                         ParseException.ERROR_UNEXPECTED_TOKEN, primitive);
             }
-        }
-        else if (CONF_DURATION_KEY.equals(currentKey))
-        {
+        } else if (CONF_DURATION_KEY.equals(currentKey)) {
             assertNumber(primitive);
 
             editedInstance.setDuration((Long) primitive);
-        }
-        else if (CONF_SIP_ID_KEY.equals(currentKey))
-        {
-            if (primitive instanceof Number)
-            {
+        } else if (CONF_SIP_ID_KEY.equals(currentKey)) {
+            if (primitive instanceof Number) {
                 editedInstance.setSipId((Number) primitive);
-            }
-            else
-            {
+            } else {
                 throw new ParseException(
-                    ParseException.ERROR_UNEXPECTED_TOKEN, primitive);
+                        ParseException.ERROR_UNEXPECTED_TOKEN, primitive);
             }
         }
         return true;

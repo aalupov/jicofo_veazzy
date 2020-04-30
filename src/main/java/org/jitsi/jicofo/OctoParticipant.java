@@ -23,59 +23,58 @@ import java.util.*;
 
 /**
  * Implements a {@link AbstractParticipant} for Octo. Manages the colibri
- * channels used for Octo on a particular jitsi-videobridge instance, and
- * the sources and source groups which need to be added to these colibri
- * channels (i.e. all sources and source groups from real participants in the
- * conference on other bridges).
+ * channels used for Octo on a particular jitsi-videobridge instance, and the
+ * sources and source groups which need to be added to these colibri channels
+ * (i.e. all sources and source groups from real participants in the conference
+ * on other bridges).
  *
  * @author Boris Grozev
  */
 public class OctoParticipant
-    extends AbstractParticipant
-{
+        extends AbstractParticipant {
+
     /**
      * A flag which determines when the session can be considered established.
-     * This is initially set to false, and raised when the colibri channels
-     * are allocated (at which point we know they IDs and we can send updates
-     * via colibri).
+     * This is initially set to false, and raised when the colibri channels are
+     * allocated (at which point we know they IDs and we can send updates via
+     * colibri).
      */
     private boolean sessionEstablished = false;
 
     /**
-     * The list of remote Octo relay IDs for this {@link OctoParticipant},
-     * i.e. the relays which will be set for the Octo channels.
+     * The list of remote Octo relay IDs for this {@link OctoParticipant}, i.e.
+     * the relays which will be set for the Octo channels.
      *
-     * This should be the list of the relay IDs of all bridges in the conference,
-     * with the current bridge's relay ID removed.
+     * This should be the list of the relay IDs of all bridges in the
+     * conference, with the current bridge's relay ID removed.
      */
     private List<String> relays;
 
     /**
      * Initializes a new {@link OctoParticipant} instance.
+     *
      * @param conference the {@link JitsiMeetConference} which this participant
      * will be a part of.
      * @param relays the list of Octo relays
      */
-    OctoParticipant(JitsiMeetConference conference, List<String> relays)
-    {
+    OctoParticipant(JitsiMeetConference conference, List<String> relays) {
         super(conference.getLogger());
         this.relays = relays;
     }
 
     /**
      * Sets the list of Octo relay IDs for this {@link OctoParticipant}.
+     *
      * @param relays the relays to set.
      */
-    void setRelays(List<String> relays)
-    {
+    void setRelays(List<String> relays) {
         this.relays = relays;
     }
 
     /**
      * @return the list of Octo relay IDs for this {@link OctoParticipant}>
      */
-    List<String> getRelays()
-    {
+    List<String> getRelays() {
         return relays;
     }
 
@@ -83,24 +82,22 @@ public class OctoParticipant
      * {@inheritDoc}
      */
     @Override
-    synchronized public boolean isSessionEstablished()
-    {
+    synchronized public boolean isSessionEstablished() {
         return sessionEstablished;
     }
 
     /**
      * Sets the "session established" flag.
+     *
      * @param sessionEstablished the value to set.
      */
-    synchronized void setSessionEstablished(boolean sessionEstablished)
-    {
+    synchronized void setSessionEstablished(boolean sessionEstablished) {
         this.sessionEstablished = sessionEstablished;
     }
 
     /**
      * Updates the sources and source groups of this participant with the
-     * sources and source groups scheduled to be added or removed via
-     * {@link #scheduleSourcesToAdd(MediaSourceMap)},
+     * sources and source groups scheduled to be added or removed via null null     {@link #scheduleSourcesToAdd(MediaSourceMap)},
      * {@link #scheduleSourceGroupsToAdd(MediaSourceGroupMap)},
      * {@link #scheduleSourcesToRemove(MediaSourceMap)},
      * {@link #scheduleSourceGroupsToRemove(MediaSourceGroupMap)}
@@ -108,8 +105,7 @@ public class OctoParticipant
      * @return {@code true} if the call resulted in this participant's sources
      * or source groups to change, and {@code false} otherwise.
      */
-    synchronized boolean updateSources()
-    {
+    synchronized boolean updateSources() {
         boolean changed = false;
 
         MediaSourceMap sourcesToAdd = getSourcesToAdd();
@@ -127,14 +123,12 @@ public class OctoParticipant
         sourcesToRemove.remove(sourcesToAdd);
         sourceGroupsToRemove.remove(sourceGroupsToAdd);
 
-        if (!sourcesToAdd.isEmpty() || !sourceGroupsToAdd.isEmpty())
-        {
+        if (!sourcesToAdd.isEmpty() || !sourceGroupsToAdd.isEmpty()) {
             addSourcesAndGroups(sourcesToAdd, sourceGroupsToAdd);
             changed = true;
         }
 
-        if (!sourcesToRemove.isEmpty() || !sourceGroupsToRemove.isEmpty())
-        {
+        if (!sourcesToRemove.isEmpty() || !sourceGroupsToRemove.isEmpty()) {
             removeSources(sourcesToRemove);
             removeSourceGroups(sourceGroupsToRemove);
             changed = true;
@@ -144,8 +138,7 @@ public class OctoParticipant
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "OctoParticipant[relays=" + relays + "]@" + hashCode();
     }
 }

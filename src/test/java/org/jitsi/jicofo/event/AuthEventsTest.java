@@ -33,12 +33,11 @@ import static org.junit.Assert.assertEquals;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class AuthEventsTest
-{
+public class AuthEventsTest {
+
     @Test
     public void testAuthSessionCreated()
-            throws UnsupportedEncodingException
-    {
+            throws UnsupportedEncodingException {
         String sessionID = "dsf23r23efsDgGBV%2312432@#$";
         String machineUID = "fdsg8973tj!@#gfdg345";
         String userId = "user@server.com";
@@ -50,13 +49,13 @@ public class AuthEventsTest
         properties.put(propA, valueA);
 
         String propB = "cookie";
-        String valueB = "_saml_xml_=fd!sadF45FE; " +
-                "_saml_sp=aGrt67DFgfdg; " +
-                "something=dgffdg43543534";
+        String valueB = "_saml_xml_=fd!sadF45FE; "
+                + "_saml_sp=aGrt67DFgfdg; "
+                + "something=dgffdg43543534";
         properties.put(propB, valueB);
 
         Event event = EventFactory.authSessionCreated(
-            sessionID, userId, machineUID, properties);
+                sessionID, userId, machineUID, properties);
 
         assertEquals(EventFactory.AUTH_SESSION_CREATED_TOPIC, event.getTopic());
 
@@ -72,8 +71,8 @@ public class AuthEventsTest
         String propertiesMerged = (String) event.getProperty(
                 EventFactory.AUTH_PROPERTIES_KEY);
 
-        Map<String, String> propertiesSplit =
-            EventFactory.splitProperties(propertiesMerged);
+        Map<String, String> propertiesSplit
+                = EventFactory.splitProperties(propertiesMerged);
 
         assertEquals(valueA, propertiesSplit.get(propA));
         assertEquals(valueB, propertiesSplit.get(propB));

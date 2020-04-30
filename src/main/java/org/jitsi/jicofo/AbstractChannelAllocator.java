@@ -28,18 +28,17 @@ import org.jxmpp.jid.*;
 import java.util.*;
 
 /**
- * A task which allocates Colibri channels and (optionally) initiates a
- * Jingle session with a participant.
+ * A task which allocates Colibri channels and (optionally) initiates a Jingle
+ * session with a participant.
  *
  * @author Pawel Domas
  * @author Boris Grozev
  */
-public abstract class AbstractChannelAllocator implements Runnable
-{
+public abstract class AbstractChannelAllocator implements Runnable {
+
     /**
      * Error code used in {@link OperationFailedException} when Colibri channel
-     * allocation fails.
-     * FIXME: consider moving to OperationFailedException ?
+     * allocation fails. FIXME: consider moving to OperationFailedException ?
      */
     final static int CHANNEL_ALLOCATION_FAILED_ERR_CODE = 21;
 
@@ -48,12 +47,12 @@ public abstract class AbstractChannelAllocator implements Runnable
      * from {@link JitsiMeetConference}.
      */
     private final static Logger classLogger
-        = Logger.getLogger(AbstractChannelAllocator.class);
+            = Logger.getLogger(AbstractChannelAllocator.class);
 
     /**
      * The logger for this instance. Uses the logging level either of the
-     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()}
-     * whichever is higher.
+     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()} whichever
+     * is higher.
      */
     private final Logger logger;
 
@@ -64,8 +63,8 @@ public abstract class AbstractChannelAllocator implements Runnable
     protected final JitsiMeetConferenceImpl meetConference;
 
     /**
-     * The {@link JitsiMeetConferenceImpl.BridgeSession} on which
-     * to allocate channels for the participant.
+     * The {@link JitsiMeetConferenceImpl.BridgeSession} on which to allocate
+     * channels for the participant.
      */
     protected final JitsiMeetConferenceImpl.BridgeSession bridgeSession;
 
@@ -89,8 +88,8 @@ public abstract class AbstractChannelAllocator implements Runnable
     protected final boolean[] startMuted;
 
     /**
-     * Indicates whether or not this task will be doing a "re-invite". It
-     * means that we're going to replace a previous conference which has failed.
+     * Indicates whether or not this task will be doing a "re-invite". It means
+     * that we're going to replace a previous conference which has failed.
      * Channels are allocated on new JVB and peer is re-invited with
      * 'transport-replace' Jingle action as opposed to 'session-initiate' in
      * regular invite.
@@ -113,19 +112,18 @@ public abstract class AbstractChannelAllocator implements Runnable
      * @param startMuted an array which must have the size of 2 where the first
      * value stands for "start audio muted" and the second one for "video
      * muted". This is to be included in client's offer.
-     * @param reInvite whether to send an initial offer (session-initiate) or
-     * a an updated offer (transport-replace).
+     * @param reInvite whether to send an initial offer (session-initiate) or a
+     * an updated offer (transport-replace).
      */
     protected AbstractChannelAllocator(
             JitsiMeetConferenceImpl meetConference,
             JitsiMeetConferenceImpl.BridgeSession bridgeSession,
             AbstractParticipant participant,
             boolean[] startMuted,
-            boolean reInvite)
-    {
+            boolean reInvite) {
         this.meetConference = meetConference;
         this.bridgeSession
-            = Objects.requireNonNull(bridgeSession, "bridgeSession");
+                = Objects.requireNonNull(bridgeSession, "bridgeSession");
         this.participant = Objects.requireNonNull(participant, "participant");
         this.startMuted = startMuted;
         this.reInvite = reInvite;
@@ -136,44 +134,33 @@ public abstract class AbstractChannelAllocator implements Runnable
      * Entry point for the {@link AbstractChannelAllocator} task.
      */
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             doRun();
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             logger.error("Channel allocator failed: ", e);
-        }
-        finally
-        {
-            if (participant != null)
-            {
+        } finally {
+            if (participant != null) {
                 participant.channelAllocatorCompleted(this);
             }
         }
     }
 
     private void doRun()
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         List<ContentPacketExtension> offer;
 
         offer = createOffer();
-        if (canceled)
-        {
+        if (canceled) {
             return;
         }
 
         ColibriConferenceIQ colibriChannels = allocateChannels(offer);
-        if (canceled)
-        {
+        if (canceled) {
             return;
         }
 
-        if (colibriChannels == null)
-        {
+        if (colibriChannels == null) {
             logger.error("Channel allocator failed: " + participant);
 
             // Cancel this task - nothing to be done after failure
@@ -181,35 +168,29 @@ public abstract class AbstractChannelAllocator implements Runnable
             return;
         }
 
-        if (participant != null)
-        {
+        if (participant != null) {
             participant.setColibriChannelsInfo(colibriChannels);
         }
 
         offer = updateOffer(offer, colibriChannels);
-        if (offer == null || canceled)
-        {
+        if (offer == null || canceled) {
             return;
         }
 
-        try
-        {
+        try {
             invite(offer);
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             logger.error("Failed to invite participant: ", e);
         }
     }
 
     /**
      * Sends a Jingle message to the {@link Participant} associated with this
-     * {@link AbstractChannelAllocator}, if there is one, in order to invite
-     * (or re-invite) him to the conference.
+     * {@link AbstractChannelAllocator}, if there is one, in order to invite (or
+     * re-invite) him to the conference.
      */
     protected void invite(List<ContentPacketExtension> offer)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
     }
 
     /**
@@ -226,11 +207,9 @@ public abstract class AbstractChannelAllocator implements Runnable
      * channels, or {@code null}.
      */
     private ColibriConferenceIQ allocateChannels(
-            List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         Jid jvb = bridgeSession.bridge.getJid();
-        if (jvb == null)
-        {
+        if (jvb == null) {
             logger.error("No bridge jid");
             cancel();
             return null;
@@ -240,43 +219,36 @@ public abstract class AbstractChannelAllocator implements Runnable
         boolean faulty = false;
         // We want to re-invite the participants in this conference.
         boolean restartConference = false;
-        try
-        {
+        try {
             logger.info(
-                "Using " + jvb + " to allocate channels for: "
-                 + (participant == null ? "null" : participant.toString()));
+                    "Using " + jvb + " to allocate channels for: "
+                    + (participant == null ? "null" : participant.toString()));
 
             ColibriConferenceIQ colibriChannels
-                = doAllocateChannels(contents);
+                    = doAllocateChannels(contents);
 
             // null means canceled, because colibriConference has been
             // disposed by another thread
-            if (colibriChannels == null)
-            {
+            if (colibriChannels == null) {
                 cancel();
                 return null;
             }
 
             bridgeSession.bridge.setIsOperational(true);
 
-            if (bridgeSession.colibriConference.hasJustAllocated())
-            {
+            if (bridgeSession.colibriConference.hasJustAllocated()) {
                 meetConference.onColibriConferenceAllocated(
-                    bridgeSession.colibriConference, jvb);
+                        bridgeSession.colibriConference, jvb);
             }
             return colibriChannels;
-        }
-        catch (ConferenceNotFoundException e)
-        {
+        } catch (ConferenceNotFoundException e) {
             // The conference on the bridge has likely expired. We want to
             // re-invite the conference participants, though the bridge is not
             // faulty.
             restartConference = true;
             faulty = false;
             logger.error("Conference ID not found (expired?)." + e.getMessage());
-        }
-        catch (BadRequestException e)
-        {
+        } catch (BadRequestException e) {
             // The bridge indicated that our request is invalid. This does not
             // mean the bridge is faulty, and retrying will likely result
             // in the same error.
@@ -285,20 +257,17 @@ public abstract class AbstractChannelAllocator implements Runnable
             restartConference = false;
             faulty = false;
             logger.error("The bridge indicated bad-request: " + e.getMessage());
-        }
-        catch (ColibriException e)
-        {
+        } catch (ColibriException e) {
             // All other errors indicate that the bridge is faulty: timeout,
             // wrong response type, or something else.
             restartConference = true;
             faulty = true;
-            logger.error("Failed to allocate channels, will consider the " +
-                    "bridge faulty.", e);
+            logger.error("Failed to allocate channels, will consider the "
+                    + "bridge faulty.", e);
         }
 
         // We only get here if we caught an exception.
-        if (faulty)
-        {
+        if (faulty) {
             bridgeSession.bridge.setIsOperational(false);
             bridgeSession.hasFailed = true;
         }
@@ -308,8 +277,7 @@ public abstract class AbstractChannelAllocator implements Runnable
         // If the ColibriConference is in use, and we want to retry,
         // notify the JitsiMeetConference.
         if (restartConference && !StringUtils.isNullOrEmpty(
-                    bridgeSession.colibriConference.getConferenceId()))
-        {
+                bridgeSession.colibriConference.getConferenceId())) {
             meetConference.channelAllocationFailed(jvb);
         }
 
@@ -317,24 +285,23 @@ public abstract class AbstractChannelAllocator implements Runnable
     }
 
     protected abstract ColibriConferenceIQ doAllocateChannels(
-        List<ContentPacketExtension> offer)
-        throws ColibriException;
+            List<ContentPacketExtension> offer)
+            throws ColibriException;
 
     /**
      * Updates a Jingle offer (represented by a list of
      * {@link ContentPacketExtension}) with the transport and SSRC information
      * contained in {@code colibriChannels}.
      *
-     * @param offer the list which contains Jingle content to be included in
-     * the offer.
+     * @param offer the list which contains Jingle content to be included in the
+     * offer.
      * @param colibriChannels the {@link ColibriConferenceIQ} which represents
-     * the channels allocated on a jitsi-videobridge instance for the participant
-     * for which the Jingle offer is being prepared.
+     * the channels allocated on a jitsi-videobridge instance for the
+     * participant for which the Jingle offer is being prepared.
      */
     protected List<ContentPacketExtension> updateOffer(
             List<ContentPacketExtension> offer,
-            ColibriConferenceIQ colibriChannels)
-    {
+            ColibriConferenceIQ colibriChannels) {
         return offer;
     }
 
@@ -342,47 +309,42 @@ public abstract class AbstractChannelAllocator implements Runnable
      * Raises the {@code canceled} flag, which causes the thread to not continue
      * with the allocation process.
      */
-    public void cancel()
-    {
+    public void cancel() {
         canceled = true;
     }
 
     /**
-     * @return the {@link JitsiMeetConferenceImpl.BridgeSession}
-     * instance of this {@link AbstractChannelAllocator}.
+     * @return the {@link JitsiMeetConferenceImpl.BridgeSession} instance of
+     * this {@link AbstractChannelAllocator}.
      */
-    public JitsiMeetConferenceImpl.BridgeSession getBridgeSession()
-    {
+    public JitsiMeetConferenceImpl.BridgeSession getBridgeSession() {
         return bridgeSession;
     }
 
     /**
      * @return the {@link Participant} of this {@link AbstractChannelAllocator}.
      */
-    public AbstractParticipant getParticipant()
-    {
+    public AbstractParticipant getParticipant() {
         return participant;
     }
 
     /**
      * @return the "startMuted" array of this {@link AbstractChannelAllocator}.
      */
-    public boolean[] getStartMuted()
-    {
+    public boolean[] getStartMuted() {
         return startMuted;
     }
 
     /**
-     * @return the {@code reInvite} flag of this {@link AbstractChannelAllocator}.
+     * @return the {@code reInvite} flag of this
+     * {@link AbstractChannelAllocator}.
      */
-    public boolean isReInvite()
-    {
+    public boolean isReInvite() {
         return reInvite;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format(
                 "%s[%s, %s]@%d",
                 this.getClass().getSimpleName(),

@@ -25,8 +25,8 @@ import org.jivesoftware.smack.provider.*;
  * @author Pawel Domas
  */
 public class MediaPresenceExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -41,8 +41,7 @@ public class MediaPresenceExtension
      * Creates an <tt>MediaPresenceExtension</tt> instance.
      *
      */
-    public MediaPresenceExtension()
-    {
+    public MediaPresenceExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -51,23 +50,22 @@ public class MediaPresenceExtension
      * <tt>providerManager</tt>.
      *
      * @param providerManager the <tt>ProviderManager</tt> to which media
-     *                        presence extensions will be registered to.
+     * presence extensions will be registered to.
      */
-    public static void registerExtensions()
-    {
+    public static void registerExtensions() {
         // <media>
         ProviderManager.addExtensionProvider(
-            MediaPresenceExtension.ELEMENT_NAME,
-            MediaPresenceExtension.NAMESPACE,
-            new DefaultPacketExtensionProvider<MediaPresenceExtension>(
-                MediaPresenceExtension.class));
+                MediaPresenceExtension.ELEMENT_NAME,
+                MediaPresenceExtension.NAMESPACE,
+                new DefaultPacketExtensionProvider<MediaPresenceExtension>(
+                        MediaPresenceExtension.class));
 
         // <source>
         ProviderManager.addExtensionProvider(
-            MediaPresenceExtension.Source.ELEMENT_NAME,
-            MediaPresenceExtension.Source.NAMESPACE,
-            new DefaultPacketExtensionProvider<Source>(
-                Source.class));
+                MediaPresenceExtension.Source.ELEMENT_NAME,
+                MediaPresenceExtension.Source.NAMESPACE,
+                new DefaultPacketExtensionProvider<Source>(
+                        Source.class));
     }
 
     /**
@@ -78,8 +76,7 @@ public class MediaPresenceExtension
      * @arg ssrc the ssrc of the <tt>Source</tt>
      * @arg direction the direction of the <tt>Source</tt>
      */
-    public void addSource(String type, String ssrc, String direction)
-    {
+    public void addSource(String type, String ssrc, String direction) {
         Source s = new Source();
         s.setMediaType(type);
         s.setSSRC(ssrc);
@@ -91,8 +88,8 @@ public class MediaPresenceExtension
      * Source extension element that specifies into about media SSRC.
      */
     public static class Source
-        extends AbstractPacketExtension
-    {
+            extends AbstractPacketExtension {
+
         /**
          * Source XML element name.
          */
@@ -122,8 +119,7 @@ public class MediaPresenceExtension
          * Creates new instance of <tt>Source</tt> packet extension with default
          * 'sendrecv' direction set.
          */
-        public Source()
-        {
+        public Source() {
             super(NAMESPACE, ELEMENT_NAME);
 
             // Default direction
@@ -131,58 +127,55 @@ public class MediaPresenceExtension
         }
 
         /**
-         * Returns media direction
-         * (values like used in SDP 'sendrecv', 'recvonly'...).
+         * Returns media direction (values like used in SDP 'sendrecv',
+         * 'recvonly'...).
          */
-        public String getDirection()
-        {
+        public String getDirection() {
             return getAttributeAsString(DIRECTION_ATTR_NAME);
         }
 
         /**
          * Returns media synchronization source identifier.
          */
-        public String getSSRC()
-        {
+        public String getSSRC() {
             return getAttributeAsString(SOURCE_ATTR_NAME);
         }
 
         /**
          * Sets media type of the media represented by this source packet
          * extensions.
+         *
          * @param mediaType media type string('audio' or 'video').
          */
-        public void setMediaType(String mediaType)
-        {
+        public void setMediaType(String mediaType) {
             setAttribute(MEDIA_TYPE_ATTR_NAME, mediaType);
         }
 
         /**
          * Direction of the media represented by this source packet extension.
-         * @param direction media direction like used in SDP
-         *                  ('sendrecv, 'recvonly'...).
+         *
+         * @param direction media direction like used in SDP ('sendrecv,
+         * 'recvonly'...).
          */
-        public void setDirection(String direction)
-        {
+        public void setDirection(String direction) {
             setAttribute(DIRECTION_ATTR_NAME, direction);
         }
 
         /**
          * Sets synchronization source identifier of the media represented by
          * this source packet extension.
+         *
          * @param ssrc synchronization source identifier to set.
          */
-        public void setSSRC(String ssrc)
-        {
+        public void setSSRC(String ssrc) {
             setAttribute(SOURCE_ATTR_NAME, ssrc);
         }
 
         /**
          * @return type of the media(audio or video) represented by this source
-         *         packet extension.
+         * packet extension.
          */
-        public String getMediaType()
-        {
+        public String getMediaType() {
             return getAttributeAsString(MEDIA_TYPE_ATTR_NAME);
         }
     }

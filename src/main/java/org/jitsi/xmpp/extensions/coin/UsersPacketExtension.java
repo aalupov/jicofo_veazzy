@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class UsersPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that users belongs to.
      */
@@ -43,8 +43,7 @@ public class UsersPacketExtension
     /**
      * Constructor.
      */
-    public UsersPacketExtension()
-    {
+    public UsersPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

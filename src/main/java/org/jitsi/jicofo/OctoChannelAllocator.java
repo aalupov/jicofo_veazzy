@@ -29,24 +29,24 @@ import java.util.*;
 /**
  * Allocates colibri channels for an {@link OctoParticipant}. The "offer" that
  * we create is specific to Octo, and there is no Jingle session like in a
- * regular {@link Participant}. The session is considered established once
- * the colibri channels have been allocated.
+ * regular {@link Participant}. The session is considered established once the
+ * colibri channels have been allocated.
  *
  * @author Boris Grozev
  */
-public class OctoChannelAllocator extends AbstractChannelAllocator
-{
+public class OctoChannelAllocator extends AbstractChannelAllocator {
+
     /**
      * The class logger which can be used to override logging level inherited
      * from {@link JitsiMeetConference}.
      */
     private final static Logger classLogger
-        = Logger.getLogger(OctoChannelAllocator.class);
+            = Logger.getLogger(OctoChannelAllocator.class);
 
     /**
      * The logger for this instance. Uses the logging level either of the
-     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()}
-     * whichever is higher.
+     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()} whichever
+     * is higher.
      */
     private final Logger logger;
 
@@ -64,8 +64,7 @@ public class OctoChannelAllocator extends AbstractChannelAllocator
     public OctoChannelAllocator(
             JitsiMeetConferenceImpl conference,
             JitsiMeetConferenceImpl.BridgeSession bridgeSession,
-            OctoParticipant participant)
-    {
+            OctoParticipant participant) {
         super(conference, bridgeSession, participant, null, false);
         this.participant = participant;
         this.logger = Logger.getLogger(classLogger, conference.getLogger());
@@ -75,8 +74,7 @@ public class OctoChannelAllocator extends AbstractChannelAllocator
      * {@inheritDoc}
      */
     @Override
-    protected List<ContentPacketExtension> createOffer()
-    {
+    protected List<ContentPacketExtension> createOffer() {
         JitsiMeetConfig config = meetConference.getConfig();
 
         boolean useIce = false;
@@ -87,23 +85,22 @@ public class OctoChannelAllocator extends AbstractChannelAllocator
         boolean useSctp = false; // config.openSctp() == null || config.openSctp();
 
         JingleOfferFactory jingleOfferFactory
-            = FocusBundleActivator.getJingleOfferFactory();
+                = FocusBundleActivator.getJingleOfferFactory();
 
         List<ContentPacketExtension> contents = new ArrayList<>();
         contents.add(
-            jingleOfferFactory.createAudioContent(
-                    !useIce, useDtls, config.stereoEnabled(),
-                    enableRemb, enableTcc));
+                jingleOfferFactory.createAudioContent(
+                        !useIce, useDtls, config.stereoEnabled(),
+                        enableRemb, enableTcc));
 
         contents.add(
-            jingleOfferFactory.createVideoContent(
-                    !useIce, useDtls, useRtx, enableRemb, enableTcc,
-                    -1, -1));
+                jingleOfferFactory.createVideoContent(
+                        !useIce, useDtls, useRtx, enableRemb, enableTcc,
+                        -1, -1));
 
-        if (useSctp)
-        {
+        if (useSctp) {
             contents.add(
-                jingleOfferFactory.createDataContent(!useIce, useDtls));
+                    jingleOfferFactory.createDataContent(!useIce, useDtls));
         }
 
         return contents;
@@ -114,33 +111,30 @@ public class OctoChannelAllocator extends AbstractChannelAllocator
      */
     @Override
     protected ColibriConferenceIQ doAllocateChannels(
-        List<ContentPacketExtension> offer)
-        throws ColibriException
-    {
+            List<ContentPacketExtension> offer)
+            throws ColibriException {
         // This is a blocking call.
-        ColibriConferenceIQ result =
-            bridgeSession.colibriConference.createColibriChannels(
-                true /* bundle */,
-                null /* endpoint */,
-                null /* statsId */,
-                false/* initiator */,
-                offer,
-                participant.getSourcesCopy().toMap(),
-                participant.getSourceGroupsCopy().toMap(),
-                participant.getRelays());
+        ColibriConferenceIQ result
+                = bridgeSession.colibriConference.createColibriChannels(
+                        true /* bundle */,
+                        null /* endpoint */,
+                        null /* statsId */,
+                        false/* initiator */,
+                        offer,
+                        participant.getSourcesCopy().toMap(),
+                        participant.getSourceGroupsCopy().toMap(),
+                        participant.getRelays());
 
         // The colibri channels have now been allocated and we know their IDs.
         // Now we check for any scheduled updates to the sources and source
         // groups, as well as the relays.
-        synchronized (participant)
-        {
+        synchronized (participant) {
             participant.setColibriChannelsInfo(result);
 
             // Check if the sources of the participant need an update.
             boolean update = false;
 
-            if (participant.updateSources())
-            {
+            if (participant.updateSources()) {
                 update = true;
                 logger.info("Will update the sources of the Octo participant " + this);
             }
@@ -148,40 +142,35 @@ public class OctoChannelAllocator extends AbstractChannelAllocator
             // Check if the relays need an update. We always use the same set
             // of relays for the audio and video channels, so just check video.
             ColibriConferenceIQ.Channel channel
-                = result.getContent("video").getChannel(0);
+                    = result.getContent("video").getChannel(0);
             if (channel == null
-                || !(channel instanceof ColibriConferenceIQ.OctoChannel))
-            {
+                    || !(channel instanceof ColibriConferenceIQ.OctoChannel)) {
                 logger.error(
-                    "Expected to find an OctoChannel in the response, found"
+                        "Expected to find an OctoChannel in the response, found"
                         + channel + " instead.");
-            }
-            else
-            {
+            } else {
                 List<String> responseRelays
-                    = ((ColibriConferenceIQ.OctoChannel) channel).getRelays();
+                        = ((ColibriConferenceIQ.OctoChannel) channel).getRelays();
                 if (!new HashSet<>(responseRelays)
-                        .equals(new HashSet<>(participant.getRelays())))
-                {
+                        .equals(new HashSet<>(participant.getRelays()))) {
                     update = true;
 
                     logger.info(
                             "Relays need updating. Response: " + responseRelays
-                                + ", participant:" + participant.getRelays());
+                            + ", participant:" + participant.getRelays());
                 }
             }
 
-            if (update)
-            {
+            if (update) {
                 bridgeSession.colibriConference.updateChannelsInfo(
-                    participant.getColibriChannelsInfo(),
-                    null,
-                    participant.getSourcesCopy(),
-                    participant.getSourceGroupsCopy(),
-                    null,
-                    null,
-                    null,
-                    participant.getRelays());
+                        participant.getColibriChannelsInfo(),
+                        null,
+                        participant.getSourcesCopy(),
+                        participant.getSourceGroupsCopy(),
+                        null,
+                        null,
+                        null,
+                        participant.getRelays());
             }
 
             participant.setSessionEstablished(true);

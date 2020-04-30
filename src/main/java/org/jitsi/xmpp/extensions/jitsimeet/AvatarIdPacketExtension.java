@@ -26,8 +26,7 @@ import org.jitsi.xmpp.extensions.*;
  * @author Nik Vaessen
  */
 public class AvatarIdPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
 
     /**
      * The namespace (xmlns attribute) of this avatar-id presence element
@@ -44,8 +43,7 @@ public class AvatarIdPacketExtension
      *
      * {@inheritDoc}
      */
-    public AvatarIdPacketExtension()
-    {
+    public AvatarIdPacketExtension() {
         super(NAME_SPACE, ELEMENT_NAME);
     }
 
@@ -55,8 +53,7 @@ public class AvatarIdPacketExtension
      *
      * @param avatarId the string value representing the avatar id
      */
-    public AvatarIdPacketExtension(String avatarId)
-    {
+    public AvatarIdPacketExtension(String avatarId) {
         super(NAME_SPACE, ELEMENT_NAME);
 
         setText(avatarId);
@@ -67,8 +64,7 @@ public class AvatarIdPacketExtension
      *
      * @return the value of the avatar-id element as a string.
      */
-    public String getAvatarId()
-    {
+    public String getAvatarId() {
         return getText();
     }
 }

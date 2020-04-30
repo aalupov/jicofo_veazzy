@@ -25,8 +25,8 @@ import org.jxmpp.jid.*;
  * @author Pawel Domas
  */
 public class MuteIq
-    extends IQ
-{
+        extends IQ {
+
     /**
      * Name space of mute packet extension.
      */
@@ -56,7 +56,7 @@ public class MuteIq
      * Attribute name of "video".
      */
     public static final String VIDEO_ATTR_NAME = "video";
-    
+
     /**
      * Muted peer MUC jid.
      */
@@ -85,47 +85,41 @@ public class MuteIq
     /**
      * Creates a new instance of this class.
      */
-    public MuteIq()
-    {
+    public MuteIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(
-            IQChildElementXmlStringBuilder xml)
-    {
-        if (jid != null)
-        {
+            IQChildElementXmlStringBuilder xml) {
+        if (jid != null) {
             xml.attribute(JID_ATTR_NAME, jid);
         }
 
-        if (actor != null)
-        {
+        if (actor != null) {
             xml.attribute(ACTOR_ATTR_NAME, actor);
         }
 
-        if (block != null)
-        {
+        if (block != null) {
             xml.attribute(BLOCK_ATTR_NAME, block);
         }
 
-        if (video != null)
-        {
+        if (video != null) {
             xml.attribute(VIDEO_ATTR_NAME, video);
         }
-        
+
         xml.rightAngleBracket()
-            .append(mute.toString());
+                .append(mute.toString());
 
         return xml;
     }
 
     /**
      * Sets the MUC jid of the user to be muted/unmuted.
+     *
      * @param jid muc jid in the form of room_name@muc.server.net/nickname.
      */
-    public void setJid(Jid jid)
-    {
+    public void setJid(Jid jid) {
         this.jid = jid;
     }
 
@@ -133,18 +127,17 @@ public class MuteIq
      * Returns MUC jid of the participant in the form of
      * "room_name@muc.server.net/nickname".
      */
-    public Jid getJid()
-    {
+    public Jid getJid() {
         return jid;
     }
 
     /**
      * The action contained in the text part of 'mute' XML element body.
+     *
      * @param mute <tt>true</tt> to mute the participant. <tt>null</tt> means no
-     *             action is included in result XML.
+     * action is included in result XML.
      */
-    public void setMute(Boolean mute)
-    {
+    public void setMute(Boolean mute) {
         this.mute = mute;
     }
 
@@ -152,64 +145,63 @@ public class MuteIq
      * Returns <tt>true</tt> to mute the participant, <tt>false</tt> to unmute
      * or <tt>null</tt> if the action has not been specified(which is invalid).
      */
-    public Boolean getMute()
-    {
+    public Boolean getMute() {
         return mute;
     }
 
     /**
      * Returns the peer jid that initiated the mute, if any.
+     *
      * @return the peer jid that initiated the mute.
      */
-    public Jid getActor()
-    {
+    public Jid getActor() {
         return actor;
     }
 
     /**
      * Sets jid for the peer that initiated the mute.
+     *
      * @param actor the jid of the peer doing the mute.
      */
-    public void setActor(Jid actor)
-    {
+    public void setActor(Jid actor) {
         this.actor = actor;
     }
-    
+
     /**
      * The action contained in the text part of 'mute' XML element body.
-     * @param block <tt>true</tt> to block the microphone of the participant. <tt>null</tt> means no
-     *             action is included in result XML.
+     *
+     * @param block <tt>true</tt> to block the microphone of the participant.
+     * <tt>null</tt> means no action is included in result XML.
      */
-    public void setBlock(Boolean block)
-    {
+    public void setBlock(Boolean block) {
         this.block = block;
     }
 
     /**
-     * Returns <tt>true</tt> to block the microphone of the participant, <tt>false</tt> to show the microphone button
-     * or <tt>null</tt> if the action has not been specified(which is invalid).
+     * Returns <tt>true</tt> to block the microphone of the participant,
+     * <tt>false</tt> to show the microphone button or <tt>null</tt> if the
+     * action has not been specified(which is invalid).
      */
-    public Boolean getBlock()
-    {
+    public Boolean getBlock() {
         return block;
     }
-    
+
     /**
      * The action contained in the text part of 'mute' XML element body.
-     * @param video <tt>true</tt> to block the microphone of the participant. <tt>null</tt> means no
-     *             action is included in result XML.
+     *
+     * @param video <tt>true</tt> to block the microphone of the participant.
+     * <tt>null</tt> means no action is included in result XML.
      */
-    public void setVideo(Boolean video)
-    {
+    public void setVideo(Boolean video) {
         this.video = video;
     }
 
     /**
-     * Returns <tt>true</tt> to block the microphone of the participant, <tt>false</tt> to show the microphone button
-     * or <tt>null</tt> if the action has not been specified(which is invalid).
+     * Returns <tt>true</tt> to block the microphone of the participant,
+     * <tt>false</tt> to show the microphone button or <tt>null</tt> if the
+     * action has not been specified(which is invalid).
      */
-    public Boolean getVideo()
-    {
+    public Boolean getVideo() {
         return video;
     }
 }

@@ -33,72 +33,61 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockVideoMediaStream
-    extends MockMediaStream
-    implements VideoMediaStream
-{
+        extends MockMediaStream
+        implements VideoMediaStream {
+
     @Override
-    public void addVideoListener(VideoListener videoListener)
-    {
+    public void addVideoListener(VideoListener videoListener) {
 
     }
 
     @Override
-    public KeyFrameControl getKeyFrameControl()
-    {
+    public KeyFrameControl getKeyFrameControl() {
         return null;
     }
 
     @Override
-    public Component getLocalVisualComponent()
-    {
+    public Component getLocalVisualComponent() {
         return null;
     }
 
     @Override
-    public QualityControl getQualityControl()
-    {
+    public QualityControl getQualityControl() {
         return null;
     }
 
     @Override
-    public Component getVisualComponent()
-    {
+    public Component getVisualComponent() {
         return null;
     }
 
     @Override
-    public Component getVisualComponent(long l)
-    {
+    public Component getVisualComponent(long l) {
         return null;
     }
 
     @Override
-    public java.util.List<Component> getVisualComponents()
-    {
+    public java.util.List<Component> getVisualComponents() {
         return null;
     }
 
     @Override
-    public void movePartialDesktopStreaming(int i, int i1)
-    {
+    public void movePartialDesktopStreaming(int i, int i1) {
 
     }
 
     @Override
-    public void removeVideoListener(VideoListener videoListener)
-    {
+    public void removeVideoListener(VideoListener videoListener) {
 
     }
 
     @Override
-    public void updateQualityControl(Map<String, String> map)
-    {
+    public void updateQualityControl(Map<String, String> map) {
 
     }
 
     @Override
-    public BandwidthEstimator getOrCreateBandwidthEstimator()
-    {
+    public BandwidthEstimator getOrCreateBandwidthEstimator() {
         return mock(BandwidthEstimator.class);
     }
 }

@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class ConferenceMediaPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that conference media belongs to.
      */
@@ -38,8 +38,7 @@ public class ConferenceMediaPacketExtension
     /**
      * Constructor.
      */
-    public ConferenceMediaPacketExtension()
-    {
+    public ConferenceMediaPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

@@ -25,35 +25,31 @@ import org.jxmpp.jid.*;
 import java.util.*;
 
 public class MockBrewery<T extends ExtensionElement>
-    extends BaseBrewery<T>
-{
+        extends BaseBrewery<T> {
+
     public MockBrewery(
-        ProtocolProviderHandler protocolProvider,
-        String breweryJid)
-    {
+            ProtocolProviderHandler protocolProvider,
+            String breweryJid) {
         super(protocolProvider, breweryJid, null, null);
     }
 
     @Override
-    protected void onInstanceStatusChanged(Jid jid, T status)
-    {}
+    protected void onInstanceStatusChanged(Jid jid, T status) {
+    }
 
     @Override
-    protected void notifyInstanceOffline(Jid jid)
-    {}
+    protected void notifyInstanceOffline(Jid jid) {
+    }
 
-    public void addNewBrewInstance(Jid jid, T el)
-    {
+    public void addNewBrewInstance(Jid jid, T el) {
         processInstanceStatusChanged(jid, el);
     }
 
-    public void updateInstanceStats(Jid jid, T el)
-    {
+    public void updateInstanceStats(Jid jid, T el) {
         processInstanceStatusChanged(jid, el);
     }
 
-    public List<BrewInstance> getInstances()
-    {
+    public List<BrewInstance> getInstances() {
         return instances;
     }
 }

@@ -19,15 +19,15 @@ import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.util.*;
 
 /**
- * SctpMap extension in transport packet extension.
- * Defined by XEP-0343: Signaling WebRTC datachannels in Jingle.
+ * SctpMap extension in transport packet extension. Defined by XEP-0343:
+ * Signaling WebRTC datachannels in Jingle.
  *
  * @author lishunyang
  *
  */
 public class SctpMapExtension
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     /**
      * The name of the "sctpmap" element.
      */
@@ -36,8 +36,8 @@ public class SctpMapExtension
     /**
      * The namespace for the "sctpmap" element.
      */
-    public static final String NAMESPACE =
-        "urn:xmpp:jingle:transports:dtls-sctp:1";
+    public static final String NAMESPACE
+            = "urn:xmpp:jingle:transports:dtls-sctp:1";
 
     /**
      * Port number of "sctpmap" element.
@@ -61,6 +61,7 @@ public class SctpMapExtension
 
     /**
      * Value of "protocol".
+     *
      * @See SctpMapExtension.Protocol
      */
     private String protocol = "";
@@ -74,8 +75,7 @@ public class SctpMapExtension
      * {@inheritDoc}
      */
     @Override
-    public String getElementName()
-    {
+    public String getElementName() {
         return ELEMENT_NAME;
     }
 
@@ -83,8 +83,7 @@ public class SctpMapExtension
      * {@inheritDoc}
      */
     @Override
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return NAMESPACE;
     }
 
@@ -92,8 +91,7 @@ public class SctpMapExtension
      * {@inheritDoc}
      */
     @Override
-    public String toXML()
-    {
+    public String toXML() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.halfOpenElement(getElementName());
@@ -108,38 +106,31 @@ public class SctpMapExtension
         return xml.toString();
     }
 
-    public void setPort(int port)
-    {
+    public void setPort(int port) {
         this.port = port;
     }
 
-    public int getPort()
-    {
+    public int getPort() {
         return port;
     }
 
-    public void setProtocol(String protocol)
-    {
+    public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
 
-    public void setProtocol(Protocol protocol)
-    {
+    public void setProtocol(Protocol protocol) {
         this.protocol = protocol.toString();
     }
 
-    public String getProtocol()
-    {
+    public String getProtocol() {
         return protocol;
     }
 
-    public void setStreams(int streams)
-    {
+    public void setStreams(int streams) {
         this.streams = streams;
     }
 
-    public int getStreams()
-    {
+    public int getStreams() {
         return streams;
     }
 
@@ -150,20 +141,17 @@ public class SctpMapExtension
      * @author lishunyang
      *
      */
-    public static enum Protocol
-    {
+    public static enum Protocol {
         WEBRTC_CHANNEL("webrtc-datachannel");
 
         private String name;
 
-        private Protocol(String name)
-        {
+        private Protocol(String name) {
             this.name = name;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name;
         }
     }

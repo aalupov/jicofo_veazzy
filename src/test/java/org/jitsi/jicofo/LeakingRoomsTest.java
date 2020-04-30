@@ -30,34 +30,31 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Pawel Domas
  */
-public class LeakingRoomsTest
-{
+public class LeakingRoomsTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
     @Test
     public void testOneToOneConference()
-            throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testLeaks@conference.pawel.jitsi.net");
         String serverName = "test-server";
 
         TestConference testConf
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         MockProtocolProvider pps
                 = testConf.getFocusProtocolProvider();
@@ -103,8 +100,7 @@ public class LeakingRoomsTest
         user3.acceptInvite(acceptInviteTimeout);
         user5.acceptInvite(acceptInviteTimeout);
 
-        try
-        {
+        try {
             assertEquals(3, testConf.getParticipantCount());
             //FIXME: implement waiting for allocation/expiration in order to verify
             //assertEquals(3,
@@ -121,9 +117,7 @@ public class LeakingRoomsTest
             assertEquals(0, testConf.getParticipantCount());
 
             //assertEquals(0, testConf.getMockVideoBridge().getChannelsCount());
-        }
-        finally
-        {
+        } finally {
             testConf.stop();
         }
     }

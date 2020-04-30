@@ -18,14 +18,14 @@ package org.jitsi.xmpp.extensions.jitsimeet;
 import org.jitsi.xmpp.extensions.*;
 
 /**
- * A packet extension used to advertise the name for shared Etherpad document
- * in Jitsi Meet conference.
+ * A packet extension used to advertise the name for shared Etherpad document in
+ * Jitsi Meet conference.
  *
  * @author Pawel Domas
  */
 public class EtherpadPacketExt
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML namespace of this packets extension.
      */
@@ -39,8 +39,7 @@ public class EtherpadPacketExt
     /**
      * Creates new instance of <tt>EtherpadPacketExt</tt>.
      */
-    public EtherpadPacketExt()
-    {
+    public EtherpadPacketExt() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -50,16 +49,14 @@ public class EtherpadPacketExt
      *
      * @param name the name of the document to set.
      */
-    public void setDocumentName(String name)
-    {
+    public void setDocumentName(String name) {
         setText(name);
     }
 
     /**
      * Returns the name of shared Etherpad document.
      */
-    public String getDocumentName()
-    {
+    public String getDocumentName() {
         return getText();
     }
 
@@ -69,8 +66,7 @@ public class EtherpadPacketExt
      *
      * @param name the name of shared Etherpad document.
      */
-    public static EtherpadPacketExt forDocumentName(String name)
-    {
+    public static EtherpadPacketExt forDocumentName(String name) {
         EtherpadPacketExt ext = new EtherpadPacketExt();
 
         ext.setDocumentName(name);

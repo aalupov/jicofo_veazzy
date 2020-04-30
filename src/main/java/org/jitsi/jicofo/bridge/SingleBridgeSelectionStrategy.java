@@ -20,12 +20,12 @@ import org.jitsi.utils.logging.*;
 import java.util.*;
 
 /**
- * A {@link BridgeSelectionStrategy} implementation which keeps all
- * participants in a conference on the same bridge.
+ * A {@link BridgeSelectionStrategy} implementation which keeps all participants
+ * in a conference on the same bridge.
  */
 public class SingleBridgeSelectionStrategy
-    extends BridgeSelectionStrategy
-{
+        extends BridgeSelectionStrategy {
+
     /**
      * The logger.
      */
@@ -35,8 +35,8 @@ public class SingleBridgeSelectionStrategy
     /**
      * Default constructor.
      */
-    public SingleBridgeSelectionStrategy()
-    {}
+    public SingleBridgeSelectionStrategy() {
+    }
 
     /**
      * {@inheritDoc}
@@ -47,26 +47,21 @@ public class SingleBridgeSelectionStrategy
     public Bridge doSelect(
             List<Bridge> bridges,
             Map<Bridge, Integer> conferenceBridges,
-            String participantRegion)
-    {
-        if (conferenceBridges.size() == 0)
-        {
+            String participantRegion) {
+        if (conferenceBridges.size() == 0) {
             return leastLoadedInRegion(bridges, Collections.emptyMap(), participantRegion).orElseGet(
                     () -> leastLoaded(bridges, Collections.emptyMap(), participantRegion).orElse(null));
-        }
-        else if (conferenceBridges.size() != 1)
-        {
+        } else if (conferenceBridges.size() != 1) {
             logger.error("Unexpected number of bridges with "
-                             + "SingleBridgeSelectionStrategy: "
-                             + conferenceBridges.size());
+                    + "SingleBridgeSelectionStrategy: "
+                    + conferenceBridges.size());
             return null;
         }
 
         Bridge bridge = conferenceBridges.keySet().stream().findFirst().get();
-        if (!bridge.isOperational())
-        {
+        if (!bridge.isOperational()) {
             logger.error(
-                "The conference already has a bridge, but it is not "
+                    "The conference already has a bridge, but it is not "
                     + "operational: bridge=" + bridge);
             return null;
         }

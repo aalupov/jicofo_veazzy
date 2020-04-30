@@ -20,8 +20,8 @@ package org.jitsi.xmpp.extensions.jingle;
  *
  * @author Emil Ivov
  */
-public class MuteSessionInfoPacketExtension extends SessionInfoPacketExtension
-{
+public class MuteSessionInfoPacketExtension extends SessionInfoPacketExtension {
+
     /**
      * The name of the <tt>name</tt> mute attribute.
      */
@@ -38,8 +38,7 @@ public class MuteSessionInfoPacketExtension extends SessionInfoPacketExtension
      * @param name the name of the session to be muted or <tt>null</tt> if the
      * element pertains to all active sessions
      */
-    public MuteSessionInfoPacketExtension(boolean mute, String name)
-    {
+    public MuteSessionInfoPacketExtension(boolean mute, String name) {
         super(mute ? SessionInfoType.mute : SessionInfoType.unmute);
         setAttribute(NAME_ATTR_VALUE, name);
 
@@ -51,8 +50,7 @@ public class MuteSessionInfoPacketExtension extends SessionInfoPacketExtension
      * @return <tt>true</tt> if this packet represents a {@link
      * SessionInfoType#mute} and <tt>false</tt> otherwise.
      */
-    public boolean isMute()
-    {
+    public boolean isMute() {
         return getType() == SessionInfoType.mute;
     }
 
@@ -63,8 +61,7 @@ public class MuteSessionInfoPacketExtension extends SessionInfoPacketExtension
      * @return the name of the session that this extension is pertaining to or
      * <tt>null</tt> if it is referring to all active sessions.
      */
-    public String getName()
-    {
+    public String getName() {
         return getAttributeAsString(NAME_ATTR_VALUE);
     }
 }

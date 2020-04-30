@@ -27,20 +27,20 @@ import java.text.*;
 import java.util.*;
 
 public class ThumbnailStreamInitiationProvider
-    extends IQProvider<StreamInitiation>
-{
+        extends IQProvider<StreamInitiation> {
+
     private static final Logger logger
-        = Logger.getLogger(ThumbnailStreamInitiationProvider.class);
+            = Logger.getLogger(ThumbnailStreamInitiationProvider.class);
 
     /**
      * Parses the given <tt>parser</tt> in order to create a
      * <tt>FileElement</tt> from it.
+     *
      * @param parser the parser to parse
      */
     @Override
     public StreamInitiation parse(final XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
 
         // si
@@ -65,89 +65,64 @@ public class ThumbnailStreamInitiationProvider
         String elementName;
         String namespace;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
             namespace = parser.getNamespace();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if (elementName.equals("file"))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals("file")) {
                     name = parser.getAttributeValue("", "name");
                     size = parser.getAttributeValue("", "size");
                     hash = parser.getAttributeValue("", "hash");
                     date = parser.getAttributeValue("", "date");
-                }
-                else if (elementName.equals("desc"))
-                {
+                } else if (elementName.equals("desc")) {
                     desc = parser.nextText();
-                }
-                else if (elementName.equals("range"))
-                {
+                } else if (elementName.equals("range")) {
                     isRanged = true;
-                }
-                else if (elementName.equals("x")
-                    && namespace.equals("jabber:x:data"))
-                {
+                } else if (elementName.equals("x")
+                        && namespace.equals("jabber:x:data")) {
                     form = dataFormProvider.parse(parser);
-                }
-                else if (elementName.equals("thumbnail"))
-                {
+                } else if (elementName.equals("thumbnail")) {
                     thumbnail = new Thumbnail(parser);
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
-                if (elementName.equals("si"))
-                {
+            } else if (eventType == XmlPullParser.END_TAG) {
+                if (elementName.equals("si")) {
                     done = true;
-                }
-                // The name-attribute is required per XEP-0096, so ignore the
+                } // The name-attribute is required per XEP-0096, so ignore the
                 // IQ if the name is not set to avoid exceptions. Particularly,
                 // the SI response of Empathy contains an invalid, empty
                 // file-tag.
-                else if (elementName.equals("file") && name != null)
-                {
+                else if (elementName.equals("file") && name != null) {
                     long fileSize = 0;
 
-                    if(size != null && size.trim().length() !=0)
-                    {
-                        try
-                        {
+                    if (size != null && size.trim().length() != 0) {
+                        try {
                             fileSize = Long.parseLong(size);
-                        }
-                        catch (NumberFormatException e)
-                        {
+                        } catch (NumberFormatException e) {
                             logger.warn("Received an invalid file size,"
-                                + " continuing with fileSize set to 0", e);
+                                    + " continuing with fileSize set to 0", e);
                         }
                     }
 
                     ThumbnailFile file = new ThumbnailFile(name, fileSize);
                     file.setHash(hash);
 
-                    if (date != null)
-                    {
-                        try
-                        {
+                    if (date != null) {
+                        try {
                             file.setDate(XmppDateTime.parseDate(date));
-                        }
-                        catch (ParseException ex)
-                        {
+                        } catch (ParseException ex) {
                             logger.warn(
-                                "Unknown dateformat on incoming file transfer: "
+                                    "Unknown dateformat on incoming file transfer: "
                                     + date);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         file.setDate(new Date());
                     }
 
-                    if (thumbnail != null)
+                    if (thumbnail != null) {
                         file.setThumbnail(thumbnail);
+                    }
 
                     file.setDesc(desc);
                     file.setRanged(isRanged);

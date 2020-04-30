@@ -29,18 +29,17 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class XmppProviderFactory
-    extends ProtocolProviderFactory
-{
+        extends ProtocolProviderFactory {
+
     /**
      * Creates a new <tt>ProtocolProviderFactory</tt>.
      *
      * @param bundleContext the bundle context reference of the service
-     * @param protocolName  the name of the protocol
+     * @param protocolName the name of the protocol
      */
     protected XmppProviderFactory(
             BundleContext bundleContext,
-            String protocolName)
-    {
+            String protocolName) {
         super(bundleContext, protocolName);
     }
 
@@ -49,10 +48,9 @@ public class XmppProviderFactory
      */
     @Override
     public AccountID installAccount(String s,
-                                    Map<String, String> stringStringMap)
-        throws IllegalArgumentException, IllegalStateException,
-               NullPointerException
-    {
+            Map<String, String> stringStringMap)
+            throws IllegalArgumentException, IllegalStateException,
+            NullPointerException {
         throw new RuntimeException("Not implemented");
     }
 
@@ -61,9 +59,8 @@ public class XmppProviderFactory
      */
     @Override
     public void modifyAccount(ProtocolProviderService protocolProviderService,
-                              Map<String, String> stringStringMap)
-        throws NullPointerException
-    {
+            Map<String, String> stringStringMap)
+            throws NullPointerException {
         throw new RuntimeException("Not implemented");
     }
 
@@ -72,8 +69,7 @@ public class XmppProviderFactory
      */
     @Override
     protected AccountID createAccountID(String userId,
-                                        Map<String, String> accountProperties)
-    {
+            Map<String, String> accountProperties) {
         return new XmppAccountID(userId, accountProperties);
     }
 
@@ -82,8 +78,7 @@ public class XmppProviderFactory
      */
     @Override
     protected ProtocolProviderService createService(String userID,
-                                                    AccountID accountID)
-    {
+            AccountID accountID) {
         return new XmppProtocolProvider(accountID);
     }
 }

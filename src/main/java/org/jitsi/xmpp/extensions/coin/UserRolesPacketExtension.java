@@ -27,8 +27,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class UserRolesPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that user roles belongs to.
      */
@@ -52,8 +52,7 @@ public class UserRolesPacketExtension
     /**
      * Constructor.
      */
-    public UserRolesPacketExtension()
-    {
+    public UserRolesPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -62,8 +61,7 @@ public class UserRolesPacketExtension
      *
      * @param role role to add
      */
-    public void addRoles(String role)
-    {
+    public void addRoles(String role) {
         roles.add(role);
     }
 
@@ -72,22 +70,20 @@ public class UserRolesPacketExtension
      *
      * @return list of roles
      */
-    public List<String> getRoles()
-    {
+    public List<String> getRoles() {
         return roles;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
-        for(String role : roles)
-        {
+        for (String role : roles) {
             xml.optElement(ELEMENT_ROLE, role);
         }
 

@@ -28,30 +28,28 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class ModeratorIdIqProvider
-    extends IQProvider<ModeratorIdIq>
-{
-    
+        extends IQProvider<ModeratorIdIq> {
+
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-        = Logger.getLogger(ModeratorIdIqProvider.class);
+            = Logger.getLogger(ModeratorIdIqProvider.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
-     * {@link #classLogger} or the one passed to the constructor, whichever
-     * is higher.
+     * {@link #classLogger} or the one passed to the constructor, whichever is
+     * higher.
      */
     private final Logger logger = Logger.getLogger(classLogger, null);
-    
+
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerModeratorIdIqProvider()
-    {
+    public static void registerModeratorIdIqProvider() {
         ProviderManager.addIQProvider(ModeratorIdIq.ELEMENT_NAME,
-        		ModeratorIdIq.NAMESPACE,
-            new ModeratorIdIqProvider());
+                ModeratorIdIq.NAMESPACE,
+                new ModeratorIdIqProvider());
     }
 
     /**
@@ -59,13 +57,11 @@ public class ModeratorIdIqProvider
      */
     @Override
     public ModeratorIdIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!ModeratorIdIq.NAMESPACE.equals(namespace))
-        {
+        if (!ModeratorIdIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
@@ -73,60 +69,48 @@ public class ModeratorIdIqProvider
 
         ModeratorIdIq iq;
 
-        if (ModeratorIdIq.ELEMENT_NAME.equals(rootElement))
-        {
+        if (ModeratorIdIq.ELEMENT_NAME.equals(rootElement)) {
             iq = new ModeratorIdIq();
             String jidStr = parser.getAttributeValue("", ModeratorIdIq.JID_ATTR_NAME);
-            if (jidStr != null)
-            {
+            if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                = parser.getAttributeValue("", ModeratorIdIq.ACTOR_ATTR_NAME);
-            if (actorStr != null)
-            {
+                    = parser.getAttributeValue("", ModeratorIdIq.ACTOR_ATTR_NAME);
+            if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
 
         boolean done = false;
 
-        while (!done)
-        {
-            switch (parser.next())
-            {
-                case XmlPullParser.END_TAG:
-                {
+        while (!done) {
+            switch (parser.next()) {
+                case XmlPullParser.END_TAG: {
                     String name = parser.getName();
 
-                    if (rootElement.equals(name))
-                    {
+                    if (rootElement.equals(name)) {
                         done = true;
                     }
                     break;
                 }
 
-                case XmlPullParser.TEXT:
-                {
-                    if(parser.getText() != null && parser.getText().length()  > 0) {
-                        if(parser.getText().equals("get")) {
+                case XmlPullParser.TEXT: {
+                    if (parser.getText() != null && parser.getText().length() > 0) {
+                        if (parser.getText().equals("get")) {
                             logger.warn("Getting moderatorId request");
                             iq.setModeratorIdRequest(true);
-                        }
-                        else {
+                        } else {
                             String moderatorId = parser.getText();
                             iq.setModeratorId(moderatorId);
                             iq.setModeratorIdRequest(false);
                         }
-                    }
-                    else {
+                    } else {
                         logger.warn("Getting moderatorId request without value");
                     }
                     break;

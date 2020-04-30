@@ -20,8 +20,8 @@ import org.jitsi.xmpp.extensions.*;
 /**
  * @author Boris Grozev
  */
-public class WebSocketPacketExtension extends AbstractPacketExtension
-{
+public class WebSocketPacketExtension extends AbstractPacketExtension {
+
     /**
      * The name of the "web-socket" element.
      */
@@ -37,16 +37,14 @@ public class WebSocketPacketExtension extends AbstractPacketExtension
     /**
      * Creates a new {@link WebSocketPacketExtension}
      */
-    public WebSocketPacketExtension()
-    {
+    public WebSocketPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Creates a new {@link WebSocketPacketExtension}
      */
-    public WebSocketPacketExtension(String url)
-    {
+    public WebSocketPacketExtension(String url) {
         super(NAMESPACE, ELEMENT_NAME);
         setUrl(url);
     }
@@ -54,16 +52,14 @@ public class WebSocketPacketExtension extends AbstractPacketExtension
     /**
      * Sets the URL.
      */
-    public void setUrl(String url)
-    {
+    public void setUrl(String url) {
         super.setAttribute(URL_ATTR_NAME, url);
     }
 
     /**
      * @return the URL.
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return super.getAttributeAsString(URL_ATTR_NAME);
     }
 }

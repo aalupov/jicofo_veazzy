@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  *
  * @author Sebastien Vincent
  */
-public class InputEvtPacketExtension extends AbstractPacketExtension
-{
+public class InputEvtPacketExtension extends AbstractPacketExtension {
+
     /**
      * Name of the XML element representing the extension.
      */
@@ -33,14 +33,13 @@ public class InputEvtPacketExtension extends AbstractPacketExtension
     /**
      * Namespace..
      */
-    public final static String NAMESPACE =
-        "http://jitsi.org/protocol/inputevt";
+    public final static String NAMESPACE
+            = "http://jitsi.org/protocol/inputevt";
 
     /**
      * Constructs a new <tt>inputevt</tt> extension.
      */
-    public InputEvtPacketExtension()
-    {
+    public InputEvtPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

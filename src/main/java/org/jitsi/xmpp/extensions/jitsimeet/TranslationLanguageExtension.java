@@ -19,20 +19,19 @@ import org.jitsi.xmpp.extensions.*;
 
 /**
  * An extension of the presence stanza for sending target translation language
- * to Jigasi.
- * The extension looks like follows:
+ * to Jigasi. The extension looks like follows:
  *
- *  <pre>
+ * <pre>
  *  {@code <jitsi_participant_translation_language>
  *      target_language_code
  *  </jitsi_participant_translation_language>}
- *  </pre>
+ * </pre>
  *
  * @author Praveen Kumar Gupta
  */
 public class TranslationLanguageExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -46,8 +45,7 @@ public class TranslationLanguageExtension
     /**
      * Creates a {@link TranslationLanguageExtension} instance.
      */
-    public TranslationLanguageExtension()
-    {
+    public TranslationLanguageExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -56,8 +54,7 @@ public class TranslationLanguageExtension
      *
      * @return target language translation code.
      */
-    public String getTranslationLanguage()
-    {
+    public String getTranslationLanguage() {
         return getText();
     }
 }

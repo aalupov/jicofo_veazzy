@@ -41,22 +41,18 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class SSRCSignaling
-{
+public class SSRCSignaling {
+
     /**
      * The constant value used as owner attribute value of
      * {@link SSRCInfoPacketExtension} for the SSRC which belongs to the JVB.
      */
     public static final Jid SSRC_OWNER_JVB;
 
-    static
-    {
-        try
-        {
+    static {
+        try {
             SSRC_OWNER_JVB = JidCreate.from("jvb");
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             // cannot happen
             throw new RuntimeException(e);
         }
@@ -65,20 +61,19 @@ public class SSRCSignaling
     /**
      * Copies value of "<parameter>" SSRC child element. The parameter to be
      * copied must exist in both source and destination SSRCs.
+     *
      * @param dst target <tt>SourcePacketExtension</tt> to which we want copy
-     *            parameter value.
+     * parameter value.
      * @param src origin <tt>SourcePacketExtension</tt> from which we want to
-     *            copy parameter value.
+     * copy parameter value.
      * @param name the name of the parameter to copy.
      */
-    private static void copyParamAttr( SourcePacketExtension    dst,
-                                      SourcePacketExtension    src,
-                                      String                  name)
-    {
+    private static void copyParamAttr(SourcePacketExtension dst,
+            SourcePacketExtension src,
+            String name) {
         ParameterPacketExtension srcParam = getParam(src, name);
         ParameterPacketExtension dstParam;
-        if (srcParam != null && (dstParam = getParam(dst, name)) != null)
-        {
+        if (srcParam != null && (dstParam = getParam(dst, name)) != null) {
             dstParam.setValue(srcParam.getValue());
         }
     }
@@ -97,34 +92,29 @@ public class SSRCSignaling
      * source in the <tt>groups</tt>.
      */
     static public void copySourceParamsToGroups(
-            MediaSourceGroupMap    groups,
-            MediaSourceMap         sources)
-        throws InvalidSSRCsException
-    {
-        for (String mediaType : groups.getMediaTypes())
-        {
+            MediaSourceGroupMap groups,
+            MediaSourceMap sources)
+            throws InvalidSSRCsException {
+        for (String mediaType : groups.getMediaTypes()) {
             List<SourceGroup> mediaGroups
-                = groups.getSourceGroupsForMedia(mediaType);
+                    = groups.getSourceGroupsForMedia(mediaType);
             List<SourceGroup> newMediaGroups
-                = new ArrayList<>(mediaGroups.size());
+                    = new ArrayList<>(mediaGroups.size());
 
-            for (SourceGroup group : mediaGroups)
-            {
+            for (SourceGroup group : mediaGroups) {
                 List<SourcePacketExtension> groupSources = group.getSources();
                 List<SourcePacketExtension> newSources
-                    = new ArrayList<>(groupSources.size());
+                        = new ArrayList<>(groupSources.size());
 
-                for (SourcePacketExtension srcInGroup : groupSources)
-                {
+                for (SourcePacketExtension srcInGroup : groupSources) {
                     SourcePacketExtension sourceInMedia
-                        = sources.findSource(mediaType, srcInGroup);
+                            = sources.findSource(mediaType, srcInGroup);
 
-                    if (sourceInMedia == null)
-                    {
+                    if (sourceInMedia == null) {
                         throw new InvalidSSRCsException(
                                 "Source " + srcInGroup
-                                    + " not found in '" + mediaType
-                                    + "' for group: " + group);
+                                + " not found in '" + mediaType
+                                + "' for group: " + group);
                     }
 
                     newSources.add(sourceInMedia);
@@ -146,12 +136,9 @@ public class SSRCSignaling
      * @param ssrcMap the <tt>MediaSourceMap</tt> which contains the SSRC packet
      * extensions to be stripped out of their parameters.
      */
-    public static void deleteSSRCParams(MediaSourceMap ssrcMap)
-    {
-        for (String media : ssrcMap.getMediaTypes())
-        {
-            for (SourcePacketExtension ssrc : ssrcMap.getSourcesForMedia(media))
-            {
+    public static void deleteSSRCParams(MediaSourceMap ssrcMap) {
+        for (String media : ssrcMap.getMediaTypes()) {
+            for (SourcePacketExtension ssrc : ssrcMap.getSourcesForMedia(media)) {
                 deleteSSRCParams(ssrc);
             }
         }
@@ -164,30 +151,25 @@ public class SSRCSignaling
      * @param ssrcPe the instance of <tt>SourcePacketExtension</tt> which will
      * be stripped off all parameters.
      */
-    private static void deleteSSRCParams(SourcePacketExtension ssrcPe)
-    {
+    private static void deleteSSRCParams(SourcePacketExtension ssrcPe) {
         List<? extends ExtensionElement> peList = ssrcPe.getChildExtensions();
         peList.removeAll(ssrcPe.getParameters());
     }
 
     /**
-     * Finds the first SSRC in the list with a valid stream ID('msid').
-     * The 'default' stream id is not considered a valid one.
+     * Finds the first SSRC in the list with a valid stream ID('msid'). The
+     * 'default' stream id is not considered a valid one.
      *
      * @param ssrcs the list of <tt>SourcePacketExtension</tt> to be searched.
      *
      * @return the first <tt>SourcePacketExtension</tt> with a valid media
-     *         stream id or <tt>null</tt> if there aren't any such streams
-     *         in the list.
+     * stream id or <tt>null</tt> if there aren't any such streams in the list.
      */
     public static SourcePacketExtension getFirstWithMSID(
-            List<SourcePacketExtension> ssrcs)
-    {
-        for (SourcePacketExtension ssrc : ssrcs)
-        {
+            List<SourcePacketExtension> ssrcs) {
+        for (SourcePacketExtension ssrc : ssrcs) {
             String streamId = getStreamId(ssrc);
-            if (streamId != null && !"default".equalsIgnoreCase(streamId))
-            {
+            if (streamId != null && !"default".equalsIgnoreCase(streamId)) {
                 return ssrc;
             }
         }
@@ -195,14 +177,11 @@ public class SSRCSignaling
     }
 
     private static List<SourcePacketExtension> getAllWithMSID(
-        List<SourcePacketExtension> ssrcs)
-    {
+            List<SourcePacketExtension> ssrcs) {
         ArrayList<SourcePacketExtension> result = new ArrayList<>(ssrcs.size());
-        for (SourcePacketExtension ssrc : ssrcs)
-        {
+        for (SourcePacketExtension ssrc : ssrcs) {
             String streamId = getStreamId(ssrc);
-            if (streamId != null && !"default".equalsIgnoreCase(streamId))
-            {
+            if (streamId != null && !"default".equalsIgnoreCase(streamId)) {
                 result.add(ssrc);
             }
         }
@@ -211,38 +190,35 @@ public class SSRCSignaling
 
     /**
      * Obtains the MSID attribute value of given {@link SourcePacketExtension}.
+     *
      * @param source {@link SourcePacketExtension}
      * @return <tt>String</tt> value of the MSID attribute of given source
      * extension or <tt>null</tt> if it's either empty or not present.
      */
-    public static String getMsid(SourcePacketExtension source)
-    {
+    public static String getMsid(SourcePacketExtension source) {
         ParameterPacketExtension msid = getParam(source, "msid");
-        if (msid != null && !StringUtils.isNullOrEmpty(msid.getValue()))
-        {
+        if (msid != null && !StringUtils.isNullOrEmpty(msid.getValue())) {
             return msid.getValue();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     /**
      * Obtains <tt>ParameterPacketExtension</tt> for given name(if it exists).
+     *
      * @param ssrc the <tt>SourcePacketExtension</tt> to be searched for
-     *             parameter
+     * parameter
      * @param name the name of the parameter to be found
      * @return <tt>ParameterPacketExtension</tt> instance for given
-     *         <tt>name</tt> or <tt>null</tt> if not found.
+     * <tt>name</tt> or <tt>null</tt> if not found.
      */
     private static ParameterPacketExtension getParam(SourcePacketExtension ssrc,
-                                                     String                name)
-    {
-        for(ParameterPacketExtension param : ssrc.getParameters())
-        {
-            if (name.equals(param.getName()))
+            String name) {
+        for (ParameterPacketExtension param : ssrc.getParameters()) {
+            if (name.equals(param.getName())) {
                 return param;
+            }
         }
         return null;
     }
@@ -250,31 +226,32 @@ public class SSRCSignaling
     /**
      * Gets the owner of <tt>SourcePacketExtension</tt> in jitsi-meet context
      * signaled through {@link SSRCInfoPacketExtension}.
+     *
      * @param ssrcPe the <tt>SourcePacketExtension</tt> instance for which we
-     *               want to find an owner.
+     * want to find an owner.
      * @return MUC {@link Jid} of the user who owns this source or <tt>null</tt>
      * if it's not owned by anyone.
      */
-    public static Jid getSSRCOwner(SourcePacketExtension ssrcPe)
-    {
+    public static Jid getSSRCOwner(SourcePacketExtension ssrcPe) {
         SSRCInfoPacketExtension ssrcInfo
-            = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
+                = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
 
         return ssrcInfo != null ? ssrcInfo.getOwner() : null;
     }
 
     /**
      * Get's WebRTC stream ID extracted from "msid" SSRC parameter.
+     *
      * @param ssrc <tt>SourcePacketExtension</tt> that describes the SSRC for
-     *             which we want to obtain WebRTC stream ID.
+     * which we want to obtain WebRTC stream ID.
      * @return WebRTC stream ID that is the first part of "msid" SSRC parameter.
      */
-    public static String getStreamId(SourcePacketExtension ssrc)
-    {
+    public static String getStreamId(SourcePacketExtension ssrc) {
         String msid = getMsid(ssrc);
 
-        if (msid == null)
+        if (msid == null) {
             return null;
+        }
 
         String[] streamAndTrack = msid.split(" ");
         String streamId = streamAndTrack.length == 2 ? streamAndTrack[0] : null;
@@ -289,16 +266,17 @@ public class SSRCSignaling
 
     /**
      * Get's WebRTC track ID extracted from "msid" SSRC parameter.
+     *
      * @param ssrc <tt>SourcePacketExtension</tt> that describes the SSRC for
-     *             which we want to obtain WebRTC stream ID.
+     * which we want to obtain WebRTC stream ID.
      * @return WebRTC track ID that is the second part of "msid" SSRC parameter.
      */
-    private static String getTrackId(SourcePacketExtension ssrc)
-    {
+    private static String getTrackId(SourcePacketExtension ssrc) {
         String msid = getMsid(ssrc);
 
-        if (msid == null)
+        if (msid == null) {
             return null;
+        }
 
         String[] streamAndTrack = msid.split(" ");
         String trackId = streamAndTrack.length == 2 ? streamAndTrack[1] : null;
@@ -311,18 +289,17 @@ public class SSRCSignaling
         return trackId;
     }
 
-    public static String getVideoType(SourcePacketExtension ssrcPe)
-    {
+    public static String getVideoType(SourcePacketExtension ssrcPe) {
         SSRCInfoPacketExtension ssrcInfo
-            = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
+                = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
 
         return ssrcInfo != null ? ssrcInfo.getVideoType() : null;
     }
 
     /**
      * Merges the first valid video stream into the first valid audio stream
-     * described in <tt>MediaSourceMap</tt>. A valid media stream is the one that
-     * has well defined "stream ID" as in the description of
+     * described in <tt>MediaSourceMap</tt>. A valid media stream is the one
+     * that has well defined "stream ID" as in the description of
      * {@link #getFirstWithMSID(List)} method.
      *
      * @param peerSSRCs the map of media SSRC to be modified.
@@ -330,20 +307,19 @@ public class SSRCSignaling
      * @return <tt>true</tt> if the streams have been merged or <tt>false</tt>
      * otherwise.
      */
-    public static boolean mergeVideoIntoAudio(MediaSourceMap peerSSRCs)
-    {
+    public static boolean mergeVideoIntoAudio(MediaSourceMap peerSSRCs) {
         List<SourcePacketExtension> audioSSRCs
-            = peerSSRCs.getSourcesForMedia(MediaType.AUDIO.toString());
+                = peerSSRCs.getSourcesForMedia(MediaType.AUDIO.toString());
 
         // We want to sync video stream with the first valid audio stream
         SourcePacketExtension audioSSRC = getFirstWithMSID(audioSSRCs);
         // Nothing to sync to
-        if (audioSSRC == null)
+        if (audioSSRC == null) {
             return false;
+        }
 
         String audioStreamId = getStreamId(audioSSRC);
-        if (audioStreamId == null)
-        {
+        if (audioStreamId == null) {
             // No valid audio stream
             return false;
         }
@@ -351,7 +327,7 @@ public class SSRCSignaling
         // Find first video SSRC with non-empty stream ID and different
         // than 'default' which is sometimes used when unspecified
         List<SourcePacketExtension> videoSSRCs
-            = peerSSRCs.getSourcesForMedia(MediaType.VIDEO.toString());
+                = peerSSRCs.getSourcesForMedia(MediaType.VIDEO.toString());
 
         boolean merged = false;
         // There are multiple video SSRCs in simulcast
@@ -360,14 +336,12 @@ public class SSRCSignaling
         videoSSRCs = getAllWithMSID(videoSSRCs);
         // Will merge video stream SSRCs by modifying their msid and copying
         // cname and label
-        for (SourcePacketExtension videoSSRC : videoSSRCs)
-        {
+        for (SourcePacketExtension videoSSRC : videoSSRCs) {
             // Note that videoMsid is never null
             // (it's checked in getAllWithMSID)
             ParameterPacketExtension videoMsid = getParam(videoSSRC, "msid");
             String videoTrackId = getTrackId(videoSSRC);
-            if (videoTrackId != null)
-            {
+            if (videoTrackId != null) {
                 // Copy cname and label
                 copyParamAttr(videoSSRC, audioSSRC, "cname");
                 copyParamAttr(videoSSRC, audioSSRC, "mslabel");
@@ -385,29 +359,25 @@ public class SSRCSignaling
      * @param contents the Jingle contents list that describes media SSRCs.
      *
      * @return a <tt>Map<String,MediaSourceMap></tt> which is the SSRC to owner
-     *         mapping of the SSRCs contained in given Jingle content list.
-     *         An owner comes form the {@link SSRCInfoPacketExtension} included
-     *         as a child of the {@link SourcePacketExtension}.
+     * mapping of the SSRCs contained in given Jingle content list. An owner
+     * comes form the {@link SSRCInfoPacketExtension} included as a child of the
+     * {@link SourcePacketExtension}.
      */
     public static Map<Jid, MediaSourceMap> ownerMapping(
-            List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         Map<Jid, MediaSourceMap> ownerMapping = new HashMap<>();
-        for (ContentPacketExtension content : contents)
-        {
+        for (ContentPacketExtension content : contents) {
             String media = content.getName();
             MediaSourceMap mediaSourceMap
-                = MediaSourceMap.getSourcesFromContent(contents);
+                    = MediaSourceMap.getSourcesFromContent(contents);
 
             for (SourcePacketExtension ssrc
-                    : mediaSourceMap.getSourcesForMedia(media))
-            {
+                    : mediaSourceMap.getSourcesForMedia(media)) {
                 Jid owner = getSSRCOwner(ssrc);
                 MediaSourceMap ownerMap = ownerMapping.get(owner);
 
                 // Create if not found
-                if (ownerMap == null)
-                {
+                if (ownerMap == null) {
                     ownerMap = new MediaSourceMap();
                     ownerMapping.put(owner, ownerMap);
                 }
@@ -419,21 +389,19 @@ public class SSRCSignaling
     }
 
     /**
-     * From the given list of {@link SourceGroup}s select those that share
-     * the given MSID value.
+     * From the given list of {@link SourceGroup}s select those that share the
+     * given MSID value.
      *
      * @param groups a {@link List} of {@link SourceGroup} to be filtered out.
      * @param groupMsid a {@link String} with the MSID value to be used as
-     *        selector.
+     * selector.
      *
      * @return a {@link List} of {@link SourceGroup}.
      */
     public static List<SourceGroup> selectWithMsid(
-        List<SourceGroup>    groups,
-        String               groupMsid)
-    {
-        if (StringUtils.isNullOrEmpty(groupMsid))
-        {
+            List<SourceGroup> groups,
+            String groupMsid) {
+        if (StringUtils.isNullOrEmpty(groupMsid)) {
             throw new IllegalArgumentException("Null or empty 'groupMsid'");
         }
 
@@ -441,13 +409,10 @@ public class SSRCSignaling
         // return groups.stream()
         //     .filter(group -> group.getGroupMsid().equalsIgnoreCase(groupMsid)
         //     .collect(Collectors.toList());
-
         List<SourceGroup> result = new LinkedList<>();
 
-        for (SourceGroup group : groups)
-        {
-            if (groupMsid.equalsIgnoreCase(group.getGroupMsid()))
-            {
+        for (SourceGroup group : groups) {
+            if (groupMsid.equalsIgnoreCase(group.getGroupMsid())) {
                 result.add(group);
             }
         }
@@ -455,13 +420,11 @@ public class SSRCSignaling
         return result;
     }
 
-    public static void setSSRCOwner(SourcePacketExtension ssrcPe, Jid owner)
-    {
+    public static void setSSRCOwner(SourcePacketExtension ssrcPe, Jid owner) {
         SSRCInfoPacketExtension ssrcInfo
-            = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
+                = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
 
-        if (ssrcInfo == null)
-        {
+        if (ssrcInfo == null) {
             ssrcInfo = new SSRCInfoPacketExtension();
             ssrcPe.addChildExtension(ssrcInfo);
         }
@@ -469,14 +432,12 @@ public class SSRCSignaling
         ssrcInfo.setOwner(owner);
     }
 
-    public static void setSSRCVideoType( SourcePacketExtension     ssrcPe,
-                                         String                 videoType)
-    {
+    public static void setSSRCVideoType(SourcePacketExtension ssrcPe,
+            String videoType) {
         SSRCInfoPacketExtension ssrcInfo
-            = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
+                = ssrcPe.getFirstChildOfType(SSRCInfoPacketExtension.class);
 
-        if (ssrcInfo == null)
-        {
+        if (ssrcInfo == null) {
             ssrcInfo = new SSRCInfoPacketExtension();
             ssrcPe.addChildExtension(ssrcInfo);
         }

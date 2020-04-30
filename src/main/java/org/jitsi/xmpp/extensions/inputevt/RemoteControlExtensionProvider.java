@@ -23,14 +23,14 @@ import org.jivesoftware.smack.provider.*;
 import org.xmlpull.v1.*;
 
 /**
- * This class parses incoming remote-control XML element and extracts
- * input events such as keyboard and mouse ones.
+ * This class parses incoming remote-control XML element and extracts input
+ * events such as keyboard and mouse ones.
  *
  * @author Sebastien Vincent
  */
 public class RemoteControlExtensionProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * The name of the remote-info XML element <tt>remote-control</tt>.
      */
@@ -52,7 +52,7 @@ public class RemoteControlExtensionProvider
     public static final String ELEMENT_MOUSE_PRESS = "mouse-press";
 
     /**
-     *The name of the remote-info XML element <tt>mouse-release</tt>.
+     * The name of the remote-info XML element <tt>mouse-release</tt>.
      */
     public static final String ELEMENT_MOUSE_RELEASE = "mouse-release";
 
@@ -74,8 +74,8 @@ public class RemoteControlExtensionProvider
     /**
      * Namespace of this extension.
      */
-    public static final String NAMESPACE =
-        "http://jitsi.org/protocol/inputevt";
+    public static final String NAMESPACE
+            = "http://jitsi.org/protocol/inputevt";
 
     /**
      * Component to be used in custom generated <tt>MouseEvent</tt> and
@@ -86,8 +86,7 @@ public class RemoteControlExtensionProvider
     /**
      * Constructor.
      */
-    public RemoteControlExtensionProvider()
-    {
+    public RemoteControlExtensionProvider() {
     }
 
     /**
@@ -100,158 +99,132 @@ public class RemoteControlExtensionProvider
      */
     @Override
     public ExtensionElement parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         RemoteControlExtension result = null;
         boolean done = false;
 
-        while (!done)
-        {
-            try
-            {
+        while (!done) {
+            try {
                 int eventType = parser.next();
 
-                if (eventType == XmlPullParser.START_TAG)
-                {
-                    if(parser.getName().equals(ELEMENT_MOUSE_MOVE))
-                    {
+                if (eventType == XmlPullParser.START_TAG) {
+                    if (parser.getName().equals(ELEMENT_MOUSE_MOVE)) {
                         String attr = parser.getAttributeValue("", "x");
                         String attr2 = parser.getAttributeValue("", "y");
-                        if(attr != null && attr2 != null)
-                        {
-                            int x = (int)(Double.
+                        if (attr != null && attr2 != null) {
+                            int x = (int) (Double.
                                     parseDouble(attr) * 1000);
-                            int y = (int)(Double.
+                            int y = (int) (Double.
                                     parseDouble(attr2) * 1000);
 
                             MouseEvent me = new MouseEvent(component,
-                                MouseEvent.MOUSE_MOVED,
-                                System.currentTimeMillis(),
-                                0, x, y, 0, false, 0);
+                                    MouseEvent.MOUSE_MOVED,
+                                    System.currentTimeMillis(),
+                                    0, x, y, 0, false, 0);
 
                             result = new RemoteControlExtension(me);
                             continue;
                         }
                     }
 
-                    if(parser.getName().equals(ELEMENT_MOUSE_WHEEL))
-                    {
+                    if (parser.getName().equals(ELEMENT_MOUSE_WHEEL)) {
                         String attr = parser.getAttributeValue("", "notch");
-                        if(attr != null)
-                        {
+                        if (attr != null) {
                             MouseWheelEvent me = new MouseWheelEvent(
                                     component, MouseEvent.MOUSE_WHEEL,
                                     System.currentTimeMillis(),
                                     0, 0, 0, 0, false, 0, 0,
                                     Integer.parseInt(attr));
 
-
                             result = new RemoteControlExtension(me);
                             continue;
                         }
                     }
 
-                    if(parser.getName().equals(ELEMENT_MOUSE_PRESS))
-                    {
+                    if (parser.getName().equals(ELEMENT_MOUSE_PRESS)) {
                         String attr = parser.getAttributeValue("", "btns");
-                        if(attr != null)
-                        {
+                        if (attr != null) {
                             MouseEvent me = new MouseEvent(component,
-                                MouseEvent.MOUSE_PRESSED,
-                                System.currentTimeMillis(),
-                                Integer.parseInt(attr),
-                                0, 0, 0, false, 0);
+                                    MouseEvent.MOUSE_PRESSED,
+                                    System.currentTimeMillis(),
+                                    Integer.parseInt(attr),
+                                    0, 0, 0, false, 0);
 
                             result = new RemoteControlExtension(me);
                             continue;
                         }
                     }
 
-                    if(parser.getName().equals(ELEMENT_MOUSE_RELEASE))
-                    {
+                    if (parser.getName().equals(ELEMENT_MOUSE_RELEASE)) {
                         String attr = parser.getAttributeValue("", "btns");
-                        if(attr != null)
-                        {
+                        if (attr != null) {
                             MouseEvent me = new MouseEvent(component,
-                                MouseEvent.MOUSE_RELEASED,
-                                System.currentTimeMillis(),
-                                Integer.parseInt(attr),
-                                0, 0, 0, false, 0);
+                                    MouseEvent.MOUSE_RELEASED,
+                                    System.currentTimeMillis(),
+                                    Integer.parseInt(attr),
+                                    0, 0, 0, false, 0);
 
                             result = new RemoteControlExtension(me);
                             continue;
                         }
                     }
 
-                    if(parser.getName().equals(ELEMENT_KEY_PRESS))
-                    {
+                    if (parser.getName().equals(ELEMENT_KEY_PRESS)) {
                         String attr = parser.getAttributeValue("", "keycode");
-                        if(attr != null)
-                        {
+                        if (attr != null) {
                             KeyEvent ke = new KeyEvent(component,
                                     KeyEvent.KEY_PRESSED,
                                     System.currentTimeMillis(),
                                     0,
                                     Integer.parseInt(attr),
-                                    (char)0);
+                                    (char) 0);
 
                             result = new RemoteControlExtension(ke);
                             continue;
                         }
                     }
 
-                    if(parser.getName().equals(ELEMENT_KEY_RELEASE))
-                    {
+                    if (parser.getName().equals(ELEMENT_KEY_RELEASE)) {
                         String attr = parser.getAttributeValue("", "keycode");
-                        if(attr != null)
-                        {
+                        if (attr != null) {
                             KeyEvent ke = new KeyEvent(component,
                                     KeyEvent.KEY_RELEASED,
                                     System.currentTimeMillis(),
                                     0,
                                     Integer.parseInt(attr),
-                                    (char)0);
+                                    (char) 0);
 
                             result = new RemoteControlExtension(ke);
                             continue;
                         }
                     }
 
-                    if(parser.getName().equals(ELEMENT_KEY_TYPE))
-                    {
+                    if (parser.getName().equals(ELEMENT_KEY_TYPE)) {
                         String attr = parser.getAttributeValue("", "keychar");
-                        if(attr != null)
-                        {
+                        if (attr != null) {
                             KeyEvent ke = new KeyEvent(component,
                                     KeyEvent.KEY_TYPED,
                                     System.currentTimeMillis(),
                                     0,
                                     0,
-                                    (char)Integer.parseInt(attr));
+                                    (char) Integer.parseInt(attr));
 
                             result = new RemoteControlExtension(ke);
                             continue;
                         }
                     }
-                }
-                else if (eventType == XmlPullParser.END_TAG)
-                {
+                } else if (eventType == XmlPullParser.END_TAG) {
                     if (parser.getName().equals(
-                            RemoteControlExtensionProvider.
-                                ELEMENT_REMOTE_CONTROL))
-                    {
+                            RemoteControlExtensionProvider.ELEMENT_REMOTE_CONTROL)) {
                         done = true;
                     }
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if(result == null)
-        {
+        if (result == null) {
             /* we are not allowed to return null otherwise the parser goes
              * crazy
              */
@@ -271,10 +244,10 @@ public class RemoteControlExtensionProvider
      * @param strings the <tt>String</tt> values to be appended to the specified
      * <tt>stringBuffer</tt>
      */
-    private static void append(StringBuffer stringBuffer, String... strings)
-    {
-        for (String str : strings)
+    private static void append(StringBuffer stringBuffer, String... strings) {
+        for (String str : strings) {
             stringBuffer.append(str);
+        }
     }
 
     /**
@@ -283,8 +256,7 @@ public class RemoteControlExtensionProvider
      * @param keycode keyboard's code
      * @return raw XML bytes
      */
-    public static String getKeyPressedXML(int keycode)
-    {
+    public static String getKeyPressedXML(int keycode) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE
@@ -302,8 +274,7 @@ public class RemoteControlExtensionProvider
      * @param keycode keyboard's code
      * @return raw XML bytes
      */
-    public static String getKeyReleasedXML(int keycode)
-    {
+    public static String getKeyReleasedXML(int keycode) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE
@@ -321,8 +292,7 @@ public class RemoteControlExtensionProvider
      * @param keycode keyboard's code
      * @return raw XML bytes
      */
-    public static String getKeyTypedXML(int keycode)
-    {
+    public static String getKeyTypedXML(int keycode) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE
@@ -340,8 +310,7 @@ public class RemoteControlExtensionProvider
      * @param btns button mask
      * @return raw XML bytes
      */
-    public static String getMousePressedXML(int btns)
-    {
+    public static String getMousePressedXML(int btns) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE
@@ -359,8 +328,7 @@ public class RemoteControlExtensionProvider
      * @param btns button mask
      * @return raw XML bytes
      */
-    public static String getMouseReleasedXML(int btns)
-    {
+    public static String getMouseReleasedXML(int btns) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE
@@ -379,8 +347,7 @@ public class RemoteControlExtensionProvider
      * @param y y position of the mouse
      * @return raw XML bytes
      */
-    public static String getMouseMovedXML(double x, double y)
-    {
+    public static String getMouseMovedXML(double x, double y) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE
@@ -399,8 +366,7 @@ public class RemoteControlExtensionProvider
      * @param notch wheel notch
      * @return raw XML bytes
      */
-    public static String getMouseWheelXML(int notch)
-    {
+    public static String getMouseWheelXML(int notch) {
         StringBuffer xml = new StringBuffer();
 
         append(xml, "<" + ELEMENT_REMOTE_CONTROL + " xmlns=\"" + NAMESPACE

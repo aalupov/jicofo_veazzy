@@ -27,13 +27,13 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class ColibriAnalyser
-{
+public class ColibriAnalyser {
+
     /**
      * The logger used by this instance.
      */
     private final static Logger logger
-        = Logger.getLogger(ColibriAnalyser.class);
+            = Logger.getLogger(ColibriAnalyser.class);
 
     /**
      * Colibri IQ instance used to store conference state.
@@ -43,31 +43,28 @@ public class ColibriAnalyser
     /**
      * Creates new instance of analyser that will used given Colibri IQ instance
      * for storing conference state.
+     *
      * @param conferenceStateHolder the Colibri IQ instance that will be used
-     *        for storing conference state.
+     * for storing conference state.
      */
-    public ColibriAnalyser(ColibriConferenceIQ conferenceStateHolder)
-    {
+    public ColibriAnalyser(ColibriConferenceIQ conferenceStateHolder) {
         this.conferenceState = conferenceStateHolder;
     }
 
     /**
      * Processes channels allocation response from the JVB and stores info about
      * new channels in {@link #conferenceState}.
+     *
      * @param allocateResponse the Colibri IQ that describes JVB response to
-     *                         allocate request.
+     * allocate request.
      */
-    public void processChannelAllocResp(ColibriConferenceIQ allocateResponse)
-    {
+    public void processChannelAllocResp(ColibriConferenceIQ allocateResponse) {
         String conferenceResponseID = allocateResponse.getID();
         String colibriID = conferenceState.getID();
 
-        if (colibriID == null)
-        {
+        if (colibriID == null) {
             conferenceState.setID(conferenceResponseID);
-        }
-        else if (!colibriID.equals(conferenceResponseID))
-        {
+        } else if (!colibriID.equals(conferenceResponseID)) {
             throw new IllegalStateException("conference.id");
         }
 
@@ -81,39 +78,34 @@ public class ColibriAnalyser
 
         Set<String> endpoints = new HashSet<>();
         for (ColibriConferenceIQ.Content contentResponse
-            : allocateResponse.getContents())
-        {
+                : allocateResponse.getContents()) {
             String contentName = contentResponse.getName();
             ColibriConferenceIQ.Content content
-                = conferenceState.getOrCreateContent(contentName);
+                    = conferenceState.getOrCreateContent(contentName);
 
             // FIXME: we do not check if allocated channel does not clash
             // with any existing one
             for (ColibriConferenceIQ.Channel channelResponse
-                : contentResponse.getChannels())
-            {
+                    : contentResponse.getChannels()) {
                 content.addChannel(channelResponse);
                 endpoints.add(channelResponse.getEndpoint());
             }
             for (ColibriConferenceIQ.SctpConnection sctpConnResponse
-                : contentResponse.getSctpConnections())
-            {
+                    : contentResponse.getSctpConnections()) {
                 content.addSctpConnection(sctpConnResponse);
                 endpoints.add(sctpConnResponse.getEndpoint());
             }
         }
 
         for (ColibriConferenceIQ.ChannelBundle bundle
-             : allocateResponse.getChannelBundles())
-        {
+                : allocateResponse.getChannelBundles()) {
             // ChannelBundles are mapped by their ID, so here we update the
             // state of the conference with whatever the response contained.
             conferenceState.addChannelBundle(bundle);
         }
 
         for (ColibriConferenceIQ.Endpoint endpoint
-            : allocateResponse.getEndpoints())
-        {
+                : allocateResponse.getEndpoints()) {
             // Endpoints are mapped by their ID, so here we update the
             // state of the conference with whatever the response contained.
             conferenceState.addEndpoint(endpoint);
@@ -122,18 +114,17 @@ public class ColibriAnalyser
 
     /**
      * Utility method for extracting info about channels allocated from JVB
-     * response.
-     * FIXME: this might not work as expected when channels for multiple peers
-     *        with single query were allocated.
+     * response. FIXME: this might not work as expected when channels for
+     * multiple peers with single query were allocated.
+     *
      * @param conferenceResponse JVB response to allocate channels request.
      * @param peerContents list of peer media contents that has to be matched
-     *                     with allocated channels.
+     * with allocated channels.
      * @return the Colibri IQ that describes allocated channels.
      */
     public static ColibriConferenceIQ getResponseContents(
             ColibriConferenceIQ conferenceResponse,
-            List<ContentPacketExtension> peerContents)
-    {
+            List<ContentPacketExtension> peerContents) {
         ColibriConferenceIQ conferenceResult = new ColibriConferenceIQ();
 
         conferenceResult.setFrom(conferenceResponse.getFrom());
@@ -144,25 +135,22 @@ public class ColibriAnalyser
         // FIXME: we support single bundle for all channels
         String bundleId = null;
         Set<String> endpointIds = new HashSet<>();
-        for (ContentPacketExtension content : peerContents)
-        {
+        for (ContentPacketExtension content : peerContents) {
             MediaType mediaType
-                = JingleUtils.getMediaType(content);
+                    = JingleUtils.getMediaType(content);
 
             ColibriConferenceIQ.Content contentResponse
-                = conferenceResponse.getContent(mediaType.toString());
+                    = conferenceResponse.getContent(mediaType.toString());
 
-            if (contentResponse != null)
-            {
+            if (contentResponse != null) {
                 String contentName = contentResponse.getName();
                 ColibriConferenceIQ.Content contentResult
-                    = new ColibriConferenceIQ.Content(contentName);
+                        = new ColibriConferenceIQ.Content(contentName);
 
                 conferenceResult.addContent(contentResult);
 
                 for (ColibriConferenceIQ.Channel channelResponse
-                    : contentResponse.getChannels())
-                {
+                        : contentResponse.getChannels()) {
                     contentResult.addChannel(channelResponse);
 
                     bundleId = readChannelBundle(channelResponse, bundleId);
@@ -171,8 +159,7 @@ public class ColibriAnalyser
                 }
 
                 for (ColibriConferenceIQ.SctpConnection sctpConnResponse
-                    : contentResponse.getSctpConnections())
-                {
+                        : contentResponse.getSctpConnections()) {
                     contentResult.addSctpConnection(sctpConnResponse);
 
                     bundleId = readChannelBundle(sctpConnResponse, bundleId);
@@ -183,13 +170,10 @@ public class ColibriAnalyser
         }
 
         // Copy only peer's bundle(JVB returns all bundles)
-        if (bundleId != null)
-        {
+        if (bundleId != null) {
             for (ColibriConferenceIQ.ChannelBundle bundle
-                : conferenceResponse.getChannelBundles())
-            {
-                if (bundleId.equals(bundle.getId()))
-                {
+                    : conferenceResponse.getChannelBundles()) {
+                if (bundleId.equals(bundle.getId())) {
                     conferenceResult.addChannelBundle(bundle);
                     break;
                 }
@@ -198,10 +182,8 @@ public class ColibriAnalyser
 
         // copy only the endpoints we have seen
         for (ColibriConferenceIQ.Endpoint en
-            : conferenceResponse.getEndpoints())
-        {
-            if (endpointIds.contains(en.getId()))
-            {
+                : conferenceResponse.getEndpoints()) {
+            if (endpointIds.contains(en.getId())) {
                 conferenceResult.addEndpoint(en);
             }
         }
@@ -217,26 +199,20 @@ public class ColibriAnalyser
      * returned in the last place anyway.
      */
     private static String readChannelBundle(
-            ColibriConferenceIQ.ChannelCommon channel, String currentBundle)
-    {
+            ColibriConferenceIQ.ChannelCommon channel, String currentBundle) {
         String channelBundle = channel.getChannelBundleId();
 
-        if (channelBundle == null)
-        {
+        if (channelBundle == null) {
             return currentBundle;
         }
 
-        if (currentBundle == null)
-        {
+        if (currentBundle == null) {
             return channel.getChannelBundleId();
-        }
-        else
-        {
+        } else {
             // Compare to detect problems
-            if (!currentBundle.equals(channelBundle))
-            {
+            if (!currentBundle.equals(channelBundle)) {
                 logger.error(
-                    "Replaced bundle: " + currentBundle
+                        "Replaced bundle: " + currentBundle
                         + " with " + channelBundle);
             }
             return channelBundle;

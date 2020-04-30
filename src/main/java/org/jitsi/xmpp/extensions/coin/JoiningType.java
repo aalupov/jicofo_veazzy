@@ -20,18 +20,15 @@ package org.jitsi.xmpp.extensions.coin;
  *
  * @author Sebastien Vincent
  */
-public enum JoiningType
-{
+public enum JoiningType {
     /**
      * Dialed-in.
      */
     dialed_in("dialed-in"),
-
     /**
      * Dialed-out.
      */
     dialed_out("dialed-out"),
-
     /**
      * Focus owner.
      */
@@ -47,8 +44,7 @@ public enum JoiningType
      *
      * @param type type name.
      */
-    private JoiningType(String type)
-    {
+    private JoiningType(String type) {
         this.type = type;
     }
 
@@ -58,29 +54,28 @@ public enum JoiningType
      * @return type name
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return type;
     }
 
     /**
      * Returns a <tt>JoiningType</tt>.
      *
-     * @param typeStr the <tt>String</tt> that we'd like to
-     * parse.
+     * @param typeStr the <tt>String</tt> that we'd like to parse.
      * @return an JoiningType.
      *
-     * @throws IllegalArgumentException in case <tt>typeStr</tt> is
-     * not a valid <tt>EndPointType</tt>.
+     * @throws IllegalArgumentException in case <tt>typeStr</tt> is not a valid
+     * <tt>EndPointType</tt>.
      */
     public static JoiningType parseString(String typeStr)
-        throws IllegalArgumentException
-    {
-        for (JoiningType value : values())
-            if (value.toString().equals(typeStr))
+            throws IllegalArgumentException {
+        for (JoiningType value : values()) {
+            if (value.toString().equals(typeStr)) {
                 return value;
+            }
+        }
 
         throw new IllegalArgumentException(
-            typeStr + " is not a valid reason");
+                typeStr + " is not a valid reason");
     }
 }

@@ -32,59 +32,51 @@ import java.util.*;
  *
  */
 public class OpSetSimpleCapsImpl
-    implements OperationSetSimpleCaps
-{
+        implements OperationSetSimpleCaps {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(OpSetSimpleCapsImpl.class);
+            = Logger.getLogger(OpSetSimpleCapsImpl.class);
 
     private final XmppProtocolProvider xmppProvider;
 
-    public OpSetSimpleCapsImpl(XmppProtocolProvider xmppProtocolProvider)
-    {
+    public OpSetSimpleCapsImpl(XmppProtocolProvider xmppProtocolProvider) {
         this.xmppProvider = xmppProtocolProvider;
     }
 
-    public Set<Jid> getItems(Jid node)
-    {
-        try
-        {
+    public Set<Jid> getItems(Jid node) {
+        try {
             return xmppProvider.discoverItems(node);
-        }
-        catch (XMPPException
+        } catch (XMPPException
                 | InterruptedException
                 | NoResponseException
-                | NotConnectedException e)
-        {
+                | NotConnectedException e) {
             logger.error(
-                "Error while discovering the services of " + node
-                        + " , error msg: " + e.getMessage());
+                    "Error while discovering the services of " + node
+                    + " , error msg: " + e.getMessage());
 
             return null;
         }
     }
 
     @Override
-    public boolean hasFeatureSupport(Jid node, String[] features)
-    {
+    public boolean hasFeatureSupport(Jid node, String[] features) {
         List<String> itemFeatures = getFeatures(node);
 
-        return itemFeatures != null &&
-            DiscoveryUtil.checkFeatureSupport(features, itemFeatures);
+        return itemFeatures != null
+                && DiscoveryUtil.checkFeatureSupport(features, itemFeatures);
 
     }
-    
-    public List<String> getFeatures(Jid node)
-    {
+
+    public List<String> getFeatures(Jid node) {
         return xmppProvider.getEntityFeatures(node);
     }
 
     //@Override
     public boolean hasFeatureSupport(Jid node, String subnode,
-                                     String[] features)
-    {
+            String[] features) {
         return xmppProvider.checkFeatureSupport(node, subnode, features);
     }
 }

@@ -24,8 +24,7 @@ import java.util.function.*;
 import org.jitsi.xmpp.extensions.jitsimeet.*;
 import org.jitsi.jicofo.*;
 import org.jitsi.jicofo.event.*;
-import org.jitsi.utils.
-        *;
+import org.jitsi.utils.*;
 import org.jitsi.utils.logging.Logger;
 import org.jitsi.eventadmin.*;
 import org.jivesoftware.smack.packet.*;
@@ -39,13 +38,13 @@ import org.jxmpp.jid.*;
  * @author Pawel Domas
  */
 public abstract class AbstractAuthAuthority
-    implements AuthenticationAuthority, FocusManager.FocusAllocationListener
-{
+        implements AuthenticationAuthority, FocusManager.FocusAllocationListener {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(AbstractAuthAuthority.class);
+            = Logger.getLogger(AbstractAuthAuthority.class);
 
     /**
      * Interval at which we check for authentication sessions expiration.
@@ -89,10 +88,10 @@ public abstract class AbstractAuthAuthority
      * Note that access to this field is almost always protected by a lock on
      * {@link #syncRoot}. However, {@link #getSession(String)} executes
      * {@link Map#get(Object)} on it, which wouldn't be safe with a
-     * {@link HashMap} (as opposed to a {@link ConcurrentHashMap}.
-     * I've chosen this solution, because I don't know whether the cleaner
-     * solution of synchronizing on {@link #syncRoot} in
-     * {@link #getSession(String)} is safe.
+     * {@link HashMap} (as opposed to a {@link ConcurrentHashMap}. I've chosen
+     * this solution, because I don't know whether the cleaner solution of
+     * synchronizing on {@link #syncRoot} in {@link #getSession(String)} is
+     * safe.
      */
     private final Map<String, AuthenticationSession> authenticationSessions
             = new ConcurrentHashMap<>();
@@ -112,13 +111,11 @@ public abstract class AbstractAuthAuthority
      * will be stored in Jicofo's memory. Interval in milliseconds.
      */
     public AbstractAuthAuthority(boolean disableAutoLogin,
-                                 long authenticationLifetime)
-    {
+            long authenticationLifetime) {
         this.disableAutoLogin = disableAutoLogin;
         this.authenticationLifetime = authenticationLifetime;
 
-        if (disableAutoLogin)
-        {
+        if (disableAutoLogin) {
             logger.info("Auto login disabled");
         }
 
@@ -128,10 +125,8 @@ public abstract class AbstractAuthAuthority
     /**
      * Returns <tt>EventAdmin</tt> service instance(if any).
      */
-    EventAdmin getEventAdmin()
-    {
-        if (eventAdmin == null)
-        {
+    EventAdmin getEventAdmin() {
+        if (eventAdmin == null) {
             eventAdmin = ServiceUtils.getService(
                     AuthBundleActivator.bundleContext,
                     EventAdmin.class);
@@ -147,53 +142,48 @@ public abstract class AbstractAuthAuthority
      * predicate or <tt>null</tt>.
      */
     protected AuthenticationSession findSession(
-        Predicate<AuthenticationSession> selector)
-    {
+            Predicate<AuthenticationSession> selector) {
         ArrayList<AuthenticationSession> sessions
-            = new ArrayList<>(authenticationSessions.values());
+                = new ArrayList<>(authenticationSessions.values());
 
         return sessions
-            .stream()
-            .filter(selector)
-            .findFirst().orElse(null);
+                .stream()
+                .filter(selector)
+                .findFirst().orElse(null);
     }
 
     /**
      * Creates new <tt>AuthenticationSession</tt> for given parameters.
      *
      * @param machineUID unique machine identifier for new session.
-     * @param authIdentity authenticated user's identity name that will be
-     *                     used in new session.
+     * @param authIdentity authenticated user's identity name that will be used
+     * in new session.
      * @param roomName the name of the conference for which the session will be
-     *                 created
+     * created
      * @param properties the list of authentication properties provided during
-     *                   authentication which will be sent in 'authentication
-     *                   session created' event. This is authentication provider
-     *                   depended and can be left empty.
+     * authentication which will be sent in 'authentication session created'
+     * event. This is authentication provider depended and can be left empty.
      *
      * @return new <tt>AuthenticationSession</tt> for given parameters.
      */
     protected AuthenticationSession createNewSession(
             String machineUID, String authIdentity, EntityBareJid roomName,
-            Map<String, String> properties)
-    {
-        synchronized (syncRoot)
-        {
+            Map<String, String> properties) {
+        synchronized (syncRoot) {
             AuthenticationSession session
-                = new AuthenticationSession(
-                        machineUID,
-                        createNonExistingUUID().toString(),
-                        authIdentity,
-                        roomName);
+                    = new AuthenticationSession(
+                            machineUID,
+                            createNonExistingUUID().toString(),
+                            authIdentity,
+                            roomName);
 
             authenticationSessions.put(session.getSessionId(), session);
 
             logger.info(
-                "Authentication session created for "
-                        + authIdentity + " SID: " + session.getSessionId());
+                    "Authentication session created for "
+                    + authIdentity + " SID: " + session.getSessionId());
 
-            if (properties != null)
-            {
+            if (properties != null) {
                 logEvent(
                         EventFactory.authSessionCreated(
                                 session.getSessionId(),
@@ -206,15 +196,11 @@ public abstract class AbstractAuthAuthority
         }
     }
 
-    private void logEvent(Event event)
-    {
+    private void logEvent(Event event) {
         EventAdmin eventAdmin = getEventAdmin();
-        if (eventAdmin != null)
-        {
+        if (eventAdmin != null) {
             eventAdmin.postEvent(event);
-        }
-        else
-        {
+        } else {
             logger.error("Unable to log events - no EventAdmin service found");
         }
     }
@@ -223,13 +209,10 @@ public abstract class AbstractAuthAuthority
      * Returns new <tt>UUID</tt> that does not collide with any of the existing
      * ones.
      */
-    private UUID createNonExistingUUID()
-    {
-        synchronized (syncRoot)
-        {
+    private UUID createNonExistingUUID() {
+        synchronized (syncRoot) {
             UUID uuid = UUID.randomUUID();
-            while (authenticationSessions.containsKey(uuid.toString()))
-            {
+            while (authenticationSessions.containsKey(uuid.toString())) {
                 uuid = UUID.randomUUID();
             }
             return uuid;
@@ -237,50 +220,45 @@ public abstract class AbstractAuthAuthority
     }
 
     /**
-     * Finds <tt>AuthenticationSession</tt> for given MUID and
-     * user's authenticated identity name.
+     * Finds <tt>AuthenticationSession</tt> for given MUID and user's
+     * authenticated identity name.
      *
-     * @param machineUID unique machine identifier used to distinguish
-     *                   between sessions for the same user on different
-     *                   machines.
-     * @param authIdentity authenticated user's identity name(usually login
-     *                     or email)
+     * @param machineUID unique machine identifier used to distinguish between
+     * sessions for the same user on different machines.
+     * @param authIdentity authenticated user's identity name(usually login or
+     * email)
      *
-     * @return <tt>AuthenticationSession</tt> for given MUID and
-     *         user's authenticated identity name
+     * @return <tt>AuthenticationSession</tt> for given MUID and user's
+     * authenticated identity name
      */
     protected AuthenticationSession findSessionForIdentity(
-            String machineUID, String authIdentity)
-    {
+            String machineUID, String authIdentity) {
         if (StringUtils.isNullOrEmpty(authIdentity)
-                || StringUtils.isNullOrEmpty(machineUID))
-        {
+                || StringUtils.isNullOrEmpty(machineUID)) {
             return null;
         }
 
         return findSession(
-            session -> session.getUserIdentity().equals(authIdentity)
-                            && session.getMachineUID().equals(machineUID));
+                session -> session.getUserIdentity().equals(authIdentity)
+                && session.getMachineUID().equals(machineUID));
     }
 
     /**
      * Finds <tt>AuthenticationSession</tt> for given Jabber ID.
      *
      * @param jabberId Jabber ID for which authentication session will be
-     *                 searched.
+     * searched.
      *
      * @return <tt>AuthenticationSession</tt> for given Jabber ID or
      * <tt>null</tt> if not found.
      */
-    protected AuthenticationSession findSessionForJabberId(Jid jabberId)
-    {
-        if (jabberId == null)
-        {
+    protected AuthenticationSession findSessionForJabberId(Jid jabberId) {
+        if (jabberId == null) {
             return null;
         }
 
         return findSession(
-            session -> jabberId.equals(session.getUserJabberId()));
+                session -> jabberId.equals(session.getUserJabberId()));
     }
 
     /**
@@ -288,10 +266,9 @@ public abstract class AbstractAuthAuthority
      * <tt>null</tt> if not found.
      *
      * @param sessionId unique authentication session identifier string that
-     *                  will be used in the search.
+     * will be used in the search.
      */
-    protected AuthenticationSession getSession(String sessionId)
-    {
+    protected AuthenticationSession getSession(String sessionId) {
         return sessionId != null ? authenticationSessions.get(sessionId) : null;
     }
 
@@ -299,8 +276,7 @@ public abstract class AbstractAuthAuthority
      * {@inheritDoc}
      */
     @Override
-    public String getSessionForJid(Jid jabberId)
-    {
+    public String getSessionForJid(Jid jabberId) {
         AuthenticationSession session = findSessionForJabberId(jabberId);
         return session != null ? session.getSessionId() : null;
     }
@@ -309,8 +285,7 @@ public abstract class AbstractAuthAuthority
      * {@inheritDoc}
      */
     @Override
-    public String getUserIdentity(Jid jabberId)
-    {
+    public String getUserIdentity(Jid jabberId) {
         AuthenticationSession session = findSessionForJabberId(jabberId);
 
         return session != null ? session.getUserIdentity() : null;
@@ -321,17 +296,15 @@ public abstract class AbstractAuthAuthority
      *
      * @param sessionId unique authentication session identifier.
      */
-    public void destroySession(String sessionId)
-    {
-        synchronized (syncRoot)
-        {
+    public void destroySession(String sessionId) {
+        synchronized (syncRoot) {
             AuthenticationSession session = getSession(sessionId);
 
-            if (session == null)
+            if (session == null) {
                 return;
+            }
 
-            if (authenticationSessions.remove(sessionId) != null)
-            {
+            if (authenticationSessions.remove(sessionId) != null) {
                 logger.info("Authentication removed: " + session);
 
                 // Generate "authentication session destroyed" event
@@ -345,25 +318,20 @@ public abstract class AbstractAuthAuthority
      * {@inheritDoc}
      */
     @Override
-    public void onFocusDestroyed(EntityBareJid roomName)
-    {
-        if (!disableAutoLogin)
-        {
+    public void onFocusDestroyed(EntityBareJid roomName) {
+        if (!disableAutoLogin) {
             return;
         }
 
-        synchronized (syncRoot)
-        {
+        synchronized (syncRoot) {
             Iterator<AuthenticationSession> sessionIterator
                     = authenticationSessions.values().iterator();
 
-            while (sessionIterator.hasNext())
-            {
+            while (sessionIterator.hasNext()) {
                 AuthenticationSession session = sessionIterator.next();
-                if (roomName.equals(session.getRoomName()))
-                {
+                if (roomName.equals(session.getRoomName())) {
                     logger.info(
-                        "Removing session for ended conference, S: " + session);
+                            "Removing session for ended conference, S: " + session);
                     sessionIterator.remove();
                 }
             }
@@ -372,37 +340,34 @@ public abstract class AbstractAuthAuthority
 
     /**
      * Registers to the list of <tt>AuthenticationListener</tt>s.
+     *
      * @param l the <tt>AuthenticationListener</tt> to be added to listeners
-     *          list.
+     * list.
      */
     @Override
-    public void addAuthenticationListener(AuthenticationListener l)
-    {
-        if (!authenticationListeners.contains(l))
-        {
+    public void addAuthenticationListener(AuthenticationListener l) {
+        if (!authenticationListeners.contains(l)) {
             authenticationListeners.add(l);
         }
     }
 
     /**
      * Unregisters from the list of <tt>AuthenticationListener</tt>s.
+     *
      * @param l the <tt>AuthenticationListener</tt> that will be removed from
-     *          authentication listeners list.
+     * authentication listeners list.
      */
     @Override
-    public void removeAuthenticationListener(AuthenticationListener l)
-    {
+    public void removeAuthenticationListener(AuthenticationListener l) {
         authenticationListeners.remove(l);
     }
 
     protected void notifyUserAuthenticated(Jid userJid,
-                                           String identity,
-                                           String sessionId)
-    {
+            String identity,
+            String sessionId) {
         logger.info("Jid " + userJid + " authenticated as: " + identity);
 
-        for (AuthenticationListener l : authenticationListeners)
-        {
+        for (AuthenticationListener l : authenticationListeners) {
             l.jidAuthenticated(userJid, identity, sessionId);
         }
     }
@@ -412,10 +377,8 @@ public abstract class AbstractAuthAuthority
      */
     @Override
     public IQ processAuthentication(
-            ConferenceIq query, ConferenceIq response)
-    {
-        synchronized (syncRoot)
-        {
+            ConferenceIq query, ConferenceIq response) {
+        synchronized (syncRoot) {
             return processAuthLocked(query, response);
         }
     }
@@ -429,36 +392,32 @@ public abstract class AbstractAuthAuthority
             ConferenceIq query, ConferenceIq response);
 
     /**
-     * Utility method to by used by implementing classes in order to
-     * verify authentication session's identifier during authentication
-     * request handling process({@link #processAuthentication(ConferenceIq,
+     * Utility method to by used by implementing classes in order to verify
+     * authentication session's identifier during authentication request
+     * handling process({@link #processAuthentication(ConferenceIq,
      * ConferenceIq)}).
      *
-     * @param query <tt>ConferenceIq</tt> that contains(or not) session id
-     *              for the verification.
+     * @param query <tt>ConferenceIq</tt> that contains(or not) session id for
+     * the verification.
      *
-     * @return <tt>null</tt> if no problems where discovered during
-     * verification process or XMPP error that should be returned as response
-     * to given <tt>query</tt>.
+     * @return <tt>null</tt> if no problems where discovered during verification
+     * process or XMPP error that should be returned as response to given
+     * <tt>query</tt>.
      */
-    protected IQ verifySession(ConferenceIq query)
-    {
+    protected IQ verifySession(ConferenceIq query) {
         String sessionId = query.getSessionId();
         AuthenticationSession session = getSession(sessionId);
 
-        if (!StringUtils.isNullOrEmpty(sessionId))
-        {
+        if (!StringUtils.isNullOrEmpty(sessionId)) {
             // Session not found: session-invalid
-            if (session == null)
-            {
+            if (session == null) {
                 // session-invalid
                 return ErrorFactory.createSessionInvalidResponse(query);
             }
             // Check if session is used with the same machine UID
             String sessionMUID = session.getMachineUID();
             String queryMUID = query.getMachineUID();
-            if (!sessionMUID.equals(queryMUID))
-            {
+            if (!sessionMUID.equals(queryMUID)) {
                 // not-acceptable
                 return ErrorFactory.createNotAcceptableError(
                         query, "machine UID mismatch or empty");
@@ -468,34 +427,31 @@ public abstract class AbstractAuthAuthority
     }
 
     /**
-     * This method should be called during authentication request processing
-     * in order to authenticate JID found in the 'from' field of the request
-     * with given <tt>AuthenticationSession</tt>(based on supplied session-id).
-     * When called it means that the request sent by <tt>peerJid</tt> is
-     * valid and has been authenticated for given <tt>session</tt>.
-     * Authentication process is specific to {@link AuthenticationAuthority}
-     * implementation.
+     * This method should be called during authentication request processing in
+     * order to authenticate JID found in the 'from' field of the request with
+     * given <tt>AuthenticationSession</tt>(based on supplied session-id). When
+     * called it means that the request sent by <tt>peerJid</tt> is valid and
+     * has been authenticated for given <tt>session</tt>. Authentication process
+     * is specific to {@link AuthenticationAuthority} implementation.
      *
      * @param session <tt>AuthenticationSession</tt> which corresponds to the
-     *                session id supplied in the request.
+     * session id supplied in the request.
      * @param peerJid user's JID that will be associated with
-     *                <tt>AuthenticationSession</tt>.
+     * <tt>AuthenticationSession</tt>.
      * @param response the response instance that will be sent back to the user.
-     *                 It will be updated with required information to describe
-     *                 the session.
+     * It will be updated with required information to describe the session.
      */
     protected void authenticateJidWithSession(
             AuthenticationSession session,
             Jid peerJid,
-            ConferenceIq response)
-    {
+            ConferenceIq response) {
         session.setUserJabberId(peerJid);
 
         logger.info(
-            "Authenticated jid: " + peerJid + " with session: " + session);
+                "Authenticated jid: " + peerJid + " with session: " + session);
 
         notifyUserAuthenticated(
-            peerJid, session.getUserIdentity(), session.getSessionId());
+                peerJid, session.getUserIdentity(), session.getSessionId());
 
         // Re-new session activity timestamp
         session.touch();
@@ -509,13 +465,11 @@ public abstract class AbstractAuthAuthority
      * {@inheritDoc}
      */
     @Override
-    public IQ processLogoutIq(LogoutIq iq)
-    {
+    public IQ processLogoutIq(LogoutIq iq) {
         //String peerJid = iq.getFrom();
         String sessionId = iq.getSessionId();
 
-        if (getSession(sessionId) == null)
-        {
+        if (getSession(sessionId) == null) {
             return ErrorFactory.createSessionInvalidResponse(iq);
         }
 
@@ -537,8 +491,8 @@ public abstract class AbstractAuthAuthority
     }
 
     /**
-     * Returns URL which should be visited by the user in order to complete
-     * the logout process. If this step is not required then <tt>null</tt>
+     * Returns URL which should be visited by the user in order to complete the
+     * logout process. If this step is not required then <tt>null</tt>
      * is returned.
      *
      * @param sessionId authentication session identifier string.
@@ -548,15 +502,14 @@ public abstract class AbstractAuthAuthority
     /**
      * Start this authentication authority instance.
      */
-    public void start()
-    {
+    public void start() {
         expireTimer = new Timer("AuthenticationExpireTimer", true);
         expireTimer.scheduleAtFixedRate(
-            new ExpireTask(), EXPIRE_POLLING_INTERVAL, EXPIRE_POLLING_INTERVAL);
+                new ExpireTask(), EXPIRE_POLLING_INTERVAL, EXPIRE_POLLING_INTERVAL);
 
         focusManager
-            = ServiceUtils.getService(
-                    AuthBundleActivator.bundleContext, FocusManager.class);
+                = ServiceUtils.getService(
+                        AuthBundleActivator.bundleContext, FocusManager.class);
 
         focusManager.setFocusAllocationListener(this);
     }
@@ -564,16 +517,13 @@ public abstract class AbstractAuthAuthority
     /**
      * Stops this authentication authority instance.
      */
-    public void stop()
-    {
-        if (focusManager != null)
-        {
+    public void stop() {
+        if (focusManager != null) {
             focusManager.setFocusAllocationListener(null);
             focusManager = null;
         }
 
-        if (expireTimer != null)
-        {
+        if (expireTimer != null) {
             expireTimer.cancel();
             expireTimer = null;
         }
@@ -582,22 +532,18 @@ public abstract class AbstractAuthAuthority
     /**
      * Task expires tokens and authentications.
      */
-    private class ExpireTask extends TimerTask
-    {
+    private class ExpireTask extends TimerTask {
+
         @Override
-        public void run()
-        {
-            synchronized (syncRoot)
-            {
+        public void run() {
+            synchronized (syncRoot) {
                 Iterator<AuthenticationSession> sessionsIter
-                    = authenticationSessions.values().iterator();
-                while (sessionsIter.hasNext())
-                {
+                        = authenticationSessions.values().iterator();
+                while (sessionsIter.hasNext()) {
                     AuthenticationSession session = sessionsIter.next();
                     if (System.currentTimeMillis()
                             - session.getActivityTimestamp()
-                                    > authenticationLifetime)
-                    {
+                            > authenticationLifetime) {
                         logger.info("Expiring session:" + session);
                         sessionsIter.remove();
                     }

@@ -56,8 +56,8 @@ import static org.mockito.Mockito.*;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class PubSubBridgeSelectorTest
-{
+public class PubSubBridgeSelectorTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     private static Jid jvb1Jid;
@@ -92,39 +92,37 @@ public class PubSubBridgeSelectorTest
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         System.clearProperty(
-            BridgeSelector.BRIDGE_TO_PUBSUB_PNAME);
+                BridgeSelector.BRIDGE_TO_PUBSUB_PNAME);
 
         System.setProperty(
-            FocusManager.SHARED_STATS_PUBSUB_NODE_PNAME, sharedPubSubNode);
+                FocusManager.SHARED_STATS_PUBSUB_NODE_PNAME, sharedPubSubNode);
 
         System.setProperty(
-            ComponentsDiscovery
-                .ThroughPubSubDiscovery.MAX_STATS_REPORT_AGE_PNAME,
-            String.valueOf(MAX_STATS_AGE));
+                ComponentsDiscovery.ThroughPubSubDiscovery.MAX_STATS_REPORT_AGE_PNAME,
+                String.valueOf(MAX_STATS_AGE));
 
         System.setProperty(
-            JvbDoctor.HEALTH_CHECK_INTERVAL_PNAME, "" + HEALTH_CHECK_INT);
+                JvbDoctor.HEALTH_CHECK_INTERVAL_PNAME, "" + HEALTH_CHECK_INT);
 
         osgi.init();
 
         meetServices
-            = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
+                = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
 
         ProviderListener providerListener
-            = new ProviderListener(FocusBundleActivator.bundleContext);
+                = new ProviderListener(FocusBundleActivator.bundleContext);
 
         mockProvider
-            = (MockProtocolProvider) providerListener.obtainProvider(1000);
+                = (MockProtocolProvider) providerListener.obtainProvider(1000);
 
         xmppConnection = mockProvider.getXmppConnection();
 
         selector = meetServices.getBridgeSelector();
 
         subOpSet
-            = mockProvider.getMockSubscriptionOpSet();
+                = mockProvider.getMockSubscriptionOpSet();
 
         capsOpSet = mockProvider.getMockCapsOpSet();
 
@@ -132,34 +130,26 @@ public class PubSubBridgeSelectorTest
     }
 
     @Before
-    public void before()
-    {
+    public void before() {
         assertFalse(osgi.isDeadlocked());
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
-        try
-        {
+            throws Exception {
+        try {
             jvb1.stop(osgi.bc);
             jvb2.stop(osgi.bc);
             jvb3.stop(osgi.bc);
-        }
-        catch(NullPointerException npe)
-        {
+        } catch (NullPointerException npe) {
             // ignore
-        }
-        finally
-        {
+        } finally {
             osgi.shutdown();
         }
     }
 
     static private void createMockJvbs()
-        throws Exception
-    {
+            throws Exception {
         jvb1Jid = JidCreate.from("jvb1.test.domain.net");
         jvb2Jid = JidCreate.from("jvb2.test.domain.net");
         jvb3Jid = JidCreate.from("jvb3.test.domain.net");
@@ -169,14 +159,13 @@ public class PubSubBridgeSelectorTest
     }
 
     static private MockVideobridge createMockJvb(Jid jvbJid)
-        throws Exception
-    {
+            throws Exception {
         MockVideobridge mockBridge
-            = new MockVideobridge(new MockXmppConnection(jvbJid), jvbJid);
+                = new MockVideobridge(new MockXmppConnection(jvbJid), jvbJid);
 
         MockCapsNode jvbNode
-            = new MockCapsNode(
-                    jvbJid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
+                = new MockCapsNode(
+                        jvbJid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
 
         mockBridge.start(osgi.bc);
 
@@ -187,8 +176,7 @@ public class PubSubBridgeSelectorTest
 
     @Test
     public void selectorTest()
-        throws InterruptedException
-    {
+            throws InterruptedException {
         // FIXME: remove sleep
         Thread.sleep(2000);
 
@@ -218,16 +206,15 @@ public class PubSubBridgeSelectorTest
      */
     // FIXME randomly fails
     //@Test
-    public void clearPubSubBridgeIssueTest()
-    {
+    public void clearPubSubBridgeIssueTest() {
         System.err.println("Running clearPubSubBridgeIssueTest");
 
         // Make sure that jvb advertises features with health-check support
         String[] features
-            = ArrayUtils.add(
-                    JitsiMeetServices.VIDEOBRIDGE_FEATURES,
-                    String.class,
-                    DiscoveryUtil.FEATURE_HEALTH_CHECK);
+                = ArrayUtils.add(
+                        JitsiMeetServices.VIDEOBRIDGE_FEATURES,
+                        String.class,
+                        DiscoveryUtil.FEATURE_HEALTH_CHECK);
         MockCapsNode jvbNode = new MockCapsNode(jvb1Jid, features);
         capsOpSet.addChildNode(jvbNode);
 
@@ -238,19 +225,19 @@ public class PubSubBridgeSelectorTest
 
         EventHandler eventSpy = mock(EventHandler.class);
         EventUtil.registerEventHandler(
-            osgi.bc,
-            new String[] {
-                BridgeEvent.BRIDGE_UP,
-                BridgeEvent.BRIDGE_DOWN,
-                BridgeEvent.HEALTH_CHECK_FAILED },
-            eventSpy);
+                osgi.bc,
+                new String[]{
+                    BridgeEvent.BRIDGE_UP,
+                    BridgeEvent.BRIDGE_DOWN,
+                    BridgeEvent.HEALTH_CHECK_FAILED},
+                eventSpy);
 
         // Trigger PubSub, so that the bridge is discovered
         triggerJvbStats(jvb1Jid, 0);
 
         // Verify that the bridge has been discovered
         verify(eventSpy, timeout(100))
-            .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
+                .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
 
         // Now make the bridge return health-check failure
         jvb1.setReturnServerError(true);
@@ -258,12 +245,12 @@ public class PubSubBridgeSelectorTest
         // Here we verify that first there was HEALTH_CHECK_FAILED event
         // send by JvbDoctor
         verify(eventSpy, timeout(HEALTH_CHECK_INT * 2))
-            .handleEvent(BridgeEvent.createHealthFailed(jvb1Jid));
+                .handleEvent(BridgeEvent.createHealthFailed(jvb1Jid));
 
         // and after that BRIDGE_DOWN should be triggered
         // by BridgeSelector
         verify(eventSpy, timeout(100))
-            .handleEvent(BridgeEvent.createBridgeDown(jvb1Jid));
+                .handleEvent(BridgeEvent.createBridgeDown(jvb1Jid));
 
         // Now we fix back the bridge and send some PubSub stats
         jvb1.setReturnServerError(false);
@@ -272,85 +259,71 @@ public class PubSubBridgeSelectorTest
         triggerJvbStats(jvb1Jid, 0);
 
         // Assert the bridge has been discovered again
-        verify(eventSpy,  times(2))
-            .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
+        verify(eventSpy, times(2))
+                .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
 
         // Verify events order
         InOrder eventsOrder = inOrder(eventSpy);
 
         eventsOrder
-            .verify(eventSpy)
-            .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
+                .verify(eventSpy)
+                .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
 
         eventsOrder
-            .verify(eventSpy)
-            .handleEvent(BridgeEvent.createHealthFailed(jvb1Jid));
+                .verify(eventSpy)
+                .handleEvent(BridgeEvent.createHealthFailed(jvb1Jid));
 
         eventsOrder
-            .verify(eventSpy)
-            .handleEvent(BridgeEvent.createBridgeDown(jvb1Jid));
+                .verify(eventSpy)
+                .handleEvent(BridgeEvent.createBridgeDown(jvb1Jid));
 
         eventsOrder
-            .verify(eventSpy)
-            .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
+                .verify(eventSpy)
+                .handleEvent(BridgeEvent.createBridgeUp(jvb1Jid));
     }
 
     @Test
     public void deadlockTest()
-        throws InterruptedException, ExecutionException
-    {
+            throws InterruptedException, ExecutionException {
         final JitsiMeetServices meetServices
-            = ServiceUtils.getService(osgi.bc(), JitsiMeetServices.class);
+                = ServiceUtils.getService(osgi.bc(), JitsiMeetServices.class);
 
         ExecutorService executorService
-            = Executors.newFixedThreadPool(30, new DaemonThreadFactory());
+                = Executors.newFixedThreadPool(30, new DaemonThreadFactory());
 
         List<Future> executors = new LinkedList<>();
-        for (int i=0; i<500;i++)
-        {
-            executors.add(executorService.submit(new Runnable()
-            {
+        for (int i = 0; i < 500; i++) {
+            executors.add(executorService.submit(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     triggerJvbStats(jvb2Jid, 1);
                 }
             }));
-            executors.add(executorService.submit(new Runnable()
-            {
+            executors.add(executorService.submit(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     meetServices.nodeNoLongerAvailable(jvb1Jid);
                 }
             }));
-            executors.add(executorService.submit(new Runnable()
-            {
+            executors.add(executorService.submit(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     triggerJvbStats(jvb1Jid, 1);
                 }
             }));
-            executors.add(executorService.submit(new Runnable()
-            {
+            executors.add(executorService.submit(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     meetServices.nodeNoLongerAvailable(jvb1Jid);
                 }
             }));
         }
 
         // Wait for all tasks to finish
-        for (Future f : executors)
-        {
-            try
-            {
+        for (Future f : executors) {
+            try {
                 f.get(3, TimeUnit.SECONDS);
-            }
-            catch (TimeoutException e)
-            {
+            } catch (TimeoutException e) {
                 osgi.setDeadlocked(true);
 
                 fail("One of the executors got blocked!");
@@ -358,16 +331,15 @@ public class PubSubBridgeSelectorTest
         }
     }
 
-    private ExtensionElement triggerJvbStats(Jid itemId, int conferenceCount)
-    {
+    private ExtensionElement triggerJvbStats(Jid itemId, int conferenceCount) {
         ColibriStatsExtension statsExtension = new ColibriStatsExtension();
 
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                CONFERENCES, "" + conferenceCount));
+                new ColibriStatsExtension.Stat(
+                        CONFERENCES, "" + conferenceCount));
 
         subOpSet.fireSubscriptionNotification(
-            sharedPubSubNode, itemId.toString(), statsExtension);
+                sharedPubSubNode, itemId.toString(), statsExtension);
 
         return statsExtension;
     }

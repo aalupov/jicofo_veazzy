@@ -31,19 +31,20 @@ import java.util.*;
  * @author Pawel Domas
  */
 public interface OperationSetSubscription
-    extends OperationSet
-{
+        extends OperationSet {
+
     /**
      * Subscribes to given <tt>node</tt> for notifications.
      *
      * @param node the of the node to which given listener will be subscribed to
      * @param listener the {@link SubscriptionListener} instance that will be
-     *                 notified of updates from the node.
+     * notified of updates from the node.
      */
     void subscribe(String node, SubscriptionListener listener);
 
     /**
      * Cancels subscriptions for given <tt>node</tt>.
+     *
      * @param node the node for which subscription will be canceled.
      * @param listener subscription listener to be registered.
      */
@@ -51,9 +52,10 @@ public interface OperationSetSubscription
 
     /**
      * Obtains the list of published items persisted on the server.
+     *
      * @param node the name of PubSub node for which items list will be fetched.
      * @return the list of items or <tt>null</tt> if an error occurred and we
-     *         were unable to obtain the list.
+     * were unable to obtain the list.
      */
     List<PayloadItem> getItems(String node);
 }

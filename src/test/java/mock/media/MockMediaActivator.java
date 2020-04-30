@@ -24,24 +24,22 @@ import org.osgi.framework.*;
  *
  */
 public class MockMediaActivator
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     private ServiceRegistration<MediaService> msRegistration;
 
     @Override
     public void start(BundleContext context)
-        throws Exception
-    {
+            throws Exception {
         MockMediaService mediaService = new MockMediaService();
 
         this.msRegistration
-            = context.registerService(MediaService.class, mediaService, null);
+                = context.registerService(MediaService.class, mediaService, null);
     }
 
     @Override
     public void stop(BundleContext context)
-        throws Exception
-    {
+            throws Exception {
         msRegistration.unregister();
     }
 }

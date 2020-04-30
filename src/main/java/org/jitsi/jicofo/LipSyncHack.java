@@ -31,8 +31,8 @@ import org.jxmpp.jid.*;
 import java.util.*;
 
 /**
- * Here we're doing audio + video stream merging in order to take advantage
- * of WebRTC's lip-sync feature.
+ * Here we're doing audio + video stream merging in order to take advantage of
+ * WebRTC's lip-sync feature.
  *
  * In Jitsi-meet we obtain separate audio and video streams and send their SSRC
  * description to Jicofo which then propagates that to other conference
@@ -41,36 +41,35 @@ import java.util.*;
  * experience.
  *
  * We are not merging the streams on the client which would result in all
- * clients receiving them merged, because of few issues:
- * 1. Chrome will not play audio for such merged stream if the user has video
- *    muted: https://bugs.chromium.org/p/chromium/issues/detail?id=403710
- *    So we will only merge the stream if the owner has his video unmuted at
- *    the time when it's being advertised to other participant. This is subject
- *    to some race conditions and will not always work. That's why this hack is
- *    not enabled by default.
- * 2. We need separate streams for doing video mute and screen streaming. When
- *    video is being muted it's stream is being removed and added on unmute. And
- *    when we're doing screen streaming the video stream is replaced with the
- *    screen one. Now when the stream is merged audio and video are becoming
- *    tracks of the same stream and on the client side we need to be able to see
- *    when they change. Unfortunately "track added" and "track removed" events
- *    are only supported by Chrome. Firefox will display the video fine after
- *    track change, but there will be no event, Temasys has no events and track
- *    changes are not supported.
+ * clients receiving them merged, because of few issues: 1. Chrome will not play
+ * audio for such merged stream if the user has video muted:
+ * https://bugs.chromium.org/p/chromium/issues/detail?id=403710 So we will only
+ * merge the stream if the owner has his video unmuted at the time when it's
+ * being advertised to other participant. This is subject to some race
+ * conditions and will not always work. That's why this hack is not enabled by
+ * default. 2. We need separate streams for doing video mute and screen
+ * streaming. When video is being muted it's stream is being removed and added
+ * on unmute. And when we're doing screen streaming the video stream is replaced
+ * with the screen one. Now when the stream is merged audio and video are
+ * becoming tracks of the same stream and on the client side we need to be able
+ * to see when they change. Unfortunately "track added" and "track removed"
+ * events are only supported by Chrome. Firefox will display the video fine
+ * after track change, but there will be no event, Temasys has no events and
+ * track changes are not supported.
  *
  * The class wraps {@link OperationSetJingle} and modifies some of the request
  * in order to do stream merging when it's needed.
  *
  * @author Pawel Domas
  */
-public class LipSyncHack implements OperationSetJingle
-{
+public class LipSyncHack implements OperationSetJingle {
+
     /**
      * The class logger which can be used to override logging level inherited
      * from {@link JitsiMeetConference}.
      */
     static private final Logger classLogger
-        = Logger.getLogger(LipSyncHack.class);
+            = Logger.getLogger(LipSyncHack.class);
 
     /**
      * Parent conference for which this instance is doing stream merging.
@@ -84,8 +83,8 @@ public class LipSyncHack implements OperationSetJingle
 
     /**
      * The logger for this instance. Uses the logging level either of the
-     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()}
-     * whichever is higher.
+     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()} whichever
+     * is higher.
      */
     private final Logger logger;
 
@@ -93,24 +92,21 @@ public class LipSyncHack implements OperationSetJingle
      * Creates new instance of <tt>LipSyncHack</tt> for given conference.
      *
      * @param conference parent <tt>JitsiMeetConference</tt> for which this
-     *        instance will be doing lip-sync hack.
+     * instance will be doing lip-sync hack.
      * @param jingleImpl the Jingle operations set that will be wrapped in order
-     *        to modify some of the Jingle requests.
+     * to modify some of the Jingle requests.
      */
-    public LipSyncHack(JitsiMeetConference    conference,
-                       OperationSetJingle     jingleImpl)
-    {
+    public LipSyncHack(JitsiMeetConference conference,
+            OperationSetJingle jingleImpl) {
         this.conference = Objects.requireNonNull(conference, "conference");
         this.jingleImpl = Objects.requireNonNull(jingleImpl, "jingleImpl");
 
         this.logger = Logger.getLogger(classLogger, conference.getLogger());
     }
 
-    private MediaSourceMap getParticipantSSRCMap(Jid mucJid)
-    {
+    private MediaSourceMap getParticipantSSRCMap(Jid mucJid) {
         Participant p = conference.findParticipantForRoomJid(mucJid);
-        if (p == null)
-        {
+        if (p == null) {
             logger.warn("No participant found for: " + mucJid);
             // Return empty to avoid null checks
             return new MediaSourceMap();
@@ -123,33 +119,29 @@ public class LipSyncHack implements OperationSetJingle
      * to another.
      *
      * @param participantJid the MUC JID of the participant to whom we're going
-     *        to send stream info.
+     * to send stream info.
      * @param ownerJid the MUC JID of the owner of the streams which are to be
-     *        advertised to given <tt>participantJid</tt>
+     * advertised to given <tt>participantJid</tt>
      *
      * @return <tt>true</tt> if it's OK to merge audio+video streams or
-     *         <tt>false</tt> otherwise.
+     * <tt>false</tt> otherwise.
      */
     private boolean isOkToMergeParticipantAV(Jid participantJid,
-                                             Jid ownerJid)
-    {
+            Jid ownerJid) {
         Participant participant
-            = conference.findParticipantForRoomJid(participantJid);
-        if (participant == null)
-        {
+                = conference.findParticipantForRoomJid(participantJid);
+        if (participant == null) {
             logger.error("No target participant found for: " + participantJid);
             return false;
         }
 
         Participant streamsOwner
-            = conference.findParticipantForRoomJid(ownerJid);
-        if (streamsOwner == null)
-        {
+                = conference.findParticipantForRoomJid(ownerJid);
+        if (streamsOwner == null) {
             // Do not log that error for the JVB
-            if (!SSRCSignaling.SSRC_OWNER_JVB.equals(ownerJid))
-            {
+            if (!SSRCSignaling.SSRC_OWNER_JVB.equals(ownerJid)) {
                 logger.error(
-                    "Stream owner not a participant or not found for jid: "
+                        "Stream owner not a participant or not found for jid: "
                         + ownerJid);
             }
             return false;
@@ -168,28 +160,23 @@ public class LipSyncHack implements OperationSetJingle
         return supportsLipSync;
     }
 
-    private void doMerge(Jid            participant,
-                         Jid            owner,
-                         MediaSourceMap ssrcs)
-    {
+    private void doMerge(Jid participant,
+            Jid owner,
+            MediaSourceMap ssrcs) {
         boolean merged = false;
-        if (isOkToMergeParticipantAV(participant, owner))
-        {
+        if (isOkToMergeParticipantAV(participant, owner)) {
             merged = SSRCSignaling.mergeVideoIntoAudio(ssrcs);
         }
 
         String logMsg
-            = (merged ? "Merging" : "Not merging")
-                    + " A/V streams from " + owner +" to " + participant;
+                = (merged ? "Merging" : "Not merging")
+                + " A/V streams from " + owner + " to " + participant;
 
         // The stream is merged most of the time and it's not that interesting.
         // FIXME JVBs SSRCs are not merged currently, but maybe should be ?
-        if (merged || SSRCSignaling.SSRC_OWNER_JVB.equals(owner))
-        {
+        if (merged || SSRCSignaling.SSRC_OWNER_JVB.equals(owner)) {
             logger.debug(logMsg);
-        }
-        else
-        {
+        } else {
             logger.info(logMsg);
         }
     }
@@ -201,34 +188,30 @@ public class LipSyncHack implements OperationSetJingle
      * merging for the purpose of enabling lip-sync functionality on the client.
      *
      * @param contents a list of Jingle contents which describes audio and video
-     *        streams for the whole conference.
+     * streams for the whole conference.
      * @param mucJid the MUC JID of the participant to whom Jingle notification
-     *        will be sent.
+     * will be sent.
      */
     private void processAllParticipantsSSRCs(
-            List<ContentPacketExtension>    contents,
-            Jid                             mucJid)
-    {
+            List<ContentPacketExtension> contents,
+            Jid mucJid) {
         // Split into maps on per owner basis
         Map<Jid, MediaSourceMap> perOwnerMapping
-            = SSRCSignaling.ownerMapping(contents);
+                = SSRCSignaling.ownerMapping(contents);
 
         for (Map.Entry<Jid, MediaSourceMap> ownerSSRCs
-                : perOwnerMapping.entrySet())
-        {
+                : perOwnerMapping.entrySet()) {
             Jid ownerJid = ownerSSRCs.getKey();
-            if (ownerJid != null)
-            {
+            if (ownerJid != null) {
                 MediaSourceMap ssrcMap = ownerSSRCs.getValue();
-                if (ssrcMap != null)
-                {
+                if (ssrcMap != null) {
                     doMerge(mucJid, ownerJid, ssrcMap);
-                }
-                else
+                } else {
                     logger.error("'ssrcMap' is null");
-            }
-            else
+                }
+            } else {
                 logger.warn("'owner' is null");
+            }
         }
     }
 
@@ -236,18 +219,17 @@ public class LipSyncHack implements OperationSetJingle
      * The <tt>LipSyncHack</tt> will attempt to merge all video streams into
      * corresponding audio streams. A corresponding stream is the one that
      * belongs to the same participant which we figure out by checking 'owner'
-     * included {@link SSRCInfoPacketExtension}. Once the processing is done
-     * the job is passed to the underlying Jingle operation set to send
-     * the notification.
+     * included {@link SSRCInfoPacketExtension}. Once the processing is done the
+     * job is passed to the underlying Jingle operation set to send the
+     * notification.
      *
      * {@inheritDoc}
      */
     @Override
     public boolean initiateSession(
-        JingleIQ jingleIQ,
-        JingleRequestHandler requestHandler)
-        throws OperationFailedException
-    {
+            JingleIQ jingleIQ,
+            JingleRequestHandler requestHandler)
+            throws OperationFailedException {
         processAllParticipantsSSRCs(jingleIQ.getContentList(), jingleIQ.getTo());
 
         return jingleImpl.initiateSession(jingleIQ, requestHandler);
@@ -261,11 +243,10 @@ public class LipSyncHack implements OperationSetJingle
      */
     @Override
     public boolean replaceTransport(JingleIQ jingleIQ, JingleSession session)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         processAllParticipantsSSRCs(
-            jingleIQ.getContentList(),
-            session.getAddress());
+                jingleIQ.getContentList(),
+                session.getAddress());
 
         return jingleImpl.replaceTransport(jingleIQ, session);
     }
@@ -275,9 +256,8 @@ public class LipSyncHack implements OperationSetJingle
      */
     @Override
     public JingleIQ createTransportReplace(
-        JingleSession session,
-        List<ContentPacketExtension> contents)
-    {
+            JingleSession session,
+            List<ContentPacketExtension> contents) {
         return jingleImpl.createTransportReplace(session, contents);
     }
 
@@ -286,9 +266,8 @@ public class LipSyncHack implements OperationSetJingle
      */
     @Override
     public JingleIQ createSessionInitiate(
-        Jid address,
-        List<ContentPacketExtension> contents)
-    {
+            Jid address,
+            List<ContentPacketExtension> contents) {
         return jingleImpl.createSessionInitiate(address, contents);
     }
 
@@ -307,35 +286,29 @@ public class LipSyncHack implements OperationSetJingle
     public void sendAddSourceIQ(
             MediaSourceMap ssrcMap,
             MediaSourceGroupMap ssrcGroupMap,
-            JingleSession       session)
-    {
+            JingleSession session) {
         Jid mucJid = session.getAddress();
         // If this is source add for video only then add audio for merge process
         for (SourcePacketExtension videoSsrc
-                : ssrcMap.getSourcesForMedia("video"))
-        {
+                : ssrcMap.getSourcesForMedia("video")) {
             Jid owner = SSRCSignaling.getSSRCOwner(videoSsrc);
             SourcePacketExtension audioSsrc
-                = ssrcMap.findSsrcForOwner("audio", owner);
-            if (audioSsrc == null)
-            {
+                    = ssrcMap.findSsrcForOwner("audio", owner);
+            if (audioSsrc == null) {
                 // Try finding corresponding audio from the global conference
                 // state for this owner
                 MediaSourceMap allOwnersSSRCs = getParticipantSSRCMap(owner);
                 List<SourcePacketExtension> audioSSRCs
-                    = allOwnersSSRCs.getSourcesForMedia("audio");
+                        = allOwnersSSRCs.getSourcesForMedia("audio");
                 audioSsrc = SSRCSignaling.getFirstWithMSID(audioSSRCs);
             }
-            if (audioSsrc != null)
-            {
+            if (audioSsrc != null) {
                 ssrcMap.addSource("audio", audioSsrc);
                 doMerge(mucJid, owner, ssrcMap);
                 ssrcMap.remove("audio", audioSsrc);
-            }
-            else
-            {
+            } else {
                 logger.warn("No corresponding audio found for: " + owner
-                            + " 'source-add' to: " + mucJid);
+                        + " 'source-add' to: " + mucJid);
             }
         }
         jingleImpl.sendAddSourceIQ(ssrcMap, ssrcGroupMap, session);
@@ -355,8 +328,7 @@ public class LipSyncHack implements OperationSetJingle
     public void sendRemoveSourceIQ(
             MediaSourceMap ssrcMap,
             MediaSourceGroupMap ssrcGroupMap,
-            JingleSession       session)
-    {
+            JingleSession session) {
         jingleImpl.sendRemoveSourceIQ(ssrcMap, ssrcGroupMap, session);
     }
 
@@ -364,10 +336,9 @@ public class LipSyncHack implements OperationSetJingle
      * {@inheritDoc}
      */
     @Override
-    public void terminateSession(JingleSession    session,
-                                 Reason           reason,
-                                 String           msg)
-    {
+    public void terminateSession(JingleSession session,
+            Reason reason,
+            String msg) {
         jingleImpl.terminateSession(session, reason, msg);
     }
 
@@ -375,8 +346,7 @@ public class LipSyncHack implements OperationSetJingle
      * {@inheritDoc}
      */
     @Override
-    public void terminateHandlersSessions(JingleRequestHandler requestHandler)
-    {
+    public void terminateHandlersSessions(JingleRequestHandler requestHandler) {
         jingleImpl.terminateHandlersSessions(requestHandler);
     }
 }

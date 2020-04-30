@@ -28,8 +28,8 @@ import java.util.*;
  * @author Boris Grozev
  */
 public class PayloadTypePacketExtensionTest
-    extends TestCase
-{
+        extends TestCase {
+
     private static final String TEST_ATTR_NAME = "my-test-attribute-name";
     private static final String TEST_ATTR_VALUE = "my-test-attribute-value";
 
@@ -38,13 +38,12 @@ public class PayloadTypePacketExtensionTest
      * {@link PayloadTypePacketExtension#clone(PayloadTypePacketExtension)}
      * method.
      */
-    public void testClone()
-    {
+    public void testClone() {
         PayloadTypePacketExtension p = new PayloadTypePacketExtension();
         p.setId(101);
         p.setName("opus");
         ParameterPacketExtension apt
-            = new ParameterPacketExtension("apt", "100");
+                = new ParameterPacketExtension("apt", "100");
         p.addParameter(apt);
         p.setAttribute(TEST_ATTR_NAME, TEST_ATTR_VALUE);
 
@@ -82,7 +81,6 @@ public class PayloadTypePacketExtensionTest
         assertEquals("nack", fb.getFeedbackType());
         assertEquals("pli", fb.getFeedbackSubtype());
 
-
         Set<String> attributeNames = new HashSet<>(p.getAttributeNames());
         attributeNames.addAll(c.getAttributeNames());
 
@@ -90,8 +88,7 @@ public class PayloadTypePacketExtensionTest
         attributeNames.remove(PayloadTypePacketExtension.ID_ATTR_NAME);
         attributeNames.remove(PayloadTypePacketExtension.NAME_ATTR_NAME);
 
-        for (String s : attributeNames)
-        {
+        for (String s : attributeNames) {
             assertEquals(c.getAttribute(s), p.getAttribute(s));
         }
 
@@ -99,8 +96,7 @@ public class PayloadTypePacketExtensionTest
         assertEquals(p.getAttribute(TEST_ATTR_NAME), TEST_ATTR_VALUE);
     }
 
-    public void testSettersAndGetters()
-    {
+    public void testSettersAndGetters() {
         PayloadTypePacketExtension p = new PayloadTypePacketExtension();
 
         p.setId(101);
@@ -110,7 +106,7 @@ public class PayloadTypePacketExtensionTest
         assertEquals("opus", p.getName());
 
         ParameterPacketExtension apt
-            = new ParameterPacketExtension("apt", "100");
+                = new ParameterPacketExtension("apt", "100");
         p.addParameter(apt);
         assertEquals(1, p.getParameters().size());
         assertEquals(apt, p.getParameters().get(0));

@@ -25,8 +25,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Cristian Florin Ghita
  */
 public class AudioMutedExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -40,18 +40,17 @@ public class AudioMutedExtension
     /**
      * Creates new instance of <tt>AudioMutedExtension</tt>.
      */
-    public AudioMutedExtension()
-    {
+    public AudioMutedExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Check whether or not user's audio is in muted status.
+     *
      * @return <tt>true</tt> if muted, <tt>false</tt> if unmuted or
-     *         <tt>null</tt> if no valid info found in the extension body.
+     * <tt>null</tt> if no valid info found in the extension body.
      */
-    public Boolean isAudioMuted()
-    {
+    public Boolean isAudioMuted() {
         return Boolean.valueOf(getText());
     }
 
@@ -59,12 +58,11 @@ public class AudioMutedExtension
      * Sets user's audio muted status.
      *
      * @param audioMuted <tt>true</tt> or <tt>false</tt> which indicates audio
-     *                   muted status of the user.
+     * muted status of the user.
      */
-    public void setAudioMuted(Boolean audioMuted)
-    {
+    public void setAudioMuted(Boolean audioMuted) {
         setText(
-            audioMuted == null
-                ? "false" : audioMuted.toString());
+                audioMuted == null
+                        ? "false" : audioMuted.toString());
     }
 }

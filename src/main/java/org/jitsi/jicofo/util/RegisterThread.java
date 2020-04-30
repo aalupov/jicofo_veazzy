@@ -26,30 +26,25 @@ import net.java.sip.communicator.util.*;
  * @author Pawel Domas
  */
 public class RegisterThread
-    extends Thread
-{
+        extends Thread {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(RegisterThread.class);
+            = Logger.getLogger(RegisterThread.class);
 
     private final ProtocolProviderService pps;
 
-    public RegisterThread(ProtocolProviderService pps)
-    {
+    public RegisterThread(ProtocolProviderService pps) {
         this.pps = pps;
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             pps.register(new ServerSecurityAuthority());
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             logger.error(e, e);
         }
     }

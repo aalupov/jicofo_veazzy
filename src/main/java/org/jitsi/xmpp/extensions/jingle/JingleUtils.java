@@ -26,37 +26,34 @@ import org.jitsi.utils.MediaType;
  * @author Emil Ivov
  * @author Lyubomir Marinov
  */
-public class JingleUtils
-{
+public class JingleUtils {
+
     /**
-     * Returns the <tt>MediaType</tt> for <tt>content</tt> by looking for it
-     * in the <tt>content</tt>'s <tt>description</tt>, if any.
+     * Returns the <tt>MediaType</tt> for <tt>content</tt> by looking for it in
+     * the <tt>content</tt>'s <tt>description</tt>, if any.
      *
      * @param content the content to return the <tt>MediaType</tt> of
-     * @return the <tt>MediaType</tt> for <tt>content</tt> by looking for it
-     * in the <tt>content</tt>'s <tt>description</tt>, if any.
+     * @return the <tt>MediaType</tt> for <tt>content</tt> by looking for it in
+     * the <tt>content</tt>'s <tt>description</tt>, if any.
      * <tt>contentName</tt>
      */
-    public static MediaType getMediaType(ContentPacketExtension content)
-    {
-        if (content == null)
+    public static MediaType getMediaType(ContentPacketExtension content) {
+        if (content == null) {
             return null;
+        }
 
         // We will use content name for determining media type
         // if no RTP description is present(SCTP connection case)
         String mediaTypeName = content.getName();
 
         RtpDescriptionPacketExtension desc = getRtpDescription(content);
-        if (desc != null)
-        {
+        if (desc != null) {
             String rtpMedia = desc.getMedia().toLowerCase();
-            if (StringUtils.isNotEmpty(rtpMedia))
-            {
+            if (StringUtils.isNotEmpty(rtpMedia)) {
                 mediaTypeName = rtpMedia;
             }
         }
-        if ("application".equals(mediaTypeName))
-        {
+        if ("application".equals(mediaTypeName)) {
             return MediaType.DATA;
         }
         return MediaType.parseString(mediaTypeName);
@@ -73,8 +70,7 @@ public class JingleUtils
      * <tt>content</tt> or <tt>null</tt> if there is none.
      */
     public static RtpDescriptionPacketExtension getRtpDescription(
-        ContentPacketExtension content)
-    {
+            ContentPacketExtension content) {
         return content.getFirstChildOfType(RtpDescriptionPacketExtension.class);
     }
 }

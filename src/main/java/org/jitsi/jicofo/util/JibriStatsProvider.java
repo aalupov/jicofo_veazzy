@@ -25,15 +25,15 @@ import org.osgi.framework.*;
  * It's used by {@link OsgiServiceBinder} to inject {@link JibriStats} instance
  * to {@link org.jitsi.jicofo.rest.Statistics}.
  */
-public class JibriStatsProvider extends OsgiServiceProvider<JibriStats>
-{
+public class JibriStatsProvider extends OsgiServiceProvider<JibriStats> {
+
     /**
      * Initializes new instance.
-     * @param bundleContext the OSGI context which will be use to retrieve
-     * the service instance.
+     *
+     * @param bundleContext the OSGI context which will be use to retrieve the
+     * service instance.
      */
-    public JibriStatsProvider(BundleContext bundleContext)
-    {
+    public JibriStatsProvider(BundleContext bundleContext) {
         super(bundleContext, JibriStats.class);
     }
 }

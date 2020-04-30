@@ -40,8 +40,8 @@ import static org.junit.Assert.assertNull;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class XMPPAuthenticationAuthorityTest
-{
+public class XMPPAuthenticationAuthorityTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     private static String authDomain = "auth.server.net";
@@ -49,8 +49,7 @@ public class XMPPAuthenticationAuthorityTest
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         // Enable XMPP authentication
         System.setProperty(
                 AuthBundleActivator.LOGIN_URL_PNAME, "XMPP:" + authDomain);
@@ -59,41 +58,37 @@ public class XMPPAuthenticationAuthorityTest
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
         System.clearProperty(AuthBundleActivator.LOGIN_URL_PNAME);
     }
 
     @Test
     public void testXmppDomainAuthentication()
-        throws Exception
-    {
+            throws Exception {
         FocusComponent focusComponent
-            = MockMainMethodActivator.getFocusComponent();
+                = MockMainMethodActivator.getFocusComponent();
 
         XMPPDomainAuthAuthority xmppAuth
-            = (XMPPDomainAuthAuthority) ServiceUtils.getService(
-                FocusBundleActivator.bundleContext,
-                AuthenticationAuthority.class);
+                = (XMPPDomainAuthAuthority) ServiceUtils.getService(
+                        FocusBundleActivator.bundleContext,
+                        AuthenticationAuthority.class);
 
         assertNotNull(xmppAuth);
 
         Jid user1GuestJid = JidCreate.from("user1@" + guestDomain);
         Jid user1AuthJid = JidCreate.from("user1@" + authDomain);
-        String user1MachineUid="machine1uid";
+        String user1MachineUid = "machine1uid";
 
         Jid user2GuestJid = JidCreate.from("user2@" + guestDomain);
         Jid user2AuthJid = JidCreate.from("user2@" + authDomain);
-        String user2MachineUid="machine2uid";
+        String user2MachineUid = "machine2uid";
 
         boolean roomExists = false;
         EntityBareJid room1 = JidCreate.entityBareFrom("testroom1@example.com");
 
         ConferenceIq query = new ConferenceIq();
         ConferenceIq response = new ConferenceIq();
-
-
 
         // CASE 1: guest Domain, no session-id passed and room does not exist
         query.setFrom(user1GuestJid);
@@ -102,9 +97,8 @@ public class XMPPAuthenticationAuthorityTest
         query.setRoom(room1);
         query.setMachineUID(user1MachineUid);
 
-
         IQ authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY WITH: not-authorized
         assertNotNull(authError);
@@ -120,7 +114,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(user1MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY WITH: null - no errors, session-id set in response
         assertNull(authError);
@@ -136,12 +130,11 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY with null - no errors, no session-id in response
         assertNull(authError);
         assertNull(response.getSessionId());
-
 
         //CASE 4: guest domain, session-id, room does not exists
         query.setFrom(user1GuestJid);
@@ -150,7 +143,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(user1MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY with null - no errors, session-id in response(repeated)
         assertNull(authError);
@@ -165,7 +158,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY with session-invalid
         assertNotNull(authError);
@@ -179,7 +172,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // not-acceptable
         assertNotNull(authError);
@@ -193,7 +186,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // not-acceptable
         assertNotNull(authError);
@@ -207,7 +200,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(null);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // not-acceptable
         assertNotNull(authError);
@@ -222,7 +215,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setMachineUID(null);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // not-acceptable
         assertNotNull(authError);
@@ -238,7 +231,7 @@ public class XMPPAuthenticationAuthorityTest
         query.setSessionId(null);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         assertNull(authError);
 

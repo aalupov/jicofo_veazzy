@@ -26,51 +26,44 @@ import org.jivesoftware.smack.packet.*;
  * @author Pawel Domas
  */
 public class OperationSetMeetToolsImpl
-    implements OperationSetJitsiMeetTools
-{
+        implements OperationSetJitsiMeetTools {
+
     @Override
-    public void addSupportedFeature(String featureName)
-    {
+    public void addSupportedFeature(String featureName) {
 
     }
 
     @Override
-    public void removeSupportedFeature(String s)
-    {
+    public void removeSupportedFeature(String s) {
 
     }
 
     @Override
     public void sendPresenceExtension(ChatRoom chatRoom,
-                                      ExtensionElement extension)
-    {
-        ((ChatRoomImpl)chatRoom).setPresenceExtension(extension, false);
+            ExtensionElement extension) {
+        ((ChatRoomImpl) chatRoom).setPresenceExtension(extension, false);
     }
 
     @Override
     public void removePresenceExtension(ChatRoom chatRoom,
-                                        ExtensionElement extension)
-    {
-        ((ChatRoomImpl)chatRoom).setPresenceExtension(extension, true);
+            ExtensionElement extension) {
+        ((ChatRoomImpl) chatRoom).setPresenceExtension(extension, true);
     }
 
     @Override
-    public void setPresenceStatus(ChatRoom chatRoom, String statusMessage)
-    {
+    public void setPresenceStatus(ChatRoom chatRoom, String statusMessage) {
 
     }
 
     @Override
     public void addRequestListener(
-        JitsiMeetRequestListener listener)
-    {
+            JitsiMeetRequestListener listener) {
 
     }
 
     @Override
     public void removeRequestListener(
-        JitsiMeetRequestListener listener)
-    {
+            JitsiMeetRequestListener listener) {
 
     }
 }

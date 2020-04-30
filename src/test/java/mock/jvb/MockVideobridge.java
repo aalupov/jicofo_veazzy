@@ -41,13 +41,13 @@ import java.util.stream.Collectors;
  * @author Pawel Domas
  */
 public class MockVideobridge
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     /**
      * The logger
      */
     private static final Logger logger
-        = Logger.getLogger(MockVideobridge.class);
+            = Logger.getLogger(MockVideobridge.class);
 
     private final XmppConnection connection;
 
@@ -69,15 +69,13 @@ public class MockVideobridge
             = new HealthCheckIqHandler();
 
     public MockVideobridge(XmppConnection connection,
-                           Jid bridgeJid)
-    {
+            Jid bridgeJid) {
         this.connection = connection;
         this.bridgeJid = bridgeJid;
     }
 
     public void start(BundleContext bc)
-        throws Exception
-    {
+            throws Exception {
         this.jvbActivator = new VideobridgeBundleActivator();
 
         jvbActivator.start(bc);
@@ -91,8 +89,7 @@ public class MockVideobridge
 
     @Override
     public void stop(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         connection.unregisterIQRequestHandler(confIqGetHandler);
         connection.unregisterIQRequestHandler(confIqSetHandler);
         connection.unregisterIQRequestHandler(healthCheckIqHandler);
@@ -100,10 +97,9 @@ public class MockVideobridge
         jvbActivator.stop(bundleContext);
     }
 
-    private class ColibriConferenceIqHandler extends AbstractIqRequestHandler
-    {
-        ColibriConferenceIqHandler(IQ.Type type)
-        {
+    private class ColibriConferenceIqHandler extends AbstractIqRequestHandler {
+
+        ColibriConferenceIqHandler(IQ.Type type) {
             super(ColibriConferenceIQ.ELEMENT_NAME,
                     ColibriConferenceIQ.NAMESPACE,
                     type,
@@ -111,37 +107,31 @@ public class MockVideobridge
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
-            if (isReturnServerError())
-            {
+        public IQ handleIQRequest(IQ iqRequest) {
+            if (isReturnServerError()) {
                 return IQ.createErrorResponse(
                         iqRequest,
                         XMPPError.getBuilder(
                                 XMPPError.Condition.internal_server_error));
             }
 
-            try
-            {
+            try {
                 IQ confResult = bridge.handleColibriConferenceIQ(
                         (ColibriConferenceIQ) iqRequest,
                         Videobridge.OPTION_ALLOW_ANY_FOCUS);
                 confResult.setTo(iqRequest.getFrom());
                 confResult.setStanzaId(iqRequest.getStanzaId());
                 return confResult;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 logger.error("JVB internal error!", e);
                 return null;
             }
         }
     }
 
-    private class HealthCheckIqHandler extends AbstractIqRequestHandler
-    {
-        HealthCheckIqHandler()
-        {
+    private class HealthCheckIqHandler extends AbstractIqRequestHandler {
+
+        HealthCheckIqHandler() {
             super(HealthCheckIQ.ELEMENT_NAME,
                     HealthCheckIQ.NAMESPACE,
                     IQ.Type.get,
@@ -149,26 +139,21 @@ public class MockVideobridge
         }
 
         @Override
-        public IQ handleIQRequest(IQ iqRequest)
-        {
-            if (isReturnServerError())
-            {
+        public IQ handleIQRequest(IQ iqRequest) {
+            if (isReturnServerError()) {
                 return IQ.createErrorResponse(
                         iqRequest,
                         XMPPError.getBuilder(
                                 XMPPError.Condition.internal_server_error));
             }
 
-            try
-            {
+            try {
                 IQ healthResult = bridge.handleHealthCheckIQ(
                         (HealthCheckIQ) iqRequest);
                 healthResult.setTo(iqRequest.getFrom());
                 healthResult.setStanzaId(iqRequest.getStanzaId());
                 return healthResult;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 logger.error("JVB internal error!", e);
                 return null;
             }
@@ -176,58 +161,54 @@ public class MockVideobridge
     }
 
     public List<RTPEncodingDesc> getSimulcastLayers(
-            String confId, String endpointId)
-    {
+            String confId, String endpointId) {
         Conference conference = bridge.getConference(confId, null);
         AbstractEndpoint endpoint = conference.getEndpoint(endpointId);
 
         MediaStreamTrackDesc[] tracks = endpoint.getMediaStreamTracks();
 
-        if (ArrayUtils.isNullOrEmpty(tracks))
+        if (ArrayUtils.isNullOrEmpty(tracks)) {
             return new ArrayList<>();
+        }
 
         RTPEncodingDesc[] layers = tracks[0].getRTPEncodings();
-        if (ArrayUtils.isNullOrEmpty(layers))
+        if (ArrayUtils.isNullOrEmpty(layers)) {
             return new ArrayList<>();
+        }
 
         return Arrays.asList(layers);
     }
 
     /**
      * Return all conferences that were not created by health checks
-     * @return a list of the currently active conferences that were not created by
-     * health checks
+     *
+     * @return a list of the currently active conferences that were not created
+     * by health checks
      */
-    public List<Conference> getNonHealthCheckConferences()
-    {
+    public List<Conference> getNonHealthCheckConferences() {
         // Filter out conferences created for health checks
         return Arrays.stream(bridge.getConferences())
                 .filter(Conference::includeInStatistics)
                 .collect(Collectors.toList());
     }
 
-    public int getChannelsCount()
-    {
+    public int getChannelsCount() {
         return bridge.getChannelCount();
     }
 
-    public Jid getBridgeJid()
-    {
+    public Jid getBridgeJid() {
         return bridgeJid;
     }
 
-    public int getConferenceCount()
-    {
+    public int getConferenceCount() {
         return getNonHealthCheckConferences().size();
     }
 
-    public boolean isReturnServerError()
-    {
+    public boolean isReturnServerError() {
         return returnServerError;
     }
 
-    public void setReturnServerError(boolean returnServerError)
-    {
+    public void setReturnServerError(boolean returnServerError) {
         this.returnServerError = returnServerError;
     }
 }

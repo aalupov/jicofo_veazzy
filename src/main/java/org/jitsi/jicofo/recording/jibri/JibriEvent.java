@@ -26,15 +26,17 @@ import org.jxmpp.stringprep.*;
 import java.util.*;
 
 /**
- * The events used to notify about the availability and busy/idle status
- * updates of Jibri instances which exist in the current Jicofo session.
+ * The events used to notify about the availability and busy/idle status updates
+ * of Jibri instances which exist in the current Jicofo session.
  *
  * @author Pawel Domas
  */
 public class JibriEvent
-    extends Event
-{
-    /** Class logger */
+        extends Event {
+
+    /**
+     * Class logger
+     */
     private static final Logger logger = Logger.getLogger(JibriEvent.class);
 
     /**
@@ -71,22 +73,21 @@ public class JibriEvent
 
     /**
      * Used to init the properties passed to the constructor.
+     *
      * @param jibriJid the Jibri JID(XMPP address)
      * @param isIdle a <tt>Boolean</tt> with Jibri's idle status or
-     *        <tt>null</tt> if it should not be included.
+     * <tt>null</tt> if it should not be included.
      * @param isSIP <tt>true</tt> for video SIP gateway Jibri or <tt>false</tt>
-     *        for live streaming type of Jibri.
+     * for live streaming type of Jibri.
      */
     static private Dictionary<String, Object> initDictionary(
-        Jid jibriJid,
-        Boolean isIdle,
-        boolean isSIP)
-    {
+            Jid jibriJid,
+            Boolean isIdle,
+            boolean isSIP) {
         Dictionary<String, Object> props = new Hashtable<>();
         props.put(JIBRI_JID_KEY, jibriJid);
         props.put(IS_SIP_KEY, isSIP);
-        if (isIdle != null)
-        {
+        if (isIdle != null) {
             props.put(IS_IDLE_KEY, isIdle);
         }
         return props;
@@ -105,10 +106,9 @@ public class JibriEvent
      * <tt>jibriJid</tt>.
      */
     static public JibriEvent newStatusChangedEvent(
-        Jid jibriJid,
-        boolean isIdle,
-        boolean isSIP)
-    {
+            Jid jibriJid,
+            boolean isIdle,
+            boolean isSIP) {
         return new JibriEvent(STATUS_CHANGED, jibriJid, isIdle, isSIP);
     }
 
@@ -123,8 +123,7 @@ public class JibriEvent
      * <tt>jibriJid</tt>.
      */
     static public JibriEvent newWentOfflineEvent(
-        Jid jibriJid, boolean isSIP)
-    {
+            Jid jibriJid, boolean isSIP) {
         return new JibriEvent(WENT_OFFLINE, jibriJid, null, isSIP);
     }
 
@@ -134,12 +133,10 @@ public class JibriEvent
      * @param event the <tt>Event</tt> instance to be checked.
      *
      * @return <tt>true</tt> if given <tt>Event</tt> instance is one of bridge
-     *         events or <tt>false</tt> otherwise.
+     * events or <tt>false</tt> otherwise.
      */
-    static public boolean isJibriEvent(Event event)
-    {
-        switch (event.getTopic())
-        {
+    static public boolean isJibriEvent(Event event) {
+        switch (event.getTopic()) {
             case STATUS_CHANGED:
             case WENT_OFFLINE:
                 return true;
@@ -149,8 +146,7 @@ public class JibriEvent
     }
 
     private JibriEvent(String topic,
-        Jid jibriJid, Boolean isIdle, boolean isSIP)
-    {
+            Jid jibriJid, Boolean isIdle, boolean isSIP) {
         super(topic, initDictionary(jibriJid, isIdle, isSIP));
     }
 
@@ -158,16 +154,12 @@ public class JibriEvent
      * Gets Jibri JID associated with this <tt>JibriEvent</tt> instance.
      *
      * @return <tt>String</tt> which is a JID of the Jibri for which this event
-     *         instance has been created.
+     * instance has been created.
      */
-    public Jid getJibriJid()
-    {
-        try
-        {
+    public Jid getJibriJid() {
+        try {
             return JidCreate.from(getProperty(JIBRI_JID_KEY).toString());
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             logger.error("Invalid Jibri JID", e);
             return null;
         }
@@ -178,18 +170,16 @@ public class JibriEvent
      * event is currently idle (<tt>true</tt>) or busy (<tt>false</tt>).
      *
      * @return a <tt>boolean</tt> value of <tt>true</tt> for idle or
-     *         <tt>false</tt> for busy.
+     * <tt>false</tt> for busy.
      *
-     * @throws IllegalStateException if the method is called on
-     *         a <tt>JibriEvent</tt> which does not support this property.
+     * @throws IllegalStateException if the method is called on a
+     * <tt>JibriEvent</tt> which does not support this property.
      */
-    public boolean isIdle()
-    {
+    public boolean isIdle() {
         Boolean isIdle = (Boolean) getProperty(IS_IDLE_KEY);
-        if (isIdle == null)
-        {
+        if (isIdle == null) {
             throw new IllegalStateException(
-                "Trying to access 'isIdle' on wrong event type: " + getTopic());
+                    "Trying to access 'isIdle' on wrong event type: " + getTopic());
         }
         return isIdle;
     }
@@ -198,8 +188,7 @@ public class JibriEvent
      * @return <tt>true</tt> if the event is for SIP Jibri or <tt>false</tt>
      * for a regular Jibri.
      */
-    public boolean isSIP()
-    {
+    public boolean isSIP() {
         Boolean isSIP = (Boolean) this.getProperty(IS_SIP_KEY);
         return isSIP != null ? isSIP : false;
     }

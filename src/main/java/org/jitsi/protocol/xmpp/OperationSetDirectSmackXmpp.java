@@ -25,8 +25,8 @@ import net.java.sip.communicator.service.protocol.*;
  * @author Pawel Domas
  */
 public interface OperationSetDirectSmackXmpp
-    extends OperationSet
-{
+        extends OperationSet {
+
     /**
      * Returns <tt>XmppConnection</tt> object for the XMPP connection of the
      * <tt>ProtocolProviderService</tt>.

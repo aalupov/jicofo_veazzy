@@ -20,66 +20,59 @@ import java.lang.management.*;
 /**
  * Utility for dumping threads status to a string.
  */
-public class ThreadDump
-{
+public class ThreadDump {
+
     /**
      * @return a string with the current threads state.
      */
-    static public String takeThreadDump()
-    {
+    static public String takeThreadDump() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadInfo[] threadInfos
-            = threadMXBean.getThreadInfo(threadMXBean.getAllThreadIds(), 100);
+                = threadMXBean.getThreadInfo(threadMXBean.getAllThreadIds(), 100);
         StringBuilder dbg = new StringBuilder();
 
-        for (ThreadInfo threadInfo : threadInfos)
-        {
+        for (ThreadInfo threadInfo : threadInfos) {
             dbg.append('"')
-                .append(threadInfo.getThreadName())
-                .append('"');
+                    .append(threadInfo.getThreadName())
+                    .append('"');
 
             Thread.State state = threadInfo.getThreadState();
 
             dbg.append("\n   java.lang.Thread.State: ")
-                .append(state);
+                    .append(state);
 
-            if (threadInfo.getLockName() != null)
-            {
+            if (threadInfo.getLockName() != null) {
                 dbg.append(" on ")
-                    .append(threadInfo.getLockName());
+                        .append(threadInfo.getLockName());
             }
             dbg.append('\n');
 
             StackTraceElement[] stackTraceElements
-                = threadInfo.getStackTrace();
-            for (int i = 0; i < stackTraceElements.length; i++)
-            {
+                    = threadInfo.getStackTrace();
+            for (int i = 0; i < stackTraceElements.length; i++) {
                 StackTraceElement ste = stackTraceElements[i];
                 dbg.append("\tat ")
-                    .append(ste.toString())
-                    .append('\n');
-                if (i == 0 && threadInfo.getLockInfo() != null)
-                {
+                        .append(ste.toString())
+                        .append('\n');
+                if (i == 0 && threadInfo.getLockInfo() != null) {
                     Thread.State ts = threadInfo.getThreadState();
                     if (ts == Thread.State.BLOCKED
                             || ts == Thread.State.WAITING
-                            || ts == Thread.State.TIMED_WAITING)
-                    {
+                            || ts == Thread.State.TIMED_WAITING) {
                         dbg.append("\t-  ")
-                            .append(ts)
-                            .append(" on ")
-                            .append(threadInfo.getLockInfo())
-                            .append('\n');
+                                .append(ts)
+                                .append(" on ")
+                                .append(threadInfo.getLockInfo())
+                                .append('\n');
                     }
                 }
 
                 for (MonitorInfo mi
-                        : threadInfo.getLockedMonitors())
-                {
+                        : threadInfo.getLockedMonitors()) {
                     if (mi.getLockedStackDepth() == i) {
                         dbg.append("\t-  locked ")
-                            .append(mi)
-                            .append('\n');
+                                .append(mi)
+                                .append('\n');
                     }
                 }
             }

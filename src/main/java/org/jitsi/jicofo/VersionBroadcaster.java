@@ -34,20 +34,20 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * The class listens for "focus joined room" and "conference created" events
- * and adds the info about all conference components versions to Jicofo's MUC
+ * The class listens for "focus joined room" and "conference created" events and
+ * adds the info about all conference components versions to Jicofo's MUC
  * presence.
  *
  * @author Pawel Domas
  */
 public class VersionBroadcaster
-    extends EventHandlerActivator
-{
+        extends EventHandlerActivator {
+
     /**
      * The logger
      */
     private static final Logger logger
-        = Logger.getLogger(VersionBroadcaster.class);
+            = Logger.getLogger(VersionBroadcaster.class);
 
     /**
      * <tt>FocusManager</tt> instance used to access
@@ -68,11 +68,10 @@ public class VersionBroadcaster
     /**
      * Creates new instance of <tt>VersionBroadcaster</tt>.
      */
-    public VersionBroadcaster()
-    {
-        super(new String[] {
-                EventFactory.FOCUS_JOINED_ROOM_TOPIC,
-                EventFactory.CONFERENCE_ROOM_TOPIC
+    public VersionBroadcaster() {
+        super(new String[]{
+            EventFactory.FOCUS_JOINED_ROOM_TOPIC,
+            EventFactory.CONFERENCE_ROOM_TOPIC
         });
     }
 
@@ -81,20 +80,19 @@ public class VersionBroadcaster
      */
     @Override
     public void start(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         focusManager
-            = ServiceUtils.getService(bundleContext, FocusManager.class);
+                = ServiceUtils.getService(bundleContext, FocusManager.class);
 
         Objects.requireNonNull(focusManager, "focusManager");
 
         versionService
-            = ServiceUtils.getService(bundleContext, VersionService.class);
+                = ServiceUtils.getService(bundleContext, VersionService.class);
 
         Objects.requireNonNull(versionService, "versionService");
 
         meetTools
-            = focusManager.getOperationSet(OperationSetJitsiMeetTools.class);
+                = focusManager.getOperationSet(OperationSetJitsiMeetTools.class);
 
         Objects.requireNonNull(meetTools, "meetTools");
 
@@ -106,8 +104,7 @@ public class VersionBroadcaster
      */
     @Override
     public void stop(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         super.stop(bundleContext);
 
         focusManager = null;
@@ -122,65 +119,59 @@ public class VersionBroadcaster
      * {@inheritDoc}
      */
     @Override
-    public void handleEvent(Event event)
-    {
+    public void handleEvent(Event event) {
         String topic = event.getTopic();
         if (!topic.equals(EventFactory.FOCUS_JOINED_ROOM_TOPIC)
-            && !topic.equals(EventFactory.CONFERENCE_ROOM_TOPIC))
-        {
+                && !topic.equals(EventFactory.CONFERENCE_ROOM_TOPIC)) {
             logger.error("Unexpected event topic: " + topic);
             return;
         }
 
         EntityBareJid roomJid
-                = (EntityBareJid)event.getProperty(EventFactory.ROOM_JID_KEY);
+                = (EntityBareJid) event.getProperty(EventFactory.ROOM_JID_KEY);
 
         JitsiMeetConference conference
-            = focusManager.getConference(roomJid);
-        if (conference == null)
-        {
+                = focusManager.getConference(roomJid);
+        if (conference == null) {
             logger.error("Conference is null");
             return;
         }
 
         ChatRoom chatRoom = conference.getChatRoom();
-        if (chatRoom == null)
-        {
+        if (chatRoom == null) {
             logger.error("Chat room is null");
             return;
         }
 
         JitsiMeetServices meetServices = focusManager.getJitsiMeetServices();
         ComponentVersionsExtension versionsExtension
-            = new ComponentVersionsExtension();
+                = new ComponentVersionsExtension();
 
         // XMPP
         Version xmppServerVersion = meetServices.getXMPPServerVersion();
-        if (xmppServerVersion != null)
-        {
+        if (xmppServerVersion != null) {
             versionsExtension.addComponentVersion(
-                   ComponentVersionsExtension.COMPONENT_XMPP_SERVER,
+                    ComponentVersionsExtension.COMPONENT_XMPP_SERVER,
                     xmppServerVersion.getNameVersionOsString());
         }
 
         // Conference focus
         org.jitsi.utils.version.Version jicofoVersion
-            = versionService.getCurrentVersion();
+                = versionService.getCurrentVersion();
         versionsExtension.addComponentVersion(
                 ComponentVersionsExtension.COMPONENT_FOCUS,
                 jicofoVersion.getApplicationName()
-                    + "(" + jicofoVersion.toString() + ","
-                    + System.getProperty("os.name") + ")");
+                + "(" + jicofoVersion.toString() + ","
+                + System.getProperty("os.name") + ")");
 
         String jvbVersions = conference.getBridges().keySet().stream()
-            .map(b -> b.getVersion())
-            .filter(Objects::nonNull)
-            .distinct()
-            .sorted()
-            .collect(Collectors.joining(", "));
+                .map(b -> b.getVersion())
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted()
+                .collect(Collectors.joining(", "));
 
-        if (jvbVersions.length() > 0)
-        {
+        if (jvbVersions.length() > 0) {
             versionsExtension.addComponentVersion(
                     ComponentVersionsExtension.COMPONENT_VIDEOBRIDGE,
                     String.join(",", jvbVersions));
@@ -188,7 +179,8 @@ public class VersionBroadcaster
 
         meetTools.sendPresenceExtension(chatRoom, versionsExtension);
 
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             logger.debug("Sending versions: " + versionsExtension.toXML());
+        }
     }
 }

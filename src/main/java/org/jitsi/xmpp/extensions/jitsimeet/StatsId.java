@@ -27,8 +27,8 @@ import org.xmlpull.v1.*;
  * @author Damian Minkov
  */
 public class StatsId
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     public static final String NAMESPACE = "jabber:client";
 
     public static final String ELEMENT_NAME = "stats-id";
@@ -37,18 +37,17 @@ public class StatsId
 
     /**
      * Initializes an {@link StatsId} instance with a given string value.
+     *
      * @param id the string value.
      */
-    public StatsId(String id)
-    {
+    public StatsId(String id) {
         this.statsId = id;
     }
 
     /**
      * @return the value of the stats-id element as a string.
      */
-    public String getStatsId()
-    {
+    public String getStatsId() {
         return statsId;
     }
 
@@ -57,26 +56,25 @@ public class StatsId
      *
      * @param value the value to set.
      */
-    public void setStatsId(String value)
-    {
+    public void setStatsId(String value) {
         this.statsId = value;
     }
 
     /**
      * Element name.
+     *
      * @return element name for this extension.
      */
-    public String getElementName()
-    {
+    public String getElementName() {
         return ELEMENT_NAME;
     }
 
     /**
      * Returns the namespace for this extension.
+     *
      * @return the namespace for this extension.
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return NAMESPACE;
     }
 
@@ -84,29 +82,26 @@ public class StatsId
      * Returns xml representation of this extension.
      * @return xml representation of this extension.
      */
-    public String toXML()
-    {
+    public String toXML() {
         return new XmlStringBuilder()
-            .element(ELEMENT_NAME, getStatsId())
-            .toString();
+                .element(ELEMENT_NAME, getStatsId())
+                .toString();
     }
 
     /**
      * The provider.
      */
     public static class Provider
-        extends ExtensionElementProvider<StatsId>
-    {
+            extends ExtensionElementProvider<StatsId> {
+
         @Override
         public StatsId parse(XmlPullParser parser, int depth)
-            throws Exception
-        {
+                throws Exception {
             parser.next();
             final String address = parser.getText();
 
             // Advance to end of extension.
-            while(parser.getEventType() != XmlPullParser.END_TAG)
-            {
+            while (parser.getEventType() != XmlPullParser.END_TAG) {
                 parser.next();
             }
 

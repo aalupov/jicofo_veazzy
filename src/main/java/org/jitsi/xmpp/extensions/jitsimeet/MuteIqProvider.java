@@ -27,17 +27,16 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class MuteIqProvider
-    extends IQProvider<MuteIq>
-{
+        extends IQProvider<MuteIq> {
+
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerMuteIqProvider()
-    {
+    public static void registerMuteIqProvider() {
         ProviderManager.addIQProvider(
-            MuteIq.ELEMENT_NAME,
-            MuteIq.NAMESPACE,
-            new MuteIqProvider());
+                MuteIq.ELEMENT_NAME,
+                MuteIq.NAMESPACE,
+                new MuteIqProvider());
     }
 
     /**
@@ -45,13 +44,11 @@ public class MuteIqProvider
      */
     @Override
     public MuteIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!MuteIq.NAMESPACE.equals(namespace))
-        {
+        if (!MuteIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
@@ -59,63 +56,50 @@ public class MuteIqProvider
 
         MuteIq iq;
 
-        if (MuteIq.ELEMENT_NAME.equals(rootElement))
-        {
+        if (MuteIq.ELEMENT_NAME.equals(rootElement)) {
             iq = new MuteIq();
             String jidStr = parser.getAttributeValue("", MuteIq.JID_ATTR_NAME);
-            if (jidStr != null)
-            {
+            if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                = parser.getAttributeValue("", MuteIq.ACTOR_ATTR_NAME);
-            if (actorStr != null)
-            {
+                    = parser.getAttributeValue("", MuteIq.ACTOR_ATTR_NAME);
+            if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
             }
-            
 
             String blockStr
-                = parser.getAttributeValue("", MuteIq.BLOCK_ATTR_NAME);
-            if (blockStr != null)
-            {
+                    = parser.getAttributeValue("", MuteIq.BLOCK_ATTR_NAME);
+            if (blockStr != null) {
                 iq.setBlock(Boolean.valueOf(blockStr));
             }
-            
+
             String videoStr
-                = parser.getAttributeValue("", MuteIq.VIDEO_ATTR_NAME);
-            if (videoStr != null)
-            {
+                    = parser.getAttributeValue("", MuteIq.VIDEO_ATTR_NAME);
+            if (videoStr != null) {
                 iq.setVideo(Boolean.valueOf(videoStr));
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
 
         boolean done = false;
 
-        while (!done)
-        {
-            switch (parser.next())
-            {
-                case XmlPullParser.END_TAG:
-                {
+        while (!done) {
+            switch (parser.next()) {
+                case XmlPullParser.END_TAG: {
                     String name = parser.getName();
 
-                    if (rootElement.equals(name))
-                    {
+                    if (rootElement.equals(name)) {
                         done = true;
                     }
                     break;
                 }
 
-                case XmlPullParser.TEXT:
-                {
+                case XmlPullParser.TEXT: {
                     Boolean mute = Boolean.parseBoolean(parser.getText());
                     iq.setMute(mute);
                     break;

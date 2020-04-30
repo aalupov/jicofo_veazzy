@@ -26,19 +26,16 @@ import java.time.*;
  * Adds the configuration for the REST web endpoints.
  */
 public class Application
-    extends ResourceConfig
-{
+        extends ResourceConfig {
+
     protected final Clock clock = Clock.systemUTC();
 
-    public Application(BundleContext bundleContext)
-    {
+    public Application(BundleContext bundleContext) {
         register(new OsgiServiceBinder(bundleContext));
-        register(new AbstractBinder()
-        {
+        register(new AbstractBinder() {
             @Override
-            protected void configure()
-            {
-               bind(clock).to(Clock.class);
+            protected void configure() {
+                bind(clock).to(Clock.class);
             }
         });
         packages("org.jitsi.jicofo.rest");

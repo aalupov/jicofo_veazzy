@@ -27,8 +27,8 @@ import java.util.*;
  * @author Boris Grozev
  */
 public class ConferenceDescriptionExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace for the XML element.
      */
@@ -67,8 +67,7 @@ public class ConferenceDescriptionExtension
     /**
      * Creates a new instance without any attributes or children.
      */
-    public ConferenceDescriptionExtension()
-    {
+    public ConferenceDescriptionExtension() {
         this(null, null, null);
     }
 
@@ -77,8 +76,7 @@ public class ConferenceDescriptionExtension
      *
      * @param uri the value to use for the "uri" attribute.
      */
-    public ConferenceDescriptionExtension(String uri)
-    {
+    public ConferenceDescriptionExtension(String uri) {
         this(uri, null, null);
     }
 
@@ -88,8 +86,7 @@ public class ConferenceDescriptionExtension
      * @param uri the value to use for the "uri" attribute.
      * @param callId the value to use for the "callid" attribute.
      */
-    public ConferenceDescriptionExtension(String uri, String callId)
-    {
+    public ConferenceDescriptionExtension(String uri, String callId) {
         this(uri, callId, null);
     }
 
@@ -102,125 +99,126 @@ public class ConferenceDescriptionExtension
      * @param password the value to use for the "auth" attribute.
      */
     public ConferenceDescriptionExtension(
-            String uri, String callId, String password)
-    {
+            String uri, String callId, String password) {
         super(NAMESPACE, ELEMENT_NAME);
 
-        if(uri != null)
+        if (uri != null) {
             setUri(uri);
-        if(callId != null)
+        }
+        if (callId != null) {
             setCallId(callId);
-        if(password != null)
+        }
+        if (password != null) {
             setAuth(password);
+        }
     }
 
     /**
      * Creates a new instance which represents <tt>ca</tt>.
+     *
      * @param uri - The URI of the conference.
      * @param callId - The call ID to use to call into the conference.
      * @param password - The password to use to call into the conference.
      * @param available - Whether the conference is available or not.
      * @param displayName - The name of the conference.
-     * @param transports - The transport methods supported for calling into
-     * the conference.
+     * @param transports - The transport methods supported for calling into the
+     * conference.
      */
     public ConferenceDescriptionExtension(
-        String uri,
-        String callId,
-        String password,
-        boolean available,
-        String displayName,
-        Set<String> transports
-    )
-    {
+            String uri,
+            String callId,
+            String password,
+            boolean available,
+            String displayName,
+            Set<String> transports
+    ) {
         this(uri, callId, password);
         setAvailable(available);
-        if(displayName != null)
+        if (displayName != null) {
             setName(displayName);
+        }
 
-        for(String transport : transports)
-        {
+        for (String transport : transports) {
             addChildExtension(new TransportExtension(transport));
         }
     }
 
     /**
      * Gets the value of the "uri" attribute.
+     *
      * @return the value of the "uri" attribute.
      */
-    public String getUri()
-    {
+    public String getUri() {
         return getAttributeAsString(URI_ATTR_NAME);
     }
 
     /**
      * Gets the value of the "callid" attribute.
+     *
      * @return the value of the "callid" attribute.
      */
-    public String getCallId()
-    {
+    public String getCallId() {
         return getAttributeAsString(CALLID_ATTR_NAME);
     }
 
     /**
      * Gets the value of the "password" attribute.
+     *
      * @return the value of the "password" attribute.
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return getAttributeAsString(PASSWORD_ATTR_NAME);
     }
 
     /**
      * Sets the value of the "uri" attribute.
+     *
      * @param uri the value to set
      */
-    public void setUri(String uri)
-    {
+    public void setUri(String uri) {
         setAttribute(URI_ATTR_NAME, uri);
     }
 
     /**
      * Sets the value of the "callid" attribute.
+     *
      * @param callId the value to set
      */
-    public void setCallId(String callId)
-    {
+    public void setCallId(String callId) {
         setAttribute(CALLID_ATTR_NAME, callId);
     }
 
     /**
      * Sets the value of the "password" attribute.
+     *
      * @param password the value to set
      */
-    public void setAuth(String password)
-    {
+    public void setAuth(String password) {
         setAttribute(PASSWORD_ATTR_NAME, password);
     }
 
     /**
      * Sets the value of the "available" attribute.
+     *
      * @param available the value to set
      */
-    public void setAvailable(boolean available)
-    {
-       setAttribute(AVAILABLE_ATTR_NAME, available);
+    public void setAvailable(boolean available) {
+        setAttribute(AVAILABLE_ATTR_NAME, available);
     }
 
     /**
      * Sets the value of the "available" attribute.
+     *
      * @param name the value to set
      */
-    public void setName(String name)
-    {
-       setAttribute(CONFERENCE_NAME_ATTR_NAME, name);
+    public void setName(String name) {
+        setAttribute(CONFERENCE_NAME_ATTR_NAME, name);
     }
 
     /**
      * Gets the value of the "available" attribute.
      */
-    public boolean isAvailable()
-    {
+    public boolean isAvailable() {
         return Boolean.parseBoolean(getAttributeAsString(AVAILABLE_ATTR_NAME));
     }
 
@@ -229,22 +227,20 @@ public class ConferenceDescriptionExtension
      *
      * @param transport the transport to add.
      */
-    public void addTransport(String transport)
-    {
+    public void addTransport(String transport) {
         addChildExtension(new TransportExtension(transport));
     }
 
     /**
-     * Returns the transports from
-     * this <tt>ConferenceDescriptionPacketExtension</tt>
+     * Returns the transports from this
+     * <tt>ConferenceDescriptionPacketExtension</tt>
+     *
      * @return the transports.
      */
-    public Set<String> getTransports()
-    {
+    public Set<String> getTransports() {
         Set<String> transports = new HashSet<>();
         for (TransportExtension t
-            : getChildExtensionsOfType(TransportExtension.class))
-        {
+                : getChildExtensionsOfType(TransportExtension.class)) {
             transports.add(t.getNamespace());
         }
 
@@ -253,10 +249,10 @@ public class ConferenceDescriptionExtension
 
     /**
      * Returns the value of the <tt>CONFERENCE_NAME_ATTR_NAME</tt> attribute.
+     *
      * @return the name of the conference.
      */
-    private String getName()
-    {
+    private String getName() {
         return getAttributeAsString(CONFERENCE_NAME_ATTR_NAME);
     }
 }

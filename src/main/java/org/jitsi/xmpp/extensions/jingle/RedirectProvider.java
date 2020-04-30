@@ -25,8 +25,8 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class RedirectProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a reason extension sub-packet and creates a {@link
      * RedirectPacketExtension} instance. At the beginning of the method call,
@@ -43,33 +43,27 @@ public class RedirectProvider
      */
     @Override
     public RedirectPacketExtension parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         String text = null;
         boolean done = false;
         int eventType;
 
         text = parseText(parser);
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            if (eventType == XmlPullParser.START_TAG) {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                    RedirectPacketExtension.ELEMENT_NAME))
-                {
+                        RedirectPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }
         }
 
         RedirectPacketExtension redirectExt
-            = new RedirectPacketExtension();
+                = new RedirectPacketExtension();
         redirectExt.setText(text);
         redirectExt.setRedir(text);
         return redirectExt;
@@ -87,24 +81,19 @@ public class RedirectProvider
      * @throws java.lang.Exception if an error occurs parsing the XML.
      */
     public String parseText(XmlPullParser parser)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
 
         int eventType;
         String text = null;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
 
-            if (eventType == XmlPullParser.TEXT)
-            {
+            if (eventType == XmlPullParser.TEXT) {
                 text = parser.getText();
                 done = true;
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 done = true;
             }
         }

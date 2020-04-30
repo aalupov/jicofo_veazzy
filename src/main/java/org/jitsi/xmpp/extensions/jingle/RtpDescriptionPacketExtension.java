@@ -27,8 +27,8 @@ import org.jivesoftware.smack.packet.*;
  * @author Emil Ivov
  */
 public class RtpDescriptionPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name space for RTP description elements.
      */
@@ -53,7 +53,7 @@ public class RtpDescriptionPacketExtension
      * The list of payload types that this description element contains.
      */
     private final List<PayloadTypePacketExtension> payloadTypes
-                                = new ArrayList<>();
+            = new ArrayList<>();
 
     /**
      * An optional encryption element that contains encryption parameters for
@@ -81,8 +81,7 @@ public class RtpDescriptionPacketExtension
     /**
      * Creates a new <tt>RtpDescriptionPacketExtension</tt>.
      */
-    public RtpDescriptionPacketExtension()
-    {
+    public RtpDescriptionPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -92,8 +91,7 @@ public class RtpDescriptionPacketExtension
      *
      * @param namespace namespace to use
      */
-    public RtpDescriptionPacketExtension(String namespace)
-    {
+    public RtpDescriptionPacketExtension(String namespace) {
         super(namespace, ELEMENT_NAME);
     }
 
@@ -104,8 +102,7 @@ public class RtpDescriptionPacketExtension
      * @param media the media type for the stream that this element represents
      * such as "audio" or "video".
      */
-    public void setMedia(String media)
-    {
+    public void setMedia(String media) {
         super.setAttribute(MEDIA_ATTR_NAME, media);
     }
 
@@ -113,11 +110,10 @@ public class RtpDescriptionPacketExtension
      * Returns the media type for the stream that this description element
      * represents, such as "audio" or "video".
      *
-     * @return  the media type for the stream that this description element
+     * @return the media type for the stream that this description element
      * represents, such as "audio" or "video".
      */
-    public String getMedia()
-    {
+    public String getMedia() {
         return getAttributeAsString(MEDIA_ATTR_NAME);
     }
 
@@ -128,8 +124,7 @@ public class RtpDescriptionPacketExtension
      * @param ssrc the SSRC ID that the RTP stream represented here will be
      * using.
      */
-    public void setSsrc(String ssrc)
-    {
+    public void setSsrc(String ssrc) {
         super.setAttribute(SSRC_ATTR_NAME, ssrc);
     }
 
@@ -140,8 +135,7 @@ public class RtpDescriptionPacketExtension
      * @return the synchronization source ID (SSRC as per RFC 3550) that the
      * stream represented by this description element will be using.
      */
-    public String getSsrc()
-    {
+    public String getSsrc() {
         return getAttributeAsString(SSRC_ATTR_NAME);
     }
 
@@ -150,8 +144,7 @@ public class RtpDescriptionPacketExtension
      *
      * @param payloadType the new payload to add.
      */
-    public void addPayloadType(PayloadTypePacketExtension payloadType)
-    {
+    public void addPayloadType(PayloadTypePacketExtension payloadType) {
         this.payloadTypes.add(payloadType);
     }
 
@@ -162,39 +155,41 @@ public class RtpDescriptionPacketExtension
      * @return a <b>reference</b> to the list of payload types that we have
      * registered with this description so far.
      */
-    public List<PayloadTypePacketExtension> getPayloadTypes()
-    {
+    public List<PayloadTypePacketExtension> getPayloadTypes() {
         return payloadTypes;
     }
 
     /**
      * Returns all child elements that we currently have in this packet.
      *
-     * @return the {@link List} of child elements currently registered with
-     * this packet.
+     * @return the {@link List} of child elements currently registered with this
+     * packet.
      */
     @Override
-    public List<? extends ExtensionElement> getChildExtensions()
-    {
-        if(children == null)
+    public List<? extends ExtensionElement> getChildExtensions() {
+        if (children == null) {
             children = new ArrayList<ExtensionElement>();
-        else
+        } else {
             children.clear();
+        }
 
         //payload types
         children.addAll(payloadTypes);
 
         //encryption element
-        if (encryption != null)
+        if (encryption != null) {
             children.add(encryption);
+        }
 
         //bandwidth element
-        if (bandwidth != null)
+        if (bandwidth != null) {
             children.add(bandwidth);
+        }
 
         //extmap elements
-        if (extmapList != null)
+        if (extmapList != null) {
             children.addAll(extmapList);
+        }
 
         children.addAll(super.getChildExtensions());
 
@@ -208,32 +203,28 @@ public class RtpDescriptionPacketExtension
      * @param childExtension the extension we'd like to add here.
      */
     @Override
-    public void addChildExtension(ExtensionElement childExtension)
-    {
-        if(childExtension instanceof PayloadTypePacketExtension)
-            this.addPayloadType((PayloadTypePacketExtension)childExtension);
-
-        else if (childExtension instanceof EncryptionPacketExtension)
-            this.setEncryption((EncryptionPacketExtension)childExtension);
-
-        else if (childExtension instanceof BandwidthPacketExtension)
-            this.setBandwidth((BandwidthPacketExtension)childExtension);
-
-        else if (childExtension instanceof RTPHdrExtPacketExtension)
-            this.addExtmap((RTPHdrExtPacketExtension)childExtension);
-        else
+    public void addChildExtension(ExtensionElement childExtension) {
+        if (childExtension instanceof PayloadTypePacketExtension) {
+            this.addPayloadType((PayloadTypePacketExtension) childExtension);
+        } else if (childExtension instanceof EncryptionPacketExtension) {
+            this.setEncryption((EncryptionPacketExtension) childExtension);
+        } else if (childExtension instanceof BandwidthPacketExtension) {
+            this.setBandwidth((BandwidthPacketExtension) childExtension);
+        } else if (childExtension instanceof RTPHdrExtPacketExtension) {
+            this.addExtmap((RTPHdrExtPacketExtension) childExtension);
+        } else {
             super.addChildExtension(childExtension);
+        }
     }
 
     /**
      * Sets the optional encryption element that contains encryption parameters
      * for this session.
      *
-     * @param encryption the encryption {@link ExtensionElement} we'd like to add
-     * to this packet.
+     * @param encryption the encryption {@link ExtensionElement} we'd like to
+     * add to this packet.
      */
-    public void setEncryption(EncryptionPacketExtension encryption)
-    {
+    public void setEncryption(EncryptionPacketExtension encryption) {
         this.encryption = encryption;
     }
 
@@ -244,8 +235,7 @@ public class RtpDescriptionPacketExtension
      * @return the encryption {@link ExtensionElement} added to this packet or
      * <tt>null</tt> if none has been set yet.
      */
-    public EncryptionPacketExtension getEncryption()
-    {
+    public EncryptionPacketExtension getEncryption() {
         return encryption;
     }
 
@@ -253,11 +243,10 @@ public class RtpDescriptionPacketExtension
      * Sets an optional bandwidth element that specifies the allowable or
      * preferred bandwidth for use by this application type.
      *
-     * @param bandwidth the max/preferred bandwidth indication that we'd like
-     * to add to this packet.
+     * @param bandwidth the max/preferred bandwidth indication that we'd like to
+     * add to this packet.
      */
-    public void setBandwidth(BandwidthPacketExtension bandwidth)
-    {
+    public void setBandwidth(BandwidthPacketExtension bandwidth) {
         this.bandwidth = bandwidth;
     }
 
@@ -268,8 +257,7 @@ public class RtpDescriptionPacketExtension
      * @return the max/preferred bandwidth set for this session or <tt>null</tt>
      * if none has been set yet.
      */
-    public BandwidthPacketExtension getBandwidth()
-    {
+    public BandwidthPacketExtension getBandwidth() {
         return bandwidth;
     }
 
@@ -280,8 +268,7 @@ public class RtpDescriptionPacketExtension
      * @param extmap an optional <tt>extmap</tt> element that allows negotiation
      * RTP extension headers as per RFC 5282.
      */
-    public void addExtmap(RTPHdrExtPacketExtension extmap)
-    {
+    public void addExtmap(RTPHdrExtPacketExtension extmap) {
         this.extmapList.add(extmap);
     }
 
@@ -292,8 +279,7 @@ public class RtpDescriptionPacketExtension
      * @return a <tt>List</tt> of the optional <tt>extmap</tt> elements that
      * allow negotiating RTP extension headers as per RFC 5282.
      */
-    public List<RTPHdrExtPacketExtension> getExtmapList()
-    {
+    public List<RTPHdrExtPacketExtension> getExtmapList() {
         return extmapList;
     }
 }

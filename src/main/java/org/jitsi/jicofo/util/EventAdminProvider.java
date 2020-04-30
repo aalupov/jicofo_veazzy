@@ -22,15 +22,15 @@ import org.osgi.framework.*;
 /**
  * Provides {@link EventAdmin} service instance for the OSGI bundle context.
  */
-public class EventAdminProvider extends OsgiServiceProvider<EventAdmin>
-{
+public class EventAdminProvider extends OsgiServiceProvider<EventAdmin> {
+
     /**
      * Initializes new instance.
-     * @param bundleContext the OSGI context which will be use to retrieve
-     * the service instance.
+     *
+     * @param bundleContext the OSGI context which will be use to retrieve the
+     * service instance.
      */
-    public EventAdminProvider(BundleContext bundleContext)
-    {
+    public EventAdminProvider(BundleContext bundleContext) {
         super(bundleContext, EventAdmin.class);
     }
 }

@@ -26,17 +26,16 @@ import org.jivesoftware.smack.util.*;
 /**
  * A generic implementation of <tt>ExtensionElement</tt>. The purpose of this
  * class is quite similar to that of smack's {@link StandardExtensionElement}
- * with the main difference being that this one is meant primarily for
- * extension rather than using as a fallback for unknown elements. We let for
- * example our descendants handle child elements and we automate attribute
- * handling instead.
+ * with the main difference being that this one is meant primarily for extension
+ * rather than using as a fallback for unknown elements. We let for example our
+ * descendants handle child elements and we automate attribute handling instead.
  *
  * @author Emil Ivov
  * @author Lyubomir Marinov
  */
 public abstract class AbstractPacketExtension
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     /**
      * Clones the attributes, namespace and text of a specific
      * <tt>AbstractPacketExtension</tt> into a new
@@ -50,21 +49,16 @@ public abstract class AbstractPacketExtension
      * <tt>src</tt>
      */
     @SuppressWarnings("unchecked")
-    public static <T extends AbstractPacketExtension> T clone(T src)
-    {
+    public static <T extends AbstractPacketExtension> T clone(T src) {
         T dst = null;
-        try
-        {
+        try {
             dst = (T) src.getClass().getConstructor().newInstance();
-        }
-        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-        {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
 
         // attributes
-        for (String name : src.getAttributeNames())
-        {
+        for (String name : src.getAttributeNames()) {
             dst.setAttribute(name, src.getAttribute(name));
         }
         // namespace
@@ -91,7 +85,7 @@ public abstract class AbstractPacketExtension
      * A map of all attributes that this extension is currently using.
      */
     protected final Map<String, Object> attributes
-        = new LinkedHashMap<String, Object>();
+            = new LinkedHashMap<String, Object>();
 
     /**
      * The text content of this packet extension, if any.
@@ -102,7 +96,7 @@ public abstract class AbstractPacketExtension
      * A list of extensions registered with this element.
      */
     private final List<ExtensionElement> childExtensions
-                                = new ArrayList<>();
+            = new ArrayList<>();
 
     /**
      * Creates an {@link AbstractPacketExtension} instance for the specified
@@ -111,8 +105,7 @@ public abstract class AbstractPacketExtension
      * @param namespace the XML namespace for this element.
      * @param elementName the name of the element
      */
-    protected AbstractPacketExtension(String namespace, String elementName)
-    {
+    protected AbstractPacketExtension(String namespace, String elementName) {
         this.namespace = namespace;
         this.elementName = elementName;
     }
@@ -122,8 +115,7 @@ public abstract class AbstractPacketExtension
      *
      * @return the name of the <tt>encryption</tt> element.
      */
-    public String getElementName()
-    {
+    public String getElementName() {
         return elementName;
     }
 
@@ -132,8 +124,7 @@ public abstract class AbstractPacketExtension
      *
      * @param namespace the XML namespace for this element.
      */
-    public void setNamespace(String namespace)
-    {
+    public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
@@ -144,8 +135,7 @@ public abstract class AbstractPacketExtension
      * @return the XML namespace for this element or <tt>null</tt> if the
      * element does not live in a namespace of its own.
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return namespace;
     }
 
@@ -154,20 +144,17 @@ public abstract class AbstractPacketExtension
      *
      * @return an XML representation of this extension.
      */
-    public String toXML()
-    {
+    public String toXML() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.halfOpenElement(getElementName());
         xml.xmlnsAttribute(getNamespace());
 
         //add the rest of the attributes if any
-        for(Map.Entry<String, Object> entry : attributes.entrySet())
-        {
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
             Object value = entry.getValue();
 
-            if (value != null)
-            {
+            if (value != null) {
                 xml.attribute(entry.getKey(), value.toString());
             }
         }
@@ -177,25 +164,17 @@ public abstract class AbstractPacketExtension
         String text = getText();
         XmlStringBuilder childBuilder = getChildElementBuilder();
 
-        if (childElements.isEmpty() && childBuilder.length() == 0)
-        {
-            if (StringUtils.isEmpty(text))
-            {
+        if (childElements.isEmpty() && childBuilder.length() == 0) {
+            if (StringUtils.isEmpty(text)) {
                 return xml.closeEmptyElement().toString();
-            }
-            else
-            {
+            } else {
                 xml.rightAngleBracket();
             }
-        }
-        else
-        {
-            synchronized(childElements)
-            {
+        } else {
+            synchronized (childElements) {
                 xml.rightAngleBracket();
 
-                for(ExtensionElement packExt : childElements)
-                {
+                for (ExtensionElement packExt : childElements) {
                     xml.optAppend(packExt);
                 }
 
@@ -204,8 +183,7 @@ public abstract class AbstractPacketExtension
         }
 
         //text content if any
-        if(StringUtils.isNotEmpty(text))
-        {
+        if (StringUtils.isNotEmpty(text)) {
             xml.optEscape(text);
         }
 
@@ -215,12 +193,12 @@ public abstract class AbstractPacketExtension
     }
 
     /**
-     * This method must be overwritten by subclasses to create their
-     * child content.
+     * This method must be overwritten by subclasses to create their child
+     * content.
+     *
      * @return the xml builder for the content.
      */
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         return new XmlStringBuilder();
     }
 
@@ -233,8 +211,7 @@ public abstract class AbstractPacketExtension
      *
      * @return the {@link List} of elements that this packet extension contains.
      */
-    public List<? extends ExtensionElement> getChildExtensions()
-    {
+    public List<? extends ExtensionElement> getChildExtensions() {
         return childExtensions;
     }
 
@@ -248,37 +225,34 @@ public abstract class AbstractPacketExtension
      *
      * @param childExtension the extension we'd like to add here.
      */
-    public void addChildExtension(ExtensionElement childExtension)
-    {
+    public void addChildExtension(ExtensionElement childExtension) {
         childExtensions.add(childExtension);
     }
 
     /**
-     * Add the given extension to the list of child extensions, but, if there already exists
-     * any child extensions of this type, remove them first.
+     * Add the given extension to the list of child extensions, but, if there
+     * already exists any child extensions of this type, remove them first.
+     *
      * @param childExtension the extension to add
      */
-    public void setChildExtension(ExtensionElement childExtension)
-    {
+    public void setChildExtension(ExtensionElement childExtension) {
         getChildExtensionsOfType(childExtension.getClass())
-            .forEach(this::removeChildExtension);
+                .forEach(this::removeChildExtension);
         addChildExtension(childExtension);
     }
 
     /**
      * Gets the first extension present of the given type
+     *
      * @param type the type of extension to get
-     * @return the first instance of an extension of type T we find, or null if there is none
+     * @return the first instance of an extension of type T we find, or null if
+     * there is none
      */
-    public <T extends ExtensionElement> T getChildExtension(Class<T> type)
-    {
+    public <T extends ExtensionElement> T getChildExtension(Class<T> type) {
         List<T> childExts = getChildExtensionsOfType(type);
-        if (!childExts.isEmpty())
-        {
+        if (!childExts.isEmpty()) {
             return childExts.get(0);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -286,17 +260,15 @@ public abstract class AbstractPacketExtension
     /**
      * Removes all occurrences of an extension element from the list of child
      * extensions.
+     *
      * @param childExtension the child extension to remove.
      * @return {@code true} if any extensions were removed, and {@code false}
      * otherwise.
      */
-    public boolean removeChildExtension(ExtensionElement childExtension)
-    {
+    public boolean removeChildExtension(ExtensionElement childExtension) {
         boolean removed = false;
-        if (childExtension != null)
-        {
-            while (childExtensions.remove(childExtension))
-            {
+        if (childExtension != null) {
+            while (childExtensions.remove(childExtension)) {
                 removed = true;
             }
         }
@@ -312,16 +284,11 @@ public abstract class AbstractPacketExtension
      * the XML value of the attribute we are setting or <tt>null</tt> if we'd
      * like to remove the attribute with the specified <tt>name</tt>.
      */
-    public void setAttribute(String name, Object value)
-    {
-        synchronized(attributes)
-        {
-            if (value != null)
-            {
+    public void setAttribute(String name, Object value) {
+        synchronized (attributes) {
+            if (value != null) {
                 this.attributes.put(name, value.toString());
-            }
-            else
-            {
+            } else {
                 this.attributes.remove(name);
             }
         }
@@ -333,10 +300,8 @@ public abstract class AbstractPacketExtension
      *
      * @param name the name of the attribute that we are removing.
      */
-    public void removeAttribute(String name)
-    {
-        synchronized(attributes)
-        {
+    public void removeAttribute(String name) {
+        synchronized (attributes) {
             attributes.remove(name);
         }
     }
@@ -350,10 +315,8 @@ public abstract class AbstractPacketExtension
      * @return the value of the specified <tt>attribute</tt> or <tt>null</tt>
      * if no such attribute is currently registered with this extension.
      */
-    public Object getAttribute(String attribute)
-    {
-        synchronized(attributes)
-        {
+    public Object getAttribute(String attribute) {
+        synchronized (attributes) {
             return attributes.get(attribute);
         }
     }
@@ -368,10 +331,8 @@ public abstract class AbstractPacketExtension
      * <tt>null</tt> if no such attribute is currently registered with this
      * extension.
      */
-    public String getAttributeAsString(String attribute)
-    {
-        synchronized(attributes)
-        {
+    public String getAttributeAsString(String attribute) {
+        synchronized (attributes) {
             Object attributeVal = attributes.get(attribute);
 
             return attributeVal == null ? null : attributeVal.toString();
@@ -388,8 +349,7 @@ public abstract class AbstractPacketExtension
      * <tt>-1</tt> if no such attribute is currently registered with this
      * extension.
      */
-    public int getAttributeAsInt(String attribute)
-    {
+    public int getAttributeAsInt(String attribute) {
         return getAttributeAsInt(attribute, -1);
     }
 
@@ -405,10 +365,8 @@ public abstract class AbstractPacketExtension
      * <tt>defaultValue</tt> if no such attribute is currently registered with
      * this extension
      */
-    public int getAttributeAsInt(String attribute, int defaultValue)
-    {
-        synchronized(attributes)
-        {
+    public int getAttributeAsInt(String attribute, int defaultValue) {
+        synchronized (attributes) {
             String value = getAttributeAsString(attribute);
 
             return (value == null) ? defaultValue : Integer.parseInt(value);
@@ -428,23 +386,19 @@ public abstract class AbstractPacketExtension
      * URI}
      */
     public URI getAttributeAsURI(String attribute)
-        throws IllegalArgumentException
-    {
-        synchronized(attributes)
-        {
+            throws IllegalArgumentException {
+        synchronized (attributes) {
             String attributeVal = getAttributeAsString(attribute);
 
-            if (attributeVal == null)
+            if (attributeVal == null) {
                 return null;
+            }
 
-            try
-            {
+            try {
                 URI uri = new URI(attributeVal);
 
                 return uri;
-            }
-            catch (URISyntaxException e)
-            {
+            } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(e);
             }
         }
@@ -457,10 +411,8 @@ public abstract class AbstractPacketExtension
      * @return the names of the attributes which currently have associated
      * values in this extension
      */
-    public List<String> getAttributeNames()
-    {
-        synchronized (attributes)
-        {
+    public List<String> getAttributeNames() {
+        synchronized (attributes) {
             return new ArrayList<String>(attributes.keySet());
         }
     }
@@ -470,8 +422,7 @@ public abstract class AbstractPacketExtension
      *
      * @param text the text content of this extension.
      */
-    public void setText(String text)
-    {
+    public void setText(String text) {
         this.textContent = text;
     }
 
@@ -482,8 +433,7 @@ public abstract class AbstractPacketExtension
      * @return the text content of this extension or <tt>null</tt> if no text
      * content has been specified so far.
      */
-    public String getText()
-    {
+    public String getText() {
         return textContent;
     }
 
@@ -498,16 +448,12 @@ public abstract class AbstractPacketExtension
      * @return this packet's first direct child extension that matches specified
      * <tt>type</tt> or <tt>null</tt> if no such child extension was found.
      */
-    public <T extends ExtensionElement> T getFirstChildOfType(Class<T> type)
-    {
+    public <T extends ExtensionElement> T getFirstChildOfType(Class<T> type) {
         List<? extends ExtensionElement> childExtensions = getChildExtensions();
 
-        synchronized (childExtensions)
-        {
-            for(ExtensionElement extension : childExtensions)
-            {
-                if(type.isInstance(extension))
-                {
+        synchronized (childExtensions) {
+            for (ExtensionElement extension : childExtensions) {
+                if (type.isInstance(extension)) {
                     @SuppressWarnings("unchecked")
                     T extensionAsType = (T) extension;
 
@@ -519,11 +465,11 @@ public abstract class AbstractPacketExtension
     }
 
     /**
-     * Returns this packet's direct child extensions that match the
-     * specified <tt>type</tt>.
+     * Returns this packet's direct child extensions that match the specified
+     * <tt>type</tt>.
      *
-     * @param <T> the specific <tt>ExtensionElement</tt> type of child extensions
-     * to be returned
+     * @param <T> the specific <tt>ExtensionElement</tt> type of child
+     * extensions to be returned
      *
      * @param type the <tt>Class</tt> of the extension we are looking for.
      *
@@ -531,20 +477,17 @@ public abstract class AbstractPacketExtension
      * child extensions that match the specified <tt>type</tt>
      */
     public <T extends ExtensionElement> List<T> getChildExtensionsOfType(
-            Class<T> type)
-    {
+            Class<T> type) {
         List<? extends ExtensionElement> childExtensions = getChildExtensions();
         List<T> result = new ArrayList<T>();
 
-        if (childExtensions == null)
+        if (childExtensions == null) {
             return result;
+        }
 
-        synchronized (childExtensions)
-        {
-            for(ExtensionElement extension : childExtensions)
-            {
-                if(type.isInstance(extension))
-                {
+        synchronized (childExtensions) {
+            for (ExtensionElement extension : childExtensions) {
+                if (type.isInstance(extension)) {
                     @SuppressWarnings("unchecked")
                     T extensionAsType = (T) extension;
 

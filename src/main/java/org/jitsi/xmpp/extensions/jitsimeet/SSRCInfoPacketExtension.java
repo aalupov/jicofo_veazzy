@@ -33,8 +33,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
  * @author Pawel Domas
  */
 public class SSRCInfoPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML namespace of this packets extension.
      */
@@ -71,8 +71,7 @@ public class SSRCInfoPacketExtension
     /**
      * Creates new instance of <tt>SSRCInfoPacketExtension</tt>.
      */
-    public SSRCInfoPacketExtension()
-    {
+    public SSRCInfoPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -80,16 +79,12 @@ public class SSRCInfoPacketExtension
      * Returns the value of {@link #OWNER_ATTR_NAME}.
      *
      * @return MUC JID of SSRC owner stored by this instance or <tt>null</tt>
-     *         if empty.
+     * if empty.
      */
-    public Jid getOwner()
-    {
-        try
-        {
+    public Jid getOwner() {
+        try {
             return JidCreate.from(getAttributeAsString(OWNER_ATTR_NAME));
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             throw new IllegalArgumentException("Invalid owner", e);
         }
     }
@@ -99,28 +94,27 @@ public class SSRCInfoPacketExtension
      *
      * @param owner MUC JID of SSRC owner to be stored in this packet extension.
      */
-    public void setOwner(Jid owner)
-    {
+    public void setOwner(Jid owner) {
         setAttribute(OWNER_ATTR_NAME, owner.toString());
     }
 
     /**
      * Returns the value of {@link #VIDEO_TYPE_ATTR_NAME}.
+     *
      * @return {@link #CAMERA_VIDEO_TYPE}, {@link #SCREEN_VIDEO_TYPE} or
-     *         <tt>null</tt> if not specified or if media SSRC is not a video.
+     * <tt>null</tt> if not specified or if media SSRC is not a video.
      */
-    public String getVideoType()
-    {
+    public String getVideoType() {
         return getAttributeAsString(VIDEO_TYPE_ATTR_NAME);
     }
 
     /**
      * Sets the type of video SSRC.
+     *
      * @param videoType {@link #CAMERA_VIDEO_TYPE}, {@link #SCREEN_VIDEO_TYPE}
-     *        or <tt>null</tt> if not specified or if media SSRC is not a video.
+     * or <tt>null</tt> if not specified or if media SSRC is not a video.
      */
-    public void setVideoType(String videoType)
-    {
+    public void setVideoType(String videoType) {
         setAttribute(VIDEO_TYPE_ATTR_NAME, videoType);
     }
 }

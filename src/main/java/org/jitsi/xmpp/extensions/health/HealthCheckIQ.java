@@ -23,8 +23,8 @@ import org.jivesoftware.smack.packet.*;
  * @author Pawel Domas
  */
 public class HealthCheckIQ
-    extends IQ
-{
+        extends IQ {
+
     /**
      * Health check IQ element name.
      */
@@ -34,10 +34,9 @@ public class HealthCheckIQ
      * XML namespace name for health check IQs.
      */
     final static public String NAMESPACE
-        = "http://jitsi.org/protocol/healthcheck";
+            = "http://jitsi.org/protocol/healthcheck";
 
-    public HealthCheckIQ()
-    {
+    public HealthCheckIQ() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
@@ -45,8 +44,7 @@ public class HealthCheckIQ
      * {@inheritDoc}
      */
     @Override
-    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder buf)
-    {
+    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder buf) {
         buf.setEmptyElement();
         return buf;
     }

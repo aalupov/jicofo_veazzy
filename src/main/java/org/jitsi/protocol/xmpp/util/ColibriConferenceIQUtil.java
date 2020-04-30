@@ -24,18 +24,18 @@ import org.jitsi.xmpp.extensions.colibri.*;
  *
  * @author Pawel Domas
  */
-public class ColibriConferenceIQUtil
-{
+public class ColibriConferenceIQUtil {
+
     /**
      * Obtains the channel count for given media type.
-     * @param channelInfo <tt>ColibriConferenceIQ</tt> from which
-     *        the information will be extracted.
+     *
+     * @param channelInfo <tt>ColibriConferenceIQ</tt> from which the
+     * information will be extracted.
      * @param type name of the channel's media type (e.g. "audio" or "video").
      * @return number of channels for the given media type
      */
     public static int getChannelCount(ColibriConferenceIQ channelInfo,
-                                      String              type)
-    {
+            String type) {
         ColibriConferenceIQ.Content mediaContent = channelInfo.getContent(type);
 
         return mediaContent != null ? mediaContent.getChannelCount() : 0;

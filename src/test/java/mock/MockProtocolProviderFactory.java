@@ -28,63 +28,56 @@ import java.util.*;
  *
  */
 public class MockProtocolProviderFactory
-    extends ProtocolProviderFactory
-{
+        extends ProtocolProviderFactory {
 
     /**
      * Creates a new <tt>ProtocolProviderFactory</tt>.
      *
      * @param bundleContext the bundle context reference of the service
-     * @param protocolName  the name of the protocol
+     * @param protocolName the name of the protocol
      */
     public MockProtocolProviderFactory(
-        BundleContext bundleContext,
-        String protocolName)
-    {
+            BundleContext bundleContext,
+            String protocolName) {
         super(bundleContext, protocolName);
     }
 
     @Override
     public AccountID installAccount(String userID,
-                                    Map<String, String> accountProperties)
-        throws IllegalArgumentException, IllegalStateException,
-               NullPointerException
-    {
+            Map<String, String> accountProperties)
+            throws IllegalArgumentException, IllegalStateException,
+            NullPointerException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void modifyAccount(ProtocolProviderService protocolProvider,
-                              Map<String, String> accountProperties)
-        throws NullPointerException
-    {
+            Map<String, String> accountProperties)
+            throws NullPointerException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     protected AccountID createAccountID(String userID,
-                                        Map<String, String> accountProperties)
-    {
+            Map<String, String> accountProperties) {
         return new MockAccountID(userID, accountProperties, getProtocolName());
     }
 
     @Override
     protected ProtocolProviderService createService(String userID,
-                                                    AccountID accountID)
-    {
+            AccountID accountID) {
         EventAdmin eventAdmin
-            = Objects.requireNonNull(
-                    ServiceUtils.getService(
-                            getBundleContext(), EventAdmin.class),
-                    "eventAdmin");
+                = Objects.requireNonNull(
+                        ServiceUtils.getService(
+                                getBundleContext(), EventAdmin.class),
+                        "eventAdmin");
 
         MockProtocolProvider protocolProvider
-            = new MockProtocolProvider((MockAccountID) accountID, eventAdmin);
+                = new MockProtocolProvider((MockAccountID) accountID, eventAdmin);
 
         protocolProvider.includeBasicTeleOpSet();
 
-        if (ProtocolNames.JABBER.equals(getProtocolName()))
-        {
+        if (ProtocolNames.JABBER.equals(getProtocolName())) {
             protocolProvider.includeMultiUserChatOpSet();
             protocolProvider.includeJitsiMeetTools();
             protocolProvider.includeColibriOpSet();

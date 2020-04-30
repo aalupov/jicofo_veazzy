@@ -28,13 +28,13 @@ import org.jivesoftware.smack.packet.*;
  * @author Lyubomir Marinov
  */
 public class RawUdpTransportPacketExtension
-    extends IceUdpTransportPacketExtension
-{
+        extends IceUdpTransportPacketExtension {
+
     /**
      * The name of the "transport" element.
      */
     public static final String NAMESPACE
-        = "urn:xmpp:jingle:transports:raw-udp:1";
+            = "urn:xmpp:jingle:transports:raw-udp:1";
     /**
      * The name of the "transport" element.
      */
@@ -43,8 +43,7 @@ public class RawUdpTransportPacketExtension
     /**
      * Creates a new {@link RawUdpTransportPacketExtension} instance.
      */
-    public RawUdpTransportPacketExtension()
-    {
+    public RawUdpTransportPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -54,8 +53,7 @@ public class RawUdpTransportPacketExtension
      * @return this element's child (local or remote) candidate elements.
      */
     @Override
-    public List<? extends ExtensionElement> getChildExtensions()
-    {
+    public List<? extends ExtensionElement> getChildExtensions() {
         // TODO Auto-generated method stub
         return super.getChildExtensions();
     }

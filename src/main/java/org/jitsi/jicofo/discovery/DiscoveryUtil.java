@@ -34,13 +34,13 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class DiscoveryUtil
-{
+public class DiscoveryUtil {
+
     /**
      * The logger
      */
     private final static Logger logger
-        = Logger.getLogger(DiscoveryUtil.class);
+            = Logger.getLogger(DiscoveryUtil.class);
 
     /**
      * List contains default feature set.
@@ -75,7 +75,7 @@ public class DiscoveryUtil
      * RTX (RFC4588) support.
      */
     public final static String FEATURE_RTX
-        = "urn:ietf:rfc:4588";
+            = "urn:ietf:rfc:4588";
 
     /**
      * The Jingle DTLS feature name (XEP-0320).
@@ -103,45 +103,42 @@ public class DiscoveryUtil
      * properly.
      */
     public final static String FEATURE_LIPSYNC
-        = "http://jitsi.org/meet/lipsync";
+            = "http://jitsi.org/meet/lipsync";
 
     /**
      * A namespace for detecting participants as jigasi users.
      */
     public final static String FEATURE_JIGASI
-        = "http://jitsi.org/protocol/jigasi";
+            = "http://jitsi.org/protocol/jigasi";
 
     /**
      * A namespace for detecting whether a participant (jigasi users) can be
      * muted.
      */
     public final static String FEATURE_AUDIO_MUTE
-        = "http://jitsi.org/protocol/audio-mute";
+            = "http://jitsi.org/protocol/audio-mute";
 
     /**
      * Array constant which can be used to check for Version IQ support.
      */
-    public final static String[] VERSION_FEATURES = new String[]
-        {
-            Version.NAMESPACE
-        };
+    public final static String[] VERSION_FEATURES = new String[]{
+        Version.NAMESPACE
+    };
 
     /**
-     * Gets the list of features supported by participant. If we fail to
-     * obtain it due to network failure default feature list is returned.
-     * @param protocolProvider protocol provider service instance that will
-     *        be used for discovery.
+     * Gets the list of features supported by participant. If we fail to obtain
+     * it due to network failure default feature list is returned.
+     *
+     * @param protocolProvider protocol provider service instance that will be
+     * used for discovery.
      * @param address XMPP address of the participant.
      */
-    public static List<String> discoverParticipantFeatures
-        (ProtocolProviderService protocolProvider, EntityFullJid address)
-    {
+    public static List<String> discoverParticipantFeatures(ProtocolProviderService protocolProvider, EntityFullJid address) {
         OperationSetSimpleCaps disco
-            = protocolProvider.getOperationSet(OperationSetSimpleCaps.class);
-        if (disco == null)
-        {
+                = protocolProvider.getOperationSet(OperationSetSimpleCaps.class);
+        if (disco == null) {
             logger.error(
-                "Service discovery not supported by " + protocolProvider);
+                    "Service discovery not supported by " + protocolProvider);
             return getDefaultParticipantFeatureSet();
         }
 
@@ -149,21 +146,19 @@ public class DiscoveryUtil
 
         // Discover participant feature set
         List<String> participantFeatures = disco.getFeatures(address);
-        if (participantFeatures == null)
-        {
+        if (participantFeatures == null) {
             logger.warn(
-                "Failed to discover features for "+ address
-                        + " assuming default feature set.");
+                    "Failed to discover features for " + address
+                    + " assuming default feature set.");
 
             return getDefaultParticipantFeatureSet();
         }
 
-        if (logger.isDebugEnabled())
-        {
+        if (logger.isDebugEnabled()) {
             StringBuilder sb
-                = new StringBuilder(address)
-                .append(", features: ")
-                .append(String.join(", ", participantFeatures));
+                    = new StringBuilder(address)
+                            .append(", features: ")
+                            .append(String.join(", ", participantFeatures));
             logger.debug(sb);
         } else {
             logger.info("Successfully discovered features for " + address);
@@ -176,48 +171,40 @@ public class DiscoveryUtil
      * Discovers version of given <tt>jid</tt>.
      *
      * @param connection the connection which will be used to send the query.
-     * @param jid       the JID to which version query wil be sent.
-     * @param features  the list of <tt>jid</tt> feature which will be used to
-     *                  determine support for the version IQ.
+     * @param jid the JID to which version query wil be sent.
+     * @param features the list of <tt>jid</tt> feature which will be used to
+     * determine support for the version IQ.
      *
      * @return {@link Version} if given <tt>jid</tt> supports version IQ and if
-     *         we the query was successful or <tt>null</tt> otherwise.
+     * we the query was successful or <tt>null</tt> otherwise.
      */
     static public Version discoverVersion(
-            XmppConnection                connection,
-            Jid                           jid,
-            List<String>                  features)
-    {
+            XmppConnection connection,
+            Jid jid,
+            List<String> features) {
         // If the bridge supports version IQ query it's version
-        if (DiscoveryUtil.checkFeatureSupport(VERSION_FEATURES, features))
-        {
+        if (DiscoveryUtil.checkFeatureSupport(VERSION_FEATURES, features)) {
             Version versionIq = new Version();
             versionIq.setType(IQ.Type.get);
             versionIq.setTo(jid);
 
             Stanza response;
-            try
-            {
+            try {
                 response = connection.sendPacketAndGetReply(versionIq);
-            }
-            catch (OperationFailedException e)
-            {
+            } catch (OperationFailedException e) {
                 logger.error(
-                    "Failed to discover component version - XMPP disconnected",
-                    e);
+                        "Failed to discover component version - XMPP disconnected",
+                        e);
                 return null;
             }
 
-            if (response instanceof Version)
-            {
-                return  (Version) response;
-            }
-            else
-            {
+            if (response instanceof Version) {
+                return (Version) response;
+            } else {
                 logger.error(
                         "Failed to discover version, req: " + versionIq.toXML()
-                            + ", response: "
-                            + IQUtils.responseToXML(response));
+                        + ", response: "
+                        + IQUtils.responseToXML(response));
             }
         }
         return null;
@@ -226,10 +213,8 @@ public class DiscoveryUtil
     /**
      * Returns default participant feature set(all features).
      */
-    static public List<String> getDefaultParticipantFeatureSet()
-    {
-        if (defaultFeatures == null)
-        {
+    static public List<String> getDefaultParticipantFeatureSet() {
+        if (defaultFeatures == null) {
             defaultFeatures = new ArrayList<String>(7);
             defaultFeatures.add(FEATURE_AUDIO);
             defaultFeatures.add(FEATURE_VIDEO);
@@ -245,18 +230,18 @@ public class DiscoveryUtil
     /**
      * Checks if all of the features given on <tt>reqFeatures</tt> array exist
      * on declared list of <tt>capabilities</tt>.
+     *
      * @param reqFeatures array of required features to check.
      * @param capabilities the list of features supported by the client.
      * @return <tt>true</tt> if all features from <tt>reqFeatures</tt> array
-     *         exist on <tt>capabilities</tt> list.
+     * exist on <tt>capabilities</tt> list.
      */
     static public boolean checkFeatureSupport(String[] reqFeatures,
-                                              List<String> capabilities)
-    {
-        for (String toCheck : reqFeatures)
-        {
-            if (!capabilities.contains(toCheck))
+            List<String> capabilities) {
+        for (String toCheck : reqFeatures) {
+            if (!capabilities.contains(toCheck)) {
                 return false;
+            }
         }
         return true;
     }
@@ -264,15 +249,15 @@ public class DiscoveryUtil
     /**
      * Returns <tt>true</tt> if <tt>list1</tt> and <tt>list2</tt> contain the
      * same elements where items order is not relevant.
-     * @param list1 the first list of <tt>String</tt> to be compared against
-     *              the second list.
+     *
+     * @param list1 the first list of <tt>String</tt> to be compared against the
+     * second list.
      * @param list2 the second list of <tt>String</tt> to be compared against
-     *              the first list.
+     * the first list.
      */
-    static public boolean areTheSame(List<String> list1, List<String> list2)
-    {
+    static public boolean areTheSame(List<String> list1, List<String> list2) {
         return list1.size() == list2.size()
-            && list2.containsAll(list1)
-            && list1.containsAll(list2);
+                && list2.containsAll(list1)
+                && list1.containsAll(list2);
     }
 }

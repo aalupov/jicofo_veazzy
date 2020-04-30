@@ -24,8 +24,8 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class DescriptionProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a description extension sub-packet and creates a {@link
      * DescriptionPacketExtension} instance. At the beginning of the method
@@ -42,43 +42,32 @@ public class DescriptionProvider
      */
     @Override
     public DescriptionPacketExtension parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
 
         DescriptionPacketExtension ext
-            = new DescriptionPacketExtension();
+                = new DescriptionPacketExtension();
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(
-                        DescriptionPacketExtension.ELEMENT_SUBJECT))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(
+                        DescriptionPacketExtension.ELEMENT_SUBJECT)) {
                     ext.setSubject(CoinIQProvider.parseText(parser));
-                }
-                else if(elementName.equals(
-                        DescriptionPacketExtension.ELEMENT_FREE_TEXT))
-                {
+                } else if (elementName.equals(
+                        DescriptionPacketExtension.ELEMENT_FREE_TEXT)) {
                     ext.setFreeText(CoinIQProvider.parseText(parser));
-                }
-                else if(elementName.equals(
-                        DescriptionPacketExtension.ELEMENT_DISPLAY_TEXT))
-                {
+                } else if (elementName.equals(
+                        DescriptionPacketExtension.ELEMENT_DISPLAY_TEXT)) {
                     ext.setDisplayText(CoinIQProvider.parseText(parser));
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        DescriptionPacketExtension.ELEMENT_NAME))
-                {
+                        DescriptionPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }

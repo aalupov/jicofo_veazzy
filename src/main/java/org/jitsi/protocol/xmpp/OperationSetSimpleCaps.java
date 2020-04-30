@@ -28,8 +28,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public interface OperationSetSimpleCaps
-    extends OperationSet
-{
+        extends OperationSet {
+
     /**
      * Returns the list of sub-nodes of given <tt>node</tt>.
      *
@@ -46,18 +46,18 @@ public interface OperationSetSimpleCaps
      * @param features the array of feature names to be checked.
      *
      * @return <tt>true</tt> if given node support all features specified in
-     *         <tt>features</tt> array or <tt>false</tt> if at least on of
-     *         the features is not supported.
+     * <tt>features</tt> array or <tt>false</tt> if at least on of the features
+     * is not supported.
      */
     boolean hasFeatureSupport(Jid node, String[] features);
 
     /**
-     * Returns the list of features supported by given <tt>node</tt>. 
-     * @param node XMPP address of the entity for which features wil be 
-     *        discovered.
+     * Returns the list of features supported by given <tt>node</tt>.
+     *
+     * @param node XMPP address of the entity for which features wil be
+     * discovered.
      * @return the list of features supported by given <tt>node</tt> or
-     *         <tt>null</tt> if we have failed to obtain the list due to some
-     *         errors.
+     * <tt>null</tt> if we have failed to obtain the list due to some errors.
      */
     List<String> getFeatures(Jid node);
 

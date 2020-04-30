@@ -23,13 +23,12 @@ import junit.framework.*;
  * @author Boris Grozev
  */
 public class ColibriStatsExtensionTest
-    extends TestCase
-{
+        extends TestCase {
+
     /**
      * Test the constructor and adding a new stat.
      */
-    public void testAddStat()
-    {
+    public void testAddStat() {
         ColibriStatsExtension stats = new ColibriStatsExtension();
 
         stats.addStat("name", "value");
@@ -52,8 +51,7 @@ public class ColibriStatsExtensionTest
     /**
      * Test cloning.
      */
-    public void testClone()
-    {
+    public void testClone() {
         ColibriStatsExtension stats = new ColibriStatsExtension();
         stats.addStat("name", "value");
 

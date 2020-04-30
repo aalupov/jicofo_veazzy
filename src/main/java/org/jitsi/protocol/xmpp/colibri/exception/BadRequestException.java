@@ -18,19 +18,17 @@
 package org.jitsi.protocol.xmpp.colibri.exception;
 
 /**
- * A {@link ColibriException} indicating the remote Colibri endpoint
- * responded to our request with with a bad-request error.
+ * A {@link ColibriException} indicating the remote Colibri endpoint responded
+ * to our request with with a bad-request error.
  */
-public class BadRequestException extends ColibriException
-{
-    public BadRequestException(String message)
-    {
+public class BadRequestException extends ColibriException {
+
+    public BadRequestException(String message) {
         super(message);
     }
 
     @Override
-    public ColibriException clone(String prefix)
-    {
+    public ColibriException clone(String prefix) {
         return new BadRequestException(prefix + getMessage());
     }
 }

@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  *
  * @author Emil Ivov
  */
-public class ZrtpHashPacketExtension extends AbstractPacketExtension
-{
+public class ZrtpHashPacketExtension extends AbstractPacketExtension {
+
     /**
      * The name of the "zrtp-hash" element.
      */
@@ -44,9 +44,8 @@ public class ZrtpHashPacketExtension extends AbstractPacketExtension
      * Creates a {@link ZrtpHashPacketExtension} instance for the specified
      * <tt>namespace</tt> and <tt>elementName</tt>.
      */
-    public ZrtpHashPacketExtension()
-    {
-        super (NAMESPACE, ELEMENT_NAME);
+    public ZrtpHashPacketExtension() {
+        super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
@@ -56,20 +55,17 @@ public class ZrtpHashPacketExtension extends AbstractPacketExtension
      * @return the ZRTP version used by the implementation that created the
      * hash.
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return getAttributeAsString(VERSION_ATTR_NAME);
     }
 
     /**
-     * Sets the ZRTP version used by the implementation that created the
-     * hash.
+     * Sets the ZRTP version used by the implementation that created the hash.
      *
      * @param version the ZRTP version used by the implementation that created
      * the hash.
      */
-    public void setVersion(String version)
-    {
+    public void setVersion(String version) {
         setAttribute(VERSION_ATTR_NAME, version);
     }
 
@@ -78,8 +74,7 @@ public class ZrtpHashPacketExtension extends AbstractPacketExtension
      *
      * @return the value of the ZRTP hash this element is carrying.
      */
-    public String getValue()
-    {
+    public String getValue() {
         return getText();
     }
 
@@ -88,8 +83,7 @@ public class ZrtpHashPacketExtension extends AbstractPacketExtension
      *
      * @param value the value of the ZRTP hash this element will be carrying.
      */
-    public void setValue(String value)
-    {
+    public void setValue(String value) {
         setText(value);
     }
 }

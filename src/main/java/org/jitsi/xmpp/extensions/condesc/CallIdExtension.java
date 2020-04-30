@@ -24,13 +24,13 @@ import org.jitsi.xmpp.extensions.AbstractPacketExtension;
  * @author Boris Grozev
  */
 public class CallIdExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace for the XML element.
      */
     public static final String NAMESPACE
-        = ConferenceDescriptionExtension.NAMESPACE;
+            = ConferenceDescriptionExtension.NAMESPACE;
 
     /**
      * The name of the "callid" element.
@@ -42,8 +42,7 @@ public class CallIdExtension
      *
      * @param callid
      */
-    public CallIdExtension(String callid)
-    {
+    public CallIdExtension(String callid) {
         this();
 
         setText(callid);
@@ -52,8 +51,7 @@ public class CallIdExtension
     /**
      * Creates a new instance.
      */
-    public CallIdExtension()
-    {
+    public CallIdExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

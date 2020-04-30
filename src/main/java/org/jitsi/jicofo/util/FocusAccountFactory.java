@@ -32,9 +32,10 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class FocusAccountFactory
-{
-    private FocusAccountFactory(){ }
+public class FocusAccountFactory {
+
+    private FocusAccountFactory() {
+    }
 
     /**
      * Creates focus XMPP account properties configured for given
@@ -51,18 +52,14 @@ public class FocusAccountFactory
             String serverAddress,
             String serverPort,
             DomainBareJid domain,
-            Resourcepart userName)
-    {
+            Resourcepart userName) {
         HashMap<String, String> properties = new HashMap<String, String>();
 
         Resourcepart resource = null;
-        try
-        {
+        try {
             resource = Resourcepart.from(
                     userName.toString() + System.nanoTime());
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             // ignore, cannot happen
         }
 
@@ -77,7 +74,6 @@ public class FocusAccountFactory
             properties.put(ProtocolProviderFactory.SERVER_PORT, serverPort.trim());
         }
 
-
         // This is used as the multi user chat nick when joining the room
         properties.put(ProtocolProviderFactory.DISPLAY_NAME, userName.toString());
 
@@ -88,7 +84,7 @@ public class FocusAccountFactory
         properties.put(ProtocolProviderFactory.IS_CARBON_DISABLED, "true");
         properties.put(ProtocolProviderFactory.DEFAULT_ENCRYPTION, "true");
         properties.put(ProtocolProviderFactory.DEFAULT_SIPZRTP_ATTRIBUTE,
-                       "false");
+                "false");
         properties.put("ENCRYPTION_PROTOCOL_STATUS.DTLS-SRTP", "true");
 
         properties.put(ProtocolProviderFactory.IS_USE_ICE, "true");
@@ -96,51 +92,50 @@ public class FocusAccountFactory
         properties.put(ProtocolProviderFactory.IS_PREFERRED_PROTOCOL, "false");
         properties.put(ProtocolProviderFactory.IS_SERVER_OVERRIDDEN, "false");
         properties.put(ProtocolProviderFactory.AUTO_DISCOVER_JINGLE_NODES,
-                       "false");
+                "false");
         properties.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.JABBER);
         properties.put(ProtocolProviderFactory.IS_USE_UPNP, "false");
         properties.put(ProtocolProviderFactory.USE_DEFAULT_STUN_SERVER, "true");
 
         //FIXME: this is not used, but have to check before remove
-        properties.put("Encodings.G722/8000","700");
-        properties.put("Encodings.GSM/8000","0");
-        properties.put("Encodings.H263-1998/90000","0");
-        properties.put("Encodings.H264/90000","0");
-        properties.put("Encodings.PCMA/8000","600");
-        properties.put("Encodings.PCMU/8000","650");
-        properties.put("Encodings.SILK/12000","0");
-        properties.put("Encodings.SILK/16000","0");
-        properties.put("Encodings.SILK/24000","0");
-        properties.put("Encodings.SILK/8000","0");
-        properties.put("Encodings.VP8/90000","100");
-        properties.put("Encodings.iLBC/8000","10");
-        properties.put("Encodings.opus/48000","1000");
-        properties.put("Encodings.red/90000","0");
-        properties.put("Encodings.speex/16000","0");
-        properties.put("Encodings.speex/32000","0");
-        properties.put("Encodings.speex/8000","0");
-        properties.put("Encodings.telephone-event/8000","0");
-        properties.put("Encodings.ulpfec/90000","0");
-        properties.put("G722/8000","0");
-        properties.put("GSM/8000","0");
-        properties.put("H263-1998/90000","0");
-        properties.put("H264/90000","0");
-        properties.put("OVERRIDE_ENCODINGS","true");
+        properties.put("Encodings.G722/8000", "700");
+        properties.put("Encodings.GSM/8000", "0");
+        properties.put("Encodings.H263-1998/90000", "0");
+        properties.put("Encodings.H264/90000", "0");
+        properties.put("Encodings.PCMA/8000", "600");
+        properties.put("Encodings.PCMU/8000", "650");
+        properties.put("Encodings.SILK/12000", "0");
+        properties.put("Encodings.SILK/16000", "0");
+        properties.put("Encodings.SILK/24000", "0");
+        properties.put("Encodings.SILK/8000", "0");
+        properties.put("Encodings.VP8/90000", "100");
+        properties.put("Encodings.iLBC/8000", "10");
+        properties.put("Encodings.opus/48000", "1000");
+        properties.put("Encodings.red/90000", "0");
+        properties.put("Encodings.speex/16000", "0");
+        properties.put("Encodings.speex/32000", "0");
+        properties.put("Encodings.speex/8000", "0");
+        properties.put("Encodings.telephone-event/8000", "0");
+        properties.put("Encodings.ulpfec/90000", "0");
+        properties.put("G722/8000", "0");
+        properties.put("GSM/8000", "0");
+        properties.put("H263-1998/90000", "0");
+        properties.put("H264/90000", "0");
+        properties.put("OVERRIDE_ENCODINGS", "true");
 
         return properties;
     }
 
     /**
      * Creates focus XMPP account properties configured for given
-     * <tt>domain</tt> which login as authenticated admin user
-     * (we expect it to be admin or otherwise focus will refuse to join
-     *  the room).
+     * <tt>domain</tt> which login as authenticated admin user (we expect it to
+     * be admin or otherwise focus will refuse to join the room).
      *
      * @param serverAddress XMPP server address.
      * @param serverPort XMPP server port(5222 by default).
      * @param domain name of the XMPP domain on which the focus will register.
-     * @param userName the nickname used by the focus in MUC room
-     *                 (also used as login name).
+     * @param userName the nickname used by the focus in MUC room (also used as
+     * login name).
      * @param password focus user admin password.
      *
      * @return the map of new focus account properties for given domain.
@@ -150,14 +145,13 @@ public class FocusAccountFactory
             String serverPort,
             DomainBareJid domain,
             Resourcepart userName,
-            String password)
-    {
+            String password) {
         Map<String, String> properties
-            = createFocusAccountProperties(
-                    serverAddress,
-                    serverPort,
-                    domain,
-                    userName);
+                = createFocusAccountProperties(
+                        serverAddress,
+                        serverPort,
+                        domain,
+                        userName);
 
         properties.put(
                 ProtocolProviderFactory.AUTHORIZATION_NAME,
@@ -166,7 +160,6 @@ public class FocusAccountFactory
         /*String pass = new String(Base64.encode(password.getBytes()));
         properties.put(ProtocolProviderFactory.PASSWORD,
                        pass);*/
-
         properties.put(ProtocolProviderFactory.PASSWORD, password);
 
         properties.put(JabberAccountID.ANONYMOUS_AUTH, "false");

@@ -20,48 +20,39 @@ package org.jitsi.xmpp.extensions.coin;
  *
  * @author Sebastien Vincent
  */
-public enum EndpointStatusType
-{
+public enum EndpointStatusType {
     /**
      * Pending.
      */
     pending("pending"),
-
     /**
      * Dialing-out.
      */
-    dialing_out ("dialing-out"),
-
+    dialing_out("dialing-out"),
     /**
      * Dialing-in.
      */
     dialing_in("dialing-in"),
-
     /**
      * Alerting.
      */
     alerting("alerting"),
-
     /**
      * On-hold.
      */
     on_hold("on-hold"),
-
     /**
      * Connected.
      */
     connected("connected"),
-
     /**
      * Muted via focus.
      */
     muted_via_focus("mute-via-focus"),
-
     /**
      * Disconnecting.
      */
     disconnecting("disconnecting"),
-
     /**
      * Disconnected.
      */
@@ -77,8 +68,7 @@ public enum EndpointStatusType
      *
      * @param type type name.
      */
-    private EndpointStatusType(String type)
-    {
+    private EndpointStatusType(String type) {
         this.type = type;
     }
 
@@ -88,29 +78,28 @@ public enum EndpointStatusType
      * @return type name
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return type;
     }
 
     /**
      * Returns a <tt>EndPointType</tt>.
      *
-     * @param typeStr the <tt>String</tt> that we'd like to
-     * parse.
+     * @param typeStr the <tt>String</tt> that we'd like to parse.
      * @return an EndPointType.
      *
-     * @throws IllegalArgumentException in case <tt>typeStr</tt> is
-     * not a valid <tt>EndPointType</tt>.
+     * @throws IllegalArgumentException in case <tt>typeStr</tt> is not a valid
+     * <tt>EndPointType</tt>.
      */
     public static EndpointStatusType parseString(String typeStr)
-        throws IllegalArgumentException
-    {
-        for (EndpointStatusType value : values())
-            if (value.toString().equals(typeStr))
+            throws IllegalArgumentException {
+        for (EndpointStatusType value : values()) {
+            if (value.toString().equals(typeStr)) {
                 return value;
+            }
+        }
 
         throw new IllegalArgumentException(
-            typeStr + " is not a valid reason");
+                typeStr + " is not a valid reason");
     }
 }

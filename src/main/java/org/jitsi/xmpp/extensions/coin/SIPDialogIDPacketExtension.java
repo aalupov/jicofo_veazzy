@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class SIPDialogIDPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that SIP Dialog ID belongs to.
      */
@@ -80,18 +80,17 @@ public class SIPDialogIDPacketExtension
     /**
      * Constructor
      */
-    public SIPDialogIDPacketExtension()
-    {
+    public SIPDialogIDPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

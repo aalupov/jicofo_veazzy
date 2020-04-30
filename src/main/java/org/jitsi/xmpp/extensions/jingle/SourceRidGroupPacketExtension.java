@@ -16,20 +16,19 @@
 package org.jitsi.xmpp.extensions.jingle;
 
 /**
- * Represents <tt>rid-group</tt> elements which we use to represent
- * a=simulcast sdp lines (from unified plan)
+ * Represents <tt>rid-group</tt> elements which we use to represent a=simulcast
+ * sdp lines (from unified plan)
  *
  * @author Brian Baldino
  */
-public class SourceRidGroupPacketExtension extends SourceGroupPacketExtension
-{
+public class SourceRidGroupPacketExtension extends SourceGroupPacketExtension {
+
     /**
      * The name of the "rid-group" element.
      */
     public static final String ELEMENT_NAME = "rid-group";
 
-    public SourceRidGroupPacketExtension()
-    {
+    public SourceRidGroupPacketExtension() {
         super(ELEMENT_NAME);
     }
 }

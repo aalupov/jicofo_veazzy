@@ -41,31 +41,28 @@ import static org.junit.Assert.*;
  *
  */
 @RunWith(JUnit4.class)
-public class AdvertiseSSRCsTest
-{
+public class AdvertiseSSRCsTest {
+
     private static final Logger logger
-        = Logger.getLogger(AdvertiseSSRCsTest.class);
+            = Logger.getLogger(AdvertiseSSRCsTest.class);
 
     private OSGiHandler osgi = OSGiHandler.getInstance();
 
     @Before
     public void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
     }
 
     @After
     public void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
     @Test
     public void testOneToOneConference()
-        throws Exception
-    {
+            throws Exception {
         //FIXME: test when there is participant without contents
 
         EntityBareJid roomName = JidCreate.entityBareFrom(
@@ -73,15 +70,15 @@ public class AdvertiseSSRCsTest
         String serverName = "test-server";
 
         TestConference testConf
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         MockProtocolProvider pps
-            = testConf.getFocusProtocolProvider();
+                = testConf.getFocusProtocolProvider();
 
         MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
         MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+                = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
         // Join with all users
         MockParticipant user1 = new MockParticipant("User1");
@@ -106,24 +103,24 @@ public class AdvertiseSSRCsTest
         // Verify SSRC owners and video types
         // From user 1 perspective
         assertEquals(
-            user2.getMyJid(),
-            SSRCSignaling.getSSRCOwner(user1.getRemoteSSRCs("audio").get(1)));
+                user2.getMyJid(),
+                SSRCSignaling.getSSRCOwner(user1.getRemoteSSRCs("audio").get(1)));
         assertEquals(
-            user2.getMyJid(),
-            SSRCSignaling.getSSRCOwner(user1.getRemoteSSRCs("video").get(1)));
+                user2.getMyJid(),
+                SSRCSignaling.getSSRCOwner(user1.getRemoteSSRCs("video").get(1)));
         assertEquals(
-            user2.getSsrcVideoType(),
-            SSRCSignaling.getVideoType(user1.getRemoteSSRCs("video").get(1)));
+                user2.getSsrcVideoType(),
+                SSRCSignaling.getVideoType(user1.getRemoteSSRCs("video").get(1)));
         // From user 2 perspective
         assertEquals(
-            user1.getMyJid(),
-            SSRCSignaling.getSSRCOwner(user2.getRemoteSSRCs("audio").get(1)));
+                user1.getMyJid(),
+                SSRCSignaling.getSSRCOwner(user2.getRemoteSSRCs("audio").get(1)));
         assertEquals(
-            user1.getMyJid(),
-            SSRCSignaling.getSSRCOwner(user2.getRemoteSSRCs("video").get(1)));
+                user1.getMyJid(),
+                SSRCSignaling.getSSRCOwner(user2.getRemoteSSRCs("video").get(1)));
         assertEquals(
-            user1.getSsrcVideoType(),
-            SSRCSignaling.getVideoType(user2.getRemoteSSRCs("video").get(1)));
+                user1.getSsrcVideoType(),
+                SSRCSignaling.getVideoType(user2.getRemoteSSRCs("video").get(1)));
 
         user2.leave();
 
@@ -153,8 +150,7 @@ public class AdvertiseSSRCsTest
 
     @Test
     public void testSourceRemoval()
-            throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testSSRCremoval@conference.pawel.jitsi.net");
         String serverName = "test-server";
@@ -214,22 +210,21 @@ public class AdvertiseSSRCsTest
 
     @Test
     public void testDuplicatedSSRCs()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testSSRCs@conference.pawel.jitsi.net");
         String serverName = "test-server";
 
         TestConference testConf
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         MockProtocolProvider pps
-            = testConf.getFocusProtocolProvider();
+                = testConf.getFocusProtocolProvider();
 
         MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
         MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+                = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
         // Join with all users
         MockParticipant user1 = new MockParticipant("User1");
@@ -257,22 +252,22 @@ public class AdvertiseSSRCsTest
         // No groups
         assertEquals(0, user2.getRemoteSSRCGroups("video").size());
 
-        user1.videoSourceAdd(new long[]{ u1VideoSSRC }, false);
+        user1.videoSourceAdd(new long[]{u1VideoSSRC}, false);
 
         user1.videoSourceAdd(
-            new long[]{
-                u1VideoSSRC, u1VideoSSRC2, u1VideoSSRC,
-                u1VideoSSRC, u1VideoSSRC, u1VideoSSRC2
-            }, false);
+                new long[]{
+                    u1VideoSSRC, u1VideoSSRC2, u1VideoSSRC,
+                    u1VideoSSRC, u1VideoSSRC, u1VideoSSRC2
+                }, false);
 
-        user1.videoSourceAdd(new long[]{ u1VideoSSRC2, u1VideoSSRC }, false);
+        user1.videoSourceAdd(new long[]{u1VideoSSRC2, u1VideoSSRC}, false);
 
         // There should be no source-add notifications sent
         assertEquals(null, user2.waitForAddSource(500));
 
-        assertEquals(1 + /* jvb */ + 1, user2.getRemoteSSRCs("audio").size());
+        assertEquals(1 + /* jvb */ +1, user2.getRemoteSSRCs("audio").size());
         // There is 1 + 2 extra we've created here in the test
-        assertEquals(1 + /* jvb */ + 3, user2.getRemoteSSRCs("video").size());
+        assertEquals(1 + /* jvb */ +3, user2.getRemoteSSRCs("video").size());
 
         user2.leave();
         user1.leave();
@@ -282,27 +277,26 @@ public class AdvertiseSSRCsTest
 
     @Test
     public void testSSRCLimit()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testSSRCs@conference.pawel.jitsi.net");
         String serverName = "test-server";
 
         TestConference testConf
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         JitsiMeetGlobalConfig globalConfig
-            = ServiceUtils.getService(osgi.bc, JitsiMeetGlobalConfig.class);
+                = ServiceUtils.getService(osgi.bc, JitsiMeetGlobalConfig.class);
 
         assertNotNull(globalConfig);
 
         MockProtocolProvider pps
-            = testConf.getFocusProtocolProvider();
+                = testConf.getFocusProtocolProvider();
 
         MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
         MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+                = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
         // Join with all users
         MockParticipant user1 = new MockParticipant("User1");
@@ -317,7 +311,6 @@ public class AdvertiseSSRCsTest
 
         // Accept invite with all users
         // Add many SSRCs to both users
-
         // Video:
         // User 1 will fit into the limit on accept, but we'll try to exceed
         // it later
@@ -340,19 +333,19 @@ public class AdvertiseSSRCsTest
         assertNotNull(user2.waitForAddSource(4000));
 
         int expectedMax
-            = 1 /* jvb's mixed */
+                = 1 /* jvb's mixed */
                 + maxSSRCs /* max that can come from 1 participant */;
 
         // Verify User1's SSRCs seen by User2
         assertEquals(1 /* jvb's mixed */ + 1 + user1ExtraVideoSSRCCount,
-                     user2.getRemoteSSRCs("video").size());
+                user2.getRemoteSSRCs("video").size());
         assertEquals(expectedMax,
-                     user2.getRemoteSSRCs("audio").size());
+                user2.getRemoteSSRCs("audio").size());
         // Verify User1's SSRCs seen by User1
         assertEquals(expectedMax,
-            user1.getRemoteSSRCs("video").size());
+                user1.getRemoteSSRCs("video").size());
         assertEquals(1 /* jvb's mixed */ + 1 + user2ExtraAudioSSRCCount,
-            user1.getRemoteSSRCs("audio").size());
+                user1.getRemoteSSRCs("audio").size());
 
         // No groups
         assertEquals(0, user2.getRemoteSSRCGroups("video").size());
@@ -392,22 +385,21 @@ public class AdvertiseSSRCsTest
     // FIXME the test is broken
     //@Test
     public void testOneToOneSSRCGroupsConference()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testSSRCs@conference.pawel.jitsi.net");
         String serverName = "test-server";
 
         TestConference testConf
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         MockProtocolProvider pps
-            = testConf.getFocusProtocolProvider();
+                = testConf.getFocusProtocolProvider();
 
         MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
         MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+                = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
         // Join with all users
         final MockParticipant user1 = new MockParticipant("User1");
@@ -438,7 +430,7 @@ public class AdvertiseSSRCsTest
         logger.info("Switching to desktop stream");
 
         // Test video stream switch(for desktop sharing)
-        long [] desktopSSRC = new long[1];
+        long[] desktopSSRC = new long[1];
         desktopSSRC[0] = MockParticipant.nextSSRC();
         user2.switchVideoSSRCs(desktopSSRC, false);
         // Wait for update
@@ -498,42 +490,41 @@ public class AdvertiseSSRCsTest
      * Verifies if number of simulcast layers on the bridge matches the SSRCs
      * count in local video group. Also checks if primary SSRCs of particular
      * layers do match local video SSRCs.
+     *
      * @param testConference instance of <tt>TestConference</tt> that will be
-     *                       used for obtaining videobridge backend.
+     * used for obtaining videobridge backend.
      * @param peer the <tt>MockParticipant</tt> for which simulcast layers will
-     *             be verified.
+     * be verified.
      */
     private void verifySimulcastLayersOnTheBridge(TestConference testConference,
-                                                  MockParticipant peer)
-    {
+            MockParticipant peer) {
         long[] simulcastLayersSSRCs
-            = testConference.getSimulcastLayersSSRCs(peer.getMyJid());
+                = testConference.getSimulcastLayersSSRCs(peer.getMyJid());
         List<SourcePacketExtension> videoSSRCs = peer.getVideoSSRCS();
 
         assertEquals(videoSSRCs.size(), simulcastLayersSSRCs.length);
 
-        for (int i=0; i<videoSSRCs.size(); i++)
-        {
+        for (int i = 0; i < videoSSRCs.size(); i++) {
             assertEquals(
-                "idx: " + i,
-                videoSSRCs.get(i).getSSRC(),
-                simulcastLayersSSRCs[i]);
+                    "idx: " + i,
+                    videoSSRCs.get(i).getSSRC(),
+                    simulcastLayersSSRCs[i]);
         }
     }
 
     /**
      * Verifies if the are 0 simulcast layers on the bridge for given
      * <tt>peer</tt>.
+     *
      * @param testConference instance of <tt>TestConference</tt> that will be
-     *                       used for obtaining videobridge backend.
+     * used for obtaining videobridge backend.
      * @param peer the <tt>MockParticipant</tt> for which simulcast layers will
-     *             be verified.
+     * be verified.
      */
     private void verifyNOSimulcastLayersOnTheBridge(
-            TestConference testConference, MockParticipant peer)
-    {
+            TestConference testConference, MockParticipant peer) {
         long[] simulcastLayersSSRCs
-            = testConference.getSimulcastLayersSSRCs(peer.getMyJid());
+                = testConference.getSimulcastLayersSSRCs(peer.getMyJid());
 
         assertEquals(1, simulcastLayersSSRCs.length);
     }

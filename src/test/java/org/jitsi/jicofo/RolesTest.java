@@ -36,21 +36,19 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(JUnit4.class)
-public class RolesTest
-{
+public class RolesTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
@@ -59,45 +57,41 @@ public class RolesTest
      */
     @Test
     public void testPassModeratorRole()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testroom@conference.pawel.jitsi.net");
         String serverName = "test-server";
 
         TestConference testConference
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         MockProtocolProvider pps
-            = testConference.getFocusProtocolProvider();
+                = testConference.getFocusProtocolProvider();
 
         MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
         MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+                = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
         // Join with all users
         MockParticipant users[] = new MockParticipant[4];
-        for (int i=0; i < users.length; i++)
-        {
+        for (int i = 0; i < users.length; i++) {
             users[i] = new MockParticipant("User" + i);
 
             users[i].join(chat);
         }
         // Accept invite with all users
-        for (MockParticipant user : users)
-        {
+        for (MockParticipant user : users) {
             assertNotNull(user.acceptInvite(10000));
         }
 
-        for (int i = 0; i < users.length; i++)
-        {
+        for (int i = 0; i < users.length; i++) {
             // FIXME: wait for role change otherwise we might randomly fail here
             assertTrue(
-                i + " user should have moderator role("
+                    i + " user should have moderator role("
                     + users[i].getNickname() + ")",
-                ChatRoomMemberRole.MODERATOR.compareTo(
-                    users[i].getChatMember().getRole()) >= 0);
+                    ChatRoomMemberRole.MODERATOR.compareTo(
+                            users[i].getChatMember().getRole()) >= 0);
 
             users[i].leave();
         }

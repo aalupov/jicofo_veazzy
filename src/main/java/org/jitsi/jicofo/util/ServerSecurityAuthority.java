@@ -25,32 +25,28 @@ import net.java.sip.communicator.service.protocol.*;
  * @author Pawel Domas
  */
 public class ServerSecurityAuthority
-    implements SecurityAuthority
-{
+        implements SecurityAuthority {
+
     @Override
     public UserCredentials obtainCredentials(String realm,
-                                             UserCredentials defaultValues,
-                                             int reasonCode)
-    {
+            UserCredentials defaultValues,
+            int reasonCode) {
         return defaultValues;
     }
 
     @Override
     public UserCredentials obtainCredentials(String realm,
-                                             UserCredentials defaultValues)
-    {
+            UserCredentials defaultValues) {
         return defaultValues;
     }
 
     @Override
-    public void setUserNameEditable(boolean isUserNameEditable)
-    {
+    public void setUserNameEditable(boolean isUserNameEditable) {
 
     }
 
     @Override
-    public boolean isUserNameEditable()
-    {
+    public boolean isUserNameEditable() {
         return false;
     }
 }

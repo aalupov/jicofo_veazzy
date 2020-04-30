@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class ReasonExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of optional platform code attribute.
      */
@@ -37,8 +37,8 @@ public class ReasonExtension
     public static final String HANGUP = "hangup";
 
     /**
-     * Indication that the call ended due to a normal hangup triggered by
-     * a hangup command.
+     * Indication that the call ended due to a normal hangup triggered by a
+     * hangup command.
      */
     public static final String HANGUP_COMMND = "hangup-command";
 
@@ -71,27 +71,26 @@ public class ReasonExtension
      *
      * @param elementName the name of the element
      */
-    public ReasonExtension(String elementName)
-    {
+    public ReasonExtension(String elementName) {
         super(RayoIqProvider.NAMESPACE, elementName);
     }
 
     /**
      * Returns the value of platform code attribute.
+     *
      * @return the value of platform code attribute.
      */
-    public String getPlatformCode()
-    {
+    public String getPlatformCode() {
         return getAttributeAsString(PLATFORM_CODE_ATTRIBUTE);
     }
 
     /**
      * Sets new value of platform code attribute. Pass <tt>null</tt> to remove.
+     *
      * @param code new value of platform code attribute. Pass <tt>null</tt> to
-     *             remove.
+     * remove.
      */
-    public void setPlatformCode(String code)
-    {
+    public void setPlatformCode(String code) {
         setAttribute(PLATFORM_CODE_ATTRIBUTE, code);
     }
 }

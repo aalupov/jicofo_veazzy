@@ -26,8 +26,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class RelayPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace.
      */
@@ -46,8 +46,7 @@ public class RelayPacketExtension
     /**
      * Constructor.
      */
-    public RelayPacketExtension()
-    {
+    public RelayPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -56,8 +55,7 @@ public class RelayPacketExtension
      *
      * @param token token
      */
-    public void setToken(String token)
-    {
+    public void setToken(String token) {
         this.token = token;
     }
 
@@ -66,8 +64,7 @@ public class RelayPacketExtension
      *
      * @return authentication token
      */
-    public String getToken()
-    {
+    public String getToken() {
         return token;
     }
 
@@ -77,19 +74,16 @@ public class RelayPacketExtension
      * @return XML string representation
      */
     @Override
-    public String toXML()
-    {
+    public String toXML() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.halfOpenElement(ELEMENT_NAME);
 
-        if(token != null)
-        {
+        if (token != null) {
             xml.element("token", token);
         }
 
-        for(ExtensionElement pe : getChildExtensions())
-        {
+        for (ExtensionElement pe : getChildExtensions()) {
             xml.optAppend(pe);
         }
 

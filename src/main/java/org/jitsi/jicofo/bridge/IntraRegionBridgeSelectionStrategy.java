@@ -18,31 +18,28 @@ package org.jitsi.jicofo.bridge;
 import java.util.*;
 
 /**
- * Implements a {@link BridgeSelectionStrategy} which selects bridges in a single
- * region, but uses multiple bridges for load balancing.
+ * Implements a {@link BridgeSelectionStrategy} which selects bridges in a
+ * single region, but uses multiple bridges for load balancing.
  */
 class IntraRegionBridgeSelectionStrategy
-    extends BridgeSelectionStrategy
-{
+        extends BridgeSelectionStrategy {
+
     /**
      * Default constructor.
      */
-    public IntraRegionBridgeSelectionStrategy()
-    {}
+    public IntraRegionBridgeSelectionStrategy() {
+    }
 
     @Override
     public Bridge doSelect(
             List<Bridge> bridges,
             Map<Bridge, Integer> conferenceBridges,
-            String participantRegion)
-    {
-        if (bridges.isEmpty())
-        {
+            String participantRegion) {
+        if (bridges.isEmpty()) {
             return null;
         }
 
-        if (conferenceBridges.isEmpty())
-        {
+        if (conferenceBridges.isEmpty()) {
             // Try to match the participant region for the initial selection
             return notLoadedInRegion(bridges, conferenceBridges, participantRegion).orElseGet(
                     () -> leastLoaded(bridges, conferenceBridges, participantRegion).orElse(null));
@@ -52,6 +49,6 @@ class IntraRegionBridgeSelectionStrategy
 
         return notLoadedAlreadyInConferenceInRegion(bridges, conferenceBridges, conferenceRegion).orElseGet(
                 () -> notLoadedInRegion(bridges, conferenceBridges, conferenceRegion).orElseGet(
-                () -> leastLoadedAlreadyInConferenceInRegion(bridges, conferenceBridges, conferenceRegion).orElse(null)));
+                        () -> leastLoadedAlreadyInConferenceInRegion(bridges, conferenceBridges, conferenceRegion).orElse(null)));
     }
 }

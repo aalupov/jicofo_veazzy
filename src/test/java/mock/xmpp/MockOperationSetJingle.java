@@ -32,8 +32,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockOperationSetJingle
-    extends AbstractOperationSetJingle
-{
+        extends AbstractOperationSetJingle {
+
     /**
      * The logger used by this class.
      */
@@ -50,26 +50,23 @@ public class MockOperationSetJingle
      *
      * @param xmppProvider parent XMPP protocol provider
      */
-    public MockOperationSetJingle(MockProtocolProvider xmppProvider)
-    {
+    public MockOperationSetJingle(MockProtocolProvider xmppProvider) {
         Objects.requireNonNull(xmppProvider);
         this.xmppProvider = xmppProvider;
     }
 
     /**
-     * Returns our XMPP address that will be used as 'from' attribute
-     * in Jingle QIs.
+     * Returns our XMPP address that will be used as 'from' attribute in Jingle
+     * QIs.
      */
-    protected EntityFullJid getOurJID()
-    {
+    protected EntityFullJid getOurJID() {
         return getConnection().getUser();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected XmppConnection getConnection()
-    {
+    protected XmppConnection getConnection() {
         return xmppProvider.getXmppConnection();
     }
 }

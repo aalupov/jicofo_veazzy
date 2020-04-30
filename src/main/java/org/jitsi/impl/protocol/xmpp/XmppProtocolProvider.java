@@ -60,10 +60,9 @@ import static org.jivesoftware.smack.SmackException.*;
  * @author Pawel Domas
  */
 public class XmppProtocolProvider
-    extends AbstractProtocolProviderService
-{
-    static
-    {
+        extends AbstractProtocolProviderService {
+
+    static {
         XMPPTCPConnection.setUseStreamManagementResumptionDefault(false);
         XMPPTCPConnection.setUseStreamManagementDefault(false);
     }
@@ -72,7 +71,7 @@ public class XmppProtocolProvider
      * The logger used by this class.
      */
     private final static Logger logger
-        = Logger.getLogger(XmppProtocolProvider.class);
+            = Logger.getLogger(XmppProtocolProvider.class);
 
     /**
      * Active account.
@@ -88,7 +87,7 @@ public class XmppProtocolProvider
      * Current registration state.
      */
     private RegistrationState registrationState
-        = RegistrationState.UNREGISTERED;
+            = RegistrationState.UNREGISTERED;
 
     /**
      * The XMPP connection used by this instance.
@@ -105,19 +104,19 @@ public class XmppProtocolProvider
      * Listens to connection status updates.
      */
     private final XmppConnectionListener connListener
-        = new XmppConnectionListener();
+            = new XmppConnectionListener();
 
     /**
      * Listens to re-connection status updates.
      */
     private final XmppReConnectionListener reConnListener
-        = new XmppReConnectionListener();
+            = new XmppReConnectionListener();
 
     /**
      * Colibri operation set.
      */
     private final OperationSetColibriConferenceImpl colibriTools
-        = new OperationSetColibriConferenceImpl();
+            = new OperationSetColibriConferenceImpl();
 
     /**
      * Smack connection adapter to {@link XmppConnection} used by this instance.
@@ -133,47 +132,44 @@ public class XmppProtocolProvider
      * Creates new instance of {@link XmppProtocolProvider} for given AccountID.
      *
      * @param accountID the <tt>JabberAccountID</tt> that will be used by new
-     *                  instance.
+     * instance.
      */
-    public XmppProtocolProvider(AccountID accountID)
-    {
+    public XmppProtocolProvider(AccountID accountID) {
         this.jabberAccountID = (JabberAccountID) accountID;
 
         ScServiceDiscoveryManager.initIdentity();
 
         addSupportedOperationSet(
-            OperationSetColibriConference.class, colibriTools);
+                OperationSetColibriConference.class, colibriTools);
 
         this.jingleOpSet = new OperationSetJingleImpl(this);
         addSupportedOperationSet(OperationSetJingle.class, jingleOpSet);
 
         addSupportedOperationSet(
-            OperationSetMultiUserChat.class,
-            new OperationSetMultiUserChatImpl(this));
+                OperationSetMultiUserChat.class,
+                new OperationSetMultiUserChatImpl(this));
 
         addSupportedOperationSet(
-            OperationSetJitsiMeetTools.class,
-            new OperationSetMeetToolsImpl());
+                OperationSetJitsiMeetTools.class,
+                new OperationSetMeetToolsImpl());
 
         addSupportedOperationSet(
-            OperationSetSimpleCaps.class,
-            new OpSetSimpleCapsImpl(this));
+                OperationSetSimpleCaps.class,
+                new OpSetSimpleCapsImpl(this));
 
         addSupportedOperationSet(
-            OperationSetDirectSmackXmpp.class,
-            new OpSetDirectSmackXmppImpl(this));
+                OperationSetDirectSmackXmpp.class,
+                new OpSetDirectSmackXmppImpl(this));
 
         addSupportedOperationSet(
-            OperationSetJibri.class,
-            new OperationSetJibri(this));
+                OperationSetJibri.class,
+                new OperationSetJibri(this));
 
         try {
             addSupportedOperationSet(
-                OperationSetSubscription.class,
-                new OpSetSubscriptionImpl(this));
-        }
-        catch (XmppStringprepException e)
-        {
+                    OperationSetSubscription.class,
+                    new OpSetSubscriptionImpl(this));
+        } catch (XmppStringprepException e) {
             throw new IllegalArgumentException("AccountID", e);
         }
     }
@@ -183,16 +179,12 @@ public class XmppProtocolProvider
      */
     @Override
     public synchronized void register(SecurityAuthority securityAuthority)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         DomainBareJid serviceName;
-        try
-        {
+        try {
             serviceName = JidCreate.domainBareFrom(
-                        getAccountID().getUserID());
-        }
-        catch (XmppStringprepException e)
-        {
+                    getAccountID().getUserID());
+        } catch (XmppStringprepException e) {
             throw new OperationFailedException(
                     "Invalid UserID",
                     OperationFailedException.ILLEGAL_ARGUMENT,
@@ -200,57 +192,54 @@ public class XmppProtocolProvider
         }
 
         String serverAddressUserSetting
-            = jabberAccountID.getServerAddress();
+                = jabberAccountID.getServerAddress();
 
         int serverPort
-            = getAccountID().getAccountPropertyInt(
-                    ProtocolProviderFactory.SERVER_PORT, 5222);
+                = getAccountID().getAccountPropertyInt(
+                        ProtocolProviderFactory.SERVER_PORT, 5222);
 
         XMPPTCPConnectionConfiguration.Builder connConfig
-            = XMPPTCPConnectionConfiguration.builder()
-                .setHost(serverAddressUserSetting)
-                .setPort(serverPort)
-                .setXmppDomain(serviceName);
+                = XMPPTCPConnectionConfiguration.builder()
+                        .setHost(serverAddressUserSetting)
+                        .setPort(serverPort)
+                        .setXmppDomain(serviceName);
         ReconnectionManager.setEnabledPerDefault(true);
 
         // focus uses SASL Mechanisms ANONYMOUS and PLAIN, but tries
         // authenticate with GSSAPI when it's offered by the server.
         // Disable GSSAPI.
         SASLAuthentication.unregisterSASLMechanism(
-            SASLGSSAPIMechanism.class.getName());
+                SASLGSSAPIMechanism.class.getName());
 
-        if (jabberAccountID.isAnonymousAuthUsed())
-        {
+        if (jabberAccountID.isAnonymousAuthUsed()) {
             connConfig.performSaslAnonymousAuthentication();
         }
 
         ConfigurationService config = FocusBundleActivator.getConfigService();
-        if (config.getBoolean(FocusManager.ALWAYS_TRUST_PNAME,false))
-        {
-            logger.warn("The always_trust config option is enabled. All" +
-                        " XMPP server provided certificates are accepted.");
+        if (config.getBoolean(FocusManager.ALWAYS_TRUST_PNAME, false)) {
+            logger.warn("The always_trust config option is enabled. All"
+                    + " XMPP server provided certificates are accepted.");
             connConfig.setCustomX509TrustManager(new TrustAllX509TrustManager());
             connConfig.setHostnameVerifier(new TrustAllHostnameVerifier());
         }
 
         connection = new XMPPTCPConnection(connConfig.build());
 
-        if (logger.isTraceEnabled())
-        {
+        if (logger.isTraceEnabled()) {
             enableDebugPacketsLogging();
         }
 
         ScheduledExecutorService executorService
-            = ServiceUtils.getService(
-                    XmppProtocolActivator.bundleContext,
-                    ScheduledExecutorService.class);
+                = ServiceUtils.getService(
+                        XmppProtocolActivator.bundleContext,
+                        ScheduledExecutorService.class);
 
         connectRetry = new RetryStrategy(executorService);
 
         // FIXME we could make retry interval configurable, but we do not have
         // control over retries executed by smack after first connect, so...
         connectRetry.runRetryingTask(
-            new SimpleRetryTask(0, 5000L, true, this::doConnect));
+                new SimpleRetryTask(0, 5000L, true, this::doConnect));
     }
 
     /**
@@ -260,32 +249,30 @@ public class XmppProtocolProvider
      * detect that there is no chance to get connected any any future retries
      * should be canceled.
      */
-    synchronized private boolean doConnect()
-    {
-        if (connection == null)
+    synchronized private boolean doConnect() {
+        if (connection == null) {
             return false;
+        }
 
-        try
-        {
+        try {
             connection.connect();
 
             connection.addConnectionListener(connListener);
 
             ReconnectionManager
-                .getInstanceFor(connection)
-                .addReconnectionListener(reConnListener);
+                    .getInstanceFor(connection)
+                    .addReconnectionListener(reConnListener);
 
             discoInfoManager
-                = new ScServiceDiscoveryManager(
-                    XmppProtocolProvider.this,
-                    FocusBundleActivator.getConfigService(),
-                    connection,
-                    new String[]{},
-                    new String[]{},
-                    false);
+                    = new ScServiceDiscoveryManager(
+                            XmppProtocolProvider.this,
+                            FocusBundleActivator.getConfigService(),
+                            connection,
+                            new String[]{},
+                            new String[]{},
+                            false);
 
-            if (!jabberAccountID.isAnonymousAuthUsed())
-            {
+            if (!jabberAccountID.isAnonymousAuthUsed()) {
                 String login = jabberAccountID.getAuthorizationName();
                 String pass = jabberAccountID.getPassword();
                 Resourcepart resource
@@ -294,24 +281,22 @@ public class XmppProtocolProvider
             }
 
             EventAdmin eventAdmin
-                = ServiceUtils.getService(
-                    XmppProtocolActivator.bundleContext,
-                    EventAdmin.class);
+                    = ServiceUtils.getService(
+                            XmppProtocolActivator.bundleContext,
+                            EventAdmin.class);
 
             colibriTools.initialize(getConnectionAdapter(), eventAdmin);
 
             connection.registerIQRequestHandler(jingleOpSet);
 
-            logger.info("XMPP provider " + jabberAccountID +
-                        " connected (JID: " + connection.getUser() + ")");
+            logger.info("XMPP provider " + jabberAccountID
+                    + " connected (JID: " + connection.getUser() + ")");
 
             return false;
-        }
-        catch (XMPPException
+        } catch (XMPPException
                 | InterruptedException
                 | SmackException
-                | IOException e)
-        {
+                | IOException e) {
             logger.error("Failed to connect/login: " + e.getMessage(), e);
             // If the connect part succeeded, but login failed we don't want to
             // rely on Smack's built-in retries, as it will be handled by
@@ -319,50 +304,45 @@ public class XmppProtocolProvider
             connection.removeConnectionListener(connListener);
 
             ReconnectionManager reconnectionManager
-                = ReconnectionManager.getInstanceFor(connection);
-            if (reconnectionManager != null)
+                    = ReconnectionManager.getInstanceFor(connection);
+            if (reconnectionManager != null) {
                 reconnectionManager.removeReconnectionListener(reConnListener);
+            }
 
-            if (connection.isConnected())
-            {
+            if (connection.isConnected()) {
                 connection.disconnect();
             }
             return true;
         }
     }
 
-    private void notifyConnected()
-    {
-        if (!RegistrationState.REGISTERED.equals(registrationState))
-        {
+    private void notifyConnected() {
+        if (!RegistrationState.REGISTERED.equals(registrationState)) {
             RegistrationState oldState = registrationState;
             registrationState = RegistrationState.REGISTERED;
 
             fireRegistrationStateChanged(
-                oldState,
-                RegistrationState.REGISTERED,
-                RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
-                null);
+                    oldState,
+                    RegistrationState.REGISTERED,
+                    RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
+                    null);
         }
     }
 
-    private void notifyDisconnected()
-    {
-        if (!RegistrationState.UNREGISTERED.equals(registrationState))
-        {
+    private void notifyDisconnected() {
+        if (!RegistrationState.UNREGISTERED.equals(registrationState)) {
             RegistrationState oldState = registrationState;
             registrationState = RegistrationState.UNREGISTERED;
 
             fireRegistrationStateChanged(
-                oldState,
-                RegistrationState.UNREGISTERED,
-                RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
-                null);
+                    oldState,
+                    RegistrationState.UNREGISTERED,
+                    RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
+                    null);
         }
     }
 
-    private void enableDebugPacketsLogging()
-    {
+    private void enableDebugPacketsLogging() {
         // FIXME: consider using packet logging service
         DebugLogger outLogger = new DebugLogger("--> ");
 
@@ -378,13 +358,12 @@ public class XmppProtocolProvider
      */
     @Override
     public synchronized void unregister()
-        throws OperationFailedException
-    {
-        if (connection == null)
+            throws OperationFailedException {
+        if (connection == null) {
             return;
+        }
 
-        if (connectRetry != null)
-        {
+        if (connectRetry != null) {
             connectRetry.cancel();
             connectRetry = null;
         }
@@ -405,8 +384,7 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public RegistrationState getRegistrationState()
-    {
+    public RegistrationState getRegistrationState() {
         return registrationState;
     }
 
@@ -414,8 +392,7 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public String getProtocolName()
-    {
+    public String getProtocolName() {
         return ProtocolNames.JABBER;
     }
 
@@ -423,8 +400,7 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public ProtocolIcon getProtocolIcon()
-    {
+    public ProtocolIcon getProtocolIcon() {
         return null;
     }
 
@@ -432,16 +408,11 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public void shutdown()
-    {
-        if (connection != null)
-        {
-            try
-            {
+    public void shutdown() {
+        if (connection != null) {
+            try {
                 unregister();
-            }
-            catch (OperationFailedException e)
-            {
+            } catch (OperationFailedException e) {
                 logger.error(e.getMessage(), e);
             }
         }
@@ -451,8 +422,7 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public AccountID getAccountID()
-    {
+    public AccountID getAccountID() {
         return jabberAccountID;
     }
 
@@ -460,8 +430,7 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public boolean isSignalingTransportSecure()
-    {
+    public boolean isSignalingTransportSecure() {
         return false;
     }
 
@@ -469,8 +438,7 @@ public class XmppProtocolProvider
      * {@inheritDoc}
      */
     @Override
-    public TransportProtocol getTransportProtocol()
-    {
+    public TransportProtocol getTransportProtocol() {
         return TransportProtocol.UNKNOWN;
     }
 
@@ -479,8 +447,7 @@ public class XmppProtocolProvider
      *
      * @return implementation of {@link org.jitsi.protocol.xmpp.XmppConnection}
      */
-    public XMPPConnection getConnection()
-    {
+    public XMPPConnection getConnection() {
         return connection;
     }
 
@@ -489,8 +456,7 @@ public class XmppProtocolProvider
      *
      * @return our JID if we're connected or <tt>null</tt> otherwise
      */
-    public EntityFullJid getOurJid()
-    {
+    public EntityFullJid getOurJid() {
         return connection != null ? connection.getUser() : null;
     }
 
@@ -499,10 +465,8 @@ public class XmppProtocolProvider
      *
      * @return {@link XmppConnection} provided by this instance.
      */
-    XmppConnection getConnectionAdapter()
-    {
-        if (connectionAdapter == null && connection != null)
-        {
+    XmppConnection getConnectionAdapter() {
+        if (connectionAdapter == null && connection != null) {
             connectionAdapter = new XmppConnectionAdapter(connection);
         }
         return connectionAdapter;
@@ -511,10 +475,8 @@ public class XmppProtocolProvider
     /**
      * FIXME: move to operation set together with ScServiceDiscoveryManager
      */
-    public boolean checkFeatureSupport(Jid contactAddress, String[] features)
-    {
-        try
-        {
+    public boolean checkFeatureSupport(Jid contactAddress, String[] features) {
+        try {
             //FIXME: fix logging levels
             logger.debug("Discovering info for: " + contactAddress);
 
@@ -523,29 +485,23 @@ public class XmppProtocolProvider
             logger.debug("HAVE Discovering info for: " + contactAddress);
 
             logger.debug("Features");
-            for (DiscoverInfo.Feature f : info.getFeatures())
-            {
+            for (DiscoverInfo.Feature f : info.getFeatures()) {
                 logger.debug(f.toXML());
             }
 
             logger.debug("Identities");
-            for (DiscoverInfo.Identity identity : info.getIdentities())
-            {
+            for (DiscoverInfo.Identity identity : info.getIdentities()) {
                 logger.debug(identity.toXML());
             }
-        }
-        catch (XMPPException
+        } catch (XMPPException
                 | InterruptedException
                 | NotConnectedException
-                | NoResponseException e)
-        {
+                | NoResponseException e) {
             logger.error("Error discovering features: " + e.getMessage());
         }
 
-        for (String feature : features)
-        {
-            if (!discoInfoManager.supportsFeature(contactAddress, feature))
-            {
+        for (String feature : features) {
+            if (!discoInfoManager.supportsFeature(contactAddress, feature)) {
                 return false;
             }
         }
@@ -553,12 +509,9 @@ public class XmppProtocolProvider
     }
 
     public boolean checkFeatureSupport(Jid node, String subnode,
-                                       String[] features)
-    {
-        for (String feature : features)
-        {
-            if (!discoInfoManager.supportsFeature(node, feature))
-            {
+            String[] features) {
+        for (String feature : features) {
+            if (!discoInfoManager.supportsFeature(node, feature)) {
                 return false;
             }
         }
@@ -572,19 +525,19 @@ public class XmppProtocolProvider
             throws XMPPException,
             NotConnectedException,
             InterruptedException,
-            NoResponseException
-    {
+            NoResponseException {
         DiscoverItems itemsDisco = discoInfoManager.discoverItems(node);
 
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             logger.debug("HAVE Discovered items for: " + node);
+        }
 
         Set<Jid> result = new HashSet<>();
 
-        for (DiscoverItems.Item item : itemsDisco.getItems())
-        {
-            if (logger.isDebugEnabled())
+        for (DiscoverItems.Item item : itemsDisco.getItems()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug(item.toXML());
+            }
 
             result.add(item.getEntityID());
         }
@@ -592,64 +545,51 @@ public class XmppProtocolProvider
         return result;
     }
 
-    public List<String> getEntityFeatures(Jid node)
-    {
-        try
-        {
+    public List<String> getEntityFeatures(Jid node) {
+        try {
             DiscoverInfo info = discoInfoManager.discoverInfo(node);
             List<String> featureList = new ArrayList<>();
-            for (DiscoverInfo.Feature feature : info.getFeatures())
-            {
+            for (DiscoverInfo.Feature feature : info.getFeatures()) {
                 featureList.add(feature.getVar());
             }
 
             return featureList;
-        }
-        catch (XMPPException
+        } catch (XMPPException
                 | InterruptedException
                 | NoResponseException
-                | NotConnectedException e)
-        {
+                | NotConnectedException e) {
             logger.debug("Error getting feature list: " + e.getMessage());
             return null;
         }
     }
 
     class XmppConnectionListener
-        implements ConnectionListener
-    {
+            implements ConnectionListener {
+
         @Override
-        public void connected(XMPPConnection connection)
-        {
+        public void connected(XMPPConnection connection) {
         }
 
         @Override
-        public void authenticated(XMPPConnection connection, boolean resumed)
-        {
+        public void authenticated(XMPPConnection connection, boolean resumed) {
             notifyConnected();
         }
 
         @Override
-        public void connectionClosed()
-        {
+        public void connectionClosed() {
             logger.info("XMPP connection closed");
 
             //shutdownConnection();
-
             //notifyConnFailed(null);
-
             notifyDisconnected();
         }
 
         @Override
-        public void connectionClosedOnError(Exception e)
-        {
+        public void connectionClosedOnError(Exception e) {
             logger.error("XMPP connection closed on error: " + e.getMessage());
 
             //shutdownConnection();
-
             //notifyConnFailed(e);
-
             notifyDisconnected();
         }
 
@@ -657,42 +597,42 @@ public class XmppProtocolProvider
          * Deprecated and will be removed in smack 4.3
          */
         @Override
-        public void reconnectionSuccessful()
-        {}
+        public void reconnectionSuccessful() {
+        }
 
         /**
          * Deprecated and will be removed in smack 4.3
+         *
          * @param e
          */
         @Override
-        public void reconnectionFailed(Exception e)
-        {}
+        public void reconnectionFailed(Exception e) {
+        }
 
         /**
          * Deprecated and will be removed in smack 4.3
+         *
          * @param i
          */
         @Override
-        public void reconnectingIn(int i)
-        {}
+        public void reconnectingIn(int i) {
+        }
     }
 
     /**
-     * Listener that just logs that we are currently reconnecting or we
-     * failed to reconnect.
+     * Listener that just logs that we are currently reconnecting or we failed
+     * to reconnect.
      */
     static class XmppReConnectionListener
-        implements ReconnectionListener
-    {
+            implements ReconnectionListener {
+
         @Override
-        public void reconnectingIn(int i)
-        {
+        public void reconnectingIn(int i) {
             logger.info("XMPP reconnecting in: " + i);
         }
 
         @Override
-        public void reconnectionFailed(Exception e)
-        {
+        public void reconnectionFailed(Exception e) {
             logger.error("XMPP reconnection failed: " + e.getMessage());
         }
     }
@@ -701,18 +641,16 @@ public class XmppProtocolProvider
      * Implements {@link XmppConnection}.
      */
     private static class XmppConnectionAdapter
-        implements XmppConnection
-    {
+            implements XmppConnection {
+
         private final XMPPConnection connection;
 
-        XmppConnectionAdapter(XMPPConnection connection)
-        {
+        XmppConnectionAdapter(XMPPConnection connection) {
             this.connection = Objects.requireNonNull(connection, "connection");
         }
 
         @Override
-        public EntityFullJid getUser()
-        {
+        public EntityFullJid getUser() {
             return this.connection.getUser();
         }
 
@@ -720,20 +658,14 @@ public class XmppProtocolProvider
          * {@inheritDoc}
          */
         @Override
-        public void sendStanza(Stanza packet)
-        {
+        public void sendStanza(Stanza packet) {
             Objects.requireNonNull(packet, "packet");
-            try
-            {
+            try {
                 connection.sendStanza(packet);
-            }
-            catch (NotConnectedException e)
-            {
+            } catch (NotConnectedException e) {
                 logger.error("No connection - unable to send packet: "
                         + packet.toXML(), e);
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 logger.error("Failed to send packet: "
                         + packet.toXML().toString(), e);
             }
@@ -744,39 +676,29 @@ public class XmppProtocolProvider
          */
         @Override
         public IQ sendPacketAndGetReply(IQ packet)
-            throws OperationFailedException
-        {
+                throws OperationFailedException {
             Objects.requireNonNull(packet, "packet");
 
-            try
-            {
+            try {
                 StanzaCollector packetCollector
                         = connection.createStanzaCollectorAndSend(packet);
-                try
-                {
+                try {
                     //FIXME: retry allocation on timeout
                     return packetCollector.nextResult();
-                }
-                finally
-                {
+                } finally {
                     packetCollector.cancel();
                 }
-            }
-            catch (InterruptedException
-                    /*| XMPPErrorException
-                    | NoResponseException*/ e)
-            {
+            } catch (InterruptedException /*| XMPPErrorException
+                    | NoResponseException*/ e) {
                 throw new OperationFailedException(
                         "No response or failed otherwise: " + packet.toXML(),
                         OperationFailedException.GENERAL_ERROR,
                         e);
-            }
-            catch (NotConnectedException e)
-            {
+            } catch (NotConnectedException e) {
                 throw new OperationFailedException(
-                    "No connection - unable to send packet: " + packet.toXML(),
-                    OperationFailedException.PROVIDER_NOT_REGISTERED,
-                    e);
+                        "No connection - unable to send packet: " + packet.toXML(),
+                        OperationFailedException.PROVIDER_NOT_REGISTERED,
+                        e);
             }
         }
 
@@ -786,23 +708,20 @@ public class XmppProtocolProvider
                 StanzaListener stanzaListener,
                 ExceptionCallback exceptionCallback,
                 long timeout)
-            throws NotConnectedException, InterruptedException
-        {
+                throws NotConnectedException, InterruptedException {
             connection.sendIqWithResponseCallback(
-                iq, stanzaListener, exceptionCallback, timeout);
+                    iq, stanzaListener, exceptionCallback, timeout);
         }
 
         @Override
         public IQRequestHandler registerIQRequestHandler(
-            IQRequestHandler handler)
-        {
+                IQRequestHandler handler) {
             return connection.registerIQRequestHandler(handler);
         }
 
         @Override
         public IQRequestHandler unregisterIQRequestHandler(
-            IQRequestHandler handler)
-        {
+                IQRequestHandler handler) {
             return connection.unregisterIQRequestHandler(handler);
         }
     }
@@ -810,24 +729,21 @@ public class XmppProtocolProvider
     // FIXME: use Smack's debug interface
     // FIXME: misses IQ get/set stanzas due to SMACK-728 (PR Smack#158)
     private static class DebugLogger
-        implements StanzaFilter, StanzaListener
-    {
+            implements StanzaFilter, StanzaListener {
+
         private final String prefix;
 
-        DebugLogger(String prefix)
-        {
+        DebugLogger(String prefix) {
             this.prefix = prefix;
         }
 
         @Override
-        public boolean accept(Stanza packet)
-        {
+        public boolean accept(Stanza packet) {
             return true;
         }
 
         @Override
-        public void processStanza(Stanza packet)
-        {
+        public void processStanza(Stanza packet) {
             logger.trace(prefix + packet.toXML());
         }
     }

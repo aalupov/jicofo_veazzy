@@ -40,14 +40,14 @@ import java.util.concurrent.*;
  * @author Pawel Domas
  */
 public class MockMultiUserChat
-    extends AbstractChatRoom
-    implements ChatRoom2
-{
+        extends AbstractChatRoom
+        implements ChatRoom2 {
+
     /**
      * The logger
      */
     private static final Logger logger
-        = Logger.getLogger(MockMultiUserChat.class);
+            = Logger.getLogger(MockMultiUserChat.class);
 
     private final EntityBareJid roomName;
 
@@ -60,122 +60,106 @@ public class MockMultiUserChat
     private XmppChatMember me;
 
     /**
-     * Listeners that will be notified of changes in member status in the
-     * room such as member joined, left or being kicked or dropped.
+     * Listeners that will be notified of changes in member status in the room
+     * such as member joined, left or being kicked or dropped.
      */
     private final Vector<ChatRoomMemberPresenceListener> memberListeners
-        = new Vector<>();
+            = new Vector<>();
 
     private final Vector<ChatRoomLocalUserRoleListener> localUserRoleListeners
-        = new Vector<>();
+            = new Vector<>();
 
     private final Vector<ChatRoomMemberRoleListener> memberRoleListeners
-        = new Vector<>();
+            = new Vector<>();
 
     private JitsiMeetConference conference;
 
     public MockMultiUserChat(EntityBareJid roomName,
-                             ProtocolProviderService protocolProviderService)
-    {
+            ProtocolProviderService protocolProviderService) {
         this.roomName = roomName;
         this.protocolProvider = protocolProviderService;
     }
 
     @Override
-    public EntityFullJid getLocalOccupantJid()
-    {
+    public EntityFullJid getLocalOccupantJid() {
         return me != null ? me.getOccupantJid() : null;
     }
 
     @Override
-    public Collection<ExtensionElement> getPresenceExtensions()
-    {
+    public Collection<ExtensionElement> getPresenceExtensions() {
         throw new RuntimeException("not implemented");
     }
 
     @Override
     public boolean containsPresenceExtension(
-        String elementName, String namespace)
-    {
+            String elementName, String namespace) {
         return false;
     }
 
     @Override
     public void modifyPresence(
-        Collection<ExtensionElement> toRemove,
-        Collection<ExtensionElement> toAdd)
-    {
+            Collection<ExtensionElement> toRemove,
+            Collection<ExtensionElement> toAdd) {
         throw new RuntimeException("not implemented");
     }
 
     @Override
-    public void setConference(JitsiMeetConference conference)
-    {
+    public void setConference(JitsiMeetConference conference) {
         this.conference = conference;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return roomName.toString();
     }
 
     @Override
-    public EntityBareJid getRoomJid()
-    {
+    public EntityBareJid getRoomJid() {
         return roomName;
     }
 
     @Override
-    public String getIdentifier()
-    {
+    public String getIdentifier() {
         return null;
     }
 
     @Override
     public void join()
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         joinAs(getParentProvider().getAccountID()
-            .getAccountPropertyString(ProtocolProviderFactory.DISPLAY_NAME));
+                .getAccountPropertyString(ProtocolProviderFactory.DISPLAY_NAME));
     }
 
     @Override
     public void join(byte[] password)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         join();
     }
 
     @Override
     public void joinAs(String nickname)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         joinAs(nickname, null);
     }
 
     private EntityFullJid createAddressForName(String nickname)
-            throws XmppStringprepException
-    {
+            throws XmppStringprepException {
         return JidCreate.entityFullFrom(roomName, Resourcepart.from(nickname));
     }
 
     @Override
     public void joinAs(String nickname, byte[] password)
-        throws OperationFailedException
-    {
-        if (isJoined)
+            throws OperationFailedException {
+        if (isJoined) {
             throw new OperationFailedException("Alread joined the room", 0);
+        }
 
         isJoined = true;
 
         MockRoomMember member;
-        try
-        {
+        try {
             member = new MockRoomMember(createAddressForName(nickname), this);
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             throw new OperationFailedException(
                     "Invalid mock room member JID",
                     OperationFailedException.ILLEGAL_ARGUMENT,
@@ -185,28 +169,25 @@ public class MockMultiUserChat
         // FIXME: for mock purposes we are always the owner on join()
         boolean isOwner = true;//= members.size() == 0;
 
-        synchronized (members)
-        {
+        synchronized (members) {
             members.add(member);
 
             me = member;
 
             fireMemberPresenceEvent(
-                me, me, ChatRoomMemberPresenceChangeEvent.MEMBER_JOINED, null);
+                    me, me, ChatRoomMemberPresenceChangeEvent.MEMBER_JOINED, null);
         }
 
         ChatRoomMemberRole oldRole = me.getRole();
-        if (isOwner)
-        {
+        if (isOwner) {
             me.setRole(ChatRoomMemberRole.OWNER);
         }
 
         fireLocalUserRoleEvent(
-            me, oldRole, true);
+                me, oldRole, true);
     }
 
-    public MockRoomMember mockOwnerJoin(EntityFullJid name)
-    {
+    public MockRoomMember mockOwnerJoin(EntityFullJid name) {
         MockRoomMember member = new MockRoomMember(name, this);
 
         member.setRole(ChatRoomMemberRole.OWNER);
@@ -217,38 +198,30 @@ public class MockMultiUserChat
     }
 
     public MockRoomMember mockJoin(String nickname)
-            throws XmppStringprepException
-    {
+            throws XmppStringprepException {
         return mockJoin(createMockRoomMember(nickname));
     }
 
     public MockRoomMember createMockRoomMember(String nickname)
-            throws XmppStringprepException
-    {
+            throws XmppStringprepException {
         return new MockRoomMember(
-            createAddressForName(nickname), this);
+                createAddressForName(nickname), this);
     }
 
-    public MockRoomMember mockJoin(MockRoomMember member)
-    {
-        synchronized (members)
-        {
+    public MockRoomMember mockJoin(MockRoomMember member) {
+        synchronized (members) {
             Resourcepart name;
-            try
-            {
+            try {
                 name = Resourcepart.from(member.getName());
-            }
-            catch (XmppStringprepException e)
-            {
+            } catch (XmppStringprepException e) {
                 throw new IllegalArgumentException(
                         "The member name " + member.getName() + " is invalid");
             }
 
-            if (findMember(name) != null)
-            {
+            if (findMember(name) != null) {
                 throw new IllegalArgumentException(
                         "The member with name: " + name
-                            + " is in the room already");
+                        + " is in the room already");
             }
 
             members.add(member);
@@ -261,24 +234,18 @@ public class MockMultiUserChat
         }
     }
 
-    public void mockLeave(String memberName)
-    {
-        for (ChatRoomMember member : members)
-        {
-            if (member.getName().equals(memberName))
-            {
+    public void mockLeave(String memberName) {
+        for (ChatRoomMember member : members) {
+            if (member.getName().equals(memberName)) {
                 mockLeave((MockRoomMember) member);
             }
         }
     }
 
-    private void mockLeave(MockRoomMember member)
-    {
-        synchronized (members)
-        {
+    private void mockLeave(MockRoomMember member) {
+        synchronized (members) {
 
-            if (!members.remove(member))
-            {
+            if (!members.remove(member)) {
                 throw new RuntimeException(
                         "Member is not in the room " + member);
             }
@@ -290,276 +257,232 @@ public class MockMultiUserChat
     }
 
     @Override
-    public boolean isJoined()
-    {
+    public boolean isJoined() {
         return isJoined;
     }
 
     @Override
-    public void leave()
-    {
-        if (!isJoined)
+    public void leave() {
+        if (!isJoined) {
             return;
+        }
 
         isJoined = false;
 
-        synchronized (members)
-        {
+        synchronized (members) {
             members.remove(me);
 
             fireMemberPresenceEvent(
-                me, me, ChatRoomMemberPresenceChangeEvent.MEMBER_LEFT, null);
+                    me, me, ChatRoomMemberPresenceChangeEvent.MEMBER_LEFT, null);
         }
 
         me = null;
     }
 
     @Override
-    public String getSubject()
-    {
+    public String getSubject() {
         return null;
     }
 
     @Override
     public void setSubject(String subject)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
 
     }
 
     @Override
-    public String getUserNickname()
-    {
+    public String getUserNickname() {
         return null;
     }
 
     @Override
-    public ChatRoomMemberRole getUserRole()
-    {
+    public ChatRoomMemberRole getUserRole() {
         return ChatRoomMemberRole.OWNER;
     }
 
     @Override
     public void setLocalUserRole(ChatRoomMemberRole role)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
 
     }
 
     @Override
     public void setUserNickname(String nickname)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
 
     }
 
     @Override
     public void addMemberPresenceListener(
-        ChatRoomMemberPresenceListener listener)
-    {
-        synchronized (memberListeners)
-        {
+            ChatRoomMemberPresenceListener listener) {
+        synchronized (memberListeners) {
             memberListeners.add(listener);
         }
     }
 
     @Override
     public void removeMemberPresenceListener(
-        ChatRoomMemberPresenceListener listener)
-    {
-        synchronized (memberListeners)
-        {
+            ChatRoomMemberPresenceListener listener) {
+        synchronized (memberListeners) {
             memberListeners.remove(listener);
         }
     }
 
     @Override
-    public void addLocalUserRoleListener(ChatRoomLocalUserRoleListener listener)
-    {
+    public void addLocalUserRoleListener(ChatRoomLocalUserRoleListener listener) {
         localUserRoleListeners.add(listener);
     }
 
     @Override
     public void removelocalUserRoleListener(
-        ChatRoomLocalUserRoleListener listener)
-    {
+            ChatRoomLocalUserRoleListener listener) {
         localUserRoleListeners.remove(listener);
     }
 
     @Override
-    public void addMemberRoleListener(ChatRoomMemberRoleListener listener)
-    {
+    public void addMemberRoleListener(ChatRoomMemberRoleListener listener) {
         memberRoleListeners.add(listener);
     }
 
     @Override
-    public void removeMemberRoleListener(ChatRoomMemberRoleListener listener)
-    {
+    public void removeMemberRoleListener(ChatRoomMemberRoleListener listener) {
         memberRoleListeners.remove(listener);
     }
 
     @Override
     public void addPropertyChangeListener(
-        ChatRoomPropertyChangeListener listener)
-    {
+            ChatRoomPropertyChangeListener listener) {
 
     }
 
     @Override
     public void removePropertyChangeListener(
-        ChatRoomPropertyChangeListener listener)
-    {
+            ChatRoomPropertyChangeListener listener) {
 
     }
 
     @Override
     public void addMemberPropertyChangeListener(
-        ChatRoomMemberPropertyChangeListener listener)
-    {
+            ChatRoomMemberPropertyChangeListener listener) {
 
     }
 
     @Override
     public void removeMemberPropertyChangeListener(
-        ChatRoomMemberPropertyChangeListener listener)
-    {
+            ChatRoomMemberPropertyChangeListener listener) {
 
     }
 
     @Override
-    public void invite(String userAddress, String reason)
-    {
+    public void invite(String userAddress, String reason) {
 
     }
 
     @Override
-    public List<ChatRoomMember> getMembers()
-    {
+    public List<ChatRoomMember> getMembers() {
         return members;
     }
 
     @Override
-    public int getMembersCount()
-    {
+    public int getMembersCount() {
         return members.size();
     }
 
     @Override
-    public void addMessageListener(ChatRoomMessageListener listener)
-    {
+    public void addMessageListener(ChatRoomMessageListener listener) {
 
     }
 
     @Override
-    public void removeMessageListener(ChatRoomMessageListener listener)
-    {
+    public void removeMessageListener(ChatRoomMessageListener listener) {
 
     }
 
     @Override
     public Message createMessage(byte[] content, String contentType,
-                                 String contentEncoding, String subject)
-    {
+            String contentEncoding, String subject) {
         return null;
     }
 
     @Override
-    public Message createMessage(String messageText)
-    {
+    public Message createMessage(String messageText) {
         return null;
     }
 
     @Override
     public void sendMessage(Message message)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
 
     }
 
     @Override
-    public ProtocolProviderService getParentProvider()
-    {
+    public ProtocolProviderService getParentProvider() {
         return protocolProvider;
     }
 
     @Override
     public Iterator<ChatRoomMember> getBanList()
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         return null;
     }
 
     @Override
     public void banParticipant(ChatRoomMember chatRoomMember, String reason)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
 
     }
 
     @Override
     public void kickParticipant(ChatRoomMember chatRoomMember, String reason)
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
 
     }
 
     @Override
     public ChatRoomConfigurationForm getConfigurationForm()
-        throws OperationFailedException
-    {
+            throws OperationFailedException {
         return null;
     }
 
     @Override
-    public boolean isSystem()
-    {
+    public boolean isSystem() {
         return false;
     }
 
     @Override
-    public boolean isPersistent()
-    {
+    public boolean isPersistent() {
         return false;
     }
 
     @Override
-    public Contact getPrivateContactByNickname(String name)
-    {
+    public Contact getPrivateContactByNickname(String name) {
         return null;
     }
 
     @Override
-    public void grantAdmin(String address)
-    {
+    public void grantAdmin(String address) {
 
     }
 
     @Override
-    public void grantMembership(String address)
-    {
+    public void grantMembership(String address) {
 
     }
 
     @Override
-    public void grantModerator(String address)
-    {
-        try
-        {
+    public void grantModerator(String address) {
+        try {
             grantRole(
                     JidCreate.entityFullFrom(address),
                     ChatRoomMemberRole.MODERATOR);
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             logger.error("Invalid address to grant moderator", e);
         }
     }
 
-    private void grantRole(EntityFullJid address, ChatRoomMemberRole newRole)
-    {
+    private void grantRole(EntityFullJid address, ChatRoomMemberRole newRole) {
         MockRoomMember member = findMember(address.getResourceOrNull());
-        if (member == null)
-        {
+        if (member == null) {
             logger.error("Member not found for nickname: " + address);
             return;
         }
@@ -571,106 +494,88 @@ public class MockMultiUserChat
         fireMemberRoleEvent(member, oldRole);
     }
 
-    private MockRoomMember findMember(Resourcepart nickname)
-    {
-        if (nickname == null)
-        {
+    private MockRoomMember findMember(Resourcepart nickname) {
+        if (nickname == null) {
             return null;
         }
 
-        for (ChatRoomMember member : members)
-        {
-            if (nickname.toString().equals(member.getName()))
+        for (ChatRoomMember member : members) {
+            if (nickname.toString().equals(member.getName())) {
                 return (MockRoomMember) member;
+            }
         }
         return null;
     }
 
     @Override
-    public void grantOwnership(String address)
-    {
-        try
-        {
+    public void grantOwnership(String address) {
+        try {
             grantRole(
                     JidCreate.entityFullFrom(address),
                     ChatRoomMemberRole.OWNER);
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             logger.error("Invalid address to grant ownership", e);
         }
     }
 
     @Override
-    public void grantVoice(String nickname)
-    {
+    public void grantVoice(String nickname) {
 
     }
 
     @Override
-    public void revokeAdmin(String address)
-    {
+    public void revokeAdmin(String address) {
 
     }
 
     @Override
-    public void revokeMembership(String address)
-    {
+    public void revokeMembership(String address) {
 
     }
 
     @Override
-    public void revokeModerator(String nickname)
-    {
+    public void revokeModerator(String nickname) {
 
     }
 
     @Override
-    public void revokeOwnership(String address)
-    {
+    public void revokeOwnership(String address) {
 
     }
 
     @Override
-    public void revokeVoice(String nickname)
-    {
+    public void revokeVoice(String nickname) {
 
     }
 
     @Override
     public ConferenceDescription publishConference(ConferenceDescription cd,
-                                                   String name)
-    {
+            String name) {
         return null;
     }
 
     @Override
-    public void updatePrivateContactPresenceStatus(String nickname)
-    {
+    public void updatePrivateContactPresenceStatus(String nickname) {
 
     }
 
     @Override
-    public void updatePrivateContactPresenceStatus(Contact contact)
-    {
+    public void updatePrivateContactPresenceStatus(Contact contact) {
 
     }
 
     @Override
-    public boolean destroy(String reason, String alternateAddress)
-    {
+    public boolean destroy(String reason, String alternateAddress) {
         return false;
     }
 
     @Override
-    public List<String> getMembersWhiteList()
-    {
+    public List<String> getMembersWhiteList() {
         return null;
     }
 
     @Override
-    public void setMembersWhiteList(List<String> members)
-    {
+    public void setMembersWhiteList(List<String> members) {
 
     }
 
@@ -681,75 +586,70 @@ public class MockMultiUserChat
      *
      * @param member the <tt>ChatRoomMember</tt> that changed its presence
      * status
-     * @param actor the <tt>ChatRoomMember</tt> that participated as an actor
-     * in this event
+     * @param actor the <tt>ChatRoomMember</tt> that participated as an actor in
+     * this event
      * @param eventID the identifier of the event
      * @param eventReason the reason of this event
      */
     private void fireMemberPresenceEvent(ChatRoomMember member,
-                                         ChatRoomMember actor,
-                                         String eventID, String eventReason)
-    {
+            ChatRoomMember actor,
+            String eventID, String eventReason) {
         ChatRoomMemberPresenceChangeEvent evt
-            = new ChatRoomMemberPresenceChangeEvent(
-                    this, member, actor, eventID, eventReason);
+                = new ChatRoomMemberPresenceChangeEvent(
+                        this, member, actor, eventID, eventReason);
 
         Iterable<ChatRoomMemberPresenceListener> listeners;
-        synchronized (memberListeners)
-        {
+        synchronized (memberListeners) {
             listeners = new ArrayList<>(memberListeners);
         }
 
-        for (ChatRoomMemberPresenceListener listener : listeners)
+        for (ChatRoomMemberPresenceListener listener : listeners) {
             listener.memberPresenceChanged(evt);
+        }
     }
 
     private void fireLocalUserRoleEvent(ChatRoomMember member,
-                                        ChatRoomMemberRole oldRole,
-                                        boolean isInitial)
-    {
+            ChatRoomMemberRole oldRole,
+            boolean isInitial) {
         ChatRoomLocalUserRoleChangeEvent evt
-            = new ChatRoomLocalUserRoleChangeEvent(
-                    this, oldRole, member.getRole(), isInitial);
+                = new ChatRoomLocalUserRoleChangeEvent(
+                        this, oldRole, member.getRole(), isInitial);
 
         Iterable<ChatRoomLocalUserRoleListener> listeners;
-        synchronized (localUserRoleListeners)
-        {
+        synchronized (localUserRoleListeners) {
             listeners = new ArrayList<>(localUserRoleListeners);
         }
 
-        for (ChatRoomLocalUserRoleListener listener : listeners)
+        for (ChatRoomLocalUserRoleListener listener : listeners) {
             listener.localUserRoleChanged(evt);
+        }
     }
 
     private void fireMemberRoleEvent(ChatRoomMember member,
-                                     ChatRoomMemberRole oldRole)
-    {
+            ChatRoomMemberRole oldRole) {
         ChatRoomMemberRoleChangeEvent evt
-            = new ChatRoomMemberRoleChangeEvent(
-                    this, member, oldRole, member.getRole());
+                = new ChatRoomMemberRoleChangeEvent(
+                        this, member, oldRole, member.getRole());
 
         Iterable<ChatRoomMemberRoleListener> listeners;
-        synchronized (memberRoleListeners)
-        {
+        synchronized (memberRoleListeners) {
             listeners = new ArrayList<>(memberRoleListeners);
         }
 
-        for (ChatRoomMemberRoleListener listener : listeners)
+        for (ChatRoomMemberRoleListener listener : listeners) {
             listener.memberRoleChanged(evt);
+        }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "MockMUC@" + hashCode()
-            + "["+ this.roomName + ", "
-            + protocolProvider + "]";
+                + "[" + this.roomName + ", "
+                + protocolProvider + "]";
     }
 
     @Override
-    public XmppChatMember findChatMember(Jid mucJid)
-    {
+    public XmppChatMember findChatMember(Jid mucJid) {
         return findMember(mucJid.getResourceOrNull());
     }
 

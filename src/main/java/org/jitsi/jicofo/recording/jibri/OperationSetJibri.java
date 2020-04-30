@@ -28,16 +28,16 @@ import org.jivesoftware.smack.packet.*;
 import java.util.*;
 
 /**
- * This operation is basically just an IQ handler for {@link JibriIq}s.
- * However, all conferences register here so that they can get a hold of
- * the incoming Jibri IQs and process them.
+ * This operation is basically just an IQ handler for {@link JibriIq}s. However,
+ * all conferences register here so that they can get a hold of the incoming
+ * Jibri IQs and process them.
  */
 public class OperationSetJibri
-    extends AbstractIqRequestHandler
-    implements OperationSet, RegistrationStateChangeListener
-{
+        extends AbstractIqRequestHandler
+        implements OperationSet, RegistrationStateChangeListener {
+
     private final List<CommonJibriStuff> jibris = Collections.synchronizedList(
-        new LinkedList<CommonJibriStuff>());
+            new LinkedList<CommonJibriStuff>());
 
     private final XmppProtocolProvider protocolProvider;
 
@@ -46,8 +46,7 @@ public class OperationSetJibri
      *
      * @param protocolProvider the XMPP to which this instance is bound.
      */
-    public OperationSetJibri(XmppProtocolProvider protocolProvider)
-    {
+    public OperationSetJibri(XmppProtocolProvider protocolProvider) {
         super(JibriIq.ELEMENT_NAME, JibriIq.NAMESPACE, IQ.Type.set, Mode.async);
         this.protocolProvider = protocolProvider;
         protocolProvider.addRegistrationStateChangeListener(this);
@@ -58,8 +57,7 @@ public class OperationSetJibri
      *
      * @param jibri The Jibri instance that is interested in {@link JibriIq}s.
      */
-    public void addJibri(CommonJibriStuff jibri)
-    {
+    public void addJibri(CommonJibriStuff jibri) {
         jibris.add(jibri);
     }
 
@@ -68,8 +66,7 @@ public class OperationSetJibri
      *
      * @param jibri the Jibri handler to remove.
      */
-    public void removeJibri(CommonJibriStuff jibri)
-    {
+    public void removeJibri(CommonJibriStuff jibri) {
         jibris.remove(jibri);
     }
 
@@ -77,24 +74,19 @@ public class OperationSetJibri
      * {@inheritDoc}
      */
     @Override
-    public IQ handleIQRequest(IQ iq)
-    {
+    public IQ handleIQRequest(IQ iq) {
         CommonJibriStuff theJibri = null;
 
-        synchronized (jibris)
-        {
-            for (CommonJibriStuff jibri : jibris)
-            {
-                if (jibri.accept((JibriIq) iq))
-                {
+        synchronized (jibris) {
+            for (CommonJibriStuff jibri : jibris) {
+                if (jibri.accept((JibriIq) iq)) {
                     theJibri = jibri;
                     break;
                 }
             }
         }
 
-        if (theJibri != null)
-        {
+        if (theJibri != null) {
             return theJibri.handleIQRequest((JibriIq) iq);
         }
 
@@ -103,11 +95,9 @@ public class OperationSetJibri
     }
 
     @Override
-    public void registrationStateChanged(RegistrationStateChangeEvent evt)
-    {
+    public void registrationStateChanged(RegistrationStateChangeEvent evt) {
         // Do initializations which require valid connection
-        if (RegistrationState.REGISTERED.equals(evt.getNewState()))
-        {
+        if (RegistrationState.REGISTERED.equals(evt.getNewState())) {
             protocolProvider.getConnection().registerIQRequestHandler(this);
         }
     }

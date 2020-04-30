@@ -24,8 +24,8 @@ import org.jivesoftware.smack.packet.*;
  *
  * @author Sebastien Vincent
  */
-public class InputEvtIQ extends IQ
-{
+public class InputEvtIQ extends IQ {
+
     /**
      * The namespace that input event belongs to.
      */
@@ -33,18 +33,16 @@ public class InputEvtIQ extends IQ
 
     /**
      * The namespace for peer that supports input event as a sharing server
-     * (sharer):
-     * Sends to remote peer "start" or "stop" action to respectively allows or
-     * disables remote peer to send "notify" action about its mouse or keyboard
-     * events.
+     * (sharer): Sends to remote peer "start" or "stop" action to respectively
+     * allows or disables remote peer to send "notify" action about its mouse or
+     * keyboard events.
      */
     public static final String NAMESPACE_SERVER = NAMESPACE + "/sharer";
 
     /**
      * The namespace for peer that supports input event as a sharing clent
-     * (sharee):
-     * Sends "notify" action describing mouse or keyboard events to the remote
-     * peer which shares its desktop.
+     * (sharee): Sends "notify" action describing mouse or keyboard events to
+     * the remote peer which shares its desktop.
      */
     public static final String NAMESPACE_CLIENT = NAMESPACE + "/sharee";
 
@@ -66,14 +64,13 @@ public class InputEvtIQ extends IQ
     /**
      * List of remote-control elements.
      */
-    private List<RemoteControlExtension> remoteControls =
-        new ArrayList<RemoteControlExtension>();
+    private List<RemoteControlExtension> remoteControls
+            = new ArrayList<RemoteControlExtension>();
 
     /**
      * Constructor.
      */
-    public InputEvtIQ()
-    {
+    public InputEvtIQ() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
@@ -83,20 +80,15 @@ public class InputEvtIQ extends IQ
      * @return XML representation of the IQ
      */
     @Override
-    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder bldr)
-    {
+    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder bldr) {
         bldr.attribute(ACTION_ATTR_NAME, getAction().toString());
-        if(remoteControls.size() > 0)
-        {
+        if (remoteControls.size() > 0) {
             bldr.rightAngleBracket();
             // FIXME use extensions list of IQ
-            for(RemoteControlExtension p : remoteControls)
-            {
+            for (RemoteControlExtension p : remoteControls) {
                 bldr.append(p.toXML());
             }
-        }
-        else
-        {
+        } else {
             bldr.setEmptyElement();
         }
 
@@ -112,8 +104,7 @@ public class InputEvtIQ extends IQ
      *
      * @param action the value of the <tt>action</tt> attribute.
      */
-    public void setAction(InputEvtAction action)
-    {
+    public void setAction(InputEvtAction action) {
         this.action = action;
     }
 
@@ -126,8 +117,7 @@ public class InputEvtIQ extends IQ
      *
      * @return the value of the <tt>action</tt> attribute.
      */
-    public InputEvtAction getAction()
-    {
+    public InputEvtAction getAction() {
         return action;
     }
 
@@ -136,8 +126,7 @@ public class InputEvtIQ extends IQ
      *
      * @param item remote-control extension
      */
-    public void addRemoteControl(RemoteControlExtension item)
-    {
+    public void addRemoteControl(RemoteControlExtension item) {
         remoteControls.add(item);
     }
 
@@ -146,8 +135,7 @@ public class InputEvtIQ extends IQ
      *
      * @param item remote-control extension
      */
-    public void removeRemoteControl(RemoteControlExtension item)
-    {
+    public void removeRemoteControl(RemoteControlExtension item) {
         remoteControls.remove(item);
     }
 
@@ -156,8 +144,7 @@ public class InputEvtIQ extends IQ
      *
      * @return list of <tt>RemoteControlExtension</tt>
      */
-    public List<RemoteControlExtension> getRemoteControls()
-    {
+    public List<RemoteControlExtension> getRemoteControls() {
         return remoteControls;
     }
 }

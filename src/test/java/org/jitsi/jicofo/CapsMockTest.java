@@ -33,35 +33,34 @@ import static org.junit.Assert.*;
  *
  */
 @RunWith(JUnit4.class)
-public class CapsMockTest
-{
+public class CapsMockTest {
+
     @Test
     public void testMockCaps()
-            throws XmppStringprepException
-    {
+            throws XmppStringprepException {
         MockSetSimpleCapsOpSet mockCaps = new MockSetSimpleCapsOpSet(
                 JidCreate.domainBareFrom("root"));
 
         MockCapsNode node = new MockCapsNode(
-            JidCreate.from("node1"),
-            new String[]{ "featureA", "featureB"});
+                JidCreate.from("node1"),
+                new String[]{"featureA", "featureB"});
 
         mockCaps.addChildNode(node);
 
         mockCaps.addChildNode(
-            new MockCapsNode(
-                    JidCreate.from("node2"),
-                new String[]{ "featureC"}));
+                new MockCapsNode(
+                        JidCreate.from("node2"),
+                        new String[]{"featureC"}));
 
         mockCaps.addChildNode(
-            new MockCapsNode(
-                    JidCreate.from("node3"),
-                new String[]{ "featureC"}));
+                new MockCapsNode(
+                        JidCreate.from("node3"),
+                        new String[]{"featureC"}));
 
         assertTrue(
-            mockCaps.hasFeatureSupport(
-                    JidCreate.from("node1"),
-                new String[]{ "featureA", "featureB"}));
+                mockCaps.hasFeatureSupport(
+                        JidCreate.from("node1"),
+                        new String[]{"featureA", "featureB"}));
 
         Set<Jid> nodes = mockCaps.getItems(JidCreate.domainBareFrom("root"));
         assertEquals(3, nodes.size());

@@ -18,15 +18,15 @@ package org.jitsi.xmpp.extensions.jitsimeet;
 import org.jitsi.xmpp.extensions.*;
 
 /**
- * A packet extension which contains the information about the current
- * bridge session.
+ * A packet extension which contains the information about the current bridge
+ * session.
  *
  * @author Boris Grozev
  * @author Pawel Domas
  */
 public class BridgeSessionPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the {@code bridge-session} element.
      */
@@ -50,13 +50,11 @@ public class BridgeSessionPacketExtension
     /**
      * Creates new instance of {@code BridgeSessionPacketExtension}.
      */
-    public BridgeSessionPacketExtension()
-    {
+    public BridgeSessionPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
-    public BridgeSessionPacketExtension(String id, String region)
-    {
+    public BridgeSessionPacketExtension(String id, String region) {
         this();
         setId(id);
         setRegion(region);
@@ -65,35 +63,34 @@ public class BridgeSessionPacketExtension
     /**
      * @return the region.
      */
-    public String getRegion()
-    {
+    public String getRegion() {
         return getAttributeAsString(REGION_ATTR_NAME);
     }
 
     /**
      * Sets the region.
+     *
      * @param region the value to set.
      */
-    public void setRegion(String region)
-    {
+    public void setRegion(String region) {
         setAttribute(REGION_ATTR_NAME, region);
     }
 
     /**
      * The bridge session id.
+     *
      * @return the id.
      */
-    public String getId()
-    {
+    public String getId() {
         return getAttributeAsString(ID_ATTR_NAME);
     }
 
     /**
      * Sets the id.
+     *
      * @param id the value to set.
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
         setAttribute(ID_ATTR_NAME, id);
     }
 }

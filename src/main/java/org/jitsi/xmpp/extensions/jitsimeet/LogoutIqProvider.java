@@ -15,7 +15,6 @@
  */
 package org.jitsi.xmpp.extensions.jitsimeet;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.provider.*;
 import org.xmlpull.v1.*;
@@ -27,16 +26,15 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class LogoutIqProvider
-    extends IQProvider<LogoutIq>
-{
+        extends IQProvider<LogoutIq> {
+
     /**
      * Creates new instance of <tt>ConferenceIqProvider</tt>.
      */
-    public LogoutIqProvider()
-    {
+    public LogoutIqProvider() {
         //<logout>
         ProviderManager.addIQProvider(
-            LogoutIq.ELEMENT_NAME, LogoutIq.NAMESPACE, this);
+                LogoutIq.ELEMENT_NAME, LogoutIq.NAMESPACE, this);
     }
 
     /**
@@ -44,40 +42,33 @@ public class LogoutIqProvider
      */
     @Override
     public LogoutIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!ConferenceIq.NAMESPACE.equals(namespace))
-        {
+        if (!ConferenceIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
         String rootElement = parser.getName();
         LogoutIq logoutIq;
-        if (LogoutIq.ELEMENT_NAME.endsWith(rootElement))
-        {
+        if (LogoutIq.ELEMENT_NAME.endsWith(rootElement)) {
             logoutIq = new LogoutIq();
 
             String sessionId = parser.getAttributeValue(
                     "", LogoutIq.SESSION_ID_ATTR);
 
-            if (StringUtils.isNotEmpty(sessionId))
-            {
+            if (StringUtils.isNotEmpty(sessionId)) {
                 logoutIq.setSessionId(sessionId);
             }
 
             String logoutUrl = parser.getAttributeValue(
                     "", LogoutIq.LOGOUT_URL_ATTR);
 
-            if (StringUtils.isNotEmpty(logoutUrl))
-            {
+            if (StringUtils.isNotEmpty(logoutUrl)) {
                 logoutIq.setLogoutUrl(logoutUrl);
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
 

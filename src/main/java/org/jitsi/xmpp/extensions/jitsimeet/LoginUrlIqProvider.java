@@ -15,7 +15,6 @@
  */
 package org.jitsi.xmpp.extensions.jitsimeet;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.provider.*;
 import org.jxmpp.jid.*;
@@ -29,16 +28,15 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class LoginUrlIqProvider
-    extends IQProvider<LoginUrlIq>
-{
+        extends IQProvider<LoginUrlIq> {
+
     /**
      * Creates new instance of <tt>ConferenceIqProvider</tt>.
      */
-    public LoginUrlIqProvider()
-    {
+    public LoginUrlIqProvider() {
         // <auth-url>
         ProviderManager.addIQProvider(
-            LoginUrlIq.ELEMENT_NAME, LoginUrlIq.NAMESPACE, this);
+                LoginUrlIq.ELEMENT_NAME, LoginUrlIq.NAMESPACE, this);
     }
 
     /**
@@ -46,52 +44,43 @@ public class LoginUrlIqProvider
      */
     @Override
     public LoginUrlIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!ConferenceIq.NAMESPACE.equals(namespace))
-        {
+        if (!ConferenceIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
         String rootElement = parser.getName();
 
         LoginUrlIq authUrlIQ;
-        if (LoginUrlIq.ELEMENT_NAME.equals(rootElement))
-        {
+        if (LoginUrlIq.ELEMENT_NAME.equals(rootElement)) {
             authUrlIQ = new LoginUrlIq();
 
             String url = parser.getAttributeValue(
                     "", LoginUrlIq.URL_ATTRIBUTE_NAME);
-            if (StringUtils.isNotEmpty(url))
-            {
+            if (StringUtils.isNotEmpty(url)) {
                 authUrlIQ.setUrl(url);
             }
             String room = parser.getAttributeValue(
                     "", LoginUrlIq.ROOM_NAME_ATTR_NAME);
-            if (StringUtils.isNotEmpty(room))
-            {
+            if (StringUtils.isNotEmpty(room)) {
                 EntityBareJid roomJid = JidCreate.entityBareFrom(room);
                 authUrlIQ.setRoom(roomJid);
             }
             String popup = parser.getAttributeValue(
                     "", LoginUrlIq.POPUP_ATTR_NAME);
-            if (StringUtils.isNotEmpty(popup))
-            {
+            if (StringUtils.isNotEmpty(popup)) {
                 Boolean popupBool = Boolean.parseBoolean(popup);
                 authUrlIQ.setPopup(popupBool);
             }
             String machineUID = parser.getAttributeValue(
                     "", LoginUrlIq.MACHINE_UID_ATTR_NAME);
-            if (StringUtils.isNotEmpty(machineUID))
-            {
+            if (StringUtils.isNotEmpty(machineUID)) {
                 authUrlIQ.setMachineUID(machineUID);
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
 

@@ -33,19 +33,19 @@ import org.jxmpp.jid.parts.*;
  * @author Boris Grozev
  */
 public class BridgeMucDetector
-    extends BaseBrewery<ColibriStatsExtension>
-{
+        extends BaseBrewery<ColibriStatsExtension> {
+
     /**
      * The logger used by the {@link BridgeMucDetector} class and its instances.
      */
     private static final Logger logger = Logger.getLogger(BaseBrewery.class);
 
     /**
-     * The name of the property used to configure the full JID of the MUC to
-     * use for detection of jitsi-videobridge instances.
+     * The name of the property used to configure the full JID of the MUC to use
+     * for detection of jitsi-videobridge instances.
      */
     public static final String BRIDGE_MUC_PNAME
-        = "org.jitsi.jicofo.BRIDGE_MUC";
+            = "org.jitsi.jicofo.BRIDGE_MUC";
 
     /**
      * Config property for JVB connection's XMPP host.
@@ -78,18 +78,17 @@ public class BridgeMucDetector
             = "org.jitsi.jicofo.BRIDGE_MUC_XMPP_PORT";
 
     /**
-     * Tries to load a {@link ProtocolProviderHandler}  for dedicated JVB
+     * Tries to load a {@link ProtocolProviderHandler} for dedicated JVB
      * connection if configured. See static properties starting with
      * "BRIDGE_MUC" in this class for config properties names.
-     * @param config - The  configuration service instance.
-     * @return protocol provider or {@code null} if not configured or failed
-     * to load.
+     *
+     * @param config - The configuration service instance.
+     * @return protocol provider or {@code null} if not configured or failed to
+     * load.
      */
     static public ProtocolProviderHandler tryLoadingJvbXmppProvider(
-            ConfigurationService config)
-    {
-        try
-        {
+            ConfigurationService config) {
+        try {
             String hostName = config.getString(BRIDGE_MUC_XMPP_HOST);
 
             //  Assume not configured if there's no XMPP host
@@ -100,16 +99,16 @@ public class BridgeMucDetector
             String xmppServerPort = config.getString(BRIDGE_MUC_XMPP_PORT);
 
             DomainBareJid userDomain
-                = JidCreate.domainBareFrom(config.getString(
-                        BRIDGE_MUC_XMPP_USER_DOMAIN));
+                    = JidCreate.domainBareFrom(config.getString(
+                            BRIDGE_MUC_XMPP_USER_DOMAIN));
             Resourcepart userName
-                = Resourcepart.from(
-                        config.getString(BRIDGE_MUC_XMPP_USER));
+                    = Resourcepart.from(
+                            config.getString(BRIDGE_MUC_XMPP_USER));
             String userPassword
-                = config.getString(BRIDGE_MUC_XMPP_USER_PASS);
+                    = config.getString(BRIDGE_MUC_XMPP_USER_PASS);
 
             ProtocolProviderHandler protocolProviderHandler
-                = new ProtocolProviderHandler();
+                    = new ProtocolProviderHandler();
 
             protocolProviderHandler.start(
                     hostName,
@@ -119,11 +118,9 @@ public class BridgeMucDetector
                     userName);
 
             return protocolProviderHandler;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             logger.error(
-                "Failed to create dedicated JVB XMPP connection provider", e);
+                    "Failed to create dedicated JVB XMPP connection provider", e);
 
             return null;
         }
@@ -139,50 +136,46 @@ public class BridgeMucDetector
     /**
      * Initializes a new {@link BridgeMucDetector} instance.
      *
-     * @param protocolProvider the {@link ProtocolProviderHandler} instance
-     * to which this {@link BridgeMucDetector} will attach.
+     * @param protocolProvider the {@link ProtocolProviderHandler} instance to
+     * which this {@link BridgeMucDetector} will attach.
      * @param breweryJid the MUC JID of the room which this detector will join.
      * @param bridgeSelector the {@link BridgeSelector} instance which will be
      * notified when new jitsi-videobridge instances are detected, or when they
      * update their status.
      */
     public BridgeMucDetector(
-        ProtocolProviderHandler protocolProvider,
-        String breweryJid,
-        BridgeSelector bridgeSelector)
-    {
+            ProtocolProviderHandler protocolProvider,
+            String breweryJid,
+            BridgeSelector bridgeSelector) {
         super(protocolProvider,
-              breweryJid,
-              ColibriStatsExtension.ELEMENT_NAME,
-              ColibriStatsExtension.NAMESPACE);
+                breweryJid,
+                ColibriStatsExtension.ELEMENT_NAME,
+                ColibriStatsExtension.NAMESPACE);
 
         this.bridgeSelector = bridgeSelector;
     }
 
     /**
      * {@inheritDoc}
+     *
      * @param jid the brewing instance muc address
      * @param stats
      */
     @Override
     protected void onInstanceStatusChanged(
-        Jid jid,
-        ColibriStatsExtension stats)
-    {
-        if (logger.isDebugEnabled())
-        {
+            Jid jid,
+            ColibriStatsExtension stats) {
+        if (logger.isDebugEnabled()) {
             logger.debug(
-                "Received updated status for " + jid + ": " + stats.toXML());
+                    "Received updated status for " + jid + ": " + stats.toXML());
         }
 
         bridgeSelector.addJvbAddress(jid, null, stats);
     }
 
     @Override
-    protected void notifyInstanceOffline(Jid jid)
-    {
+    protected void notifyInstanceOffline(Jid jid) {
         logger.info("A bridge left the MUC: " + jid);
         bridgeSelector.removeJvbAddress(jid);
     }
 }
-

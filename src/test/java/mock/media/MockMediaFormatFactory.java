@@ -28,63 +28,55 @@ import java.util.*;
  *
  */
 public class MockMediaFormatFactory
-    implements MediaFormatFactory
-{
+        implements MediaFormatFactory {
+
     @Override
-    public MediaFormat createUnknownMediaFormat(MediaType type)
-    {
+    public MediaFormat createUnknownMediaFormat(MediaType type) {
         return new AudioMediaFormatImpl("unknown");
     }
 
     @Override
-    public MediaFormat createMediaFormat(String encoding)
-    {
+    public MediaFormat createMediaFormat(String encoding) {
         return null;
     }
 
     @Override
-    public MediaFormat createMediaFormat(byte rtpPayloadType)
-    {
+    public MediaFormat createMediaFormat(byte rtpPayloadType) {
         return null;
     }
 
     @Override
-    public MediaFormat createMediaFormat(String encoding, double clockRate)
-    {
-        return null;
-    }
-
-    @Override
-    public MediaFormat createMediaFormat(String encoding, double clockRate,
-                                         int channels)
-    {
+    public MediaFormat createMediaFormat(String encoding, double clockRate) {
         return null;
     }
 
     @Override
     public MediaFormat createMediaFormat(String encoding, double clockRate,
-                                         Map<String, String> formatParams,
-                                         Map<String, String> advancedAttrs)
-    {
+            int channels) {
         return null;
     }
 
     @Override
     public MediaFormat createMediaFormat(String encoding, double clockRate,
-                                         int channels, float frameRate,
-                                         Map<String, String> formatParams,
-                                         Map<String, String> advancedAttrs)
-    {
+            Map<String, String> formatParams,
+            Map<String, String> advancedAttrs) {
+        return null;
+    }
+
+    @Override
+    public MediaFormat createMediaFormat(String encoding, double clockRate,
+            int channels, float frameRate,
+            Map<String, String> formatParams,
+            Map<String, String> advancedAttrs) {
         return null;
     }
 
     @Override
     public MediaFormat createMediaFormat(byte rtpPayloadType, String encoding,
-                                         double clockRate, int channels,
-                                         float frameRate,
-                                         Map<String, String> formatParams,
-                                         Map<String, String> advancedAttrs)
-    {
+            double clockRate, int channels,
+            float frameRate,
+            Map<String, String> formatParams,
+            Map<String, String> advancedAttrs) {
         return null;
     }
 }

@@ -26,44 +26,38 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Class listens for {@link EventFactory#CONFERENCE_ROOM_TOPIC} and exposes
- * the functionality of waiting for 'n' conference created events.
+ * Class listens for {@link EventFactory#CONFERENCE_ROOM_TOPIC} and exposes the
+ * functionality of waiting for 'n' conference created events.
  *
  * @author Pawel Domas
  */
 public class ConferenceRoomListener
-    extends EventHandlerActivator
-{
+        extends EventHandlerActivator {
+
     private List<Event> rooms = new LinkedList<>();
 
     private CountDownLatch roomCounter;
 
-    public ConferenceRoomListener()
-    {
-        super(new String[]{ EventFactory.CONFERENCE_ROOM_TOPIC });
+    public ConferenceRoomListener() {
+        super(new String[]{EventFactory.CONFERENCE_ROOM_TOPIC});
     }
 
     public void await(BundleContext bc,
-                      int roomCount, long timeout, TimeUnit timeUnit)
-        throws Exception
-    {
+            int roomCount, long timeout, TimeUnit timeUnit)
+            throws Exception {
         roomCounter = new CountDownLatch(roomCount);
 
         start(bc);
 
-        try
-        {
+        try {
             roomCounter.await(timeout, timeUnit);
-        }
-        finally
-        {
+        } finally {
             stop(bc);
         }
     }
 
     @Override
-    public void handleEvent(Event event)
-    {
+    public void handleEvent(Event event) {
         rooms.add(event);
 
         roomCounter.countDown();

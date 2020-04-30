@@ -28,8 +28,8 @@ import org.jxmpp.jid.*;
  * @author Pawel Domas
  */
 public interface XmppChatMember
-    extends ChatRoomMember
-{
+        extends ChatRoomMember {
+
     /**
      * Returns the JID of the user (outside the MUC), i.e. the "real" JID.
      */
@@ -42,28 +42,31 @@ public interface XmppChatMember
 
     /**
      * Returns number based on the order of joining of the members in the room.
+     *
      * @return number based on the order of joining of the members in the room.
      */
     int getJoinOrderNumber();
 
     /**
      * Obtains the last MUC <tt>Presence</tt> seen for this chat member.
+     *
      * @return the last {@link Presence} packet received for this
-     *         <tt>XmppChatMember</tt> or <tt>null</tt> if we haven't received
-     *         it yet.
+     * <tt>XmppChatMember</tt> or <tt>null</tt> if we haven't received it yet.
      */
     Presence getPresence();
 
     /**
      * Check for video muted status.
+     *
      * @return <tt>true</tt> if the user has video muted, <tt>false</tt> when
-     *         video is not muted or <tt>null</tt> if the status is unknown.
+     * video is not muted or <tt>null</tt> if the status is unknown.
      */
     Boolean hasVideoMuted();
 
     /**
-     * Tells if this <tt>XmppChatMember</tt> is a robot(SIP gateway,
-     * recorder component etc.).
+     * Tells if this <tt>XmppChatMember</tt> is a robot(SIP gateway, recorder
+     * component etc.).
+     *
      * @return <tt>true</tt> if this MUC member is a robot or <tt>false</tt>
      * otherwise.
      */
@@ -76,6 +79,7 @@ public interface XmppChatMember
 
     /**
      * Gets the statistics id if any.
+     *
      * @return the statistics ID for this member.
      */
     String getStatsId();

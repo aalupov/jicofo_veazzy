@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  *
  * @author Emil Ivov
  */
-public class SessionInfoPacketExtension extends AbstractPacketExtension
-{
+public class SessionInfoPacketExtension extends AbstractPacketExtension {
+
     /**
      * The name space for RTP description elements.
      */
@@ -41,8 +41,7 @@ public class SessionInfoPacketExtension extends AbstractPacketExtension
      * @param type the name of the element we'd like to create (mute, active,
      * hold);
      */
-    public SessionInfoPacketExtension(SessionInfoType type)
-    {
+    public SessionInfoPacketExtension(SessionInfoType type) {
         super(NAMESPACE, type.toString());
         this.type = type;
     }
@@ -52,8 +51,7 @@ public class SessionInfoPacketExtension extends AbstractPacketExtension
      *
      * @return the {@link SessionInfoType} of this extension.
      */
-    public SessionInfoType getType()
-    {
+    public SessionInfoType getType() {
         return type;
     }
 }

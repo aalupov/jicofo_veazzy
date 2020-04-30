@@ -25,8 +25,8 @@ import org.jivesoftware.smack.packet.*;
  * @author Pawel Domas
  */
 public class ShutdownIQ
-    extends IQ
-{
+        extends IQ {
+
     /**
      * XML namespace name for shutdown IQs.
      */
@@ -54,39 +54,33 @@ public class ShutdownIQ
      * @param elementName the name if XML element name inside of the IQ.
      *
      * @return <tt>true</tt> if given <tt>elementName</tt> is correct for
-     *         <tt>ShutdownIQ</tt>.
+     * <tt>ShutdownIQ</tt>.
      */
-    public static boolean isValidElementName(String elementName)
-    {
+    public static boolean isValidElementName(String elementName) {
         return GRACEFUL_ELEMENT_NAME.equals(elementName)
-            || FORCE_ELEMENT_NAME.equals(elementName);
+                || FORCE_ELEMENT_NAME.equals(elementName);
     }
 
     /**
      * Creates shutdown IQ for given element name.
      *
      * @param elementName can be {@link #FORCE_ELEMENT_NAME} or
-     *        {@link #GRACEFUL_ELEMENT_NAME}
+     * {@link #GRACEFUL_ELEMENT_NAME}
      *
      * @return new <tt>ShutdownIQ</tt> instance for given element name.
      *
      * @throws IllegalArgumentException if given element name is neither
-     *         {@link #FORCE_ELEMENT_NAME} nor {@link #GRACEFUL_ELEMENT_NAME}.
+     * {@link #FORCE_ELEMENT_NAME} nor {@link #GRACEFUL_ELEMENT_NAME}.
      */
-    public static ShutdownIQ createShutdownIQ(String elementName)
-    {
-        if (!isValidElementName(elementName))
-        {
+    public static ShutdownIQ createShutdownIQ(String elementName) {
+        if (!isValidElementName(elementName)) {
             throw new IllegalArgumentException(
-                "Invalid element name: " + elementName);
+                    "Invalid element name: " + elementName);
         }
 
-        if (GRACEFUL_ELEMENT_NAME.equals(elementName))
-        {
+        if (GRACEFUL_ELEMENT_NAME.equals(elementName)) {
             return createGracefulShutdownIQ();
-        }
-        else
-        {
+        } else {
             return createForceShutdownIQ();
         }
     }
@@ -94,21 +88,18 @@ public class ShutdownIQ
     /**
      * Creates and returns new instance of graceful shutdown IQ.
      */
-    public static ShutdownIQ createGracefulShutdownIQ()
-    {
+    public static ShutdownIQ createGracefulShutdownIQ() {
         return new ShutdownIQ(GRACEFUL_ELEMENT_NAME);
     }
 
     /**
      * Creates and returns new instance of force shutdown IQ.
      */
-    public static ShutdownIQ createForceShutdownIQ()
-    {
+    public static ShutdownIQ createForceShutdownIQ() {
         return new ShutdownIQ(FORCE_ELEMENT_NAME);
     }
 
-    private ShutdownIQ(String elementName)
-    {
+    private ShutdownIQ(String elementName) {
         super(elementName, NAMESPACE);
         this.elementName = elementName;
     }
@@ -117,8 +108,7 @@ public class ShutdownIQ
      * Returns <tt>true</tt> if this IQ instance is a "graceful shutdown" one.
      * Otherwise it is a force shutdown IQ.
      */
-    public boolean isGracefulShutdown()
-    {
+    public boolean isGracefulShutdown() {
         return elementName.equals(GRACEFUL_ELEMENT_NAME);
     }
 
@@ -126,8 +116,7 @@ public class ShutdownIQ
      * {@inheritDoc}
      */
     @Override
-    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder buf)
-    {
+    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder buf) {
         buf.setEmptyElement();
         return buf;
     }

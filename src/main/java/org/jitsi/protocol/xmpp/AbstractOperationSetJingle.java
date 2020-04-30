@@ -38,38 +38,34 @@ import java.util.concurrent.*;
  * @author Pawel Domas
  */
 public abstract class AbstractOperationSetJingle
-    extends AbstractIqRequestHandler
-    implements OperationSetJingle
-{
+        extends AbstractIqRequestHandler
+        implements OperationSetJingle {
+
     /**
      * The {@code Logger} used by the class {@code AbstractOperationSetJingle}
      * and its instances to print debug-related information.
      */
     private static final Logger logger
-        = Logger.getLogger(AbstractOperationSetJingle.class);
+            = Logger.getLogger(AbstractOperationSetJingle.class);
 
     /**
      * The list of active Jingle sessions.
      */
     protected final Map<String, JingleSession> sessions
-        = new ConcurrentHashMap<>();
+            = new ConcurrentHashMap<>();
 
-    protected AbstractOperationSetJingle()
-    {
+    protected AbstractOperationSetJingle() {
         super(JingleIQ.ELEMENT_NAME, JingleIQ.NAMESPACE,
-              IQ.Type.set, Mode.sync);
+                IQ.Type.set, Mode.sync);
     }
 
     @Override
-    public IQ handleIQRequest(IQ iqRequest)
-    {
+    public IQ handleIQRequest(IQ iqRequest) {
         JingleIQ packet = (JingleIQ) iqRequest;
         JingleSession session = getSession(packet.getSID());
-        if (session == null)
-        {
+        if (session == null) {
             logger.warn("No session found for SID " + packet.getSID());
-            return
-                IQ.createErrorResponse(
+            return IQ.createErrorResponse(
                     packet,
                     XMPPError.getBuilder(XMPPError.Condition.bad_request));
         }
@@ -98,8 +94,7 @@ public abstract class AbstractOperationSetJingle
      * @return Jingle session for given session identifier or <tt>null</tt> if
      * no such session exists.
      */
-    public JingleSession getSession(String sid)
-    {
+    public JingleSession getSession(String sid) {
         return sessions.get(sid);
     }
 
@@ -108,8 +103,7 @@ public abstract class AbstractOperationSetJingle
      */
     @Override
     public JingleIQ createSessionInitiate(
-        Jid address, List<ContentPacketExtension> contents)
-    {
+            Jid address, List<ContentPacketExtension> contents) {
         String sid = JingleIQ.generateSID();
         JingleIQ jingleIQ = new JingleIQ(JingleAction.SESSION_INITIATE, sid);
 
@@ -118,8 +112,7 @@ public abstract class AbstractOperationSetJingle
         jingleIQ.setInitiator(getOurJID());
         jingleIQ.setType(IQ.Type.set);
 
-        for (ContentPacketExtension content : contents)
-        {
+        for (ContentPacketExtension content : contents) {
             jingleIQ.addContent(content);
         }
 
@@ -131,13 +124,12 @@ public abstract class AbstractOperationSetJingle
      */
     @Override
     public boolean initiateSession(
-        JingleIQ inviteIQ,
-        JingleRequestHandler requestHandler)
-        throws OperationFailedException
-    {
+            JingleIQ inviteIQ,
+            JingleRequestHandler requestHandler)
+            throws OperationFailedException {
         String sid = inviteIQ.getSID();
         JingleSession session
-            = new JingleSession(sid, inviteIQ.getTo(), requestHandler);
+                = new JingleSession(sid, inviteIQ.getTo(), requestHandler);
 
         sessions.put(sid, session);
 
@@ -161,13 +153,12 @@ public abstract class AbstractOperationSetJingle
      * @return New instance of <tt>JingleIQ</tt> filled up with the details
      * provided as parameters.
      */
-    private JingleIQ createInviteIQ(JingleAction                    action,
-                                    String                          sessionId,
-                                    boolean                         useBundle,
-                                    Jid                             address,
-                                    List<ContentPacketExtension>    contents,
-                                    boolean[]                       startMuted)
-    {
+    private JingleIQ createInviteIQ(JingleAction action,
+            String sessionId,
+            boolean useBundle,
+            Jid address,
+            List<ContentPacketExtension> contents,
+            boolean[] startMuted) {
         JingleIQ inviteIQ = new JingleIQ(action, sessionId);
 
         inviteIQ.setTo(address);
@@ -175,20 +166,17 @@ public abstract class AbstractOperationSetJingle
         inviteIQ.setInitiator(getOurJID());
         inviteIQ.setType(IQ.Type.set);
 
-        for(ContentPacketExtension content : contents)
-        {
+        for (ContentPacketExtension content : contents) {
             inviteIQ.addContent(content);
         }
 
-        if (useBundle)
-        {
+        if (useBundle) {
             GroupPacketExtension group
-                = GroupPacketExtension.createBundleGroup(contents);
+                    = GroupPacketExtension.createBundleGroup(contents);
 
             inviteIQ.addExtension(group);
 
-            for (ContentPacketExtension content : contents)
-            {
+            for (ContentPacketExtension content : contents) {
                 // FIXME: is it mandatory ?
                 // http://estos.de/ns/bundle
                 content.addChildExtension(new BundlePacketExtension());
@@ -197,10 +185,9 @@ public abstract class AbstractOperationSetJingle
 
         // FIXME Move this to a place where offer's contents are created or
         // convert the array to a list of extra PacketExtensions
-        if(startMuted[0] || startMuted[1])
-        {
+        if (startMuted[0] || startMuted[1]) {
             StartMutedPacketExtension startMutedExt
-                = new StartMutedPacketExtension();
+                    = new StartMutedPacketExtension();
             startMutedExt.setAudioMute(startMuted[0]);
             startMutedExt.setVideoMute(startMuted[1]);
             inviteIQ.addExtension(startMutedExt);
@@ -222,10 +209,8 @@ public abstract class AbstractOperationSetJingle
      * @return <tt>true</tt> if the invite IQ to which {@code reply} replies is
      * considered accepted; <tt>false</tt>, otherwise.
      */
-    private boolean wasInviteAccepted(JingleSession session, IQ reply)
-    {
-        if (reply == null)
-        {
+    private boolean wasInviteAccepted(JingleSession session, IQ reply) {
+        if (reply == null) {
             // XXX By the time the acknowledgement timeout occurs, we may have
             // received and acted upon the session-accept. We have seen that
             // happen multiple times: the conference is established, the media
@@ -234,29 +219,22 @@ public abstract class AbstractOperationSetJingle
             // (because the acknowldegment timeout has occured eventually). As a
             // workaround, we will ignore the lack of the acknowledgment if we
             // have already acted upon the session-accept.
-            if (session.isAccepted())
-            {
+            if (session.isAccepted()) {
                 return true;
-            }
-            else
-            {
+            } else {
                 logger.warn(
                         "Timeout waiting for RESULT response to "
-                            + "'session-initiate' request from "
-                            + session.getAddress());
+                        + "'session-initiate' request from "
+                        + session.getAddress());
                 return false;
             }
-        }
-        else if (IQ.Type.result.equals(reply.getType()))
-        {
+        } else if (IQ.Type.result.equals(reply.getType())) {
             return true;
-        }
-        else
-        {
+        } else {
             logger.error(
                     "Failed to send 'session-initiate' to "
-                        + session.getAddress() + ", error: "
-                        + reply.getError());
+                    + session.getAddress() + ", error: "
+                    + reply.getError());
             return false;
         }
     }
@@ -266,18 +244,16 @@ public abstract class AbstractOperationSetJingle
      */
     @Override
     public JingleIQ createTransportReplace(
-        JingleSession session, List<ContentPacketExtension> contents)
-    {
+            JingleSession session, List<ContentPacketExtension> contents) {
         JingleIQ jingleIQ
-            = new JingleIQ(
-                JingleAction.TRANSPORT_REPLACE, session.getSessionID());
+                = new JingleIQ(
+                        JingleAction.TRANSPORT_REPLACE, session.getSessionID());
         jingleIQ.setTo(session.getAddress());
         jingleIQ.setFrom(getOurJID());
         jingleIQ.setInitiator(getOurJID());
         jingleIQ.setType(IQ.Type.set);
 
-        for (ContentPacketExtension content : contents)
-        {
+        for (ContentPacketExtension content : contents) {
             jingleIQ.addContent(content);
         }
 
@@ -289,16 +265,14 @@ public abstract class AbstractOperationSetJingle
      */
     @Override
     public boolean replaceTransport(
-        JingleIQ jingleIQ,
-        JingleSession session)
-        throws OperationFailedException
-    {
+            JingleIQ jingleIQ,
+            JingleSession session)
+            throws OperationFailedException {
         Jid address = session.getAddress();
 
         logger.info("RE-INVITE PEER: " + address);
 
-        if (!sessions.containsValue(session))
-        {
+        if (!sessions.containsValue(session)) {
             throw new IllegalStateException(
                     "Session does not exist for: " + address);
         }
@@ -316,65 +290,58 @@ public abstract class AbstractOperationSetJingle
      *
      * @param iq the <tt>JingleIQ</tt> to process.
      */
-    protected IQ processJingleIQ(JingleIQ iq)
-    {
+    protected IQ processJingleIQ(JingleIQ iq) {
         JingleSession session = getSession(iq.getSID());
         JingleAction action = iq.getAction();
 
-        if (action == null)
-        {
+        if (action == null) {
             // bad-request
             return IQ.createErrorResponse(
-                iq, XMPPError.getBuilder(XMPPError.Condition.bad_request));
+                    iq, XMPPError.getBuilder(XMPPError.Condition.bad_request));
         }
 
-        if (session == null)
-        {
+        if (session == null) {
             logger.warn(
-                "Action: " + action
+                    "Action: " + action
                     + ", no session found for SID " + iq.getSID());
             return IQ.createErrorResponse(
-                iq, XMPPError.getBuilder(XMPPError.Condition.item_not_found));
+                    iq, XMPPError.getBuilder(XMPPError.Condition.item_not_found));
         }
 
         JingleRequestHandler requestHandler = session.getRequestHandler();
         XMPPError error = null;
-        switch (action)
-        {
-        case SESSION_ACCEPT:
-            error = requestHandler.onSessionAccept(session, iq.getContentList());
-            break;
-        case SESSION_INFO:
-            error = requestHandler.onSessionInfo(session, iq);
-            break;
-        case TRANSPORT_ACCEPT:
-            error = requestHandler.onTransportAccept(session, iq.getContentList());
-            break;
-        case TRANSPORT_INFO:
-            requestHandler.onTransportInfo(session, iq.getContentList());
-            break;
-        case TRANSPORT_REJECT:
-            requestHandler.onTransportReject(session, iq);
-            break;
-        case ADDSOURCE:
-        case SOURCEADD:
-            error = requestHandler.onAddSource(session, iq.getContentList());
-            break;
-        case REMOVESOURCE:
-        case SOURCEREMOVE:
-            error = requestHandler.onRemoveSource(session, iq.getContentList());
-            break;
-        default:
-            logger.warn("unsupported action " + action);
+        switch (action) {
+            case SESSION_ACCEPT:
+                error = requestHandler.onSessionAccept(session, iq.getContentList());
+                break;
+            case SESSION_INFO:
+                error = requestHandler.onSessionInfo(session, iq);
+                break;
+            case TRANSPORT_ACCEPT:
+                error = requestHandler.onTransportAccept(session, iq.getContentList());
+                break;
+            case TRANSPORT_INFO:
+                requestHandler.onTransportInfo(session, iq.getContentList());
+                break;
+            case TRANSPORT_REJECT:
+                requestHandler.onTransportReject(session, iq);
+                break;
+            case ADDSOURCE:
+            case SOURCEADD:
+                error = requestHandler.onAddSource(session, iq.getContentList());
+                break;
+            case REMOVESOURCE:
+            case SOURCEREMOVE:
+                error = requestHandler.onRemoveSource(session, iq.getContentList());
+                break;
+            default:
+                logger.warn("unsupported action " + action);
         }
 
         // FIXME IQ type is not taken into account
-        if (error == null)
-        {
+        if (error == null) {
             return IQ.createResultIQ(iq);
-        }
-        else
-        {
+        } else {
             return IQ.createErrorResponse(iq, error);
         }
     }
@@ -383,45 +350,39 @@ public abstract class AbstractOperationSetJingle
      * Sends 'source-add' notification to the peer of given
      * <tt>JingleSession</tt>.
      *
-     * @param ssrcs the map of media SSRCs that will be included in
-     *              the notification.
+     * @param ssrcs the map of media SSRCs that will be included in the
+     * notification.
      * @param ssrcGroupMap the map of media SSRC groups that will be included in
-     *                     the notification.
+     * the notification.
      * @param session the <tt>JingleSession</tt> used to send the notification.
      */
     @Override
     public void sendAddSourceIQ(MediaSourceMap ssrcs,
-                                MediaSourceGroupMap ssrcGroupMap,
-                                JingleSession        session)
-    {
+            MediaSourceGroupMap ssrcGroupMap,
+            JingleSession session) {
         JingleIQ addSourceIq
-            = new JingleIQ(JingleAction.SOURCEADD, session.getSessionID());
+                = new JingleIQ(JingleAction.SOURCEADD, session.getSessionID());
 
         addSourceIq.setFrom(getOurJID());
         addSourceIq.setType(IQ.Type.set);
 
-        for (String media : ssrcs.getMediaTypes())
-        {
+        for (String media : ssrcs.getMediaTypes()) {
             ContentPacketExtension content
-                = new ContentPacketExtension();
+                    = new ContentPacketExtension();
 
             content.setName(media);
 
             RtpDescriptionPacketExtension rtpDesc
-                = new RtpDescriptionPacketExtension();
+                    = new RtpDescriptionPacketExtension();
 
             rtpDesc.setMedia(media);
 
             content.addChildExtension(rtpDesc);
 
-            for (SourcePacketExtension ssrc : ssrcs.getSourcesForMedia(media))
-            {
-                try
-                {
+            for (SourcePacketExtension ssrc : ssrcs.getSourcesForMedia(media)) {
+                try {
                     rtpDesc.addChildExtension(ssrc.copy());
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     logger.error("Copy SSRC error", e);
                 }
             }
@@ -429,19 +390,16 @@ public abstract class AbstractOperationSetJingle
             addSourceIq.addContent(content);
         }
 
-        if (ssrcGroupMap != null)
-        {
-            for (String media : ssrcGroupMap.getMediaTypes())
-            {
+        if (ssrcGroupMap != null) {
+            for (String media : ssrcGroupMap.getMediaTypes()) {
                 ContentPacketExtension content
-                    = addSourceIq.getContentByName(media);
+                        = addSourceIq.getContentByName(media);
                 RtpDescriptionPacketExtension rtpDesc;
 
-                if (content == null)
-                {
+                if (content == null) {
                     // It means content was not created when adding SSRCs...
                     logger.warn(
-                        "No SSRCs to be added when group exists for media: "
+                            "No SSRCs to be added when group exists for media: "
                             + media);
 
                     content = new ContentPacketExtension();
@@ -451,22 +409,16 @@ public abstract class AbstractOperationSetJingle
                     rtpDesc = new RtpDescriptionPacketExtension();
                     rtpDesc.setMedia(media);
                     content.addChildExtension(rtpDesc);
-                }
-                else
-                {
+                } else {
                     rtpDesc = content.getFirstChildOfType(
-                        RtpDescriptionPacketExtension.class);
+                            RtpDescriptionPacketExtension.class);
                 }
 
                 for (SourceGroup sourceGroup
-                    : ssrcGroupMap.getSourceGroupsForMedia(media))
-                {
-                    try
-                    {
+                        : ssrcGroupMap.getSourceGroupsForMedia(media)) {
+                    try {
                         rtpDesc.addChildExtension(sourceGroup.getExtensionCopy());
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         logger.error("Copy SSRC GROUP error", e);
                     }
                 }
@@ -476,7 +428,7 @@ public abstract class AbstractOperationSetJingle
         addSourceIq.setTo(session.getAddress());
 
         logger.info(
-            "Notify add SSRC " + session.getAddress()
+                "Notify add SSRC " + session.getAddress()
                 + " SID: " + session.getSessionID() + " "
                 + ssrcs + " " + ssrcGroupMap);
 
@@ -487,44 +439,38 @@ public abstract class AbstractOperationSetJingle
      * Sends 'source-remove' notification to the peer of given
      * <tt>JingleSession</tt>.
      *
-     * @param ssrcs the map of media SSRCs that will be included in
-     *              the notification.
+     * @param ssrcs the map of media SSRCs that will be included in the
+     * notification.
      * @param ssrcGroupMap the map of media SSRC groups that will be included in
-     *                     the notification.
+     * the notification.
      * @param session the <tt>JingleSession</tt> used to send the notification.
      */
     @Override
     public void sendRemoveSourceIQ(MediaSourceMap ssrcs,
-                                   MediaSourceGroupMap ssrcGroupMap,
-                                   JingleSession        session)
-    {
+            MediaSourceGroupMap ssrcGroupMap,
+            JingleSession session) {
         JingleIQ removeSourceIq = new JingleIQ(JingleAction.SOURCEREMOVE,
                 session.getSessionID());
 
         removeSourceIq.setFrom(getOurJID());
         removeSourceIq.setType(IQ.Type.set);
 
-        for (String media : ssrcs.getMediaTypes())
-        {
+        for (String media : ssrcs.getMediaTypes()) {
             ContentPacketExtension content
-                = new ContentPacketExtension();
+                    = new ContentPacketExtension();
 
             content.setName(media);
 
             RtpDescriptionPacketExtension rtpDesc
-                = new RtpDescriptionPacketExtension();
+                    = new RtpDescriptionPacketExtension();
             rtpDesc.setMedia(media);
 
             content.addChildExtension(rtpDesc);
 
-            for (SourcePacketExtension ssrc : ssrcs.getSourcesForMedia(media))
-            {
-                try
-                {
+            for (SourcePacketExtension ssrc : ssrcs.getSourcesForMedia(media)) {
+                try {
                     rtpDesc.addChildExtension(ssrc.copy());
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     logger.error("Copy SSRC error", e);
                 }
             }
@@ -532,19 +478,16 @@ public abstract class AbstractOperationSetJingle
             removeSourceIq.addContent(content);
         }
 
-        if (ssrcGroupMap != null)
-        {
-            for (String media : ssrcGroupMap.getMediaTypes())
-            {
+        if (ssrcGroupMap != null) {
+            for (String media : ssrcGroupMap.getMediaTypes()) {
                 ContentPacketExtension content
-                    = removeSourceIq.getContentByName(media);
+                        = removeSourceIq.getContentByName(media);
                 RtpDescriptionPacketExtension rtpDesc;
 
-                if (content == null)
-                {
+                if (content == null) {
                     // It means content was not created when adding SSRCs...
                     logger.warn(
-                        "No SSRCs to be removed when group exists for media: "
+                            "No SSRCs to be removed when group exists for media: "
                             + media);
 
                     content = new ContentPacketExtension();
@@ -554,22 +497,16 @@ public abstract class AbstractOperationSetJingle
                     rtpDesc = new RtpDescriptionPacketExtension();
                     rtpDesc.setMedia(media);
                     content.addChildExtension(rtpDesc);
-                }
-                else
-                {
+                } else {
                     rtpDesc = content.getFirstChildOfType(
-                        RtpDescriptionPacketExtension.class);
+                            RtpDescriptionPacketExtension.class);
                 }
 
                 for (SourceGroup sourceGroup
-                    : ssrcGroupMap.getSourceGroupsForMedia(media))
-                {
-                    try
-                    {
+                        : ssrcGroupMap.getSourceGroupsForMedia(media)) {
+                    try {
                         rtpDesc.addChildExtension(sourceGroup.getExtensionCopy());
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         logger.error("Copy SSRC GROUP error", e);
                     }
                 }
@@ -579,7 +516,7 @@ public abstract class AbstractOperationSetJingle
         removeSourceIq.setTo(session.getAddress());
 
         logger.info(
-            "Notify remove SSRC " + session.getAddress()
+                "Notify remove SSRC " + session.getAddress()
                 + " SID: " + session.getSessionID() + " "
                 + ssrcs + " " + ssrcGroupMap);
 
@@ -590,14 +527,11 @@ public abstract class AbstractOperationSetJingle
      * {@inheritDoc}
      */
     @Override
-    public void terminateHandlersSessions(JingleRequestHandler requestHandler)
-    {
+    public void terminateHandlersSessions(JingleRequestHandler requestHandler) {
         List<JingleSession> sessions = new ArrayList<>(this.sessions.values());
 
-        for (JingleSession session : sessions)
-        {
-            if (session.getRequestHandler() == requestHandler)
-            {
+        for (JingleSession session : sessions) {
+            if (session.getRequestHandler() == requestHandler) {
                 terminateSession(session, Reason.GONE, null);
             }
         }
@@ -609,26 +543,24 @@ public abstract class AbstractOperationSetJingle
      *
      * @param session the <tt>JingleSession</tt> to terminate.
      * @param reason one of {@link Reason} enum that indicates why the session
-     *               is being ended or <tt>null</tt> to omit.
-     * {@inheritDoc}
+     * is being ended or <tt>null</tt> to omit. {@inheritDoc}
      */
     @Override
-    public void terminateSession(JingleSession    session,
-                                 Reason           reason,
-                                 String           message)
-    {
+    public void terminateSession(JingleSession session,
+            Reason reason,
+            String message) {
         logger.info("Terminate session: " + session.getAddress());
 
         // we do not send session-terminate as muc addresses are invalid at this
         // point
         // FIXME: but there is also connection address available
         JingleIQ terminate
-            = JinglePacketFactory.createSessionTerminate(
-                    getOurJID(),
-                    session.getAddress(),
-                    session.getSessionID(),
-                    reason,
-                    message);
+                = JinglePacketFactory.createSessionTerminate(
+                        getOurJID(),
+                        session.getAddress(),
+                        session.getSessionID(),
+                        reason,
+                        message);
 
         getConnection().sendStanza(terminate);
 

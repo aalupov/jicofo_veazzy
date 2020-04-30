@@ -34,17 +34,18 @@ import org.xmlpull.v1.*;
  * @author Boris Grozev
  */
 public class ColibriIQProvider
-    extends IQProvider
-{
+        extends IQProvider {
+
     /**
      * The logger instance used by this class.
      */
     private final static Logger logger
-        = Logger.getLogger(ColibriIQProvider.class);
+            = Logger.getLogger(ColibriIQProvider.class);
 
-    /** Initializes a new <tt>ColibriIQProvider</tt> instance. */
-    public ColibriIQProvider()
-    {
+    /**
+     * Initializes a new <tt>ColibriIQProvider</tt> instance.
+     */
+    public ColibriIQProvider() {
         ProviderManager.addExtensionProvider(
                 PayloadTypePacketExtension.ELEMENT_NAME,
                 ColibriConferenceIQ.NAMESPACE,
@@ -78,7 +79,7 @@ public class ColibriIQProvider
 
         ExtensionElementProvider parameterProvider
                 = new DefaultPacketExtensionProvider<>(
-                ParameterPacketExtension.class);
+                        ParameterPacketExtension.class);
 
         ProviderManager.addExtensionProvider(
                 ParameterPacketExtension.ELEMENT_NAME,
@@ -100,7 +101,7 @@ public class ColibriIQProvider
         // Shutdown extension
         ExtensionElementProvider shutdownProvider
                 = new DefaultPacketExtensionProvider<>(
-                    ColibriConferenceIQ.GracefulShutdown.class);
+                        ColibriConferenceIQ.GracefulShutdown.class);
 
         ProviderManager.addExtensionProvider(
                 ColibriConferenceIQ.GracefulShutdown.ELEMENT_NAME,
@@ -116,7 +117,7 @@ public class ColibriIQProvider
         // ColibriStatsExtension
         ExtensionElementProvider statsProvider
                 = new DefaultPacketExtensionProvider<>(
-                ColibriStatsExtension.class);
+                        ColibriStatsExtension.class);
 
         ProviderManager.addExtensionProvider(
                 ColibriStatsExtension.ELEMENT_NAME,
@@ -125,7 +126,7 @@ public class ColibriIQProvider
         // ColibriStatsExtension.Stat
         ExtensionElementProvider statProvider
                 = new DefaultPacketExtensionProvider<>(
-                    ColibriStatsExtension.Stat.class);
+                        ColibriStatsExtension.Stat.class);
 
         ProviderManager.addExtensionProvider(
                 ColibriStatsExtension.Stat.ELEMENT_NAME,
@@ -134,24 +135,21 @@ public class ColibriIQProvider
 
         // ssrc-info
         ProviderManager.addExtensionProvider(
-            SSRCInfoPacketExtension.ELEMENT_NAME,
-            SSRCInfoPacketExtension.NAMESPACE,
-            new DefaultPacketExtensionProvider<>(
-                SSRCInfoPacketExtension.class));
+                SSRCInfoPacketExtension.ELEMENT_NAME,
+                SSRCInfoPacketExtension.NAMESPACE,
+                new DefaultPacketExtensionProvider<>(
+                        SSRCInfoPacketExtension.class));
     }
 
     private void addChildExtension(
             ColibriConferenceIQ.Channel channel,
-            ExtensionElement childExtension)
-    {
-        if (childExtension instanceof PayloadTypePacketExtension)
-        {
+            ExtensionElement childExtension) {
+        if (childExtension instanceof PayloadTypePacketExtension) {
             PayloadTypePacketExtension payloadType
-                = (PayloadTypePacketExtension) childExtension;
+                    = (PayloadTypePacketExtension) childExtension;
 
             if ("opus".equals(payloadType.getName())
-                    && (payloadType.getChannels() != 2))
-            {
+                    && (payloadType.getChannels() != 2)) {
                 /*
                  * We only have a Format for opus with 2 channels, because it
                  * MUST be advertised with 2 channels. Fixing the number of
@@ -161,48 +159,36 @@ public class ColibriIQProvider
                 payloadType.setChannels(2);
             }
             channel.addPayloadType(payloadType);
-        }
-        else if (childExtension instanceof IceUdpTransportPacketExtension)
-        {
+        } else if (childExtension instanceof IceUdpTransportPacketExtension) {
             IceUdpTransportPacketExtension transport
-                = (IceUdpTransportPacketExtension) childExtension;
+                    = (IceUdpTransportPacketExtension) childExtension;
 
             channel.setTransport(transport);
-        }
-        else if (childExtension instanceof SourcePacketExtension)
-        {
+        } else if (childExtension instanceof SourcePacketExtension) {
             channel.addSource((SourcePacketExtension) childExtension);
-        }
-        else if (childExtension instanceof SourceGroupPacketExtension)
-        {
+        } else if (childExtension instanceof SourceGroupPacketExtension) {
             SourceGroupPacketExtension sourceGroup
-                    = (SourceGroupPacketExtension)childExtension;
+                    = (SourceGroupPacketExtension) childExtension;
 
             channel.addSourceGroup(sourceGroup);
-        }
-        else if (childExtension instanceof RTPHdrExtPacketExtension)
-        {
+        } else if (childExtension instanceof RTPHdrExtPacketExtension) {
             RTPHdrExtPacketExtension rtpHdrExtPacketExtension
                     = (RTPHdrExtPacketExtension) childExtension;
 
             channel.addRtpHeaderExtension(rtpHdrExtPacketExtension);
-        }
-        else
-        {
+        } else {
             logger.error(
-                "Ignoring a child of 'channel' of unknown type: "
+                    "Ignoring a child of 'channel' of unknown type: "
                     + childExtension);
         }
     }
 
     private void addChildExtension(
             ColibriConferenceIQ.ChannelBundle bundle,
-            ExtensionElement childExtension)
-    {
-        if (childExtension instanceof IceUdpTransportPacketExtension)
-        {
+            ExtensionElement childExtension) {
+        if (childExtension instanceof IceUdpTransportPacketExtension) {
             IceUdpTransportPacketExtension transport
-                = (IceUdpTransportPacketExtension) childExtension;
+                    = (IceUdpTransportPacketExtension) childExtension;
 
             bundle.setTransport(transport);
         }
@@ -210,12 +196,10 @@ public class ColibriIQProvider
 
     private void addChildExtension(
             ColibriConferenceIQ.SctpConnection sctpConnection,
-            ExtensionElement childExtension)
-    {
-        if (childExtension instanceof IceUdpTransportPacketExtension)
-        {
+            ExtensionElement childExtension) {
+        if (childExtension instanceof IceUdpTransportPacketExtension) {
             IceUdpTransportPacketExtension transport
-                = (IceUdpTransportPacketExtension) childExtension;
+                    = (IceUdpTransportPacketExtension) childExtension;
 
             sctpConnection.setTransport(transport);
         }
@@ -225,26 +209,22 @@ public class ColibriIQProvider
             XmlPullParser parser,
             String name,
             String namespace)
-        throws Exception
-    {
+            throws Exception {
         ExtensionElementProvider extensionProvider
-            = ProviderManager.getExtensionProvider(
+                = ProviderManager.getExtensionProvider(
                         name,
                         namespace);
         ExtensionElement extension;
 
-        if (extensionProvider == null)
-        {
+        if (extensionProvider == null) {
             /*
              * No ExtensionElementProvider for the specified name and namespace
              * has been registered. Throw away the element.
              */
             throwAway(parser, name);
             extension = null;
-        }
-        else
-        {
-            extension = (ExtensionElement)extensionProvider.parse(parser);
+        } else {
+            extension = (ExtensionElement) extensionProvider.parse(parser);
         }
         return extension;
     }
@@ -259,34 +239,35 @@ public class ColibriIQProvider
      * sub-document
      */
     @SuppressWarnings("deprecation") // Compatibility with legacy Jitsi and
-                                     // Jitsi Videobridge
+    // Jitsi Videobridge
     public IQ parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
         IQ iq;
 
         if (ColibriConferenceIQ.ELEMENT_NAME.equals(parser.getName())
-                && ColibriConferenceIQ.NAMESPACE.equals(namespace))
-        {
+                && ColibriConferenceIQ.NAMESPACE.equals(namespace)) {
             ColibriConferenceIQ conference = new ColibriConferenceIQ();
             String conferenceID = parser
                     .getAttributeValue("", ColibriConferenceIQ.ID_ATTR_NAME);
 
-            if ((conferenceID != null) && (conferenceID.length() != 0))
+            if ((conferenceID != null) && (conferenceID.length() != 0)) {
                 conference.setID(conferenceID);
+            }
 
             String conferenceGID = parser
-                .getAttributeValue("", ColibriConferenceIQ.GID_ATTR_NAME);
+                    .getAttributeValue("", ColibriConferenceIQ.GID_ATTR_NAME);
 
-            if ((conferenceGID != null) && (conferenceGID.length() != 0))
+            if ((conferenceGID != null) && (conferenceGID.length() != 0)) {
                 conference.setGID(conferenceGID);
+            }
 
             String conferenceName = parser
-                .getAttributeValue("", ColibriConferenceIQ.NAME_ATTR_NAME);
+                    .getAttributeValue("", ColibriConferenceIQ.NAME_ATTR_NAME);
 
-            if (StringUtils.isNotEmpty(conferenceName))
+            if (StringUtils.isNotEmpty(conferenceName)) {
                 conference.setName(Localpart.from(conferenceName));
+            }
 
             boolean done = false;
             ColibriConferenceIQ.Channel channel = null;
@@ -299,622 +280,513 @@ public class ColibriIQProvider
             ColibriConferenceIQ.Endpoint conferenceEndpoint = null;
             StringBuilder ssrc = null;
 
-            while (!done)
-            {
-                switch (parser.next())
-                {
-                case XmlPullParser.END_TAG:
-                {
-                    String name = parser.getName();
+            while (!done) {
+                switch (parser.next()) {
+                    case XmlPullParser.END_TAG: {
+                        String name = parser.getName();
 
-                    if (ColibriConferenceIQ.ELEMENT_NAME.equals(name))
-                    {
-                        done = true;
-                    }
-                    else if (ColibriConferenceIQ.Channel.ELEMENT_NAME.equals(
-                            name))
-                    {
-                        content.addChannel(channel);
-                        channel = null;
-                    }
-                    else if (ColibriConferenceIQ.SctpConnection.ELEMENT_NAME
-                            .equals(name))
-                    {
-                        if (sctpConnection != null)
-                            content.addSctpConnection(sctpConnection);
-
-                        sctpConnection = null;
-                    }
-                    else if (ColibriConferenceIQ.ChannelBundle.ELEMENT_NAME
-                            .equals(name))
-                    {
-                        if (bundle != null)
-                        {
-                            if (conference.addChannelBundle(bundle) != null)
-                            {
-                                logger.warn(
-                                    "Replacing a channel-bundle with the same"
-                                        + "ID (not a valid Colibri packet).");
+                        if (ColibriConferenceIQ.ELEMENT_NAME.equals(name)) {
+                            done = true;
+                        } else if (ColibriConferenceIQ.Channel.ELEMENT_NAME.equals(
+                                name)) {
+                            content.addChannel(channel);
+                            channel = null;
+                        } else if (ColibriConferenceIQ.SctpConnection.ELEMENT_NAME
+                                .equals(name)) {
+                            if (sctpConnection != null) {
+                                content.addSctpConnection(sctpConnection);
                             }
 
-                            bundle = null;
-                        }
-                    }
-                    else if (ColibriConferenceIQ.Endpoint.ELEMENT_NAME
-                            .equals(name))
-                    {
-                        if (conference.addEndpoint(conferenceEndpoint) != null)
-                        {
-                            logger.warn(
-                                "Replacing an endpoint element with the same"
-                                    + "ID (not a valid Colibri packet).");
-                        }
-                        conferenceEndpoint = null;
-                    }
-                    else if (ColibriConferenceIQ.Channel.SSRC_ELEMENT_NAME
-                            .equals(name))
-                    {
-                        String s = ssrc.toString().trim();
+                            sctpConnection = null;
+                        } else if (ColibriConferenceIQ.ChannelBundle.ELEMENT_NAME
+                                .equals(name)) {
+                            if (bundle != null) {
+                                if (conference.addChannelBundle(bundle) != null) {
+                                    logger.warn(
+                                            "Replacing a channel-bundle with the same"
+                                            + "ID (not a valid Colibri packet).");
+                                }
 
-                        if (s.length() != 0)
-                        {
-                            int i;
+                                bundle = null;
+                            }
+                        } else if (ColibriConferenceIQ.Endpoint.ELEMENT_NAME
+                                .equals(name)) {
+                            if (conference.addEndpoint(conferenceEndpoint) != null) {
+                                logger.warn(
+                                        "Replacing an endpoint element with the same"
+                                        + "ID (not a valid Colibri packet).");
+                            }
+                            conferenceEndpoint = null;
+                        } else if (ColibriConferenceIQ.Channel.SSRC_ELEMENT_NAME
+                                .equals(name)) {
+                            String s = ssrc.toString().trim();
 
-                            /*
+                            if (s.length() != 0) {
+                                int i;
+
+                                /*
                              * Legacy versions of Jitsi and Jitsi Videobridge
                              * may send a synchronization source (SSRC)
                              * identifier as a negative integer.
-                             */
-                            if (s.startsWith("-"))
-                                i = Integer.parseInt(s);
-                            else
-                                i = (int) Long.parseLong(s);
-                            channel.addSSRC(i);
+                                 */
+                                if (s.startsWith("-")) {
+                                    i = Integer.parseInt(s);
+                                } else {
+                                    i = (int) Long.parseLong(s);
+                                }
+                                channel.addSSRC(i);
+                            }
+                            ssrc = null;
+                        } else if (ColibriConferenceIQ.Content.ELEMENT_NAME.equals(
+                                name)) {
+                            conference.addContent(content);
+                            content = null;
+                        } else if (ColibriConferenceIQ.RTCPTerminationStrategy.ELEMENT_NAME.equals(name)) {
+                            conference.setRTCPTerminationStrategy(
+                                    rtcpTerminationStrategy);
+                            rtcpTerminationStrategy = null;
+                        } else if (ColibriConferenceIQ.Recording.ELEMENT_NAME.equals(
+                                name)) {
+                            conference.setRecording(recording);
+                            recording = null;
+                        } else if (ColibriConferenceIQ.GracefulShutdown.ELEMENT_NAME
+                                .equals(name)) {
+                            conference.setGracefulShutdown(true);
                         }
-                        ssrc = null;
+                        break;
                     }
-                    else if (ColibriConferenceIQ.Content.ELEMENT_NAME.equals(
-                            name))
-                    {
-                        conference.addContent(content);
-                        content = null;
-                    }
-                    else if (ColibriConferenceIQ.RTCPTerminationStrategy
-                            .ELEMENT_NAME.equals(name))
-                    {
-                        conference.setRTCPTerminationStrategy(
-                                rtcpTerminationStrategy);
-                        rtcpTerminationStrategy = null;
-                    }
-                    else if (ColibriConferenceIQ.Recording.ELEMENT_NAME.equals(
-                            name))
-                    {
-                        conference.setRecording(recording);
-                        recording = null;
-                    }
-                    else if (ColibriConferenceIQ.GracefulShutdown.ELEMENT_NAME
-                        .equals(name))
-                    {
-                        conference.setGracefulShutdown(true);
-                    }
-                    break;
-                }
 
-                case XmlPullParser.START_TAG:
-                {
-                    String name = parser.getName();
+                    case XmlPullParser.START_TAG: {
+                        String name = parser.getName();
 
-                    if (ColibriConferenceIQ.Channel.ELEMENT_NAME.equals(name))
-                    {
-                        String type
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel.TYPE_ATTR_NAME);
+                        if (ColibriConferenceIQ.Channel.ELEMENT_NAME.equals(name)) {
+                            String type
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.TYPE_ATTR_NAME);
 
-                        if (ColibriConferenceIQ.OctoChannel.TYPE.equals(type))
-                        {
-                            channel = new ColibriConferenceIQ.OctoChannel();
-                        }
-                        else
-                        {
-                            channel = new ColibriConferenceIQ.Channel();
-                        }
+                            if (ColibriConferenceIQ.OctoChannel.TYPE.equals(type)) {
+                                channel = new ColibriConferenceIQ.OctoChannel();
+                            } else {
+                                channel = new ColibriConferenceIQ.Channel();
+                            }
 
-                        // direction
-                        String direction
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .DIRECTION_ATTR_NAME);
+                            // direction
+                            String direction
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.DIRECTION_ATTR_NAME);
 
-                        if ((direction != null) && (direction.length() != 0))
-                        {
-                            channel.setDirection(direction);
-                        }
+                            if ((direction != null) && (direction.length() != 0)) {
+                                channel.setDirection(direction);
+                            }
 
-                        // endpoint
-                        String endpoint
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .ENDPOINT_ATTR_NAME);
+                            // endpoint
+                            String endpoint
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.ENDPOINT_ATTR_NAME);
 
-                        if (StringUtils.isNotEmpty(endpoint))
-                        {
-                            channel.setEndpoint(endpoint);
-                        }
+                            if (StringUtils.isNotEmpty(endpoint)) {
+                                channel.setEndpoint(endpoint);
+                            }
 
-                        String channelBundleId
-                            = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.ChannelCommon
-                                        .CHANNEL_BUNDLE_ID_ATTR_NAME);
-                        if (StringUtils.isNotEmpty(channelBundleId))
-                        {
-                            channel.setChannelBundleId(channelBundleId);
-                        }
+                            String channelBundleId
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.ChannelCommon.CHANNEL_BUNDLE_ID_ATTR_NAME);
+                            if (StringUtils.isNotEmpty(channelBundleId)) {
+                                channel.setChannelBundleId(channelBundleId);
+                            }
 
-                        // expire
-                        String expire
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .EXPIRE_ATTR_NAME);
+                            // expire
+                            String expire
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.EXPIRE_ATTR_NAME);
 
-                        if ((expire != null) && (expire.length() != 0))
-                            channel.setExpire(Integer.parseInt(expire));
+                            if ((expire != null) && (expire.length() != 0)) {
+                                channel.setExpire(Integer.parseInt(expire));
+                            }
 
-                        String packetDelay
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .PACKET_DELAY_ATTR_NAME);
-                        if (StringUtils.isNotEmpty(packetDelay))
-                            channel.setPacketDelay(
-                                    Integer.parseInt(packetDelay));
+                            String packetDelay
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.PACKET_DELAY_ATTR_NAME);
+                            if (StringUtils.isNotEmpty(packetDelay)) {
+                                channel.setPacketDelay(
+                                        Integer.parseInt(packetDelay));
+                            }
 
-                        // host
-                        String host
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel.HOST_ATTR_NAME);
+                            // host
+                            String host
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.HOST_ATTR_NAME);
 
-                        if ((host != null) && (host.length() != 0))
-                            channel.setHost(host);
+                            if ((host != null) && (host.length() != 0)) {
+                                channel.setHost(host);
+                            }
 
-                        // id
-                        String channelID
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel.ID_ATTR_NAME);
+                            // id
+                            String channelID
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.ID_ATTR_NAME);
 
-                        if ((channelID != null) && (channelID.length() != 0))
-                            channel.setID(channelID);
+                            if ((channelID != null) && (channelID.length() != 0)) {
+                                channel.setID(channelID);
+                            }
 
-                        // initiator
-                        String initiator
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .INITIATOR_ATTR_NAME);
+                            // initiator
+                            String initiator
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.INITIATOR_ATTR_NAME);
 
-                        if ((initiator != null) && (initiator.length() != 0))
-                        {
-                            channel.setInitiator(Boolean.valueOf(initiator));
-                        }
+                            if ((initiator != null) && (initiator.length() != 0)) {
+                                channel.setInitiator(Boolean.valueOf(initiator));
+                            }
 
-                        // lastN
-                        String lastN
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .LAST_N_ATTR_NAME);
+                            // lastN
+                            String lastN
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.LAST_N_ATTR_NAME);
 
-                        if ((lastN != null) && (lastN.length() != 0))
-                        {
-                            channel.setLastN(Integer.parseInt(lastN));
-                        }
+                            if ((lastN != null) && (lastN.length() != 0)) {
+                                channel.setLastN(Integer.parseInt(lastN));
+                            }
 
-                        // simulcastMode
-                        String simulcastMode
-                                = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Channel
-                                        .SIMULCAST_MODE_ATTR_NAME);
+                            // simulcastMode
+                            String simulcastMode
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.SIMULCAST_MODE_ATTR_NAME);
 
-                        if (StringUtils.isNotEmpty(simulcastMode))
-                        {
-                            channel.setSimulcastMode(
-                                    SimulcastMode.fromString(simulcastMode));
-                        }
+                            if (StringUtils.isNotEmpty(simulcastMode)) {
+                                channel.setSimulcastMode(
+                                        SimulcastMode.fromString(simulcastMode));
+                            }
 
-                        // receiving simulcast layer
-                        String receivingSimulcastLayer
-                                = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Channel
-                                            .RECEIVING_SIMULCAST_LAYER);
+                            // receiving simulcast layer
+                            String receivingSimulcastLayer
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.RECEIVING_SIMULCAST_LAYER);
 
-                        if ((receivingSimulcastLayer != null)
-                                && (receivingSimulcastLayer.length() != 0))
-                            channel.setReceivingSimulcastLayer(
-                                    Integer.parseInt(receivingSimulcastLayer));
+                            if ((receivingSimulcastLayer != null)
+                                    && (receivingSimulcastLayer.length() != 0)) {
+                                channel.setReceivingSimulcastLayer(
+                                        Integer.parseInt(receivingSimulcastLayer));
+                            }
 
-                        // rtcpPort
-                        String rtcpPort
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .RTCP_PORT_ATTR_NAME);
+                            // rtcpPort
+                            String rtcpPort
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.RTCP_PORT_ATTR_NAME);
 
-                        if ((rtcpPort != null) && (rtcpPort.length() != 0))
-                        {
-                            channel.setRTCPPort(Integer.parseInt(rtcpPort));
-                        }
+                            if ((rtcpPort != null) && (rtcpPort.length() != 0)) {
+                                channel.setRTCPPort(Integer.parseInt(rtcpPort));
+                            }
 
-                        // rtpLevelRelayType
-                        String rtpLevelRelayType
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .RTP_LEVEL_RELAY_TYPE_ATTR_NAME);
+                            // rtpLevelRelayType
+                            String rtpLevelRelayType
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.RTP_LEVEL_RELAY_TYPE_ATTR_NAME);
 
-                        if ((rtpLevelRelayType != null)
-                                && (rtpLevelRelayType.length() != 0))
-                        {
-                            channel.setRTPLevelRelayType(rtpLevelRelayType);
-                        }
+                            if ((rtpLevelRelayType != null)
+                                    && (rtpLevelRelayType.length() != 0)) {
+                                channel.setRTPLevelRelayType(rtpLevelRelayType);
+                            }
 
-                        // rtpPort
-                        String rtpPort
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Channel
-                                            .RTP_PORT_ATTR_NAME);
+                            // rtpPort
+                            String rtpPort
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Channel.RTP_PORT_ATTR_NAME);
 
-                        if ((rtpPort != null) && (rtpPort.length() != 0))
-                        {
-                            channel.setRTPPort(Integer.parseInt(rtpPort));
-                        }
-                    }
-                    else if (ColibriConferenceIQ.ChannelBundle
-                            .ELEMENT_NAME.equals(name))
-                    {
-                        String bundleId
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ
-                                        .ChannelBundle.ID_ATTR_NAME);
+                            if ((rtpPort != null) && (rtpPort.length() != 0)) {
+                                channel.setRTPPort(Integer.parseInt(rtpPort));
+                            }
+                        } else if (ColibriConferenceIQ.ChannelBundle.ELEMENT_NAME.equals(name)) {
+                            String bundleId
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.ChannelBundle.ID_ATTR_NAME);
 
-                        if(StringUtils.isNotEmpty(bundleId))
-                        {
-                            bundle = new ColibriConferenceIQ
-                                        .ChannelBundle(bundleId);
-                        }
-                    }
-                    else if (ColibriConferenceIQ.RTCPTerminationStrategy
-                            .ELEMENT_NAME.equals(name))
-                    {
-                        rtcpTerminationStrategy =
-                                new ColibriConferenceIQ.RTCPTerminationStrategy();
+                            if (StringUtils.isNotEmpty(bundleId)) {
+                                bundle = new ColibriConferenceIQ.ChannelBundle(bundleId);
+                            }
+                        } else if (ColibriConferenceIQ.RTCPTerminationStrategy.ELEMENT_NAME.equals(name)) {
+                            rtcpTerminationStrategy
+                                    = new ColibriConferenceIQ.RTCPTerminationStrategy();
 
-                        // name
-                        String strategyName
-                                = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.RTCPTerminationStrategy
-                                        .NAME_ATTR_NAME);
+                            // name
+                            String strategyName
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.RTCPTerminationStrategy.NAME_ATTR_NAME);
 
-                        if ((strategyName != null)
-                                && (strategyName.length() != 0))
-                            rtcpTerminationStrategy.setName(strategyName);
+                            if ((strategyName != null)
+                                    && (strategyName.length() != 0)) {
+                                rtcpTerminationStrategy.setName(strategyName);
+                            }
 
-                    }
-                    else if (ColibriConferenceIQ.OctoChannel
-                                    .RELAY_ELEMENT_NAME.equals(name))
-                    {
-                        String id
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.OctoChannel.RELAY_ID_ATTR_NAME);
+                        } else if (ColibriConferenceIQ.OctoChannel.RELAY_ELEMENT_NAME.equals(name)) {
+                            String id
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.OctoChannel.RELAY_ID_ATTR_NAME);
 
-                        if (id != null &&
-                            channel instanceof ColibriConferenceIQ.OctoChannel)
-                        {
-                            ((ColibriConferenceIQ.OctoChannel) channel)
-                                .addRelay(id);
-                        }
-                    }
-                    else if (ColibriConferenceIQ.Channel.SSRC_ELEMENT_NAME
-                            .equals(name))
-                    {
-                        ssrc = new StringBuilder();
-                    }
-                    else if (ColibriConferenceIQ.Content.ELEMENT_NAME.equals(
-                            name))
-                    {
-                        content = new ColibriConferenceIQ.Content();
+                            if (id != null
+                                    && channel instanceof ColibriConferenceIQ.OctoChannel) {
+                                ((ColibriConferenceIQ.OctoChannel) channel)
+                                        .addRelay(id);
+                            }
+                        } else if (ColibriConferenceIQ.Channel.SSRC_ELEMENT_NAME
+                                .equals(name)) {
+                            ssrc = new StringBuilder();
+                        } else if (ColibriConferenceIQ.Content.ELEMENT_NAME.equals(
+                                name)) {
+                            content = new ColibriConferenceIQ.Content();
 
-                        String contentName
-                            = parser.getAttributeValue(
-                                    "",
-                                    ColibriConferenceIQ.Content.NAME_ATTR_NAME);
+                            String contentName
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Content.NAME_ATTR_NAME);
 
-                        if ((contentName != null)
-                                && (contentName.length() != 0))
-                            content.setName(contentName);
-                    }
-                    else if (ColibriConferenceIQ.Recording.ELEMENT_NAME.equals(
-                            name))
-                    {
-                        String stateStr
-                                = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Recording.STATE_ATTR_NAME);
-                        String token
-                                = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Recording.TOKEN_ATTR_NAME);
+                            if ((contentName != null)
+                                    && (contentName.length() != 0)) {
+                                content.setName(contentName);
+                            }
+                        } else if (ColibriConferenceIQ.Recording.ELEMENT_NAME.equals(
+                                name)) {
+                            String stateStr
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Recording.STATE_ATTR_NAME);
+                            String token
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Recording.TOKEN_ATTR_NAME);
 
-                        recording
-                                = new ColibriConferenceIQ.Recording(
-                                stateStr,
-                                token);
-                    }
-                    else if (ColibriConferenceIQ.SctpConnection.ELEMENT_NAME
-                        .equals(name))
-                    {
-                        // Endpoint
-                        String endpoint
-                            = parser.getAttributeValue(
-                            "",
-                            ColibriConferenceIQ.
-                                SctpConnection.ENDPOINT_ATTR_NAME);
+                            recording
+                                    = new ColibriConferenceIQ.Recording(
+                                            stateStr,
+                                            token);
+                        } else if (ColibriConferenceIQ.SctpConnection.ELEMENT_NAME
+                                .equals(name)) {
+                            // Endpoint
+                            String endpoint
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.SctpConnection.ENDPOINT_ATTR_NAME);
 
-                        // id
-                        String connID
-                            = parser.getAttributeValue(
-                            "",
-                            ColibriConferenceIQ.
-                                ChannelCommon.ID_ATTR_NAME);
+                            // id
+                            String connID
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.ChannelCommon.ID_ATTR_NAME);
 
-                        if(StringUtils.isEmpty(connID)
-                           && StringUtils.isEmpty(endpoint))
-                        {
-                            sctpConnection = null;
-                            continue;
-                        }
+                            if (StringUtils.isEmpty(connID)
+                                    && StringUtils.isEmpty(endpoint)) {
+                                sctpConnection = null;
+                                continue;
+                            }
 
-                        sctpConnection
-                            = new ColibriConferenceIQ.SctpConnection();
+                            sctpConnection
+                                    = new ColibriConferenceIQ.SctpConnection();
 
-                        if (StringUtils.isNotEmpty(connID))
-                            sctpConnection.setID(connID);
+                            if (StringUtils.isNotEmpty(connID)) {
+                                sctpConnection.setID(connID);
+                            }
 
-                        if (StringUtils.isNotEmpty(endpoint))
-                        {
-                            sctpConnection.setEndpoint(endpoint);
-                        }
+                            if (StringUtils.isNotEmpty(endpoint)) {
+                                sctpConnection.setEndpoint(endpoint);
+                            }
 
-                        // port
-                        String port
-                            = parser.getAttributeValue(
-                            "",
-                            ColibriConferenceIQ.SctpConnection.PORT_ATTR_NAME);
-                        if (StringUtils.isNotEmpty(port))
-                            sctpConnection.setPort(Integer.parseInt(port));
+                            // port
+                            String port
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.SctpConnection.PORT_ATTR_NAME);
+                            if (StringUtils.isNotEmpty(port)) {
+                                sctpConnection.setPort(Integer.parseInt(port));
+                            }
 
-                        String channelBundleId
-                            = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.ChannelCommon
-                                        .CHANNEL_BUNDLE_ID_ATTR_NAME);
-                        if (StringUtils.isNotEmpty(channelBundleId))
-                        {
-                            sctpConnection.setChannelBundleId(channelBundleId);
-                        }
+                            String channelBundleId
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.ChannelCommon.CHANNEL_BUNDLE_ID_ATTR_NAME);
+                            if (StringUtils.isNotEmpty(channelBundleId)) {
+                                sctpConnection.setChannelBundleId(channelBundleId);
+                            }
 
-                        // initiator
-                        String initiator
-                            = parser.getAttributeValue(
-                            "",
-                            ColibriConferenceIQ.SctpConnection
-                                .INITIATOR_ATTR_NAME);
+                            // initiator
+                            String initiator
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.SctpConnection.INITIATOR_ATTR_NAME);
 
-                        if (StringUtils.isNotEmpty(initiator))
-                            sctpConnection.setInitiator(
-                                Boolean.valueOf(initiator));
+                            if (StringUtils.isNotEmpty(initiator)) {
+                                sctpConnection.setInitiator(
+                                        Boolean.valueOf(initiator));
+                            }
 
-                        // expire
-                        String expire
-                            = parser.getAttributeValue(
-                            "",
-                            ColibriConferenceIQ.SctpConnection
-                                .EXPIRE_ATTR_NAME);
+                            // expire
+                            String expire
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.SctpConnection.EXPIRE_ATTR_NAME);
 
-                        if (StringUtils.isNotEmpty(expire))
-                            sctpConnection.setExpire(Integer.parseInt(expire));
-                    }
-                    else if (ColibriConferenceIQ.Endpoint.ELEMENT_NAME
-                            .equals(name))
-                    {
-                        String id
-                            = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Endpoint.ID_ATTR_NAME);
+                            if (StringUtils.isNotEmpty(expire)) {
+                                sctpConnection.setExpire(Integer.parseInt(expire));
+                            }
+                        } else if (ColibriConferenceIQ.Endpoint.ELEMENT_NAME
+                                .equals(name)) {
+                            String id
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Endpoint.ID_ATTR_NAME);
 
-                        String displayName
-                            = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Endpoint
-                                    .DISPLAYNAME_ATTR_NAME);
+                            String displayName
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Endpoint.DISPLAYNAME_ATTR_NAME);
 
-                        String statsId
-                            = parser.getAttributeValue(
-                                "",
-                                ColibriConferenceIQ.Endpoint
-                                    .STATS_ID_ATTR_NAME);
+                            String statsId
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriConferenceIQ.Endpoint.STATS_ID_ATTR_NAME);
 
-                        if(StringUtils.isNotEmpty(id))
-                        {
-                            conferenceEndpoint
-                                = new ColibriConferenceIQ.Endpoint(
-                                    id, statsId, displayName);
-                        }
-                    }
-                    else if ( channel != null
-                              || sctpConnection != null
-                              || bundle != null )
-                    {
-                        String peName = null;
-                        String peNamespace = null;
+                            if (StringUtils.isNotEmpty(id)) {
+                                conferenceEndpoint
+                                        = new ColibriConferenceIQ.Endpoint(
+                                                id, statsId, displayName);
+                            }
+                        } else if (channel != null
+                                || sctpConnection != null
+                                || bundle != null) {
+                            String peName = null;
+                            String peNamespace = null;
 
-                        if (IceUdpTransportPacketExtension.ELEMENT_NAME
+                            if (IceUdpTransportPacketExtension.ELEMENT_NAME
                                     .equals(name)
-                                && IceUdpTransportPacketExtension.NAMESPACE
-                                        .equals(parser.getNamespace()))
-                        {
-                            peName = name;
-                            peNamespace
-                                = IceUdpTransportPacketExtension.NAMESPACE;
-                        }
-                        else if (PayloadTypePacketExtension.ELEMENT_NAME.equals(
-                                name))
-                        {
-                            /*
+                                    && IceUdpTransportPacketExtension.NAMESPACE
+                                            .equals(parser.getNamespace())) {
+                                peName = name;
+                                peNamespace
+                                        = IceUdpTransportPacketExtension.NAMESPACE;
+                            } else if (PayloadTypePacketExtension.ELEMENT_NAME.equals(
+                                    name)) {
+                                /*
                              * The channel element of the Jitsi Videobridge
                              * protocol reuses the payload-type element defined
                              * in XEP-0167: Jingle RTP Sessions.
-                             */
-                            peName = name;
-                            peNamespace = namespace;
-                        }
-                        else if (RtcpFbPacketExtension.ELEMENT_NAME.equals(
-                                name)
-                                && RtcpFbPacketExtension.NAMESPACE
-                                .equals(parser.getNamespace()))
-                        {
-                            /*
+                                 */
+                                peName = name;
+                                peNamespace = namespace;
+                            } else if (RtcpFbPacketExtension.ELEMENT_NAME.equals(
+                                    name)
+                                    && RtcpFbPacketExtension.NAMESPACE
+                                            .equals(parser.getNamespace())) {
+                                /*
                              * The channel element of the Jitsi Videobridge
                              * protocol reuses the payload-type element defined
                              * in XEP-0167: Jingle RTP Sessions.
-                             */
-                            peName = name;
-                            peNamespace = namespace;
-                        }
-                        else if (RTPHdrExtPacketExtension.ELEMENT_NAME.equals(
-                                name))
-                        {
-                            /*
+                                 */
+                                peName = name;
+                                peNamespace = namespace;
+                            } else if (RTPHdrExtPacketExtension.ELEMENT_NAME.equals(
+                                    name)) {
+                                /*
                              * The channel element of the Jitsi Videobridge
                              * protocol reuses the rtp-hdrext element defined
                              * in XEP-0167: Jingle RTP Sessions.
-                             */
-                            peName = name;
-                            peNamespace = namespace;
-                        }
-                        else if (RawUdpTransportPacketExtension.ELEMENT_NAME
+                                 */
+                                peName = name;
+                                peNamespace = namespace;
+                            } else if (RawUdpTransportPacketExtension.ELEMENT_NAME
                                     .equals(name)
-                                && RawUdpTransportPacketExtension.NAMESPACE
-                                        .equals(parser.getNamespace()))
-                        {
-                            peName = name;
-                            peNamespace
-                                = RawUdpTransportPacketExtension.NAMESPACE;
-                        }
-                        else if (SourcePacketExtension.ELEMENT_NAME.equals(name)
-                                && SourcePacketExtension.NAMESPACE.equals(
-                                        parser.getNamespace()))
-                        {
-                            peName = name;
-                            peNamespace = SourcePacketExtension.NAMESPACE;
-                        }
-                        else if (SourceGroupPacketExtension.ELEMENT_NAME
-                                                .equals(name)
-                                && SourceGroupPacketExtension.NAMESPACE
-                                                .equals(parser.getNamespace()))
-                        {
-                            peName = name;
-                            peNamespace = SourceGroupPacketExtension.NAMESPACE;
-                        }
-                        else if (SourceRidGroupPacketExtension.ELEMENT_NAME
-                                                .equals(name)
-                                && SourceRidGroupPacketExtension.NAMESPACE
-                                                .equals(parser.getNamespace()))
-                        {
-                            peName = name;
-                            peNamespace = SourceRidGroupPacketExtension.NAMESPACE;
-                        }
-                        if (peName == null)
-                        {
-                            throwAway(parser, name);
-                        }
-                        else
-                        {
-                            ExtensionElement extension
-                                = parseExtension(parser, peName, peNamespace);
+                                    && RawUdpTransportPacketExtension.NAMESPACE
+                                            .equals(parser.getNamespace())) {
+                                peName = name;
+                                peNamespace
+                                        = RawUdpTransportPacketExtension.NAMESPACE;
+                            } else if (SourcePacketExtension.ELEMENT_NAME.equals(name)
+                                    && SourcePacketExtension.NAMESPACE.equals(
+                                            parser.getNamespace())) {
+                                peName = name;
+                                peNamespace = SourcePacketExtension.NAMESPACE;
+                            } else if (SourceGroupPacketExtension.ELEMENT_NAME
+                                    .equals(name)
+                                    && SourceGroupPacketExtension.NAMESPACE
+                                            .equals(parser.getNamespace())) {
+                                peName = name;
+                                peNamespace = SourceGroupPacketExtension.NAMESPACE;
+                            } else if (SourceRidGroupPacketExtension.ELEMENT_NAME
+                                    .equals(name)
+                                    && SourceRidGroupPacketExtension.NAMESPACE
+                                            .equals(parser.getNamespace())) {
+                                peName = name;
+                                peNamespace = SourceRidGroupPacketExtension.NAMESPACE;
+                            }
+                            if (peName == null) {
+                                throwAway(parser, name);
+                            } else {
+                                ExtensionElement extension
+                                        = parseExtension(parser, peName, peNamespace);
 
-                            if (extension != null)
-                            {
-                                if(channel != null)
-                                {
-                                    addChildExtension(channel, extension);
-                                }
-                                else if (sctpConnection != null)
-                                {
-                                    addChildExtension(sctpConnection,
-                                                      extension);
-                                }
-                                else
-                                {
-                                    addChildExtension(bundle, extension);
+                                if (extension != null) {
+                                    if (channel != null) {
+                                        addChildExtension(channel, extension);
+                                    } else if (sctpConnection != null) {
+                                        addChildExtension(sctpConnection,
+                                                extension);
+                                    } else {
+                                        addChildExtension(bundle, extension);
+                                    }
                                 }
                             }
                         }
+                        break;
                     }
-                    break;
-                }
 
-                case XmlPullParser.TEXT:
-                {
-                    if (ssrc != null)
-                        ssrc.append(parser.getText());
-                    break;
-                }
+                    case XmlPullParser.TEXT: {
+                        if (ssrc != null) {
+                            ssrc.append(parser.getText());
+                        }
+                        break;
+                    }
                 }
             }
 
             iq = conference;
-        }
-        else if (ShutdownIQ.NAMESPACE.equals(namespace) &&
-                 ShutdownIQ.isValidElementName(parser.getName()))
-        {
+        } else if (ShutdownIQ.NAMESPACE.equals(namespace)
+                && ShutdownIQ.isValidElementName(parser.getName())) {
             String rootElement = parser.getName();
 
             iq = ShutdownIQ.createShutdownIQ(rootElement);
 
             boolean done = false;
 
-            while (!done)
-            {
-                switch (parser.next())
-                {
-                    case XmlPullParser.END_TAG:
-                    {
+            while (!done) {
+                switch (parser.next()) {
+                    case XmlPullParser.END_TAG: {
                         String name = parser.getName();
 
-                        if (rootElement.equals(name))
-                        {
+                        if (rootElement.equals(name)) {
                             done = true;
                         }
                         break;
                     }
                 }
             }
-        }
-        else if (ColibriStatsIQ.ELEMENT_NAME.equals(parser.getName())
-            && ColibriStatsIQ.NAMESPACE.equals(namespace))
-        {
+        } else if (ColibriStatsIQ.ELEMENT_NAME.equals(parser.getName())
+                && ColibriStatsIQ.NAMESPACE.equals(namespace)) {
             String rootElement = parser.getName();
 
             ColibriStatsIQ statsIQ = new ColibriStatsIQ();
@@ -923,46 +795,36 @@ public class ColibriIQProvider
 
             boolean done = false;
 
-            while (!done)
-            {
-                switch (parser.next())
-                {
-                    case XmlPullParser.START_TAG:
-                    {
+            while (!done) {
+                switch (parser.next()) {
+                    case XmlPullParser.START_TAG: {
                         String name = parser.getName();
 
-                        if (ColibriStatsExtension.Stat
-                                    .ELEMENT_NAME.equals(name))
-                        {
+                        if (ColibriStatsExtension.Stat.ELEMENT_NAME.equals(name)) {
                             stat = new ColibriStatsExtension.Stat();
 
                             String statName
-                                = parser.getAttributeValue(
-                                    "",
-                                    ColibriStatsExtension.Stat.NAME_ATTR_NAME);
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriStatsExtension.Stat.NAME_ATTR_NAME);
                             stat.setName(statName);
 
                             String statValue
-                                = parser.getAttributeValue(
-                                    "",
-                                    ColibriStatsExtension.Stat.VALUE_ATTR_NAME);
+                                    = parser.getAttributeValue(
+                                            "",
+                                            ColibriStatsExtension.Stat.VALUE_ATTR_NAME);
                             stat.setValue(statValue);
                         }
                         break;
                     }
-                    case XmlPullParser.END_TAG:
-                    {
+                    case XmlPullParser.END_TAG: {
                         String name = parser.getName();
 
-                        if (rootElement.equals(name))
-                        {
+                        if (rootElement.equals(name)) {
                             done = true;
-                        }
-                        else if (ColibriStatsExtension.Stat.ELEMENT_NAME
-                            .equals(name))
-                        {
-                            if (stat != null)
-                            {
+                        } else if (ColibriStatsExtension.Stat.ELEMENT_NAME
+                                .equals(name)) {
+                            if (stat != null) {
                                 statsIQ.addStat(stat);
                                 stat = null;
                             }
@@ -971,9 +833,9 @@ public class ColibriIQProvider
                     }
                 }
             }
-        }
-        else
+        } else {
             iq = null;
+        }
 
         return iq;
     }
@@ -991,8 +853,7 @@ public class ColibriIQProvider
      * @throws Exception if an errors occurs while parsing the XML content
      */
     private void throwAway(XmlPullParser parser, String name)
-        throws Exception
-    {
+            throws Exception {
         while ((XmlPullParser.END_TAG != parser.next())
                 || !name.equals(parser.getName()));
     }

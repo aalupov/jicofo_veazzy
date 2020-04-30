@@ -25,17 +25,15 @@ import java.util.concurrent.*;
  * @author Pawel Domas
  */
 public class DaemonThreadFactory
-    implements ThreadFactory
-{
+        implements ThreadFactory {
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public Thread newThread(Runnable r)
-    {
+    public Thread newThread(Runnable r) {
         Thread t = Executors.defaultThreadFactory().newThread(r);
-        if (!t.isDaemon())
-        {
+        if (!t.isDaemon()) {
             t.setDaemon(true);
         }
         return t;

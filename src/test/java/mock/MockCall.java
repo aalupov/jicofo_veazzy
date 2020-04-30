@@ -25,61 +25,50 @@ import net.java.sip.communicator.service.protocol.media.*;
  * @author Pawel Domas
  */
 public class MockCall
-    extends MediaAwareCall<MockCallPeer,
-                           MockBasicTeleOpSet,
-                           MockProtocolProvider>
-{
+        extends MediaAwareCall<MockCallPeer, MockBasicTeleOpSet, MockProtocolProvider> {
+
     /**
      * Creates a new Call instance.
      *
      * @param telephony
      */
-    protected MockCall(MockBasicTeleOpSet telephony)
-    {
+    protected MockCall(MockBasicTeleOpSet telephony) {
         super(telephony);
     }
 
     @Override
-    public boolean isConferenceFocus()
-    {
+    public boolean isConferenceFocus() {
         return false;
     }
 
     @Override
-    public void addLocalUserSoundLevelListener(SoundLevelListener l)
-    {
+    public void addLocalUserSoundLevelListener(SoundLevelListener l) {
 
     }
 
     @Override
-    public void removeLocalUserSoundLevelListener(SoundLevelListener l)
-    {
+    public void removeLocalUserSoundLevelListener(SoundLevelListener l) {
 
     }
 
-    public void addCallPeer(MockCallPeer peer)
-    {
+    public void addCallPeer(MockCallPeer peer) {
         doAddCallPeer(peer);
     }
 
-    public synchronized void hangup()
-    {
+    public synchronized void hangup() {
         setCallState(CallState.CALL_ENDED);
 
-        for (MockCallPeer peer : getCallPeerList())
-        {
+        for (MockCallPeer peer : getCallPeerList()) {
             peer.setState(CallPeerState.DISCONNECTED);
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return super.toString() + " " + getProtocolProvider().getProtocolName();
     }
 
-    public void setCallState(CallState newState)
-    {
+    public void setCallState(CallState newState) {
         super.setCallState(newState);
     }
 }

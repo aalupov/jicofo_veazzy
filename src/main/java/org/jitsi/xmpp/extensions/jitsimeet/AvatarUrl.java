@@ -27,8 +27,8 @@ import org.xmlpull.v1.*;
  * @author Boris Grozev
  */
 public class AvatarUrl
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     public static final String NAMESPACE = "jabber:client";
 
     public static final String ELEMENT_NAME = "avatar-url";
@@ -37,18 +37,17 @@ public class AvatarUrl
 
     /**
      * Initializes an {@link AvatarUrl} instance with a given string value.
+     *
      * @param avatarUrl the string value.
      */
-    public AvatarUrl(String avatarUrl)
-    {
+    public AvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
 
     /**
      * @return the value of the avatar-url element as a string.
      */
-    public String getAvatarUrl()
-    {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
@@ -57,26 +56,25 @@ public class AvatarUrl
      *
      * @param avatarUrl the value to set.
      */
-    public void setAvatarUrl(String avatarUrl)
-    {
+    public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
 
     /**
      * Element name.
+     *
      * @return element name for this extension.
      */
-    public String getElementName()
-    {
+    public String getElementName() {
         return ELEMENT_NAME;
     }
 
     /**
      * Returns the namespace for this extension.
+     *
      * @return the namespace for this extension.
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return NAMESPACE;
     }
 
@@ -84,28 +82,25 @@ public class AvatarUrl
      * Returns xml representation of this extension.
      * @return xml representation of this extension.
      */
-    public String toXML()
-    {
+    public String toXML() {
         return new XmlStringBuilder()
-            .element(getElementName(), getAvatarUrl())
-            .toString();
+                .element(getElementName(), getAvatarUrl())
+                .toString();
     }
 
     /**
      * The provider.
      */
     public static class Provider
-        extends ExtensionElementProvider<AvatarUrl>
-    {
+            extends ExtensionElementProvider<AvatarUrl> {
+
         @Override
-        public AvatarUrl parse(XmlPullParser parser, int depth) throws Exception
-        {
+        public AvatarUrl parse(XmlPullParser parser, int depth) throws Exception {
             parser.next();
             final String address = parser.getText();
 
             // Advance to end of extension.
-            while(parser.getEventType() != XmlPullParser.END_TAG)
-            {
+            while (parser.getEventType() != XmlPullParser.END_TAG) {
                 parser.next();
             }
 

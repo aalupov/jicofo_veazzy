@@ -29,16 +29,15 @@ import org.jxmpp.stringprep.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
-public class ConnectionMockTest
-{
+public class ConnectionMockTest {
+
     private XmppPeer peerA;
     private XmppPeer peerB;
     private XmppPeer peerC;
 
     @Before
     public void setup()
-            throws Exception
-    {
+            throws Exception {
         peerA = new XmppPeer("A");
         peerB = new XmppPeer("B");
         peerC = new XmppPeer("C");
@@ -49,8 +48,7 @@ public class ConnectionMockTest
     }
 
     @After
-    public void tearDown()
-    {
+    public void tearDown() {
         peerA.stop();
         peerB.stop();
         peerC.stop();
@@ -58,8 +56,7 @@ public class ConnectionMockTest
 
     @Test
     public void testXmpConnectionIqGet()
-            throws InterruptedException, XmppStringprepException
-    {
+            throws InterruptedException, XmppStringprepException {
         peerA.getConnection().sendStanza(getIq("B"));
         peerA.getConnection().sendStanza(getIq("C"));
         peerB.getConnection().sendStanza(getIq("A"));
@@ -76,8 +73,7 @@ public class ConnectionMockTest
     }
 
     private JingleIQ getIq(String to)
-            throws XmppStringprepException
-    {
+            throws XmppStringprepException {
         JingleIQ jingle = new JingleIQ(JingleAction.SESSION_INFO, "123");
         jingle.setType(IQ.Type.get);
         jingle.setTo(JidCreate.from(to));

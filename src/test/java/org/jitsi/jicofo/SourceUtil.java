@@ -28,10 +28,9 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class SourceUtil
-{
-    static public SourcePacketExtension createSourceWithSsrc(long ssrc, String[][] params)
-    {
+public class SourceUtil {
+
+    static public SourcePacketExtension createSourceWithSsrc(long ssrc, String[][] params) {
         SourcePacketExtension ssrcPE = new SourcePacketExtension();
 
         ssrcPE.setSSRC(ssrc);
@@ -40,8 +39,7 @@ public class SourceUtil
         return ssrcPE;
     }
 
-    static public SourcePacketExtension createSourceWithRid(String rid, String[][] params)
-    {
+    static public SourcePacketExtension createSourceWithRid(String rid, String[][] params) {
         SourcePacketExtension ssrcPE = new SourcePacketExtension();
 
         ssrcPE.setRid(rid);
@@ -50,19 +48,16 @@ public class SourceUtil
         return ssrcPE;
     }
 
-    static private void setSourceParams(SourcePacketExtension source, String[][] params)
-    {
-        for (String[] param : params)
-        {
+    static private void setSourceParams(SourcePacketExtension source, String[][] params) {
+        for (String[] param : params) {
             source.addParameter(
                     new ParameterPacketExtension(param[0], param[1]));
         }
 
     }
 
-    static public SourceGroup createSourceGroup(String                semantics,
-                                                SourcePacketExtension ssrcs[])
-    {
+    static public SourceGroup createSourceGroup(String semantics,
+            SourcePacketExtension ssrcs[]) {
         SourceGroupPacketExtension groupPe = new SourceGroupPacketExtension();
 
         groupPe.setSemantics(semantics);

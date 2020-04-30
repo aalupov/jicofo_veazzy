@@ -25,14 +25,14 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class UsersProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a users extension sub-packet and creates a {@link
-     * UsersPacketExtension} instance. At the beginning of the method
-     * call, the xml parser will be positioned on the opening element of the
-     * packet extension. As required by the smack API, at the end of the method
-     * call, the parser will be positioned on the closing element of the packet
+     * UsersPacketExtension} instance. At the beginning of the method call, the
+     * xml parser will be positioned on the opening element of the packet
+     * extension. As required by the smack API, at the end of the method call,
+     * the parser will be positioned on the closing element of the packet
      * extension.
      *
      * @param parser an XML parser positioned at the opening
@@ -43,8 +43,7 @@ public class UsersProvider
      */
     @Override
     public UsersPacketExtension parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
@@ -52,37 +51,30 @@ public class UsersProvider
         String stateStr = parser.getAttributeValue("",
                 UserPacketExtension.STATE_ATTR_NAME);
 
-        if(stateStr != null)
-        {
+        if (stateStr != null) {
             state = StateType.parseString(stateStr);
         }
 
         UsersPacketExtension ext
-            = new UsersPacketExtension();
+                = new UsersPacketExtension();
 
         ext.setAttribute(UsersPacketExtension.STATE_ATTR_NAME, state);
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(UserPacketExtension.ELEMENT_NAME))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(UserPacketExtension.ELEMENT_NAME)) {
                     ExtensionElementProvider provider
-                        = new UserProvider();
-                    ExtensionElement childExtension = (ExtensionElement)provider.parse(
+                            = new UserProvider();
+                    ExtensionElement childExtension = (ExtensionElement) provider.parse(
                             parser);
                     ext.addChildExtension(childExtension);
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        UsersPacketExtension.ELEMENT_NAME))
-                {
+                        UsersPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }

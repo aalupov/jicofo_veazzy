@@ -20,16 +20,15 @@ import org.jitsi.xmpp.extensions.*;
 import java.util.*;
 
 /**
- * A packet extension that represents a list of
- * {@link ConferenceProperty}s to be included in the focus MUC presence. The
- * idea is to use it for stuff like recording status, etherpad URL, and other
- * conference related information.
+ * A packet extension that represents a list of {@link ConferenceProperty}s to
+ * be included in the focus MUC presence. The idea is to use it for stuff like
+ * recording status, etherpad URL, and other conference related information.
  *
  * @author George Politis
  */
 public class ConferenceProperties
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The XML namespace of this element.
      */
@@ -62,16 +61,15 @@ public class ConferenceProperties
 
     /**
      * Creates a deep copy of a {@link ConferenceProperties} instance.
+     *
      * @param source the {@link ConferenceProperties} to copy.
      * @return the copy.
      */
-    public static ConferenceProperties clone(ConferenceProperties source)
-    {
+    public static ConferenceProperties clone(ConferenceProperties source) {
         ConferenceProperties destination
-            = AbstractPacketExtension.clone(source);
+                = AbstractPacketExtension.clone(source);
 
-        for (ConferenceProperty property : source.getProperties())
-        {
+        for (ConferenceProperty property : source.getProperties()) {
             destination.addProperty(ConferenceProperty.clone(property));
         }
 
@@ -81,27 +79,25 @@ public class ConferenceProperties
     /**
      * Ctor.
      */
-    public ConferenceProperties()
-    {
+    public ConferenceProperties() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * @return the list of all {@link ConferenceProperty}.
      */
-    public List<ConferenceProperty> getProperties()
-    {
-       return getChildExtensionsOfType(ConferenceProperty.class);
+    public List<ConferenceProperty> getProperties() {
+        return getChildExtensionsOfType(ConferenceProperty.class);
     }
 
     /**
      * Adds a specific {@link ConferenceProperty} object to this
-     * {@link ConferenceProperties}. Existing properties with the same key
-     * are removed.
+     * {@link ConferenceProperties}. Existing properties with the same key are
+     * removed.
+     *
      * @param property the property to add.
      */
-    public void addProperty(ConferenceProperty property)
-    {
+    public void addProperty(ConferenceProperty property) {
         clear(property.getKey());
         addChildExtension(property);
     }
@@ -113,8 +109,7 @@ public class ConferenceProperties
      * @param key key with which the specified value is to be associated
      * @param value value to be associated with the specified key
      */
-    public void put(String key, String value)
-    {
+    public void put(String key, String value) {
         clear(key);
         addChildExtension(new ConferenceProperty(key, value));
     }
@@ -122,31 +117,29 @@ public class ConferenceProperties
     /**
      * Removes all {@link ConferenceProperty}-s with a given key from this
      * instance.
+     *
      * @param key the key to match.
      */
-    private void clear(String key)
-    {
+    private void clear(String key) {
         Objects.requireNonNull(key);
 
-        for (ConferenceProperty property :
-            getChildExtensionsOfType(ConferenceProperty.class))
-        {
-            if (key.equals(property.getKey()))
-            {
+        for (ConferenceProperty property
+                : getChildExtensionsOfType(ConferenceProperty.class)) {
+            if (key.equals(property.getKey())) {
                 removeChildExtension(property);
             }
         }
     }
 
     /**
-     * A packet extension that represents a key-value
-     * pair to be included in the focus MUC presence.
+     * A packet extension that represents a key-value pair to be included in the
+     * focus MUC presence.
      *
      * @author George Politis
      */
     public static class ConferenceProperty
-        extends AbstractPacketExtension
-    {
+            extends AbstractPacketExtension {
+
         /**
          * The XML name of the conference property element.
          */
@@ -164,11 +157,10 @@ public class ConferenceProperties
 
         /**
          * This should not be used externally, because it leaves the instance
-         * without a "key" and "vale" attribute. It is needed (with public access)
-         * because of {@link AbstractPacketExtension#clone()}, though.
+         * without a "key" and "vale" attribute. It is needed (with public
+         * access) because of {@link AbstractPacketExtension#clone()}, though.
          */
-        public ConferenceProperty()
-        {
+        public ConferenceProperty() {
             super(NAMESPACE, ELEMENT_NAME);
         }
 
@@ -178,8 +170,7 @@ public class ConferenceProperties
          * @param key key with which the specified value is to be associated
          * @param value value to be associated with the specified key
          */
-        public ConferenceProperty(String key, String value)
-        {
+        public ConferenceProperty(String key, String value) {
             super(NAMESPACE, ELEMENT_NAME);
 
             setAttribute(KEY_ATTR_NAME, key);
@@ -189,16 +180,14 @@ public class ConferenceProperties
         /**
          * @return the key of this {@link ConferenceProperty}.
          */
-        public String getKey()
-        {
+        public String getKey() {
             return (String) getAttribute("key");
         }
 
         /**
          * @return the value of this {@link ConferenceProperty}.
          */
-        public String getValue()
-        {
+        public String getValue() {
             return (String) getAttribute("value");
         }
     }

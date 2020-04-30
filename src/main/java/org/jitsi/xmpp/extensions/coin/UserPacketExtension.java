@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class UserPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that user belongs to.
      */
@@ -62,18 +62,17 @@ public class UserPacketExtension
      *
      * @param entity entity
      */
-    public UserPacketExtension(String entity)
-    {
+    public UserPacketExtension(String entity) {
         super(NAMESPACE, ELEMENT_NAME);
         setAttribute("entity", entity);
     }
 
     /**
      * Set display text.
+     *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -82,18 +81,17 @@ public class UserPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

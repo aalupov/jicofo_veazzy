@@ -38,237 +38,194 @@ import org.jxmpp.stringprep.*;
  * @author Pawel Domas
  */
 public class MockProtocolProvider
-    extends AbstractProtocolProviderService
-{
+        extends AbstractProtocolProviderService {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(MockProtocolProvider.class);
+            = Logger.getLogger(MockProtocolProvider.class);
 
     private final MockAccountID accountId;
 
     private final EventAdmin eventAdmin;
 
     private RegistrationState registrationState
-        = RegistrationState.UNREGISTERED;
+            = RegistrationState.UNREGISTERED;
 
     private MockXmppConnection connection;
 
     private AbstractOperationSetJingle jingleOpSet;
 
-    public MockProtocolProvider(MockAccountID accountId, EventAdmin eventAdmin)
-    {
+    public MockProtocolProvider(MockAccountID accountId, EventAdmin eventAdmin) {
         this.accountId = accountId;
         this.eventAdmin = eventAdmin;
     }
 
     @Override
     public void register(SecurityAuthority authority)
-        throws OperationFailedException
-    {
-        if (jingleOpSet != null)
-        {
+            throws OperationFailedException {
+        if (jingleOpSet != null) {
             connection.registerIQRequestHandler(jingleOpSet);
         }
 
         setRegistrationState(
-            RegistrationState.REGISTERED,
-            RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
-            null);
+                RegistrationState.REGISTERED,
+                RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
+                null);
     }
 
     private void setRegistrationState(RegistrationState newState,
-                                      int reasonCode,
-                                      String reason)
-    {
+            int reasonCode,
+            String reason) {
         RegistrationState oldState = getRegistrationState();
 
         this.registrationState = newState;
 
         fireRegistrationStateChanged(
-            oldState, newState, reasonCode, reason);
+                oldState, newState, reasonCode, reason);
     }
 
     @Override
     public void unregister()
-        throws OperationFailedException
-    {
-        if (jingleOpSet != null)
-        {
+            throws OperationFailedException {
+        if (jingleOpSet != null) {
             connection.unregisterIQRequestHandler(jingleOpSet);
         }
 
         setRegistrationState(
-            RegistrationState.UNREGISTERED,
-            RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
-            null);
+                RegistrationState.UNREGISTERED,
+                RegistrationStateChangeEvent.REASON_NOT_SPECIFIED,
+                null);
     }
 
     @Override
-    public RegistrationState getRegistrationState()
-    {
+    public RegistrationState getRegistrationState() {
         return registrationState;
     }
 
     @Override
-    public String getProtocolName()
-    {
+    public String getProtocolName() {
         return accountId.getProtocolName();
     }
 
     @Override
-    public ProtocolIcon getProtocolIcon()
-    {
+    public ProtocolIcon getProtocolIcon() {
         return null;
     }
 
     @Override
-    public void shutdown()
-    {
-        try
-        {
+    public void shutdown() {
+        try {
             unregister();
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             logger.error(e, e);
         }
     }
 
     @Override
-    public AccountID getAccountID()
-    {
+    public AccountID getAccountID() {
         return accountId;
     }
 
     @Override
-    public boolean isSignalingTransportSecure()
-    {
+    public boolean isSignalingTransportSecure() {
         return false;
     }
 
     @Override
-    public TransportProtocol getTransportProtocol()
-    {
+    public TransportProtocol getTransportProtocol() {
         return null;
     }
 
-
-    public void includeBasicTeleOpSet()
-    {
+    public void includeBasicTeleOpSet() {
         addSupportedOperationSet(
-            OperationSetBasicTelephony.class,
-            new MockBasicTeleOpSet(this));
+                OperationSetBasicTelephony.class,
+                new MockBasicTeleOpSet(this));
     }
 
-    public void includeMultiUserChatOpSet()
-    {
+    public void includeMultiUserChatOpSet() {
         addSupportedOperationSet(
-            OperationSetMultiUserChat.class,
-            new MockMultiUserChatOpSet(this));
+                OperationSetMultiUserChat.class,
+                new MockMultiUserChatOpSet(this));
     }
 
-    public void includeColibriOpSet()
-    {
+    public void includeColibriOpSet() {
         addSupportedOperationSet(
-            OperationSetColibriConference.class,
-            new MockColibriOpSet(this, eventAdmin));
+                OperationSetColibriConference.class,
+                new MockColibriOpSet(this, eventAdmin));
     }
 
-    public void includeJingleOpSet()
-    {
+    public void includeJingleOpSet() {
         this.jingleOpSet = new MockOperationSetJingle(this);
 
         addSupportedOperationSet(
-            OperationSetJingle.class,
-            jingleOpSet);
+                OperationSetJingle.class,
+                jingleOpSet);
     }
 
-    public void includeSimpleCapsOpSet()
-    {
-        try
-        {
+    public void includeSimpleCapsOpSet() {
+        try {
             addSupportedOperationSet(
-                OperationSetSimpleCaps.class,
-                new MockSetSimpleCapsOpSet(
-                        JidCreate.from(accountId.getServerAddress())));
-        }
-        catch (XmppStringprepException e)
-        {
+                    OperationSetSimpleCaps.class,
+                    new MockSetSimpleCapsOpSet(
+                            JidCreate.from(accountId.getServerAddress())));
+        } catch (XmppStringprepException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void includeDirectXmppOpSet()
-    {
+    public void includeDirectXmppOpSet() {
         addSupportedOperationSet(
-            OperationSetDirectSmackXmpp.class,
-            new MockSmackXmppOpSet(this));
+                OperationSetDirectSmackXmpp.class,
+                new MockSmackXmppOpSet(this));
     }
 
-    public void includeJitsiMeetTools()
-    {
+    public void includeJitsiMeetTools() {
         addSupportedOperationSet(
-            OperationSetJitsiMeetTools.class,
-            new MockJitsiMeetTools(this));
+                OperationSetJitsiMeetTools.class,
+                new MockJitsiMeetTools(this));
     }
 
-    public void includeSubscriptionOpSet()
-    {
+    public void includeSubscriptionOpSet() {
         addSupportedOperationSet(
-            OperationSetSubscription.class,
-            new MockSubscriptionOpSetImpl());
+                OperationSetSubscription.class,
+                new MockSubscriptionOpSetImpl());
     }
 
-    public OperationSetBasicTelephony getTelephony()
-    {
+    public OperationSetBasicTelephony getTelephony() {
         return getOperationSet(OperationSetBasicTelephony.class);
     }
 
-    public XmppConnection getXmppConnection()
-    {
-        if (this.connection == null)
-        {
+    public XmppConnection getXmppConnection() {
+        if (this.connection == null) {
             this.connection = new MockXmppConnection(getOurJID());
         }
         return connection;
     }
 
-    public EntityFullJid getOurJID()
-    {
-        try
-        {
+    public EntityFullJid getOurJID() {
+        try {
             return JidCreate.entityFullFrom(
                     "mock-" + accountId.getAccountAddress());
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public MockMultiUserChatOpSet getMockChatOpSet()
-    {
-        return (MockMultiUserChatOpSet)
-            getOperationSet(OperationSetMultiUserChat.class);
+    public MockMultiUserChatOpSet getMockChatOpSet() {
+        return (MockMultiUserChatOpSet) getOperationSet(OperationSetMultiUserChat.class);
     }
 
-    public MockSubscriptionOpSetImpl getMockSubscriptionOpSet()
-    {
-        return (MockSubscriptionOpSetImpl)
-            getOperationSet(OperationSetSubscription.class);
+    public MockSubscriptionOpSetImpl getMockSubscriptionOpSet() {
+        return (MockSubscriptionOpSetImpl) getOperationSet(OperationSetSubscription.class);
     }
 
-    public MockSetSimpleCapsOpSet getMockCapsOpSet()
-    {
-        return (MockSetSimpleCapsOpSet)
-            getOperationSet(OperationSetSimpleCaps.class);
+    public MockSetSimpleCapsOpSet getMockCapsOpSet() {
+        return (MockSetSimpleCapsOpSet) getOperationSet(OperationSetSimpleCaps.class);
     }
 
-    public MockColibriOpSet getMockColibriOpSet()
-    {
-        return (MockColibriOpSet)
-            getOperationSet(OperationSetColibriConference.class);
+    public MockColibriOpSet getMockColibriOpSet() {
+        return (MockColibriOpSet) getOperationSet(OperationSetColibriConference.class);
     }
 }

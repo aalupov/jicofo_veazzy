@@ -31,13 +31,13 @@ import org.jivesoftware.smack.util.*;
  * @author Boris Grozev
  */
 public class ColibriStatsExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The logger instance used by this class.
      */
     private final static Logger logger
-        = Logger.getLogger(ColibriConferenceIQ.class);
+            = Logger.getLogger(ColibriConferenceIQ.class);
 
     /**
      * The XML element name of the Jitsi Videobridge <tt>stats</tt> extension.
@@ -49,7 +49,7 @@ public class ColibriStatsExtension
      * Videobridge <tt>stats</tt> extension.
      */
     public static final String NAMESPACE
-        = "http://jitsi.org/protocol/colibri";
+            = "http://jitsi.org/protocol/colibri";
 
     /**
      * The name of the bit rate statistic for download.
@@ -164,8 +164,8 @@ public class ColibriStatsExtension
     public static final String INACTIVE_ENDPOINTS = "inactive_endpoints";
 
     /**
-     * The number of endpoints endpoints that have no audio or video, but
-     * are not inactive.
+     * The number of endpoints endpoints that have no audio or video, but are
+     * not inactive.
      */
     public static final String RECEIVE_ONLY_ENDPOINTS = "receive_only_endpoints";
 
@@ -196,6 +196,7 @@ public class ColibriStatsExtension
 
     /**
      * The name of the RTP loss statistic.
+     *
      * @deprecated
      */
     public static final String RTP_LOSS = "rtp_loss";
@@ -219,7 +220,7 @@ public class ColibriStatsExtension
      * The name of the stat that indicates support of transcription.
      */
     public static final String SUPPORTS_TRANSCRIPTION
-        = "supports_transcription";
+            = "supports_transcription";
 
     /**
      * The name of the number of threads statistic. Its runtime type is
@@ -235,8 +236,8 @@ public class ColibriStatsExtension
     public static final String TIMESTAMP = "current_timestamp";
 
     /**
-     * The name of the stat indicating the total number of bytes received in
-     * RTP packets.
+     * The name of the stat indicating the total number of bytes received in RTP
+     * packets.
      */
     public static final String TOTAL_BYTES_RECEIVED = "total_bytes_received";
 
@@ -245,7 +246,7 @@ public class ColibriStatsExtension
      * Octo packets.
      */
     public static final String TOTAL_BYTES_RECEIVED_OCTO
-        = "total_bytes_received_octo";
+            = "total_bytes_received_octo";
 
     /**
      * The name of the stat indicating the total number of bytes sent in RTP
@@ -264,63 +265,62 @@ public class ColibriStatsExtension
      * from data channels.
      */
     public static final String TOTAL_COLIBRI_WEB_SOCKET_MESSAGES_RECEIVED
-        = "total_colibri_web_socket_messages_received";
+            = "total_colibri_web_socket_messages_received";
 
     /**
      * The name of the stat indicating the total number of messages sent over
      * data channels.
      */
     public static final String TOTAL_COLIBRI_WEB_SOCKET_MESSAGES_SENT
-        = "total_colibri_web_socket_messages_sent";
+            = "total_colibri_web_socket_messages_sent";
 
     /**
-     * The name of the number of conferences which do not receive media from
-     * the gateway side.
-     * {@code Integer}.
+     * The name of the number of conferences which do not receive media from the
+     * gateway side. {@code Integer}.
      */
     public static final String TOTAL_CALLS_WITH_DROPPED_MEDIA
-        = "total_calls_with_dropped_media";
+            = "total_calls_with_dropped_media";
 
     /**
-     * The name of the total number of completed/expired conferences
-     * (failed + succeeded).
+     * The name of the total number of completed/expired conferences (failed +
+     * succeeded).
      */
     public static final String TOTAL_CONFERENCES_COMPLETED
-        = "total_conferences_completed";
+            = "total_conferences_completed";
 
     /**
      * The name of the stat indicating the total number of conferences created.
      */
     public static final String TOTAL_CONFERENCES_CREATED
-        = "total_conferences_created";
+            = "total_conferences_created";
 
     /**
      * The name of the stat indicating the total number of conference-seconds
      * (i.e. the sum of the lengths is seconds).
      */
     public static final String TOTAL_CONFERENCE_SECONDS
-        = "total_conference_seconds";
+            = "total_conference_seconds";
 
     /**
      * The name of the stat indicating the total number of messages received
      * from data channels.
      */
     public static final String TOTAL_DATA_CHANNEL_MESSAGES_RECEIVED
-        = "total_data_channel_messages_received";
+            = "total_data_channel_messages_received";
 
     /**
      * The name of the stat indicating the total number of messages sent over
      * data channels.
      */
     public static final String TOTAL_DATA_CHANNEL_MESSAGES_SENT
-        = "total_data_channel_messages_sent";
+            = "total_data_channel_messages_sent";
 
     /**
-     * The name of the total number of conferences where all channels failed
-     * due to no payload traffic.
+     * The name of the total number of conferences where all channels failed due
+     * to no payload traffic.
      */
     public static final String TOTAL_FAILED_CONFERENCES
-        = "total_failed_conferences";
+            = "total_failed_conferences";
 
     /**
      * The name of the stat indicating the total number of times ICE failed.
@@ -337,28 +337,28 @@ public class ColibriStatsExtension
      * over TCP.
      */
     public static final String TOTAL_ICE_SUCCEEDED_TCP
-        = "total_ice_succeeded_tcp";
+            = "total_ice_succeeded_tcp";
 
     /**
      * The name of the stat indicating the total number of participant-seconds
      * that are loss-controlled (i.e. the sum of the lengths is seconds).
      */
     public static final String TOTAL_LOSS_CONTROLLED_PARTICIPANT_SECONDS
-        = "total_loss_controlled_participant_seconds";
+            = "total_loss_controlled_participant_seconds";
 
     /**
      * The name of the stat indicating the total number of participant-seconds
      * that are loss-limited.
      */
     public static final String TOTAL_LOSS_LIMITED_PARTICIPANT_SECONDS
-        = "total_loss_limited_participant_seconds";
+            = "total_loss_limited_participant_seconds";
 
     /**
      * The name of the stat indicating the total number of participant-seconds
      * that are loss-degraded.
      */
     public static final String TOTAL_LOSS_DEGRADED_PARTICIPANT_SECONDS
-        = "total_loss_degraded_participant_seconds";
+            = "total_loss_degraded_participant_seconds";
 
     /**
      * The name of total memory statistic. Its runtime type is {@code Integer}.
@@ -374,26 +374,27 @@ public class ColibriStatsExtension
      * The name of the total number of conferences with some failed channels.
      */
     public static final String TOTAL_PARTIALLY_FAILED_CONFERENCES
-        = "total_partially_failed_conferences";
+            = "total_partially_failed_conferences";
 
     /**
      * The name of the stat indicating the total number of Octo packets which
      * were dropped (due to a failure to parse, or an unknown conference ID).
      */
     public static final String TOTAL_PACKETS_DROPPED_OCTO
-        = "total_packets_dropped_octo";
+            = "total_packets_dropped_octo";
 
     /**
      * The name of the stat indicating the total number of RTP packets received.
      */
     public static final String TOTAL_PACKETS_RECEIVED
-        = "total_packets_received";
+            = "total_packets_received";
 
     /**
-     * The name of the stat indicating the total number of Octo packets received.
+     * The name of the stat indicating the total number of Octo packets
+     * received.
      */
     public static final String TOTAL_PACKETS_RECEIVED_OCTO
-        = "total_packets_received_octo";
+            = "total_packets_received_octo";
 
     /**
      * The name of the stat indicating the total number of RTP packets sent.
@@ -404,7 +405,7 @@ public class ColibriStatsExtension
      * The name of the stat indicating the total number of Octo packets sent.
      */
     public static final String TOTAL_PACKETS_SENT_OCTO
-        = "total_packets_sent_octo";
+            = "total_packets_sent_octo";
 
     /**
      * The name of used memory statistic. Its runtime type is {@code Integer}.
@@ -435,26 +436,21 @@ public class ColibriStatsExtension
 
     /**
      * Tries to parse an object as an integer, returns null on failure.
+     *
      * @param obj the object to parse.
      */
-    private static Integer getInt(Object obj)
-    {
-        if (obj == null)
-        {
+    private static Integer getInt(Object obj) {
+        if (obj == null) {
             return null;
         }
-        if (obj instanceof Integer)
-        {
+        if (obj instanceof Integer) {
             return (Integer) obj;
         }
 
         String str = obj.toString();
-        try
-        {
+        try {
             return Integer.valueOf(str);
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             logger.error("Error parsing an int: " + obj);
         }
         return null;
@@ -462,17 +458,16 @@ public class ColibriStatsExtension
 
     /**
      * Creates a deep copy of a {@link ColibriStatsExtension}.
+     *
      * @param source the {@link ColibriStatsExtension} to copy.
      * @return the copy.
      */
     public static ColibriStatsExtension clone(
-        ColibriStatsExtension source)
-    {
+            ColibriStatsExtension source) {
         ColibriStatsExtension destination
-            = AbstractPacketExtension.clone(source);
+                = AbstractPacketExtension.clone(source);
 
-        for (Stat stat : source.getChildExtensionsOfType(Stat.class))
-        {
+        for (Stat stat : source.getChildExtensionsOfType(Stat.class)) {
             destination.addStat(Stat.clone(stat));
         }
 
@@ -482,28 +477,27 @@ public class ColibriStatsExtension
     /**
      * Constructs new <tt>ColibriStatsExtension</tt>
      */
-    public ColibriStatsExtension()
-    {
+    public ColibriStatsExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Adds a specific {@link Stat} instance to the list of stats.
+     *
      * @param stat the {@link Stat} instance to add.
      */
-    public void addStat(Stat stat)
-    {
+    public void addStat(Stat stat) {
         addChildExtension(stat);
     }
 
     /**
      * Adds a new {@link Stat} instance with a specific name and a specific
      * value to the list of stats.
+     *
      * @param name the name.
      * @param value the value.
      */
-    public void addStat(String name, Object value)
-    {
+    public void addStat(String name, Object value) {
         addStat(new Stat(name, value));
     }
 
@@ -511,12 +505,9 @@ public class ColibriStatsExtension
      * @return the first {@link Stat}, if any, with a specific name.
      * @param name the name of the stat to match.
      */
-    public Stat getStat(String name)
-    {
-        for (Stat stat : getChildExtensionsOfType(Stat.class))
-        {
-            if (stat.getName().equals(name))
-            {
+    public Stat getStat(String name) {
+        for (Stat stat : getChildExtensionsOfType(Stat.class)) {
+            if (stat.getName().equals(name)) {
                 return stat;
             }
         }
@@ -529,8 +520,7 @@ public class ColibriStatsExtension
      * name.
      * @param name the name of the stat to match.
      */
-    public Object getValue(String name)
-    {
+    public Object getValue(String name) {
         Stat stat = getStat(name);
         return stat == null ? null : stat.getValue();
     }
@@ -545,11 +535,9 @@ public class ColibriStatsExtension
      * @return a {@link String} which represents the value of the stat with the
      * given {@code name}, or {@code null}.
      */
-    public String getValueAsString(String name)
-    {
+    public String getValueAsString(String name) {
         Object o = getValue(name);
-        if (o != null)
-        {
+        if (o != null) {
             return (o instanceof String) ? (String) o : o.toString();
         }
         return null;
@@ -558,28 +546,26 @@ public class ColibriStatsExtension
     /**
      * Tries to get the value of the stat with the given {@code name} as an
      * {@link Integer}. If there is no stat with the given name, or it has no
-     * value, returns {@code null}. Otherwise, it tries to parse the value as
-     * an {@link Integer} and returns the result (or {@code null} if parsing
+     * value, returns {@code null}. Otherwise, it tries to parse the value as an
+     * {@link Integer} and returns the result (or {@code null} if parsing
      * fails).
      *
      * @param name the name of the stat.
      * @return an {@link Integer} representation of the value of the stat with
      * the given {@code name}, or {@code null}.
      */
-    public Integer getValueAsInt(String name)
-    {
+    public Integer getValueAsInt(String name) {
         return getInt(getValue(name));
     }
 
     @Override
-    public List<? extends ExtensionElement> getChildExtensions()
-    {
+    public List<? extends ExtensionElement> getChildExtensions() {
         return Collections.unmodifiableList(super.getChildExtensions());
     }
 
     public static class Stat
-        extends AbstractPacketExtension
-    {
+            extends AbstractPacketExtension {
+
         /**
          * The XML element name of a <tt>content</tt> of a Jitsi Videobridge
          * <tt>stats</tt> IQ.
@@ -600,85 +586,74 @@ public class ColibriStatsExtension
          */
         public static final String VALUE_ATTR_NAME = "value";
 
-        public Stat()
-        {
+        public Stat() {
             super(NAMESPACE, ELEMENT_NAME);
         }
 
         /**
          * Constructs new <tt>Stat</tt> by given name and value.
+         *
          * @param name the name
          * @param value the value
          */
-        public Stat(String name, Object value)
-        {
+        public Stat(String name, Object value) {
             this();
             this.setName(name);
             this.setValue(value);
         }
 
         @Override
-        public String getElementName()
-        {
+        public String getElementName() {
             return ELEMENT_NAME;
         }
 
         /**
          * @return the name
          */
-        public String getName()
-        {
+        public String getName() {
             return getAttributeAsString(NAME_ATTR_NAME);
         }
 
         @Override
-        public String getNamespace()
-        {
+        public String getNamespace() {
             return NAMESPACE;
         }
 
         /**
          * @return the value
          */
-        public Object getValue()
-        {
+        public Object getValue() {
             return getAttribute(VALUE_ATTR_NAME);
         }
 
         /**
          * @param name the name to set
          */
-        public void setName(String name)
-        {
+        public void setName(String name) {
             setAttribute(NAME_ATTR_NAME, name);
         }
 
         /**
          * @param value the value to set
          */
-        public void setValue(Object value)
-        {
+        public void setValue(Object value) {
             setAttribute(VALUE_ATTR_NAME, value);
         }
 
         @Override
-        public String toXML()
-        {
+        public String toXML() {
             String name = getName();
             Object value = getValue();
 
-            if ((name == null) || (value == null))
-            {
+            if ((name == null) || (value == null)) {
                 return "";
-            }
-            else
-            {
+            } else {
                 return new XmlStringBuilder()
-                    .halfOpenElement(ELEMENT_NAME)
-                    .attribute(NAME_ATTR_NAME, name)
-                    .attribute(VALUE_ATTR_NAME, value.toString())
-                    .closeEmptyElement()
-                    .toString();
+                        .halfOpenElement(ELEMENT_NAME)
+                        .attribute(NAME_ATTR_NAME, name)
+                        .attribute(VALUE_ATTR_NAME, value.toString())
+                        .closeEmptyElement()
+                        .toString();
             }
         }
     }

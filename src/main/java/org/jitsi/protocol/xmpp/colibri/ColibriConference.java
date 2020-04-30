@@ -31,16 +31,16 @@ import java.util.*;
 
 /**
  * This is Colibri conference allocated on the videobridge. It exposes
- * operations like allocating/expiring channels, updating channel transport
- * and so on.
+ * operations like allocating/expiring channels, updating channel transport and
+ * so on.
  *
  * @author Pawel Domas
  */
-public interface ColibriConference
-{
+public interface ColibriConference {
+
     /**
-     * Sets Jitsi videobridge XMPP address to be used to allocate
-     * the conferences.
+     * Sets Jitsi videobridge XMPP address to be used to allocate the
+     * conferences.
      *
      * @param videobridgeJid the videobridge address to be set.
      */
@@ -62,19 +62,22 @@ public interface ColibriConference
     /**
      * Sets Jitsi Meet config that provides Colibri channels configurable
      * properties.
-     * @param config <tt>JitsiMeetConfig</tt> to be used for allocating
-     * Colibri channels in this conference.
+     *
+     * @param config <tt>JitsiMeetConfig</tt> to be used for allocating Colibri
+     * channels in this conference.
      */
     void setConfig(JitsiMeetConfig config);
 
     /**
      * Sets world readable name that identifies the conference.
+     *
      * @param name the new name.
      */
     void setName(Localpart name);
 
     /**
      * Gets world readable name that identifies the conference.
+     *
      * @return the name.
      */
     Localpart getName();
@@ -97,30 +100,29 @@ public interface ColibriConference
      * for this allocation.
      * @param endpointId the ID of the Colibri endpoint.
      * @param statsId the statistics Id to use if any.
-     * @param peerIsInitiator <tt>true</tt> if peer is ICE an initiator
-     * of ICE session.
+     * @param peerIsInitiator <tt>true</tt> if peer is ICE an initiator of ICE
+     * session.
      * @param contents content list that describes peer media.
      * @return <tt>ColibriConferenceIQ</tt> that describes allocated channels.
      *
      * @throws OperationFailedException if channel allocation fails.
      */
     default ColibriConferenceIQ createColibriChannels(
-        boolean useBundle,
-        String endpointId,
-        String statsId,
-        boolean peerIsInitiator,
-        List<ContentPacketExtension> contents)
-        throws ColibriException
-    {
+            boolean useBundle,
+            String endpointId,
+            String statsId,
+            boolean peerIsInitiator,
+            List<ContentPacketExtension> contents)
+            throws ColibriException {
         return createColibriChannels(
-            useBundle,
-            endpointId,
-            statsId,
-            peerIsInitiator,
-            contents,
-            null /* sources */,
-            null /* source groups */,
-            null /* relays */);
+                useBundle,
+                endpointId,
+                statsId,
+                peerIsInitiator,
+                contents,
+                null /* sources */,
+                null /* source groups */,
+                null /* relays */);
     }
 
     /**
@@ -130,8 +132,8 @@ public interface ColibriConference
      * for this allocation.
      * @param endpointId the ID of the Colibri endpoint.
      * @param statsId the statistics Id to use if any.
-     * @param peerIsInitiator <tt>true</tt> if peer is ICE an initiator
-     * of ICE session.
+     * @param peerIsInitiator <tt>true</tt> if peer is ICE an initiator of ICE
+     * session.
      * @param contents content list that describes peer media.
      * @param sources the sources to include with the channel creation request,
      * if any.
@@ -152,7 +154,7 @@ public interface ColibriConference
             Map<String, List<SourcePacketExtension>> sources,
             Map<String, List<SourceGroupPacketExtension>> sourceGroups,
             List<String> relays)
-        throws ColibriException;
+            throws ColibriException;
 
     /**
      * Does Colibri channels update of RTP description, SSRC and transport
@@ -165,30 +167,30 @@ public interface ColibriConference
      * contains the description of the channels for which update request will be
      * sent to the bridge.
      * @param rtpInfoMap (optional) the map of Colibri content name to
-     * <tt>RtpDescriptionPacketExtension</tt> which will be used to update
-     * the RTP description of the channel in corresponding content described by
+     * <tt>RtpDescriptionPacketExtension</tt> which will be used to update the
+     * RTP description of the channel in corresponding content described by
      * <tt>localChannelsInfo</tt>.
      * @param sources (optional) the <tt>MediaSourceMap</tt> which maps Colibri
      * content name to a list of <tt>SourcePacketExtension</tt> which will be
      * used to update SSRCs of the channel in corresponding content described by
      * <tt>localChannelsInfo</tt>.
-     * @param sourceGroups (optional) the <tt>MediaSourceGroupMap</tt> which maps
-     * Colibri content name to a list of <tt>SourceGroupPacketExtension</tt>
+     * @param sourceGroups (optional) the <tt>MediaSourceGroupMap</tt> which
+     * maps Colibri content name to a list of
+     * <tt>SourceGroupPacketExtension</tt>
      * which will be used to update SSRCs of the channel in corresponding
      * content described by <tt>localChannelsInfo</tt>.
      */
     default void updateChannelsInfo(
-        ColibriConferenceIQ localChannelsInfo,
-        Map<String, RtpDescriptionPacketExtension> rtpInfoMap,
-        MediaSourceMap sources,
-        MediaSourceGroupMap sourceGroups)
-    {
+            ColibriConferenceIQ localChannelsInfo,
+            Map<String, RtpDescriptionPacketExtension> rtpInfoMap,
+            MediaSourceMap sources,
+            MediaSourceGroupMap sourceGroups) {
         updateChannelsInfo(
-            localChannelsInfo,
-            rtpInfoMap,
-            sources,
-            sourceGroups,
-            null, null, null, null);
+                localChannelsInfo,
+                rtpInfoMap,
+                sources,
+                sourceGroups,
+                null, null, null, null);
     }
 
     /**
@@ -202,29 +204,29 @@ public interface ColibriConference
      * contains the description of the channels for which update request will be
      * sent to the bridge.
      * @param rtpInfoMap (optional) the map of Colibri content name to
-     * <tt>RtpDescriptionPacketExtension</tt> which will be used to update
-     * the RTP description of the channel in corresponding content described by
+     * <tt>RtpDescriptionPacketExtension</tt> which will be used to update the
+     * RTP description of the channel in corresponding content described by
      * <tt>localChannelsInfo</tt>.
      * @param sources (optional) the <tt>MediaSourceMap</tt> which maps Colibri
      * content name to a list of <tt>SourcePacketExtension</tt> which will be
      * used to update SSRCs of the channel in corresponding content described by
      * <tt>localChannelsInfo</tt>.
-     * @param sourceGroups (optional) the <tt>MediaSourceGroupMap</tt> which maps
-     * Colibri content name to a list of <tt>SourceGroupPacketExtension</tt>
+     * @param sourceGroups (optional) the <tt>MediaSourceGroupMap</tt> which
+     * maps Colibri content name to a list of
+     * <tt>SourceGroupPacketExtension</tt>
      * which will be used to update SSRCs of the channel in corresponding
      * content described by <tt>localChannelsInfo</tt>.
      * @param bundleTransport (optional) the
      * <tt>IceUdpTransportPacketExtension</tt> which will be used to set
      * "bundle" transport of the first channel bundle from
      * <tt>localChannelsInfo</tt>.
-     * @param transportMap  (optional) the map of
-     * <tt>IceUdpTransportPacketExtension</tt> to Colibri content name
-     * which will be used to update transport of the channels in corresponding
-     * content described by <tt>localChannelsInfo</tt>.
-     * @param endpointId the ID of the endpoint for which the update applies
-     * (it is implicit that the update only works for channels of a single
-     * @param relays the Octo relay IDs to set.
-     * participant/endpoint).
+     * @param transportMap (optional) the map of
+     * <tt>IceUdpTransportPacketExtension</tt> to Colibri content name which
+     * will be used to update transport of the channels in corresponding content
+     * described by <tt>localChannelsInfo</tt>.
+     * @param endpointId the ID of the endpoint for which the update applies (it
+     * is implicit that the update only works for channels of a single
+     * @param relays the Octo relay IDs to set. participant/endpoint).
      */
     void updateChannelsInfo(
             ColibriConferenceIQ localChannelsInfo,
@@ -240,33 +242,34 @@ public interface ColibriConference
      * Updates the RTP description for active channels (existing on the bridge).
      *
      * @param map the map of content name to RTP description packet extension.
-     * @param localChannelsInfo <tt>ColibriConferenceIQ</tt> that contains
-     * the description of the channel for which the RTP description will be
-     * updated on the bridge.
+     * @param localChannelsInfo <tt>ColibriConferenceIQ</tt> that contains the
+     * description of the channel for which the RTP description will be updated
+     * on the bridge.
      */
     void updateRtpDescription(
             Map<String, RtpDescriptionPacketExtension> map,
             ColibriConferenceIQ localChannelsInfo);
 
     /**
-     * Updates transport information for active channels
-     * (existing on the bridge).
+     * Updates transport information for active channels (existing on the
+     * bridge).
      *
      * @param map the map of content name to transport packet extension.
-     * @param localChannelsInfo <tt>ColibriConferenceIQ</tt> that contains
-     * the description of the channel for which transport information will be
+     * @param localChannelsInfo <tt>ColibriConferenceIQ</tt> that contains the
+     * description of the channel for which transport information will be
      * updated on the bridge.
      */
     void updateTransportInfo(
-            Map<String, IceUdpTransportPacketExtension>   map,
-            ColibriConferenceIQ                           localChannelsInfo);
+            Map<String, IceUdpTransportPacketExtension> map,
+            ColibriConferenceIQ localChannelsInfo);
 
     /**
      * Updates simulcast layers on the bridge.
+     *
      * @param ssrcGroups the map of media SSRC groups that will be updated on
      * the bridge.
-     * @param localChannelsInfo <tt>ColibriConferenceIQ</tt> that contains
-     * the description of the channel for which SSRC groups information will be
+     * @param localChannelsInfo <tt>ColibriConferenceIQ</tt> that contains the
+     * description of the channel for which SSRC groups information will be
      * updated on the bridge.
      */
     void updateSourcesInfo(
@@ -302,8 +305,8 @@ public interface ColibriConference
      * The method is deprecated to discourage it's usage. It's been added to
      * mitigate temporarily JVB's out of order processing issue where it can
      * happen that two packets regarding one conference will be processed not in
-     * the order in which they were received. The issues is to be fixed on
-     * the JVB side.
+     * the order in which they were received. The issues is to be fixed on the
+     * JVB side.
      *
      * @param channelInfo the <tt>ColibriConferenceIQ</tt> that contains
      * information about the channel to be expired.
@@ -323,6 +326,7 @@ public interface ColibriConference
     /**
      * Mutes audio channels described in given IQ by changing their media
      * direction to {@link org.jitsi.service.neomedia.MediaDirection#SENDONLY}.
+     *
      * @param channelsInfo the IQ that describes the channels to be muted.
      * @param mute <tt>true</tt> to mute or <tt>false</tt> to unmute audio
      * channels described in <tt>channelsInfo</tt>.
@@ -349,5 +353,5 @@ public interface ColibriConference
     /**
      * Sets the "global" id of the conference.
      */
-    void setGID(String gid) ;
+    void setGID(String gid);
 }

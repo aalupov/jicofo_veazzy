@@ -29,8 +29,8 @@ import java.io.*;
  * @author Pawel Domas
  */
 public abstract class AbstractJsonHandler<T>
-    implements ContentHandler
-{
+        implements ContentHandler {
+
     /**
      * Variable stores currently parsed object key name.
      */
@@ -48,32 +48,28 @@ public abstract class AbstractJsonHandler<T>
     protected T result;
 
     /**
-     * If method is called before this handler is used for parsing then
-     * passed instance will have it's fields edited during the process and no
-     * new instance will be created.
+     * If method is called before this handler is used for parsing then passed
+     * instance will have it's fields edited during the process and no new
+     * instance will be created.
      *
      * @param instanceToUpdate the instance which fields should be updated
-     *                         during parsing.
+     * during parsing.
      */
-    public void setForUpdate(T instanceToUpdate)
-    {
+    public void setForUpdate(T instanceToUpdate) {
         this.editedInstance = instanceToUpdate;
     }
 
     /**
      * Returns parsed object.
      */
-    public T getResult()
-    {
+    public T getResult() {
         return result;
     }
 
     @Override
     public void startJSON()
-        throws ParseException, IOException
-    {
-        if (this.editedInstance == null)
-        {
+            throws ParseException, IOException {
+        if (this.editedInstance == null) {
             editedInstance = createNewObject();
         }
         this.result = null;
@@ -86,30 +82,26 @@ public abstract class AbstractJsonHandler<T>
 
     @Override
     public void endJSON()
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         this.result = editedInstance;
         this.editedInstance = null;
     }
 
     @Override
     public boolean startObject()
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         return true;
     }
 
     @Override
     public boolean endObject()
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         return true;
     }
 
     @Override
     public boolean startObjectEntry(String key)
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         this.currentKey = key;
 
         return true;
@@ -117,8 +109,7 @@ public abstract class AbstractJsonHandler<T>
 
     @Override
     public boolean endObjectEntry()
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         currentKey = null;
 
         return true;
@@ -126,15 +117,13 @@ public abstract class AbstractJsonHandler<T>
 
     @Override
     public boolean startArray()
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         return false;
     }
 
     @Override
     public boolean endArray()
-        throws ParseException, IOException
-    {
+            throws ParseException, IOException {
         return false;
     }
 
@@ -145,13 +134,11 @@ public abstract class AbstractJsonHandler<T>
      * @param primitive the object to check
      *
      * @throws ParseException if given <tt>primitive</tt> is not instance of
-     *         <tt>String</tt>
+     * <tt>String</tt>
      */
     protected void assertString(Object primitive)
-        throws ParseException
-    {
-        if (!(primitive instanceof String))
-        {
+            throws ParseException {
+        if (!(primitive instanceof String)) {
             throw new ParseException(
                     ParseException.ERROR_UNEXPECTED_TOKEN, primitive);
         }
@@ -164,13 +151,11 @@ public abstract class AbstractJsonHandler<T>
      * @param primitive the object to check
      *
      * @throws ParseException if given <tt>primitive</tt> is not instance of
-     *         <tt>Number</tt>
+     * <tt>Number</tt>
      */
     protected void assertNumber(Object primitive)
-        throws ParseException
-    {
-        if (!(primitive instanceof Number))
-        {
+            throws ParseException {
+        if (!(primitive instanceof Number)) {
             throw new ParseException(
                     ParseException.ERROR_UNEXPECTED_TOKEN, primitive);
         }
@@ -184,31 +169,27 @@ public abstract class AbstractJsonHandler<T>
      * instance.
      *
      * @param oldValue old value of the field to be checked. If <tt>null</tt>
-     *                 no exception will be thrown which means that value has
-     *                 not been assigned yet.
-     * @param newValue the new value to be verified if it matches the
-     *                 previous one(if old value is not null nor empty).
-     * @param key the name of read-only key which will be included in
-     *            exception message.
+     * no exception will be thrown which means that value has not been assigned
+     * yet.
+     * @param newValue the new value to be verified if it matches the previous
+     * one(if old value is not null nor empty).
+     * @param key the name of read-only key which will be included in exception
+     * message.
      *
      * @return <tt>true</tt> if read only policy has not been violated.
      *
      * @throws ParseException if <tt>oldValue</tt> is not null nor empty and
-     *         <tt>newValue</tt> is not equal to the same as the old one.
+     * <tt>newValue</tt> is not equal to the same as the old one.
      */
     protected boolean checkImmutableString(String oldValue, String newValue,
-                                           String key)
-        throws ParseException
-    {
-        if(!StringUtils.isNullOrEmpty(oldValue) && !oldValue.equals(newValue))
-        {
+            String key)
+            throws ParseException {
+        if (!StringUtils.isNullOrEmpty(oldValue) && !oldValue.equals(newValue)) {
             throw new ParseException(
-                ParseException.ERROR_UNEXPECTED_EXCEPTION,
-                "Attempt to modify immutable " + key + " property: "
-                + oldValue + " -> " + newValue);
-        }
-        else
-        {
+                    ParseException.ERROR_UNEXPECTED_EXCEPTION,
+                    "Attempt to modify immutable " + key + " property: "
+                    + oldValue + " -> " + newValue);
+        } else {
             return true;
         }
     }

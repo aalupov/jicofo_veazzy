@@ -25,8 +25,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class UserInfoPacketExt
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML element name of this packet extension.
      */
@@ -47,8 +47,7 @@ public class UserInfoPacketExt
      * Creates an {@link UserInfoPacketExt} instance.
      *
      */
-    public UserInfoPacketExt()
-    {
+    public UserInfoPacketExt() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -57,27 +56,23 @@ public class UserInfoPacketExt
      * component, SIP gateway etc.), <tt>false</tt> if it's not and
      * <tt>null</tt> if the attribute value is not defined.
      */
-    public Boolean isRobot()
-    {
+    public Boolean isRobot() {
         String isRobotStr = getAttributeAsString(ROBOT_ATTRIBUTE_NAME);
-        if (StringUtils.isNotEmpty(isRobotStr))
-        {
+        if (StringUtils.isNotEmpty(isRobotStr)) {
             return Boolean.parseBoolean(isRobotStr);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     /**
      * Sets new value for the "robot" attribute.
+     *
      * @param isRobot <tt>true</tt> if the user is considered a robot or
      * <tt>false</tt> otherwise. Pass <tt>null</tt> to remove the attribute.
      * @see {@link #ROBOT_ATTRIBUTE_NAME}
      */
-    public void setIsRobot(Boolean isRobot)
-    {
+    public void setIsRobot(Boolean isRobot) {
         setAttribute(ROBOT_ATTRIBUTE_NAME, isRobot);
     }
 }

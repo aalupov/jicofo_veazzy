@@ -36,14 +36,14 @@ import java.util.*;
  * @author Boris Grozev
  */
 public class Participant
-    extends AbstractParticipant
-{
+        extends AbstractParticipant {
+
     /**
      * The class logger which can be used to override logging level inherited
      * from {@link JitsiMeetConference}.
      */
     private final static Logger classLogger
-        = Logger.getLogger(Participant.class);
+            = Logger.getLogger(Participant.class);
 
     /**
      * Returns the endpoint ID for a participant in the videobridge (Colibri)
@@ -51,18 +51,17 @@ public class Participant
      * created for the <tt>ChatRoomMember</tt>.
      *
      * @param chatRoomMember XMPP MUC chat room member which represents a
-     *                       <tt>Participant</tt>.
+     * <tt>Participant</tt>.
      */
-    public static String getEndpointId(XmppChatMember chatRoomMember)
-    {
+    public static String getEndpointId(XmppChatMember chatRoomMember) {
         return chatRoomMember.getName(); // XMPP MUC Nickname
     }
 
     /**
      * The {@code BridgeSession} of which this {@code Participant} is part of.
      *
-     * Whenever this value is set to a non-null value it means that Jicofo
-     * has assigned a bridge to this instance.
+     * Whenever this value is set to a non-null value it means that Jicofo has
+     * assigned a bridge to this instance.
      */
     private JitsiMeetConferenceImpl.BridgeSession bridgeSession;
 
@@ -78,8 +77,8 @@ public class Participant
 
     /**
      * The logger for this instance. Uses the logging level either of the
-     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()}
-     * whichever is higher.
+     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()} whichever
+     * is higher.
      */
     private final Logger logger;
 
@@ -95,7 +94,7 @@ public class Participant
      * returns <tt>false</tt>.
      */
     private Map<String, IceUdpTransportPacketExtension> transportMap
-        = new HashMap<>();
+            = new HashMap<>();
 
     /**
      * The list of XMPP features supported by this participant.
@@ -116,15 +115,14 @@ public class Participant
      * Creates new {@link Participant} for given chat room member.
      *
      * @param roomMember the {@link XmppChatMember} that represent this
-     *                   participant in MUC conference room.
+     * participant in MUC conference room.
      *
      * @param maxSourceCount how many unique sources per media this participant
-     *                     instance will be allowed to advertise.
+     * instance will be allowed to advertise.
      */
-    public Participant(JitsiMeetConference    conference,
-                       XmppChatMember         roomMember,
-                       int maxSourceCount)
-    {
+    public Participant(JitsiMeetConference conference,
+            XmppChatMember roomMember,
+            int maxSourceCount) {
         super(conference.getLogger());
         Objects.requireNonNull(conference, "conference");
 
@@ -137,8 +135,7 @@ public class Participant
      * Returns {@link JingleSession} established with this conference
      * participant or <tt>null</tt> if there is no session yet.
      */
-    public JingleSession getJingleSession()
-    {
+    public JingleSession getJingleSession() {
         return jingleSession;
     }
 
@@ -148,10 +145,8 @@ public class Participant
      * @param bridgeSession the new bridge session to set.
      * @see #bridgeSession
      */
-    void setBridgeSession(JitsiMeetConferenceImpl.BridgeSession bridgeSession)
-    {
-        if (this.bridgeSession != null)
-        {
+    void setBridgeSession(JitsiMeetConferenceImpl.BridgeSession bridgeSession) {
+        if (this.bridgeSession != null) {
             logger.error(String.format(
                     "Overwriting bridge session in %s new: %s old: %s",
                     this,
@@ -163,10 +158,10 @@ public class Participant
 
     /**
      * Sets {@link JingleSession} established with this peer.
+     *
      * @param jingleSession the new Jingle session to be assigned to this peer.
      */
-    public void setJingleSession(JingleSession jingleSession)
-    {
+    public void setJingleSession(JingleSession jingleSession) {
         this.jingleSession = jingleSession;
     }
 
@@ -174,8 +169,7 @@ public class Participant
      * Returns {@link XmppChatMember} that represents this participant in
      * conference multi-user chat room.
      */
-    public XmppChatMember getChatMember()
-    {
+    public XmppChatMember getChatMember() {
         return roomMember;
     }
 
@@ -183,8 +177,7 @@ public class Participant
      * Returns <tt>true</tt> if this participant supports RTP bundle and RTCP
      * mux.
      */
-    public boolean hasBundleSupport()
-    {
+    public boolean hasBundleSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_RTCP_MUX)
                 && supportedFeatures.contains(DiscoveryUtil.FEATURE_RTP_BUNDLE);
     }
@@ -192,8 +185,7 @@ public class Participant
     /**
      * Returns <tt>true</tt> if this participant supports DTLS.
      */
-    public boolean hasDtlsSupport()
-    {
+    public boolean hasDtlsSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_DTLS);
     }
 
@@ -201,97 +193,88 @@ public class Participant
      * Returns <tt>true</tt> if this participant supports 'lip-sync' or
      * <tt>false</tt> otherwise.
      */
-    public boolean hasLipSyncSupport()
-    {
+    public boolean hasLipSyncSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_LIPSYNC);
     }
 
     /**
      * Returns {@code true} iff this participant supports RTX.
      */
-    public boolean hasRtxSupport()
-    {
+    public boolean hasRtxSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_RTX);
     }
 
     /**
      * FIXME: we need to remove "is SIP gateway code", but there are still
      * situations where we need to know whether given peer is a human or not.
-     * For example when we close browser window and only SIP gateway stays
-     * we should destroy the conference and close SIP connection.
+     * For example when we close browser window and only SIP gateway stays we
+     * should destroy the conference and close SIP connection.
      *
      * Returns <tt>true</tt> if this participant belongs to SIP gateway service.
      */
-    public boolean isSipGateway()
-    {
+    public boolean isSipGateway() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_JIGASI);
     }
 
     /**
      * Returns <tt>true</tt> if this participant is a Jibri instance.
-    */
-    public boolean isJibri()
-    {
+     */
+    public boolean isJibri() {
         return supportedFeatures.contains("http://jitsi.org/protocol/jibri");
     }
 
     /**
      * Returns <tt>true</tt> if RTP audio is supported by this peer.
      */
-    public boolean hasAudioSupport()
-    {
+    public boolean hasAudioSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_AUDIO);
     }
 
     /**
      * Returns <tt>true</tt> if RTP audio can be muted for this peer.
      */
-    public boolean hasAudioMuteSupport()
-    {
+    public boolean hasAudioMuteSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_AUDIO_MUTE);
     }
 
     /**
      * Returns <tt>true</tt> if RTP video is supported by this peer.
      */
-    public boolean hasVideoSupport()
-    {
+    public boolean hasVideoSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_VIDEO);
     }
 
     /**
      * Returns <tt>true</tt> if this peer supports ICE transport.
      */
-    public boolean hasIceSupport()
-    {
+    public boolean hasIceSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_ICE);
     }
 
     /**
      * Returns <tt>true</tt> if this peer supports DTLS/SCTP.
      */
-    public boolean hasSctpSupport()
-    {
+    public boolean hasSctpSupport() {
         return supportedFeatures.contains(DiscoveryUtil.FEATURE_SCTP);
     }
 
     /**
      * Sets the list of features supported by this participant.
+     *
      * @see DiscoveryUtil for the list of predefined feature constants.
      * @param supportedFeatures the list of features to set.
      */
-    public void setSupportedFeatures(List<String> supportedFeatures)
-    {
+    public void setSupportedFeatures(List<String> supportedFeatures) {
         this.supportedFeatures
-            = Objects.requireNonNull(supportedFeatures, "supportedFeatures");
+                = Objects.requireNonNull(supportedFeatures, "supportedFeatures");
     }
 
     /**
      * Sets muted status of this participant.
+     *
      * @param mutedStatus new muted status to set.
      */
-    public void setMuted(boolean mutedStatus)
-    {
+    public void setMuted(boolean mutedStatus) {
         this.mutedStatus = mutedStatus;
     }
 
@@ -299,8 +282,7 @@ public class Participant
      * Returns <tt>true</tt> if this participant is muted or <tt>false</tt>
      * otherwise.
      */
-    public boolean isMuted()
-    {
+    public boolean isMuted() {
         return mutedStatus;
     }
 
@@ -309,8 +291,7 @@ public class Participant
      * muted status. The <tt>null</tt> value stands for 'unknown'/not signalled,
      * <tt>true</tt> for muted and <tt>false</tt> means unmuted.
      */
-    public Boolean isVideoMuted()
-    {
+    public Boolean isVideoMuted() {
         return roomMember.hasVideoMuted();
     }
 
@@ -325,66 +306,50 @@ public class Participant
      * jingle message which can potentially contain transport info like
      * 'session-accept', 'transport-info', 'transport-accept' etc.
      */
-    public void addTransportFromJingle(List<ContentPacketExtension> contents)
-    {
-        if (hasBundleSupport())
-        {
+    public void addTransportFromJingle(List<ContentPacketExtension> contents) {
+        if (hasBundleSupport()) {
             // Select first transport
             IceUdpTransportPacketExtension transport = null;
-            for (ContentPacketExtension cpe : contents)
-            {
+            for (ContentPacketExtension cpe : contents) {
                 IceUdpTransportPacketExtension contentTransport
-                    = cpe.getFirstChildOfType(
-                            IceUdpTransportPacketExtension.class);
-                if (contentTransport != null)
-                {
+                        = cpe.getFirstChildOfType(
+                                IceUdpTransportPacketExtension.class);
+                if (contentTransport != null) {
                     transport = contentTransport;
                     break;
                 }
             }
-            if (transport == null)
-            {
+            if (transport == null) {
                 logger.error(
-                    "No valid transport supplied in transport-update from "
+                        "No valid transport supplied in transport-update from "
                         + getChatMember().getContactAddress());
                 return;
             }
 
-            if (!transport.isRtcpMux())
-            {
+            if (!transport.isRtcpMux()) {
                 transport.addChildExtension(new RtcpmuxPacketExtension());
             }
 
-            if (bundleTransport == null)
-            {
+            if (bundleTransport == null) {
                 bundleTransport = transport;
-            }
-            else
-            {
+            } else {
                 TransportSignaling.mergeTransportExtension(
                         bundleTransport, transport);
             }
-        }
-        else
-        {
-            for (ContentPacketExtension cpe : contents)
-            {
+        } else {
+            for (ContentPacketExtension cpe : contents) {
                 IceUdpTransportPacketExtension srcTransport
-                    = cpe.getFirstChildOfType(
-                            IceUdpTransportPacketExtension.class);
+                        = cpe.getFirstChildOfType(
+                                IceUdpTransportPacketExtension.class);
 
-                if (srcTransport != null)
-                {
+                if (srcTransport != null) {
                     String contentName = cpe.getName().toLowerCase();
                     IceUdpTransportPacketExtension dstTransport
-                        = transportMap.get(contentName);
+                            = transportMap.get(contentName);
 
-                    if (dstTransport == null)
-                    {
+                    if (dstTransport == null) {
                         transportMap.put(contentName, srcTransport);
-                    }
-                    else
-                    {
+                    } else {
                         TransportSignaling.mergeTransportExtension(
                                 dstTransport, srcTransport);
                     }
@@ -396,12 +361,12 @@ public class Participant
     /**
      * Returns 'bundled' transport information stored for this
      * <tt>Participant</tt>.
+     *
      * @return <tt>IceUdpTransportPacketExtension</tt> which describes 'bundled'
-     *         transport of this participant or <tt>null</tt> either if it's not
-     *         available yet or if 'non-bundled' transport is being used.
+     * transport of this participant or <tt>null</tt> either if it's not
+     * available yet or if 'non-bundled' transport is being used.
      */
-    public IceUdpTransportPacketExtension getBundleTransport()
-    {
+    public IceUdpTransportPacketExtension getBundleTransport() {
         return bundleTransport;
     }
 
@@ -414,8 +379,7 @@ public class Participant
      * or <tt>null</tt> either if it's not available yet or if 'bundled'
      * transport is being used.
      */
-    public Map<String, IceUdpTransportPacketExtension> getTransportMap()
-    {
+    public Map<String, IceUdpTransportPacketExtension> getTransportMap() {
         return transportMap;
     }
 
@@ -423,18 +387,17 @@ public class Participant
      * Clears any ICE transport information currently stored for this
      * participant.
      */
-    public void clearTransportInfo()
-    {
+    public void clearTransportInfo() {
         bundleTransport = null;
         transportMap = new HashMap<>();
     }
 
     /**
-     * Returns the {@link org.jitsi.jicofo.JitsiMeetConferenceImpl.BridgeSession}
-     * or <tt>null</tt>.
+     * Returns the
+     * {@link org.jitsi.jicofo.JitsiMeetConferenceImpl.BridgeSession} or
+     * <tt>null</tt>.
      */
-    public JitsiMeetConferenceImpl.BridgeSession getBridgeSession()
-    {
+    public JitsiMeetConferenceImpl.BridgeSession getBridgeSession() {
         return bridgeSession;
     }
 
@@ -442,68 +405,65 @@ public class Participant
      * Returns the endpoint ID for this participant in the videobridge(Colibri)
      * context.
      */
-    public String getEndpointId()
-    {
+    public String getEndpointId() {
         return getEndpointId(roomMember);
     }
 
     /**
      * Returns the display name of the participant.
+     *
      * @return the display name of the participant.
      */
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return displayName;
     }
 
     /**
      * Returns the stats ID of the participant.
+     *
      * @return the stats ID of the participant.
      */
-    public String getStatId()
-    {
+    public String getStatId() {
         return roomMember.getStatsId();
     }
 
     /**
      * Sets the display name of the participant.
+     *
      * @param displayName the display name to set.
      */
-    public void setDisplayName(String displayName)
-    {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
     /**
      * Returns the MUC JID of this <tt>Participant</tt>.
+     *
      * @return full MUC address e.g. "room1@muc.server.net/nickname"
      */
-    public EntityFullJid getMucJid()
-    {
+    public EntityFullJid getMucJid() {
         return roomMember.getOccupantJid();
     }
 
-    public void claimSources(MediaSourceMap sourceMap)
-    {
+    public void claimSources(MediaSourceMap sourceMap) {
         // Mark as source owner
         Jid roomJid = roomMember.getOccupantJid();
 
         sourceMap
-            .getMediaTypes()
-            .forEach(
-                mediaType -> sourceMap
-                    .getSourcesForMedia(mediaType)
-                    .forEach(
-                        source -> SSRCSignaling.setSSRCOwner(source, roomJid)));
+                .getMediaTypes()
+                .forEach(
+                        mediaType -> sourceMap
+                                .getSourcesForMedia(mediaType)
+                                .forEach(
+                                        source -> SSRCSignaling.setSSRCOwner(source, roomJid)));
     }
 
     /**
-     * @return {@code true} if the Jingle session with this participant has
-     * been established.
+     * @return {@code true} if the Jingle session with this participant has been
+     * established.
      */
     @Override
-    public boolean isSessionEstablished()
-    {
+    public boolean isSessionEstablished() {
         return jingleSession != null;
     }
 
@@ -515,18 +475,17 @@ public class Participant
      * should be performed in a synchronous manner.
      *
      * @return {@code BridgeSession} from which this {@code Participant} has
-     * been removed or {@code null} if this {@link Participant} was not part
-     * of any bridge session.
-     * @see org.jitsi.protocol.xmpp.colibri.ColibriConference#expireChannels(ColibriConferenceIQ)
+     * been removed or {@code null} if this {@link Participant} was not part of
+     * any bridge session.
+     * @see
+     * org.jitsi.protocol.xmpp.colibri.ColibriConference#expireChannels(ColibriConferenceIQ)
      */
     @Deprecated
     JitsiMeetConferenceImpl.BridgeSession terminateBridgeSession(
-            boolean syncExpire)
-    {
+            boolean syncExpire) {
         JitsiMeetConferenceImpl.BridgeSession _session = this.bridgeSession;
 
-        if (_session != null)
-        {
+        if (_session != null) {
             this.setChannelAllocator(null);
             _session.terminate(this, syncExpire);
             this.clearTransportInfo();
@@ -540,14 +499,12 @@ public class Participant
     /**
      * See {@link #terminateBridgeSession(boolean)}.
      */
-    JitsiMeetConferenceImpl.BridgeSession terminateBridgeSession()
-    {
+    JitsiMeetConferenceImpl.BridgeSession terminateBridgeSession() {
         return terminateBridgeSession(false);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Participant[" + getMucJid() + "]@" + hashCode();
     }
 

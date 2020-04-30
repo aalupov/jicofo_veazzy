@@ -25,23 +25,23 @@ import org.jxmpp.jid.*;
  * XMPP domain should be passed to the constructor, which will happen when
  * {@link AuthBundleActivator#LOGIN_URL_PNAME} is set to
  * "EXT_JWT:auth.server.net", where 'auth.server.net' is the Prosody domain with
- * JWT token authentication enabled.
- * In order to obtain JWT, the user visits external "login" service from where
- * is redirected back to the app with the token. That's why
- * {@link #isExternal()} is overridden to return <tt>true</tt>.
+ * JWT token authentication enabled. In order to obtain JWT, the user visits
+ * external "login" service from where is redirected back to the app with the
+ * token. That's why {@link #isExternal()} is overridden to return
+ * <tt>true</tt>.
  *
  * @author Pawel Domas
  */
 public class ExternalJWTAuthority
-    extends XMPPDomainAuthAuthority
-{
+        extends XMPPDomainAuthAuthority {
+
     /**
      * Creates new instance of <tt>{@link ExternalJWTAuthority}</tt>.
+     *
      * @param domain the name of the Prosody domain with JWT authentication
      * enabled.
      */
-    public ExternalJWTAuthority(DomainBareJid domain)
-    {
+    public ExternalJWTAuthority(DomainBareJid domain) {
         // For external JWT type of authentication we do not want to persist
         // the session IDs longer than the duration of the conference.
         // Also session duration is limited to 1 minuted. This is how long it
@@ -49,22 +49,20 @@ public class ExternalJWTAuthority
         // the user starts from anonymous domain and then authenticates in
         // the popup window.
         super(true /* disable auto login */,
-              60L * 1000L /* limit session duration to 1 minute */,
-              domain);
+                60L * 1000L /* limit session duration to 1 minute */,
+                domain);
     }
 
     @Override
     public String createLoginUrl(
             String machineUID, EntityFullJid peerFullJid,
-            EntityBareJid roomName, boolean popup)
-    {
+            EntityBareJid roomName, boolean popup) {
         // Login URL is configured/generated in the client
         return null;
     }
 
     @Override
-    public boolean isExternal()
-    {
+    public boolean isExternal() {
         return true;
     }
 }

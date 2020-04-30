@@ -23,13 +23,13 @@ import java.util.*;
 /**
  * Events emitted for {@link JibriSession}.
  */
-public class JibriSessionEvent extends Event
-{
+public class JibriSessionEvent extends Event {
+
     /**
      * Event emitted when a {@link JibriSession} fails to start.
      */
     public static final String FAILED_TO_START
-        = "org/jitsi/jicofo/jibri/session/FAILED_TO_START";
+            = "org/jitsi/jicofo/jibri/session/FAILED_TO_START";
 
     /**
      * A key holding the {@link Type}.
@@ -41,11 +41,10 @@ public class JibriSessionEvent extends Event
      * topic.
      *
      * @param type - Tells which {@link Type} of Jibri session is the new event
-     *               for.
+     * for.
      */
-    static public JibriSessionEvent newFailedToStartEvent(Type type)
-    {
-        Dictionary<String, Object> props =  new Hashtable<>(1);
+    static public JibriSessionEvent newFailedToStartEvent(Type type) {
+        Dictionary<String, Object> props = new Hashtable<>(1);
 
         props.put(TYPE_KEY, type);
 
@@ -54,11 +53,11 @@ public class JibriSessionEvent extends Event
 
     /**
      * Creates new instance.
+     *
      * @param topic - The event's topic.
      * @param properties - The event's properties.
      */
-    public JibriSessionEvent(String topic, Dictionary properties)
-    {
+    public JibriSessionEvent(String topic, Dictionary properties) {
         super(topic, properties);
     }
 
@@ -66,8 +65,7 @@ public class JibriSessionEvent extends Event
      * @return {@code true} if the event comes for a SIP Jibri session or
      * {@code false} otherwise.
      */
-    public Type getType()
-    {
+    public Type getType() {
         Object type = getProperty(TYPE_KEY);
 
         return type instanceof Type ? (Type) type : null;

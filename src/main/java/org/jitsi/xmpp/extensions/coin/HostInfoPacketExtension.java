@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class HostInfoPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that media belongs to.
      */
@@ -60,17 +60,16 @@ public class HostInfoPacketExtension
     /**
      * Constructor.
      */
-    public HostInfoPacketExtension()
-    {
+    public HostInfoPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Set display text.
+     *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -79,17 +78,16 @@ public class HostInfoPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
     /**
      * Set web page.
+     *
      * @param webPage web page
      */
-    public void setWebPage(String webPage)
-    {
+    public void setWebPage(String webPage) {
         this.webPage = webPage;
     }
 
@@ -98,18 +96,17 @@ public class HostInfoPacketExtension
      *
      * @return web page
      */
-    public String getWebPage()
-    {
+    public String getWebPage() {
         return webPage;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

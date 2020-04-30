@@ -25,37 +25,33 @@ import org.osgi.framework.*;
  *
  */
 public class ProviderListener
-    implements ServiceListener
-{
+        implements ServiceListener {
+
     private final BundleContext context;
 
     private ProtocolProviderService pps;
 
-    public ProviderListener(BundleContext context)
-    {
+    public ProviderListener(BundleContext context) {
         this.context = context;
 
         pps = ServiceUtils.getService(context, ProtocolProviderService.class);
 
-        if (pps == null)
-        {
+        if (pps == null) {
             context.addServiceListener(this);
         }
     }
 
     @Override
-    public void serviceChanged(ServiceEvent event)
-    {
-        if (event.getType() != ServiceEvent.REGISTERED)
+    public void serviceChanged(ServiceEvent event) {
+        if (event.getType() != ServiceEvent.REGISTERED) {
             return;
+        }
 
         Object service = context.getService(event.getServiceReference());
-        if (service instanceof ProtocolProviderService)
-        {
+        if (service instanceof ProtocolProviderService) {
             context.removeServiceListener(this);
 
-            synchronized (this)
-            {
+            synchronized (this) {
                 pps = (ProtocolProviderService) service;
 
                 this.notifyAll();
@@ -63,22 +59,20 @@ public class ProviderListener
         }
     }
 
-    public synchronized ProtocolProviderService obtainProvider(long timeout)
-    {
-        if (pps != null)
+    public synchronized ProtocolProviderService obtainProvider(long timeout) {
+        if (pps != null) {
             return pps;
-
-        try
-        {
-            this.wait(timeout);
         }
-        catch (InterruptedException e)
-        {
+
+        try {
+            this.wait(timeout);
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
-        if (pps == null)
+        if (pps == null) {
             throw new RuntimeException("Failed to get protocol provider");
+        }
 
         return pps;
     }

@@ -44,8 +44,8 @@ import static org.junit.Assert.*;
  *
  */
 @RunWith(JUnit4.class)
-public class ShutdownTest
-{
+public class ShutdownTest {
+
     private final OSGiHandler osgi = OSGiHandler.getInstance();
     private Jid shutdownJid;
     private TestShutdownService shutdownService;
@@ -58,11 +58,10 @@ public class ShutdownTest
 
     @Before
     public void setUp()
-        throws Exception
-    {
+            throws Exception {
         shutdownJid = JidCreate.from("shutdown.server.net");
         System.setProperty(
-            FocusComponent.SHUTDOWN_ALLOWED_JID_PNAME, shutdownJid.toString());
+                FocusComponent.SHUTDOWN_ALLOWED_JID_PNAME, shutdownJid.toString());
 
         osgi.init();
 
@@ -87,17 +86,13 @@ public class ShutdownTest
 
     @After
     public void tearDown()
-        throws Exception
-    {
-        try
-        {
+            throws Exception {
+        try {
             // End conference
             conf1User1.leave();
             conf1User2.leave();
             conf1.stop();
-        }
-        finally
-        {
+        } finally {
             osgi.shutdown();
         }
 
@@ -110,8 +105,7 @@ public class ShutdownTest
      */
     @Test
     public void testShutdownForbidden()
-        throws Exception
-    {
+            throws Exception {
         shutdownStartedExpected = false;
         ShutdownIQ shutdownIQ = ShutdownIQ.createGracefulShutdownIQ();
 
@@ -130,8 +124,7 @@ public class ShutdownTest
      */
     @Test
     public void testShutdownAllowed()
-        throws Exception
-    {
+            throws Exception {
         ShutdownIQ shutdownIQ = ShutdownIQ.createGracefulShutdownIQ();
         shutdownIQ.setFrom(shutdownJid);
 
@@ -147,8 +140,7 @@ public class ShutdownTest
      */
     @Test
     public void testNewConferenceDuringShutdown()
-        throws Exception
-    {
+            throws Exception {
         // initiate shutdown
         testShutdownAllowed();
 
@@ -174,8 +166,7 @@ public class ShutdownTest
      */
     @Test
     public void testJoinExistingConferenceDuringShutdown()
-        throws Exception
-    {
+            throws Exception {
         // initiate shutdown
         testShutdownAllowed();
 
@@ -184,30 +175,28 @@ public class ShutdownTest
         activeConfRequest.setRoom(roomName);
 
         IQ result = focusComponent.handleIQSetImpl(
-            IQUtils.convert(activeConfRequest));
+                IQUtils.convert(activeConfRequest));
 
         assertEquals(result.toXML(), IQ.Type.result, result.getType());
 
         org.jivesoftware.smack.packet.IQ smackResult
-            = IQUtils.convert(result);
+                = IQUtils.convert(result);
 
         assertTrue(smackResult instanceof ConferenceIq);
-        assertEquals(true, ((ConferenceIq)smackResult).isReady());
+        assertEquals(true, ((ConferenceIq) smackResult).isReady());
     }
 
     class TestShutdownService
-        implements ShutdownService
-    {
+            implements ShutdownService {
+
         private boolean shutdownStarted;
 
-        TestShutdownService(BundleContext context)
-        {
+        TestShutdownService(BundleContext context) {
             context.registerService(ShutdownService.class, this, null);
         }
 
         @Override
-        public void beginShutdown()
-        {
+        public void beginShutdown() {
             shutdownStarted = true;
         }
     }

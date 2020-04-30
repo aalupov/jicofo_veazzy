@@ -23,13 +23,13 @@ import java.util.*;
  * testing purposes only.
  */
 class SplitBridgeSelectionStrategy
-    extends BridgeSelectionStrategy
-{
+        extends BridgeSelectionStrategy {
+
     /**
      * Default constructor.
      */
-    public SplitBridgeSelectionStrategy()
-    {}
+    public SplitBridgeSelectionStrategy() {
+    }
 
     /**
      * {@inheritDoc}
@@ -38,26 +38,21 @@ class SplitBridgeSelectionStrategy
      */
     @Override
     public Bridge doSelect(
-        List<Bridge> bridges,
-        Map<Bridge, Integer> conferenceBridges,
-        String participantRegion)
-    {
-        for (Bridge bridge : bridges)
-        {
+            List<Bridge> bridges,
+            Map<Bridge, Integer> conferenceBridges,
+            String participantRegion) {
+        for (Bridge bridge : bridges) {
             // If there's an available bridge, which isn't yet used in the
             // conference, use it.
-            if (!conferenceBridges.keySet().contains(bridge))
-            {
+            if (!conferenceBridges.keySet().contains(bridge)) {
                 return bridge;
             }
         }
 
         // Otherwise, select one of the existing bridges in the conference
         // at random.
-        if (!bridges.isEmpty())
-        {
-            return
-                bridges.get(
+        if (!bridges.isEmpty()) {
+            return bridges.get(
                     Math.abs(new Random().nextInt()) % bridges.size());
         }
 

@@ -31,13 +31,13 @@ import org.osgi.framework.*;
  * @author Pawel Domas
  */
 public class Activator
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(Activator.class);
+            = Logger.getLogger(Activator.class);
 
     /**
      * Reservation system handler.
@@ -51,35 +51,33 @@ public class Activator
 
     @Override
     public void start(BundleContext context)
-            throws Exception
-    {
+            throws Exception {
         ConfigurationService config
-            = ServiceUtils.getService(context, ConfigurationService.class);
+                = ServiceUtils.getService(context, ConfigurationService.class);
         String apiBaseUrl
-            = config.getString(RESTReservations.API_BASE_URL_PNAME);
+                = config.getString(RESTReservations.API_BASE_URL_PNAME);
 
-        if (StringUtils.isNullOrEmpty(apiBaseUrl))
+        if (StringUtils.isNullOrEmpty(apiBaseUrl)) {
             return;
+        }
 
         logger.info("REST reservation API will use base URL: " + apiBaseUrl);
 
         restReservations = new RESTReservations(apiBaseUrl);
 
         serviceRegistration = context.registerService(
-            ReservationSystem.class, restReservations, null);
+                ReservationSystem.class, restReservations, null);
 
         FocusManager focusManager
-            = ServiceUtils.getService(context, FocusManager.class);
+                = ServiceUtils.getService(context, FocusManager.class);
 
         restReservations.start(focusManager);
     }
 
     @Override
     public void stop(BundleContext context)
-            throws Exception
-    {
-        if (serviceRegistration != null)
-        {
+            throws Exception {
+        if (serviceRegistration != null) {
             serviceRegistration.unregister();
             serviceRegistration = null;
 

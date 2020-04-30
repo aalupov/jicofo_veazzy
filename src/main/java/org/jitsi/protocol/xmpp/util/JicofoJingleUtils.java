@@ -25,8 +25,8 @@ import org.jitsi.xmpp.extensions.jitsimeet.*;
  *
  * @author Boris Grozev
  */
-public class JicofoJingleUtils
-{
+public class JicofoJingleUtils {
+
     /**
      * Adds a group packet extension to a {@link JingleIQ}, and a
      * {@link BundlePacketExtension} to each of its contents. I.e. adds
@@ -36,15 +36,13 @@ public class JicofoJingleUtils
      *
      * @param jingleIQ the IQ to add extensions to.
      */
-    public static void addBundleExtensions(JingleIQ jingleIQ)
-    {
+    public static void addBundleExtensions(JingleIQ jingleIQ) {
         GroupPacketExtension group
-            = GroupPacketExtension.createBundleGroup(jingleIQ.getContentList());
+                = GroupPacketExtension.createBundleGroup(jingleIQ.getContentList());
 
         jingleIQ.addExtension(group);
 
-        for (ContentPacketExtension content : jingleIQ.getContentList())
-        {
+        for (ContentPacketExtension content : jingleIQ.getContentList()) {
             // FIXME: is it mandatory ?
             // http://estos.de/ns/bundle
             content.addChildExtension(new BundlePacketExtension());
@@ -53,15 +51,15 @@ public class JicofoJingleUtils
 
     /**
      * Adds a {@link StartMutedPacketExtension} to a specific {@link JingleIQ}.
+     *
      * @param jingleIQ the {@link JingleIQ} to add extensions to.
      * @param audioMute the value to set for the {@code audio} attribute.
      * @param videoMute the value to set for the {@code video} attribute.
      */
     public static void addStartMutedExtension(
-        JingleIQ jingleIQ, boolean audioMute, boolean videoMute)
-    {
+            JingleIQ jingleIQ, boolean audioMute, boolean videoMute) {
         StartMutedPacketExtension startMutedExt
-            = new StartMutedPacketExtension();
+                = new StartMutedPacketExtension();
         startMutedExt.setAudioMute(audioMute);
         startMutedExt.setVideoMute(videoMute);
         jingleIQ.addExtension(startMutedExt);

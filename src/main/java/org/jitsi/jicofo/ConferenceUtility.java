@@ -28,8 +28,8 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public class ConferenceUtility
-{
+public class ConferenceUtility {
+
     /**
      * Conference instance.
      */
@@ -37,32 +37,32 @@ public class ConferenceUtility
 
     /**
      * Creates new instance for given <tt>JitsiMeetConference</tt>.
+     *
      * @param conference the conference that wil be used by this instance.
      */
-    public ConferenceUtility(JitsiMeetConference conference)
-    {
+    public ConferenceUtility(JitsiMeetConference conference) {
         this.conference = conference;
     }
 
     /**
      * Returns the id of video channel allocated for the participant with given
      * JID.
+     *
      * @param participantJid the MUC JID of the participant for whom we want to
-     *                       get video channel id.
+     * get video channel id.
      */
-    public String getParticipantVideoChannelId(Jid participantJid)
-    {
+    public String getParticipantVideoChannelId(Jid participantJid) {
         Participant participant
-            = conference.findParticipantForRoomJid(participantJid);
+                = conference.findParticipantForRoomJid(participantJid);
 
         ColibriConferenceIQ channelsInfo
-            = participant.getColibriChannelsInfo();
+                = participant.getColibriChannelsInfo();
 
         ColibriConferenceIQ.Content videoContent
-            = channelsInfo.getContent("video");
+                = channelsInfo.getContent("video");
 
         ColibriConferenceIQ.Channel videoChannel
-            = videoContent.getChannel(0);
+                = videoContent.getChannel(0);
 
         return videoChannel.getID();
     }

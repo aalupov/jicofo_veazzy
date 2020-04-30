@@ -21,16 +21,14 @@ package org.jitsi.protocol.xmpp.colibri.exception;
  * A {@link ColibriException} indicating that the remote Colibri endpoint
  * responded to our request with a "conference not found" error.
  */
-public class ConferenceNotFoundException extends ColibriException
-{
-    public ConferenceNotFoundException(String message)
-    {
+public class ConferenceNotFoundException extends ColibriException {
+
+    public ConferenceNotFoundException(String message) {
         super(message);
     }
 
     @Override
-    public ColibriException clone(String prefix)
-    {
+    public ColibriException clone(String prefix) {
         return new ConferenceNotFoundException(prefix + getMessage());
     }
 }

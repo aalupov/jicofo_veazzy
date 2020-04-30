@@ -20,23 +20,19 @@ package org.jitsi.xmpp.extensions.coin;
  *
  * @author Sebastien Vincent
  */
-public enum DisconnectionType
-{
+public enum DisconnectionType {
     /**
      * Departed.
      */
     departed("departed"),
-
     /**
      * Booted.
      */
     booted("booted"),
-
     /**
      * Failed.
      */
     failed("failed"),
-
     /**
      * Busy
      */
@@ -52,8 +48,7 @@ public enum DisconnectionType
      *
      * @param type type name.
      */
-    private DisconnectionType(String type)
-    {
+    private DisconnectionType(String type) {
         this.type = type;
     }
 
@@ -63,29 +58,28 @@ public enum DisconnectionType
      * @return type name
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return type;
     }
 
     /**
      * Returns a <tt>DisconnectionType</tt>.
      *
-     * @param typeStr the <tt>String</tt> that we'd like to
-     * parse.
+     * @param typeStr the <tt>String</tt> that we'd like to parse.
      * @return an DisconnectionType.
      *
-     * @throws IllegalArgumentException in case <tt>typeStr</tt> is
-     * not a valid <tt>EndPointType</tt>.
+     * @throws IllegalArgumentException in case <tt>typeStr</tt> is not a valid
+     * <tt>EndPointType</tt>.
      */
     public static DisconnectionType parseString(String typeStr)
-        throws IllegalArgumentException
-    {
-        for (DisconnectionType value : values())
-            if (value.toString().equals(typeStr))
+            throws IllegalArgumentException {
+        for (DisconnectionType value : values()) {
+            if (value.toString().equals(typeStr)) {
                 return value;
+            }
+        }
 
         throw new IllegalArgumentException(
-            typeStr + " is not a valid reason");
+                typeStr + " is not a valid reason");
     }
 }

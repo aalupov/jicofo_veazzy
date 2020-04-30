@@ -33,63 +33,50 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockMucShare
-    implements ChatRoomMemberPresenceListener
-{
+        implements ChatRoomMemberPresenceListener {
+
     private final static Logger logger = Logger.getLogger(MockMucShare.class);
 
     private final EntityBareJid roomName;
 
     private List<MockMultiUserChat> groupedChats = new ArrayList<>();
 
-    public MockMucShare(EntityBareJid roomName)
-    {
+    public MockMucShare(EntityBareJid roomName) {
         this.roomName = roomName;
     }
 
-    public void nextRoomCreated(MockMultiUserChat chatRoom)
-    {
+    public void nextRoomCreated(MockMultiUserChat chatRoom) {
         groupedChats.add(chatRoom);
 
         chatRoom.addMemberPresenceListener(this);
 
         // Copy existing members if any
-        for (ChatRoomMember member : chatRoom.getMembers())
-        {
+        for (ChatRoomMember member : chatRoom.getMembers()) {
             broadcastMemberJoined(chatRoom, member);
         }
     }
 
     @Override
-    public void memberPresenceChanged(ChatRoomMemberPresenceChangeEvent evt)
-    {
+    public void memberPresenceChanged(ChatRoomMemberPresenceChangeEvent evt) {
         String eventType = evt.getEventType();
 
-        if (ChatRoomMemberPresenceChangeEvent.MEMBER_JOINED.equals(eventType))
-        {
+        if (ChatRoomMemberPresenceChangeEvent.MEMBER_JOINED.equals(eventType)) {
             broadcastMemberJoined(evt.getChatRoom(), evt.getChatRoomMember());
-        }
-        else if(
-            ChatRoomMemberPresenceChangeEvent.MEMBER_KICKED.equals(eventType)
-            || ChatRoomMemberPresenceChangeEvent.MEMBER_LEFT.equals(eventType)
-            || ChatRoomMemberPresenceChangeEvent.MEMBER_QUIT.equals(eventType) )
-        {
+        } else if (ChatRoomMemberPresenceChangeEvent.MEMBER_KICKED.equals(eventType)
+                || ChatRoomMemberPresenceChangeEvent.MEMBER_LEFT.equals(eventType)
+                || ChatRoomMemberPresenceChangeEvent.MEMBER_QUIT.equals(eventType)) {
             broadcastMemberLeft(
                     evt.getChatRoom(),
-                    (XmppChatMember)evt.getChatRoomMember());
-        }
-        else
-        {
+                    (XmppChatMember) evt.getChatRoomMember());
+        } else {
             logger.warn("Unsupported event type: " + eventType);
         }
     }
 
     private void broadcastMemberJoined(ChatRoom chatRoom,
-                                       ChatRoomMember chatRoomMember)
-    {
-        for (MockMultiUserChat chatToNotify : groupedChats)
-        {
-            if (chatToNotify != chatRoom)
-            {
+            ChatRoomMember chatRoomMember) {
+        for (MockMultiUserChat chatToNotify : groupedChats) {
+            if (chatToNotify != chatRoom) {
                 chatToNotify.removeMemberPresenceListener(this);
 
                 chatToNotify.mockJoin((MockRoomMember) chatRoomMember);
@@ -100,17 +87,13 @@ public class MockMucShare
     }
 
     private void broadcastMemberLeft(ChatRoom chatRoom,
-                                     XmppChatMember chatRoomMember)
-    {
-        for (MockMultiUserChat chatToNotify : groupedChats)
-        {
-            if (chatToNotify != chatRoom)
-            {
+            XmppChatMember chatRoomMember) {
+        for (MockMultiUserChat chatToNotify : groupedChats) {
+            if (chatToNotify != chatRoom) {
                 MockRoomMember mockRoomMember
-                    = (MockRoomMember) chatToNotify.findChatMember(
-                            chatRoomMember.getOccupantJid());
-                if (mockRoomMember != null)
-                {
+                        = (MockRoomMember) chatToNotify.findChatMember(
+                                chatRoomMember.getOccupantJid());
+                if (mockRoomMember != null) {
                     chatToNotify.mockLeave(mockRoomMember.getName());
                 }
             }

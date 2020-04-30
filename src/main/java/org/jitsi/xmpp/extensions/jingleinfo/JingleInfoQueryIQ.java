@@ -24,8 +24,8 @@ import org.jivesoftware.smack.packet.*;
  * @author Sebastien Vincent
  */
 public class JingleInfoQueryIQ
-    extends IQ
-{
+        extends IQ {
+
     /**
      * The namespace.
      */
@@ -36,20 +36,18 @@ public class JingleInfoQueryIQ
      */
     public static final String ELEMENT_NAME = "query";
 
-    public JingleInfoQueryIQ()
-    {
+    public JingleInfoQueryIQ() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     /**
-     * Returns the sub-element XML section of the IQ packet, or null if
-     * there isn't one. Packet extensions must be included, if any are defined.
+     * Returns the sub-element XML section of the IQ packet, or null if there
+     * isn't one. Packet extensions must be included, if any are defined.
      *
      * @return the child element section of the IQ XML.
      */
     @Override
-    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder bld)
-    {
+    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder bld) {
         bld.setEmptyElement();
         return bld;
     }

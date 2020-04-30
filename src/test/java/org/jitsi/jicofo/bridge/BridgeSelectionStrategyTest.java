@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package org.jitsi.jicofo.bridge;
+
 import net.java.sip.communicator.util.*;
 import org.jitsi.jicofo.*;
 import org.jitsi.jicofo.util.*;
@@ -28,14 +29,14 @@ import static org.jitsi.xmpp.extensions.colibri.ColibriStatsExtension.RELAY_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class BridgeSelectionStrategyTest
-{
+public class BridgeSelectionStrategyTest {
+
     private final OSGiHandler osgi = OSGiHandler.getInstance();
 
     private final String region1 = "region1",
-        region2 = "region2",
-        region3 = "region3",
-        invalidRegion = "invalid region";
+            region2 = "region2",
+            region3 = "region3",
+            invalidRegion = "invalid region";
 
     private Bridge bridge1, bridge2, bridge3;
 
@@ -43,12 +44,11 @@ public class BridgeSelectionStrategyTest
 
     @Before
     public void init()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
 
         JitsiMeetServices meetServices
-            = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
+                = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
 
         BridgeSelector selector = meetServices.getBridgeSelector();
 
@@ -60,8 +60,7 @@ public class BridgeSelectionStrategyTest
 
     @After
     public void tearDown()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
@@ -70,16 +69,15 @@ public class BridgeSelectionStrategyTest
      * is located, a low-stressed bridge should be preferred.
      */
     @Test
-    public void preferLowestStress()
-    {
+    public void preferLowestStress() {
         Bridge localBridge = bridge1,
-            lowStressBridge = bridge3,
-            mediumStressBridge = bridge2,
-            highStressBridge = bridge1;
+                lowStressBridge = bridge3,
+                mediumStressBridge = bridge2,
+                highStressBridge = bridge1;
 
         String lowStressRegion = region3,
-            mediumStressRegion = region2,
-            highStressRegion = region1;
+                mediumStressRegion = region2,
+                highStressRegion = region1;
 
         // Here we specify 3 bridges in 3 different regions: one high-stressed,
         // one medium-stressed and one low-stressed. The numbers bellow are
@@ -93,17 +91,16 @@ public class BridgeSelectionStrategyTest
         // groups of bridges with similar stress level and allocate participants
         // to a bridge in the least stressed group.
         highStressBridge.setStats(
-            createJvbStats(20, 5, highStressRegion));
+                createJvbStats(20, 5, highStressRegion));
 
         mediumStressBridge.setStats(
-            createJvbStats(10, 2, mediumStressRegion));
+                createJvbStats(10, 2, mediumStressRegion));
 
         lowStressBridge.setStats(
-            createJvbStats(1, 0, lowStressRegion));
-
+                createJvbStats(1, 0, lowStressRegion));
 
         BridgeSelectionStrategy strategy
-            = new RegionBasedBridgeSelectionStrategy();
+                = new RegionBasedBridgeSelectionStrategy();
         strategy.setLocalRegion(localBridge.getRegion());
 
         Map<Bridge, Integer> conferenceBridges = new HashMap<>();
@@ -111,33 +108,32 @@ public class BridgeSelectionStrategyTest
         Collections.sort(allBridges);
 
         // Initial selection should select a bridge in the participant's region.
-
         assertEquals(
-            highStressBridge,
-            strategy.select(allBridges, conferenceBridges, highStressRegion, true));
+                highStressBridge,
+                strategy.select(allBridges, conferenceBridges, highStressRegion, true));
         assertEquals(
-            mediumStressBridge,
-            strategy.select(allBridges, conferenceBridges, mediumStressRegion, true));
+                mediumStressBridge,
+                strategy.select(allBridges, conferenceBridges, mediumStressRegion, true));
         assertEquals(
-            lowStressBridge,
-            strategy.select(allBridges, conferenceBridges, invalidRegion, true));
+                lowStressBridge,
+                strategy.select(allBridges, conferenceBridges, invalidRegion, true));
         assertEquals(
-            lowStressBridge,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                lowStressBridge,
+                strategy.select(allBridges, conferenceBridges, null, true));
 
         // Now assume that the low-stressed bridge is in the conference.
         conferenceBridges.put(lowStressBridge, 1);
         assertEquals(
-            lowStressBridge,
-            strategy.select(allBridges, conferenceBridges, lowStressRegion, true));
+                lowStressBridge,
+                strategy.select(allBridges, conferenceBridges, lowStressRegion, true));
         assertEquals(
-            mediumStressBridge,
-            strategy.select(allBridges, conferenceBridges, mediumStressRegion, true));
+                mediumStressBridge,
+                strategy.select(allBridges, conferenceBridges, mediumStressRegion, true));
         // A participant in an unknown region should be allocated on the
         // existing conference bridge.
         assertEquals(
-            lowStressBridge,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                lowStressBridge,
+                strategy.select(allBridges, conferenceBridges, null, true));
 
         // Now assume that a medium-stressed bridge is in the conference.
         conferenceBridges.put(mediumStressBridge, 1);
@@ -145,63 +141,58 @@ public class BridgeSelectionStrategyTest
         // loaded (according to the order of 'allBridges') existing conference
         // bridge.
         assertEquals(
-            lowStressBridge,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                lowStressBridge,
+                strategy.select(allBridges, conferenceBridges, null, true));
         // A participant in a region with no bridges should also be allocated
         // on the least loaded (according to the order of 'allBridges') existing
         // conference bridge.
         assertEquals(
-            lowStressBridge,
-            strategy.select(allBridges, conferenceBridges, invalidRegion, true));
+                lowStressBridge,
+                strategy.select(allBridges, conferenceBridges, invalidRegion, true));
     }
 
-
-    private ColibriStatsExtension createJvbStats(int numberOfLocalSenders, int numberOfLocalReceivers, String region)
-    {
+    private ColibriStatsExtension createJvbStats(int numberOfLocalSenders, int numberOfLocalReceivers, String region) {
         MaxPacketRateCalculator maxPacketRateCalculator = new MaxPacketRateCalculator(
-            4 /* numberOfConferenceBridges */,
-            20 /* numberOfGlobalSenders */,
-            2 /* numberOfSpeakers */,
-            numberOfLocalSenders,
-            numberOfLocalReceivers
+                4 /* numberOfConferenceBridges */,
+                20 /* numberOfGlobalSenders */,
+                2 /* numberOfSpeakers */,
+                numberOfLocalSenders,
+                numberOfLocalReceivers
         );
 
-        int maxDownload = maxPacketRateCalculator.computeIngressPacketRatePps()
-            , maxUpload = maxPacketRateCalculator.computeEgressPacketRatePps();
+        int maxDownload = maxPacketRateCalculator.computeIngressPacketRatePps(), maxUpload = maxPacketRateCalculator.computeEgressPacketRatePps();
 
         ColibriStatsExtension statsExtension = new ColibriStatsExtension();
 
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                PACKET_RATE_DOWNLOAD, maxDownload));
+                new ColibriStatsExtension.Stat(
+                        PACKET_RATE_DOWNLOAD, maxDownload));
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                PACKET_RATE_UPLOAD, maxUpload));
+                new ColibriStatsExtension.Stat(
+                        PACKET_RATE_UPLOAD, maxUpload));
 
-        if (region != null)
-        {
+        if (region != null) {
             statsExtension.addStat(
-                new ColibriStatsExtension.Stat(
-                    REGION, region));
+                    new ColibriStatsExtension.Stat(
+                            REGION, region));
             statsExtension.addStat(
-                new ColibriStatsExtension.Stat(
-                    RELAY_ID, region));
+                    new ColibriStatsExtension.Stat(
+                            RELAY_ID, region));
         }
 
         return statsExtension;
     }
 
     @Test
-    public void preferRegionWhenStressIsEqual()
-    {
+    public void preferRegionWhenStressIsEqual() {
         Bridge localBridge = bridge1,
-            mediumStressBridge3 = bridge3,
-            mediumStressBridge2 = bridge2,
-            highStressBridge = bridge1;
+                mediumStressBridge3 = bridge3,
+                mediumStressBridge2 = bridge2,
+                highStressBridge = bridge1;
 
         String mediumStressRegion3 = region3,
-            mediumStressRegion2 = region2,
-            highStressRegion = region1;
+                mediumStressRegion2 = region2,
+                highStressRegion = region1;
 
         // Here we specify 3 bridges in 3 different regions: one high-stressed
         // and two medium-stressed. The numbers bellow are bitrates, as our
@@ -215,14 +206,14 @@ public class BridgeSelectionStrategyTest
         // groups of bridges with similar stress level and allocate participants
         // to a bridge in the least stressed group.
         highStressBridge.setStats(
-            createJvbStats(20, 5, highStressRegion));
+                createJvbStats(20, 5, highStressRegion));
         mediumStressBridge3.setStats(
-            createJvbStats(10, 2, mediumStressRegion3));
+                createJvbStats(10, 2, mediumStressRegion3));
         mediumStressBridge2.setStats(
-            createJvbStats(10, 2, mediumStressRegion2));
+                createJvbStats(10, 2, mediumStressRegion2));
 
         BridgeSelectionStrategy strategy
-            = new RegionBasedBridgeSelectionStrategy();
+                = new RegionBasedBridgeSelectionStrategy();
         strategy.setLocalRegion(localBridge.getRegion());
 
         Map<Bridge, Integer> conferenceBridges = new HashMap<>();
@@ -230,34 +221,33 @@ public class BridgeSelectionStrategyTest
         Collections.sort(allBridges);
 
         // Initial selection should select a bridge in the participant's region.
-
         assertEquals(
-            highStressBridge,
-            strategy.select(allBridges, conferenceBridges, highStressRegion, true));
+                highStressBridge,
+                strategy.select(allBridges, conferenceBridges, highStressRegion, true));
 
         Bridge b = strategy.select(allBridges, conferenceBridges, mediumStressRegion2, true);
         assertEquals(
-            mediumStressBridge2, b);
+                mediumStressBridge2, b);
 
         assertEquals(
-            mediumStressBridge2,
-            strategy.select(allBridges, conferenceBridges, invalidRegion, true));
+                mediumStressBridge2,
+                strategy.select(allBridges, conferenceBridges, invalidRegion, true));
         assertEquals(
-            mediumStressBridge2,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                mediumStressBridge2,
+                strategy.select(allBridges, conferenceBridges, null, true));
 
         conferenceBridges.put(mediumStressBridge2, 1);
         assertEquals(
-            mediumStressBridge3,
-            strategy.select(allBridges, conferenceBridges, mediumStressRegion3, true));
+                mediumStressBridge3,
+                strategy.select(allBridges, conferenceBridges, mediumStressRegion3, true));
         assertEquals(
-            mediumStressBridge2,
-            strategy.select(allBridges, conferenceBridges, mediumStressRegion2, true));
+                mediumStressBridge2,
+                strategy.select(allBridges, conferenceBridges, mediumStressRegion2, true));
         // A participant in an unknown region should be allocated on the existing
         // conference bridge.
         assertEquals(
-            mediumStressBridge2,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                mediumStressBridge2,
+                strategy.select(allBridges, conferenceBridges, null, true));
 
         // Now assume that a medium-stressed bridge is in the conference.
         conferenceBridges.put(highStressBridge, 1);
@@ -265,13 +255,13 @@ public class BridgeSelectionStrategyTest
         // loaded (according to the order of 'allBridges') existing conference
         // bridge.
         assertEquals(
-            mediumStressBridge2,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                mediumStressBridge2,
+                strategy.select(allBridges, conferenceBridges, null, true));
         // A participant in a region with no bridges should also be allocated
         // on the least loaded (according to the order of 'allBridges') existing
         // conference bridge.
         assertEquals(
-            mediumStressBridge2,
-            strategy.select(allBridges, conferenceBridges, invalidRegion, true));
+                mediumStressBridge2,
+                strategy.select(allBridges, conferenceBridges, invalidRegion, true));
     }
 }

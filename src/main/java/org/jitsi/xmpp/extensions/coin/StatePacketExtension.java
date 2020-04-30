@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class StatePacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that state belongs to.
      */
@@ -70,8 +70,7 @@ public class StatePacketExtension
     /**
      * Constructor.
      */
-    public StatePacketExtension()
-    {
+    public StatePacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -80,8 +79,7 @@ public class StatePacketExtension
      *
      * @param userCount user count
      */
-    public void setUserCount(int userCount)
-    {
+    public void setUserCount(int userCount) {
         this.userCount = userCount;
     }
 
@@ -90,8 +88,7 @@ public class StatePacketExtension
      *
      * @param active state
      */
-    public void setActive(int active)
-    {
+    public void setActive(int active) {
         this.active = active;
     }
 
@@ -100,8 +97,7 @@ public class StatePacketExtension
      *
      * @param locked locked state
      */
-    public void setLocked(int locked)
-    {
+    public void setLocked(int locked) {
         this.locked = locked;
     }
 
@@ -110,8 +106,7 @@ public class StatePacketExtension
      *
      * @return user count
      */
-    public int getUserCount()
-    {
+    public int getUserCount() {
         return userCount;
     }
 
@@ -120,8 +115,7 @@ public class StatePacketExtension
      *
      * @return active state
      */
-    public int getActive()
-    {
+    public int getActive() {
         return active;
     }
 
@@ -130,32 +124,28 @@ public class StatePacketExtension
      *
      * @return locked state
      */
-    public int getLocked()
-    {
+    public int getLocked() {
         return locked;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
-        if(userCount != 0)
-        {
+        if (userCount != 0) {
             xml.optElement(ELEMENT_USER_COUNT, userCount);
         }
 
-        if(active != -1)
-        {
+        if (active != -1) {
             xml.optElement(ELEMENT_ACTIVE, (active > 0));
         }
 
-        if(locked != -1)
-        {
+        if (locked != -1) {
             xml.optElement(ELEMENT_LOCKED, (locked > 0));
         }
 

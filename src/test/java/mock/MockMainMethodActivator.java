@@ -28,29 +28,27 @@ import org.osgi.framework.*;
  * @author Pawel Domas
  */
 public class MockMainMethodActivator
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     private static boolean started;
 
     private static FocusComponent focusComponent;
 
     @Override
     public void start(BundleContext context)
-        throws Exception
-    {
+            throws Exception {
         // These properties are set in OSGiHandler
         focusComponent = new FocusComponent(
-            System.getProperty(FocusManager.HOSTNAME_PNAME),
-            -1, // whatever port in mock
-            System.getProperty(FocusManager.XMPP_DOMAIN_PNAME),
-            "focus",
-            "secret",
-            true, "focus@test.domain.net");
+                System.getProperty(FocusManager.HOSTNAME_PNAME),
+                -1, // whatever port in mock
+                System.getProperty(FocusManager.XMPP_DOMAIN_PNAME),
+                "focus",
+                "secret",
+                true, "focus@test.domain.net");
 
         focusComponent.init();
 
-        synchronized (MockMainMethodActivator.class)
-        {
+        synchronized (MockMainMethodActivator.class) {
             started = true;
             MockMainMethodActivator.class.notifyAll();
         }
@@ -58,33 +56,24 @@ public class MockMainMethodActivator
 
     @Override
     public void stop(BundleContext context)
-        throws Exception
-    {
+            throws Exception {
         focusComponent.dispose();
     }
 
-    public static FocusComponent getFocusComponent()
-    {
+    public static FocusComponent getFocusComponent() {
         return focusComponent;
     }
 
-    public static void waitUntilStarted(long timeout)
-    {
-        synchronized (MockMainMethodActivator.class)
-        {
-            if (!started)
-            {
-                try
-                {
+    public static void waitUntilStarted(long timeout) {
+        synchronized (MockMainMethodActivator.class) {
+            if (!started) {
+                try {
                     MockMainMethodActivator.class.wait(timeout);
-                    if (!started)
-                    {
+                    if (!started) {
                         throw new RuntimeException(
-                            "Failed to wait for activator to get started");
+                                "Failed to wait for activator to get started");
                     }
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }

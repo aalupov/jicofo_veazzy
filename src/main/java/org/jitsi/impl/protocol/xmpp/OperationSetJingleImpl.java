@@ -30,8 +30,8 @@ import org.jxmpp.jid.*;
  * @author Pawel Domas
  */
 public class OperationSetJingleImpl
-    extends AbstractOperationSetJingle
-{
+        extends AbstractOperationSetJingle {
+
     /**
      * The logger used by this class.
      */
@@ -48,25 +48,22 @@ public class OperationSetJingleImpl
      *
      * @param xmppProvider parent XMPP protocol provider
      */
-    OperationSetJingleImpl(XmppProtocolProvider xmppProvider)
-    {
+    OperationSetJingleImpl(XmppProtocolProvider xmppProvider) {
         this.xmppProvider = xmppProvider;
     }
 
     /**
-     * Returns our XMPP address that will be used as 'from' attribute
-     * in Jingle QIs.
+     * Returns our XMPP address that will be used as 'from' attribute in Jingle
+     * QIs.
      */
-    protected EntityFullJid getOurJID()
-    {
+    protected EntityFullJid getOurJID() {
         return xmppProvider.getOurJid();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected XmppConnection getConnection()
-    {
+    protected XmppConnection getConnection() {
         return xmppProvider.getConnectionAdapter();
     }
 }

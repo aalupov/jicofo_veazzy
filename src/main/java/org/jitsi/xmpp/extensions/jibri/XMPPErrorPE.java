@@ -24,8 +24,8 @@ import java.util.*;
  * can be easily inserted into {@link RecordingStatus}.
  */
 public class XMPPErrorPE
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     /**
      * <tt>XMPPError</tt> wrapped into this <tt>XMPPErrorPE</tt>.
      */
@@ -33,30 +33,29 @@ public class XMPPErrorPE
 
     /**
      * Creates new instance of <tt>XMPPErrorPE</tt>.
+     *
      * @param xmppError the instance of <tt>XMPPError</tt> that will be wrapped
      * by the newly created <tt>XMPPErrorPE</tt>.
      */
-    public XMPPErrorPE(XMPPError xmppError)
-    {
+    public XMPPErrorPE(XMPPError xmppError) {
         setError(xmppError);
     }
 
     /**
      * Returns the underlying instance of <tt>XMPPError</tt>.
      */
-    public XMPPError getError()
-    {
+    public XMPPError getError() {
         return error;
     }
 
     /**
      * Sets new instance of <tt>XMPPError</tt> to be wrapped by this
      * <tt>XMPPErrorPE</tt>.
+     *
      * @param error <tt>XMPPError</tt> that will be wrapped by this
      * <TT>XMPPErrorPE</TT>.
      */
-    public void setError(XMPPError error)
-    {
+    public void setError(XMPPError error) {
         Objects.requireNonNull(error, "error");
 
         this.error = error;
@@ -66,8 +65,7 @@ public class XMPPErrorPE
      * {@inheritDoc}
      */
     @Override
-    public String getElementName()
-    {
+    public String getElementName() {
         return "error";
     }
 
@@ -75,8 +73,7 @@ public class XMPPErrorPE
      * {@inheritDoc}
      */
     @Override
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return "";
     }
 
@@ -84,8 +81,7 @@ public class XMPPErrorPE
      * {@inheritDoc}
      */
     @Override
-    public String toXML()
-    {
+    public String toXML() {
         return error.toXML().toString();
     }
 }

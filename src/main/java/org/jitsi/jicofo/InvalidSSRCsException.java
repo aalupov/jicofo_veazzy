@@ -23,15 +23,15 @@ package org.jitsi.jicofo;
  *
  * @author Pawel Domas
  */
-public class InvalidSSRCsException extends Exception
-{
+public class InvalidSSRCsException extends Exception {
+
     /**
      * Creates new <tt>InvalidSSRCsException</tt>
+     *
      * @param errorDetails a text that will provide more details for the
      * exception.
      */
-    public InvalidSSRCsException(String errorDetails)
-    {
+    public InvalidSSRCsException(String errorDetails) {
         super(errorDetails);
     }
 }

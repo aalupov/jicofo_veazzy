@@ -26,8 +26,8 @@ import org.jitsi.xmpp.extensions.*;
  * <tt>{@link Status#ON}</tt> - transcription in progress
  */
 public class TranscriptionStatusExtension
-        extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML element name of this packet extension.
      */
@@ -46,17 +46,16 @@ public class TranscriptionStatusExtension
     /**
      * Constructs new TranscriptionStatusExtension.
      */
-    public TranscriptionStatusExtension()
-    {
+    public TranscriptionStatusExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Sets new value for the transcription status.
+     *
      * @param status one of {@link Status}
      */
-    public void setStatus(Status status)
-    {
+    public void setStatus(Status status) {
         setAttribute(STATUS_ATTRIBUTE, status);
     }
 
@@ -65,22 +64,19 @@ public class TranscriptionStatusExtension
      *
      * @return one of the {@link Status}
      */
-    public Status getStatus()
-    {
+    public Status getStatus() {
         return Status.valueOf(
-            ((String) getAttribute(STATUS_ATTRIBUTE)).toUpperCase());
+                ((String) getAttribute(STATUS_ATTRIBUTE)).toUpperCase());
     }
 
     /**
      * The enumeration of recording status values.
      */
-    public enum Status
-    {
+    public enum Status {
         /**
          * Transcription is in progress.
          */
         ON("ON"),
-
         /**
          * Transcription stopped.
          */
@@ -93,10 +89,10 @@ public class TranscriptionStatusExtension
 
         /**
          * Creates new {@link Status} instance.
+         *
          * @param name a string corresponding to one of {@link Status} values.
          */
-        Status(String name)
-        {
+        Status(String name) {
             this.name = name;
         }
 
@@ -104,11 +100,9 @@ public class TranscriptionStatusExtension
          * {@inheritDoc}
          */
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name;
         }
 
     }
 }
-

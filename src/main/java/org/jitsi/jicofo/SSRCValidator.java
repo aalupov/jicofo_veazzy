@@ -36,17 +36,17 @@ import java.util.stream.*;
  *
  * @author Pawel Domas
  */
-public class SSRCValidator
-{
+public class SSRCValidator {
+
     /**
      * The logger used by this class
      */
     private final static Logger classLogger
-        = Logger.getLogger(SSRCValidator.class);
+            = Logger.getLogger(SSRCValidator.class);
 
     /**
-     * The logger used by this instance. It uses the log level delegate from
-     * the logger passed to the constructor.
+     * The logger used by this instance. It uses the log level delegate from the
+     * logger passed to the constructor.
      */
     private final Logger logger;
 
@@ -60,8 +60,8 @@ public class SSRCValidator
 
     /**
      * The source map obtained from the participant which reflects current
-     * source status. It's a clone and modifications done here do not affect
-     * the version held by {@link Participant}.
+     * source status. It's a clone and modifications done here do not affect the
+     * version held by {@link Participant}.
      */
     private final MediaSourceMap sources;
 
@@ -71,8 +71,8 @@ public class SSRCValidator
     private final MediaSourceGroupMap sourceGroups;
 
     /**
-     * The limit sources count per media type allowed to be stored by
-     * each {@link Participant} at a time.
+     * The limit sources count per media type allowed to be stored by each
+     * {@link Participant} at a time.
      */
     private final int maxSourceCount;
 
@@ -81,26 +81,24 @@ public class SSRCValidator
      *
      * @param simGroupings the list of all {@link SimulcastGrouping}s.
      * @param fidGroups the list of all FID groups even these which are part of
-     *        the <tt>simGroupings</tt>.
+     * the <tt>simGroupings</tt>.
      *
      * @return a list of FID groups that are not part of any SIM grouping.
      */
     static private List<SourceGroup> getIndependentFidGroups(
-            List<SimulcastGrouping>    simGroupings,
-            List<SourceGroup>          fidGroups)
-    {
-        if (simGroupings.isEmpty())
-        {
+            List<SimulcastGrouping> simGroupings,
+            List<SourceGroup> fidGroups) {
+        if (simGroupings.isEmpty()) {
             // Nothing to be done here...
             return new ArrayList<>(fidGroups);
         }
 
         return fidGroups.stream()
-            .filter(
-                fidGroup -> simGroupings.stream()
-                    .noneMatch(
-                        simGroup ->
-                            simGroup.belongsToSimulcastGrouping(fidGroup))
+                .filter(
+                        fidGroup -> simGroupings.stream()
+                                .noneMatch(
+                                        simGroup
+                                        -> simGroup.belongsToSimulcastGrouping(fidGroup))
                 ).collect(Collectors.toList());
     }
 
@@ -108,30 +106,26 @@ public class SSRCValidator
      * Checks if there are no MSID conflicts across all independent FID groups.
      *
      * @param independentFidGroups the list of all independent FID groups (that
-     *        do not belong to any other higher level grouping).
+     * do not belong to any other higher level grouping).
      *
      * @throws InvalidSSRCsException in case of MSID conflict
      */
     static private void verifyNoMsidConflictsAcrossFidGroups(
             List<SourceGroup> independentFidGroups)
-        throws InvalidSSRCsException
-    {
-        for (SourceGroup fidGroup : independentFidGroups)
-        {
+            throws InvalidSSRCsException {
+        for (SourceGroup fidGroup : independentFidGroups) {
             // NOTE at this point we're sure that every source has MSID
             String fidGroupMsid = fidGroup.getGroupMsid();
             List<SourceGroup> withTheMsid
-                = SSRCSignaling.selectWithMsid(
-                        independentFidGroups, fidGroupMsid);
+                    = SSRCSignaling.selectWithMsid(
+                            independentFidGroups, fidGroupMsid);
 
-            for (SourceGroup conflictingGroup : withTheMsid)
-            {
-                if (conflictingGroup != fidGroup)
-                {
+            for (SourceGroup conflictingGroup : withTheMsid) {
+                if (conflictingGroup != fidGroup) {
                     throw new InvalidSSRCsException(
                             "MSID conflict across FID groups: "
-                                + fidGroupMsid + ", " + conflictingGroup
-                                + " conflicts with group " + fidGroup);
+                            + fidGroupMsid + ", " + conflictingGroup
+                            + " conflicts with group " + fidGroup);
                 }
             }
         }
@@ -142,43 +136,36 @@ public class SSRCValidator
      *
      * @param mediaType the media type to be checked in this call
      * @param groupedSources the map holding all sources which belong to any
-     *        group for all media types.
-     * @param simGroupings the list of all {@link SimulcastGrouping}s for
-     *        the <tt>mediaType</tt>.
+     * group for all media types.
+     * @param simGroupings the list of all {@link SimulcastGrouping}s for the
+     * <tt>mediaType</tt>.
      *
      * @throws InvalidSSRCsException in case of MSID conflict
      */
     static private void verifyNoMsidConflictsAcrossSimGroupings(
-            String                     mediaType,
-            MediaSourceMap             groupedSources,
-            List<SimulcastGrouping>    simGroupings)
-        throws InvalidSSRCsException
-    {
-        for (SimulcastGrouping simGrouping : simGroupings)
-        {
+            String mediaType,
+            MediaSourceMap groupedSources,
+            List<SimulcastGrouping> simGroupings)
+            throws InvalidSSRCsException {
+        for (SimulcastGrouping simGrouping : simGroupings) {
             String simulcastMsid = simGrouping.getSimulcastMsid();
 
-            if (simGrouping.isUsingRidSignaling())
-            {
+            if (simGrouping.isUsingRidSignaling()) {
                 // Skip RID simulcast group
                 continue;
-            }
-            else if (StringUtils.isNullOrEmpty(simulcastMsid))
-            {
+            } else if (StringUtils.isNullOrEmpty(simulcastMsid)) {
                 throw new InvalidSSRCsException(
                         "No MSID in simulcast group: " + simGrouping);
             }
 
             List<SourcePacketExtension> sourcesWithTheMsid
-                = groupedSources.findSourcesWithMsid(
-                        mediaType, simulcastMsid);
+                    = groupedSources.findSourcesWithMsid(
+                            mediaType, simulcastMsid);
 
-            for (SourcePacketExtension src : sourcesWithTheMsid)
-            {
-                if (!simGrouping.belongsToSimulcastGrouping(src))
-                {
+            for (SourcePacketExtension src : sourcesWithTheMsid) {
+                if (!simGrouping.belongsToSimulcastGrouping(src)) {
                     throw new InvalidSSRCsException(
-                        "MSID conflict across SIM groups: "
+                            "MSID conflict across SIM groups: "
                             + simulcastMsid + ", " + src
                             + " conflicts with group " + simGrouping);
                 }
@@ -188,6 +175,7 @@ public class SSRCValidator
 
     /**
      * Creates new <tt>SSRCValidator</tt>
+     *
      * @param endpointId participant's endpoint ID for whom the new
      * sources/groups will be validated.
      * @param sources the map which holds sources of the whole conference.
@@ -195,15 +183,14 @@ public class SSRCValidator
      * in the conference.
      * @param maxSourceCount the source limit, tells how many sources per media
      * type can be stored at a time by each conference participant.
-     * @param logLevelDelegate a <tt>Logger</tt> which will be used as
-     * the logging level delegate.
+     * @param logLevelDelegate a <tt>Logger</tt> which will be used as the
+     * logging level delegate.
      */
-    public SSRCValidator(String              endpointId,
-                         MediaSourceMap      sources,
-                         MediaSourceGroupMap sourceGroups,
-                         int                 maxSourceCount,
-                         Logger              logLevelDelegate)
-    {
+    public SSRCValidator(String endpointId,
+            MediaSourceMap sources,
+            MediaSourceGroupMap sourceGroups,
+            int maxSourceCount,
+            Logger logLevelDelegate) {
         this.endpointId = endpointId;
         this.sources = sources.copyDeep();
         this.sourceGroups = sourceGroups.copy();
@@ -221,70 +208,61 @@ public class SSRCValidator
      * @return how many sources are currently in the conference source map for
      * given media type and owner's JID.
      */
-    private long getSourceCountForOwner(Jid owner, String mediaType)
-    {
+    private long getSourceCountForOwner(Jid owner, String mediaType) {
         return this.sources.getSourcesForMedia(mediaType)
-            .stream()
-            .filter(
-                source -> Objects.equals(
-                    SSRCSignaling.getSSRCOwner(source), owner))
-            .count();
+                .stream()
+                .filter(
+                        source -> Objects.equals(
+                                SSRCSignaling.getSSRCOwner(source), owner))
+                .count();
 
     }
 
     /**
-     * Makes an attempt to add given sources and source groups to the current state.
-     * It checks some constraints that prevent from injecting invalid
-     * description into the conference:
-     * 1. Allow SSRC value between 1 and 0xFFFFFFFF (note that 0 is a valid
-     *    value, but it breaks WebRTC stack in Chrome, so not allowed here)
-     * 2. Does not allow the same source to appear more than once per media type
-     * 3. Truncates sources above the limit (configured in the constructor)
-     * 4. Filters out SSRC parameters other than 'cname' and 'msid'
-     * 5. Drop empty source groups
-     * 6. Skips duplicated groups (the same semantics and contained sources)
-     * 7. Looks for MSID conflicts between SSRCs which do not belong to the same
-     *    group
-     * 8. Makes sure that sources described by groups exist in media description
+     * Makes an attempt to add given sources and source groups to the current
+     * state. It checks some constraints that prevent from injecting invalid
+     * description into the conference: 1. Allow SSRC value between 1 and
+     * 0xFFFFFFFF (note that 0 is a valid value, but it breaks WebRTC stack in
+     * Chrome, so not allowed here) 2. Does not allow the same source to appear
+     * more than once per media type 3. Truncates sources above the limit
+     * (configured in the constructor) 4. Filters out SSRC parameters other than
+     * 'cname' and 'msid' 5. Drop empty source groups 6. Skips duplicated groups
+     * (the same semantics and contained sources) 7. Looks for MSID conflicts
+     * between SSRCs which do not belong to the same group 8. Makes sure that
+     * sources described by groups exist in media description
      *
      * @param newSources the sources to add
      * @param newGroups the groups to add
      *
-     * @return an array of two objects where first one is <tt>MediaSourceMap</tt>
+     * @return an array of two objects where first one is
+     * <tt>MediaSourceMap</tt>
      * contains the sources that have been accepted and the second one is
      * <tt>MediaSourceGroupMap</tt> with <tt>SourceGroup</tt>s accepted by this
      * validator instance.
      *
-     * @throws InvalidSSRCsException if a critical problem has been found
-     * with the new sources/groups which would probably result in
+     * @throws InvalidSSRCsException if a critical problem has been found with
+     * the new sources/groups which would probably result in
      * "setRemoteDescription" error on the client.
      */
     public Object[] tryAddSourcesAndGroups(
             MediaSourceMap newSources, MediaSourceGroupMap newGroups)
-        throws InvalidSSRCsException
-    {
+            throws InvalidSSRCsException {
         MediaSourceMap acceptedSources = new MediaSourceMap();
-        for (String mediaType : newSources.getMediaTypes())
-        {
+        for (String mediaType : newSources.getMediaTypes()) {
             List<SourcePacketExtension> mediaSources
-                = newSources.getSourcesForMedia(mediaType);
+                    = newSources.getSourcesForMedia(mediaType);
 
-            for (SourcePacketExtension source : mediaSources)
-            {
-                if (!source.hasSSRC() && !source.hasRid())
-                {
+            for (SourcePacketExtension source : mediaSources) {
+                if (!source.hasSSRC() && !source.hasRid()) {
                     // SourcePacketExtension treats -1 as lack of SSRC
                     throw new InvalidSSRCsException(
                             "Source with no value was passed"
-                                + " (parsed from negative ?)");
-                }
-                else if (source.hasSSRC())
-                {
+                            + " (parsed from negative ?)");
+                } else if (source.hasSSRC()) {
                     long ssrcValue = source.getSSRC();
 
                     // NOTE Technically SSRC == 0 is allowed, but it breaks Chrome
-                    if (ssrcValue <= 0L || ssrcValue > 0xFFFFFFFFL)
-                    {
+                    if (ssrcValue <= 0L || ssrcValue > 0xFFFFFFFFL) {
                         throw new InvalidSSRCsException(
                                 "Illegal SSRC value: " + ssrcValue);
                     }
@@ -292,21 +270,19 @@ public class SSRCValidator
 
                 // Check for duplicates
                 String conflictingMediaType
-                    = sources.getMediaTypeForSource(source);
-                if (conflictingMediaType != null)
-                {
+                        = sources.getMediaTypeForSource(source);
+                if (conflictingMediaType != null) {
                     throw new InvalidSSRCsException(
-                        "Source "  + source.toString() + " is in "
+                            "Source " + source.toString() + " is in "
                             + conflictingMediaType + " already");
                 }
 
                 // Check for Source limit exceeded
                 Jid owner = SSRCSignaling.getSSRCOwner(source);
                 long sourceCount = getSourceCountForOwner(owner, mediaType);
-                if (sourceCount >= maxSourceCount)
-                {
+                if (sourceCount >= maxSourceCount) {
                     logger.error(
-                        "Too many sources signalled by "
+                            "Too many sources signalled by "
                             + endpointId + " - dropping: " + source.toString());
                     // Abort - can't add any more SSRCs.
                     break;
@@ -324,26 +300,20 @@ public class SSRCValidator
         MediaSourceGroupMap acceptedGroups = new MediaSourceGroupMap();
 
         // Cross check if any source belongs to any existing group already
-        for (String mediaType : newGroups.getMediaTypes())
-        {
+        for (String mediaType : newGroups.getMediaTypes()) {
             for (SourceGroup groupToAdd
-                : newGroups.getSourceGroupsForMedia(mediaType))
-            {
-                if (groupToAdd.isEmpty())
-                {
+                    : newGroups.getSourceGroupsForMedia(mediaType)) {
+                if (groupToAdd.isEmpty()) {
                     logger.warn("Empty group signalled by: " + endpointId);
                     continue;
                 }
 
-                if (sourceGroups.containsGroup(mediaType, groupToAdd))
-                {
+                if (sourceGroups.containsGroup(mediaType, groupToAdd)) {
                     logger.warn(
-                        endpointId
+                            endpointId
                             + " is trying to add an existing group :"
                             + groupToAdd);
-                }
-                else
-                {
+                } else {
                     acceptedGroups.addSourceGroup(mediaType, groupToAdd);
                     sourceGroups.addSourceGroup(mediaType, groupToAdd);
                 }
@@ -352,51 +322,47 @@ public class SSRCValidator
 
         this.validateStreams();
 
-        return new Object[] { acceptedSources, acceptedGroups };
+        return new Object[]{acceptedSources, acceptedGroups};
     }
 
     /**
-     * Makes an attempt to remove given sources and source groups from
-     * the current state.
+     * Makes an attempt to remove given sources and source groups from the
+     * current state.
      *
      * @param sourcesToRemove the sources to be removed
      * @param groupsToRemove the groups to be removed
      *
-     * @return an array of two objects where first one is <tt>MediaSourceMap</tt>
+     * @return an array of two objects where first one is
+     * <tt>MediaSourceMap</tt>
      * contains the sources that have been removed and the second one is
      * <tt>MediaSourceGroupMap</tt> with <tt>SourceGroup</tt>s removed by this
      * validator instance.
      *
-     * @throws InvalidSSRCsException if a critical problem has been found
-     * after sources/groups removal which would probably would result in
+     * @throws InvalidSSRCsException if a critical problem has been found after
+     * sources/groups removal which would probably would result in
      * "setRemoteDescription" error on the client.
      */
     public Object[] tryRemoveSourcesAndGroups(
             MediaSourceMap sourcesToRemove,
             MediaSourceGroupMap groupsToRemove)
-        throws InvalidSSRCsException
-    {
+            throws InvalidSSRCsException {
         MediaSourceMap removedSources = sources.remove(sourcesToRemove);
         MediaSourceGroupMap removedGroups = sourceGroups.remove(groupsToRemove);
 
         this.validateStreams();
 
-        return new Object[] { removedSources, removedGroups };
+        return new Object[]{removedSources, removedGroups};
     }
 
-    private void filterOutParams(SourcePacketExtension copy)
-    {
+    private void filterOutParams(SourcePacketExtension copy) {
         Iterator<? extends ExtensionElement> params
-            = copy.getChildExtensions().iterator();
-        while (params.hasNext())
-        {
+                = copy.getChildExtensions().iterator();
+        while (params.hasNext()) {
             ExtensionElement ext = params.next();
-            if (ext instanceof ParameterPacketExtension)
-            {
+            if (ext instanceof ParameterPacketExtension) {
                 ParameterPacketExtension ppe = (ParameterPacketExtension) ext;
-                if (!"cname".equalsIgnoreCase(ppe.getName()) &&
-                    !"msid".equalsIgnoreCase(ppe.getName()))
-                {
+                if (!"cname".equalsIgnoreCase(ppe.getName())
+                        && !"msid".equalsIgnoreCase(ppe.getName())) {
                     params.remove();
                 }
             }
@@ -404,8 +370,7 @@ public class SSRCValidator
     }
 
     private void validateStreams()
-        throws InvalidSSRCsException
-    {
+            throws InvalidSSRCsException {
         // Migrate source attributes from SourcePacketExtensions stored in
         // the media section to SourcePacketExtensions stored by the groups
         // directly in order to simplify the stream validation process.
@@ -419,32 +384,25 @@ public class SSRCValidator
         MediaSourceMap groupedSources = new MediaSourceMap();
 
         // Go over every group and check if they have corresponding SSRCs
-        for (String mediaType : sourceGroups.getMediaTypes())
-        {
+        for (String mediaType : sourceGroups.getMediaTypes()) {
             List<SourceGroup> mediaGroups
-                = sourceGroups.getSourceGroupsForMedia(mediaType);
-            for (SourceGroup group : mediaGroups)
-            {
+                    = sourceGroups.getSourceGroupsForMedia(mediaType);
+            for (SourceGroup group : mediaGroups) {
                 List<SourcePacketExtension> groupSources = group.getSources();
                 // NOTE that empty groups are not allowed at this point and
                 // should have been filtered out earlier
                 String groupMSID = group.getGroupMsid();
 
-                for (SourcePacketExtension source : groupSources)
-                {
-                    if (source.hasSSRC())
-                    {
+                for (SourcePacketExtension source : groupSources) {
+                    if (source.hasSSRC()) {
                         String msid = SSRCSignaling.getMsid(source);
                         // Grouped SSRC needs to have a valid MSID
-                        if (StringUtils.isNullOrEmpty(groupMSID))
-                        {
+                        if (StringUtils.isNullOrEmpty(groupMSID)) {
                             throw new InvalidSSRCsException(
                                     "Grouped " + source + " has no 'msid'");
-                        }
-                        // Verify if MSID is the same across all SSRCs which
+                        } // Verify if MSID is the same across all SSRCs which
                         // belong to the same group
-                        else if (!groupMSID.equals(msid))
-                        {
+                        else if (!groupMSID.equals(msid)) {
                             throw new InvalidSSRCsException(
                                     "MSID mismatch detected in group " + group);
                         }
@@ -456,25 +414,20 @@ public class SSRCValidator
         }
 
         // Verify SIM/FID grouping
-        for (String mediaType : sourceGroups.getMediaTypes())
-        {
+        for (String mediaType : sourceGroups.getMediaTypes()) {
             // FIXME migrate logic to use MediaType instead of String
-            if (!MediaType.VIDEO.toString().equalsIgnoreCase(mediaType))
-            {
+            if (!MediaType.VIDEO.toString().equalsIgnoreCase(mediaType)) {
                 // Verify Simulcast only for the video media type
                 continue;
             }
 
             List<SimulcastGrouping> simGroupings;
 
-            try
-            {
+            try {
                 simGroupings = sourceGroups.findSimulcastGroupings();
-            }
-            // If groups are in invalid state a SIM grouping may fail to
+            } // If groups are in invalid state a SIM grouping may fail to
             // initialize with IllegalArgumentException
-            catch (IllegalArgumentException exc)
-            {
+            catch (IllegalArgumentException exc) {
                 throw new InvalidSSRCsException(exc.getMessage());
             }
 
@@ -487,7 +440,7 @@ public class SSRCValidator
             // any Simulcast grouping.
             List<SourceGroup> fidGroups = sourceGroups.getRtxGroups();
             List<SourceGroup> independentFidGroups
-                = getIndependentFidGroups(simGroupings, fidGroups);
+                    = getIndependentFidGroups(simGroupings, fidGroups);
 
             verifyNoMsidConflictsAcrossFidGroups(independentFidGroups);
         }
@@ -497,29 +450,23 @@ public class SSRCValidator
 
         // Check for duplicated 'MSID's across each media type in
         // non grouped-sources
-        for (String mediaType : notGroupedSSRCs.getMediaTypes())
-        {
+        for (String mediaType : notGroupedSSRCs.getMediaTypes()) {
             Map<String, SourcePacketExtension> streamMap
-                = new HashMap<>();
+                    = new HashMap<>();
 
             List<SourcePacketExtension> mediaSSRCs
-                = notGroupedSSRCs.getSourcesForMedia(mediaType);
-            for (SourcePacketExtension ssrc : mediaSSRCs)
-            {
+                    = notGroupedSSRCs.getSourcesForMedia(mediaType);
+            for (SourcePacketExtension ssrc : mediaSSRCs) {
                 String msid = SSRCSignaling.getMsid(ssrc);
-                if (msid != null)
-                {
+                if (msid != null) {
                     SourcePacketExtension conflictingSSRC
-                        = streamMap.get(msid);
-                    if (conflictingSSRC != null)
-                    {
+                            = streamMap.get(msid);
+                    if (conflictingSSRC != null) {
                         throw new InvalidSSRCsException(
-                            "Not grouped SSRC " + ssrc.getSSRC()
+                                "Not grouped SSRC " + ssrc.getSSRC()
                                 + " has conflicting MSID '" + msid
                                 + "' with " + conflictingSSRC.getSSRC());
-                    }
-                    else
-                    {
+                    } else {
                         streamMap.put(msid, ssrc);
                     }
                 }

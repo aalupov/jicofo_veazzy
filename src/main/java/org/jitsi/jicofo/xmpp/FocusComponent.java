@@ -38,27 +38,27 @@ import org.osgi.framework.*;
 import org.xmpp.packet.IQ;
 
 /**
- * XMPP component that listens for {@link ConferenceIq}
- * and allocates {@link org.jitsi.jicofo.JitsiMeetConference}s appropriately.
+ * XMPP component that listens for {@link ConferenceIq} and allocates
+ * {@link org.jitsi.jicofo.JitsiMeetConference}s appropriately.
  *
  * @author Pawel Domas
  */
 public class FocusComponent
-    extends ComponentBase
-    implements BundleActivator
-{
+        extends ComponentBase
+        implements BundleActivator {
+
     /**
      * The logger.
      */
     private final static Logger logger
-        = Logger.getLogger(FocusComponent.class);
+            = Logger.getLogger(FocusComponent.class);
 
     /**
      * Name of system and configuration property which specifies the JID from
      * which shutdown requests will be accepted.
      */
     public static final String SHUTDOWN_ALLOWED_JID_PNAME
-        = "org.jitsi.jicofo.SHUTDOWN_ALLOWED_JID";
+            = "org.jitsi.jicofo.SHUTDOWN_ALLOWED_JID";
 
     /**
      * The JID from which shutdown requests are accepted.
@@ -88,31 +88,31 @@ public class FocusComponent
     private AuthenticationAuthority authAuthority;
 
     /**
-     * (Optional)Reservation system that manages new rooms allocation.
-     * Requires authentication system in order to verify user's identity.
+     * (Optional)Reservation system that manages new rooms allocation. Requires
+     * authentication system in order to verify user's identity.
      */
     private ReservationSystem reservationSystem;
 
     /**
      * Creates new instance of <tt>FocusComponent</tt>.
+     *
      * @param host the hostname or IP address to which this component will be
-     *             connected.
+     * connected.
      * @param port the port of XMPP server to which this component will connect.
      * @param domain the name of main XMPP domain on which this component will
-     *               be served.
+     * be served.
      * @param subDomain the name of subdomain on which this component will be
-     *                  available.
+     * available.
      * @param secret the password used by the component to authenticate with
-     *               XMPP server.
+     * XMPP server.
      * @param anonymousFocus indicates if the focus user is anonymous.
      * @param focusAuthJid the JID of authenticated focus user which will be
-     *                     advertised to conference participants.
+     * advertised to conference participants.
      */
     public FocusComponent(String host, int port,
-                          String domain, String subDomain,
-                          String secret,
-                          boolean anonymousFocus, String focusAuthJid)
-    {
+            String domain, String subDomain,
+            String secret,
+            boolean anonymousFocus, String focusAuthJid) {
         super(host, port, domain, subDomain, secret);
 
         this.isFocusAnonymous = anonymousFocus;
@@ -122,8 +122,7 @@ public class FocusComponent
     /**
      * Initializes this component.
      */
-    public void init()
-    {
+    public void init() {
         OSGi.start(this);
     }
 
@@ -132,35 +131,34 @@ public class FocusComponent
      */
     @Override
     public void start(BundleContext bc)
-        throws Exception
-    {
+            throws Exception {
         ConfigurationService configService
-            = ServiceUtils.getService(bc, ConfigurationService.class);
+                = ServiceUtils.getService(bc, ConfigurationService.class);
 
         loadConfig(configService, "org.jitsi.jicofo");
 
-        if (!isPingTaskStarted())
+        if (!isPingTaskStarted()) {
             startPingTask();
+        }
 
         String shutdownAllowedJid
                 = configService.getString(SHUTDOWN_ALLOWED_JID_PNAME);
         this.shutdownAllowedJid
-            = StringUtils.isNullOrEmpty(shutdownAllowedJid)
+                = StringUtils.isNullOrEmpty(shutdownAllowedJid)
                 ? null
                 : JidCreate.from(shutdownAllowedJid);
 
         authAuthority
-            = ServiceUtils.getService(bc, AuthenticationAuthority.class);
+                = ServiceUtils.getService(bc, AuthenticationAuthority.class);
         focusManager = ServiceUtils.getService(bc, FocusManager.class);
         reservationSystem
-            = ServiceUtils.getService(bc, ReservationSystem.class);
+                = ServiceUtils.getService(bc, ReservationSystem.class);
     }
 
     /**
      * Releases resources used by this instance.
      */
-    public void dispose()
-    {
+    public void dispose() {
         OSGi.stop(this);
     }
 
@@ -169,22 +167,19 @@ public class FocusComponent
      */
     @Override
     public void stop(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         authAuthority = null;
         focusManager = null;
         reservationSystem = null;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Manages Jitsi Meet conferences";
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Jitsi Meet Focus";
     }
 
@@ -192,21 +187,16 @@ public class FocusComponent
      * {@inheritDoc}
      */
     @Override
-    protected String[] discoInfoFeatureNamespaces()
-    {
-        return
-            new String[]
-                {
-                    ConferenceIq.NAMESPACE
-                };
+    protected String[] discoInfoFeatureNamespaces() {
+        return new String[]{
+            ConferenceIq.NAMESPACE
+        };
     }
 
     @Override
     protected IQ handleIQGetImpl(IQ iq)
-        throws Exception
-    {
-        try
-        {
+            throws Exception {
+        try {
             org.jivesoftware.smack.packet.IQ smackIq = IQUtils.convert(iq);
             // We intentionally don't handle ColibriStatsIQ, because we don't
             // want to expose it publicly. The code is left because it might
@@ -215,19 +205,14 @@ public class FocusComponent
             //{
             //    return handleColibriStatsIQ((ColibriStatsIQ) smackIq);
             //}
-            if (smackIq instanceof LoginUrlIq)
-            {
+            if (smackIq instanceof LoginUrlIq) {
                 org.jivesoftware.smack.packet.IQ result
-                    = handleAuthUrlIq((LoginUrlIq) smackIq);
+                        = handleAuthUrlIq((LoginUrlIq) smackIq);
                 return IQUtils.convert(result);
-            }
-            else
-            {
+            } else {
                 return super.handleIQGetImpl(iq);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             logger.error(e, e);
             throw e;
         }
@@ -247,48 +232,41 @@ public class FocusComponent
      */
     @Override
     public IQ handleIQSetImpl(IQ iq)
-        throws Exception
-    {
-        try
-        {
+            throws Exception {
+        try {
             org.jivesoftware.smack.packet.IQ smackIq = IQUtils.convert(iq);
 
-            if (smackIq instanceof ConferenceIq)
-            {
+            if (smackIq instanceof ConferenceIq) {
                 org.jivesoftware.smack.packet.IQ response
-                    = handleConferenceIq((ConferenceIq) smackIq);
+                        = handleConferenceIq((ConferenceIq) smackIq);
 
                 return response != null ? IQUtils.convert(response) : null;
-            }
-            else if (smackIq instanceof ShutdownIQ)
-            {
+            } else if (smackIq instanceof ShutdownIQ) {
                 ShutdownIQ gracefulShutdownIQ
-                    = (ShutdownIQ) smackIq;
+                        = (ShutdownIQ) smackIq;
 
-                if (!gracefulShutdownIQ.isGracefulShutdown())
-                {
+                if (!gracefulShutdownIQ.isGracefulShutdown()) {
                     return IQUtils.convert(
-                        org.jivesoftware.smack.packet.IQ.createErrorResponse(
-                            smackIq,
-                            XMPPError.getBuilder(
-                                    XMPPError.Condition.bad_request)));
+                            org.jivesoftware.smack.packet.IQ.createErrorResponse(
+                                    smackIq,
+                                    XMPPError.getBuilder(
+                                            XMPPError.Condition.bad_request)));
                 }
 
                 Jid from = gracefulShutdownIQ.getFrom();
                 BareJid bareFrom = from.asBareJid();
 
                 if (shutdownAllowedJid == null
-                    || !shutdownAllowedJid.equals(bareFrom))
-                {
+                        || !shutdownAllowedJid.equals(bareFrom)) {
                     // Forbidden
                     XMPPError.Builder forbiddenError
-                        = XMPPError.getBuilder(XMPPError.Condition.forbidden);
+                            = XMPPError.getBuilder(XMPPError.Condition.forbidden);
 
                     logger.warn("Rejected shutdown request from: " + from);
 
                     return IQUtils.convert(
-                        org.jivesoftware.smack.packet.IQ.createErrorResponse(
-                                smackIq, forbiddenError));
+                            org.jivesoftware.smack.packet.IQ.createErrorResponse(
+                                    smackIq, forbiddenError));
                 }
 
                 logger.info("Accepted shutdown request from: " + from);
@@ -296,93 +274,79 @@ public class FocusComponent
                 focusManager.enableGracefulShutdownMode();
 
                 return IQUtils.convert(
-                    org.jivesoftware.smack.packet.IQ.createResultIQ(smackIq));
-            }
-            else if (smackIq instanceof LogoutIq)
-            {
+                        org.jivesoftware.smack.packet.IQ.createResultIQ(smackIq));
+            } else if (smackIq instanceof LogoutIq) {
                 logger.info("Logout IQ received: " + iq.toXML());
 
-                if (authAuthority == null)
-                {
+                if (authAuthority == null) {
                     // not-implemented
                     return null;
                 }
 
                 org.jivesoftware.smack.packet.IQ smackResult
-                    = authAuthority.processLogoutIq((LogoutIq) smackIq);
+                        = authAuthority.processLogoutIq((LogoutIq) smackIq);
 
                 return smackResult != null
                         ? IQUtils.convert(smackResult) : null;
-            }
-            else
-            {
+            } else {
                 return super.handleIQSetImpl(iq);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             logger.error(e, e);
             throw e;
         }
     }
 
     /**
-     * Additional logic added for conference IQ processing like
-     * authentication and room reservation.
+     * Additional logic added for conference IQ processing like authentication
+     * and room reservation.
      *
      * @param query <tt>ConferenceIq</tt> query
      * @param response <tt>ConferenceIq</tt> response which can be modified
-     *                 during this processing.
+     * during this processing.
      * @param roomExists <tt>true</tt> if room mentioned in the <tt>query</tt>
-     *                   already exists.
+     * already exists.
      *
-     * @return <tt>null</tt> if everything went ok or an error/response IQ
-     *         which should be returned to the user
+     * @return <tt>null</tt> if everything went ok or an error/response IQ which
+     * should be returned to the user
      */
     public org.jivesoftware.smack.packet.IQ processExtensions(
-            ConferenceIq query, ConferenceIq response, boolean roomExists)
-    {
+            ConferenceIq query, ConferenceIq response, boolean roomExists) {
         Jid peerJid = query.getFrom();
         String identity = null;
 
         // Authentication
-        if (authAuthority != null)
-        {
+        if (authAuthority != null) {
             org.jivesoftware.smack.packet.IQ authErrorOrResponse
                     = authAuthority.processAuthentication(query, response);
 
             // Checks if authentication module wants to cancel further
             // processing and eventually returns it's response
-            if (authErrorOrResponse != null)
-            {
+            if (authErrorOrResponse != null) {
                 return authErrorOrResponse;
             }
             // Only authenticated users are allowed to create new rooms
-            if (!roomExists)
-            {
+            if (!roomExists) {
                 identity = authAuthority.getUserIdentity(peerJid);
-                if (identity == null)
-                {
+                if (identity == null) {
                     // Error not authorized
                     return ErrorFactory.createNotAuthorizedError(
-                        query, "not authorized user domain");
+                            query, "not authorized user domain");
                 }
             }
         }
 
         // Check room reservation?
-        if (!roomExists && reservationSystem != null)
-        {
+        if (!roomExists && reservationSystem != null) {
             EntityBareJid room = query.getRoom();
 
             ReservationSystem.Result result
-                = reservationSystem.createConference(identity, room);
+                    = reservationSystem.createConference(identity, room);
 
             logger.info(
-                "Create room result: " + result + " for " + room);
+                    "Create room result: " + result + " for " + room);
 
-            if (result.getCode() != ReservationSystem.RESULT_OK)
-            {
+            if (result.getCode() != ReservationSystem.RESULT_OK) {
                 return ErrorFactory
                         .createReservationError(query, result);
             }
@@ -393,8 +357,7 @@ public class FocusComponent
 
     private org.jivesoftware.smack.packet.IQ handleConferenceIq(
             ConferenceIq query)
-        throws Exception
-    {
+            throws Exception {
         ConferenceIq response = new ConferenceIq();
         EntityBareJid room = query.getRoom();
 
@@ -402,8 +365,7 @@ public class FocusComponent
 
         boolean roomExists = focusManager.getConference(room) != null;
 
-        if (focusManager.isShutdownInProgress() && !roomExists)
-        {
+        if (focusManager.isShutdownInProgress() && !roomExists) {
             // Service unavailable
             return ColibriConferenceIQ
                     .createGracefulShutdownErrorResponse(query);
@@ -411,18 +373,16 @@ public class FocusComponent
 
         // Authentication and reservations system logic
         org.jivesoftware.smack.packet.IQ error
-            = processExtensions(query, response, roomExists);
-        if (error != null)
-        {
+                = processExtensions(query, response, roomExists);
+        if (error != null) {
             return error;
         }
 
         boolean ready
-            = focusManager.conferenceRequest(
-                    room, query.getPropertiesMap());
+                = focusManager.conferenceRequest(
+                        room, query.getPropertiesMap());
 
-        if (!isFocusAnonymous && authAuthority == null)
-        {
+        if (!isFocusAnonymous && authAuthority == null) {
             // Focus is authenticated system admin, so we let them in
             // immediately. Focus will get OWNER anyway.
             ready = true;
@@ -440,44 +400,39 @@ public class FocusComponent
 
         // Authentication module enabled?
         response.addProperty(
-            new ConferenceIq.Property(
-                    "authentication",
-                    String.valueOf(authAuthority != null)));
-
-        if (authAuthority != null)
-        {
-            response.addProperty(
                 new ConferenceIq.Property(
-                        "externalAuth",
-                        String.valueOf(authAuthority.isExternal())));
+                        "authentication",
+                        String.valueOf(authAuthority != null)));
+
+        if (authAuthority != null) {
+            response.addProperty(
+                    new ConferenceIq.Property(
+                            "externalAuth",
+                            String.valueOf(authAuthority.isExternal())));
         }
 
         if (focusManager.getJitsiMeetServices().getSipGateway() != null
-            || focusManager.getJitsiMeetServices().getJigasiDetector() != null)
-        {
+                || focusManager.getJitsiMeetServices().getJigasiDetector() != null) {
             response.addProperty(
-                new ConferenceIq.Property("sipGatewayEnabled", "true"));
+                    new ConferenceIq.Property("sipGatewayEnabled", "true"));
         }
 
         return response;
     }
 
     private org.jivesoftware.smack.packet.IQ handleAuthUrlIq(
-            LoginUrlIq authUrlIq)
-    {
-        if (authAuthority == null)
-        {
+            LoginUrlIq authUrlIq) {
+        if (authAuthority == null) {
             XMPPError.Builder error
-                = XMPPError.getBuilder(XMPPError.Condition.service_unavailable);
+                    = XMPPError.getBuilder(XMPPError.Condition.service_unavailable);
             return org.jivesoftware.smack.packet.IQ
                     .createErrorResponse(authUrlIq, error);
         }
 
         EntityFullJid peerFullJid
-            = authUrlIq.getFrom().asEntityFullJidIfPossible();
+                = authUrlIq.getFrom().asEntityFullJidIfPossible();
         EntityBareJid roomName = authUrlIq.getRoom();
-        if (roomName == null)
-        {
+        if (roomName == null) {
             XMPPError.Builder error = XMPPError.getBuilder(
                     XMPPError.Condition.not_acceptable);
             return org.jivesoftware.smack.packet.IQ
@@ -489,23 +444,22 @@ public class FocusComponent
         result.setStanzaId(authUrlIq.getStanzaId());
         result.setTo(authUrlIq.getFrom());
 
-        boolean popup =
-            authUrlIq.getPopup() != null && authUrlIq.getPopup();
+        boolean popup
+                = authUrlIq.getPopup() != null && authUrlIq.getPopup();
 
         String machineUID = authUrlIq.getMachineUID();
-        if (StringUtils.isNullOrEmpty(machineUID))
-        {
+        if (StringUtils.isNullOrEmpty(machineUID)) {
             XMPPError.Builder error
-                = XMPPError.from(
-                    XMPPError.Condition.bad_request,
-                    "missing mandatory attribute 'machineUID'");
+                    = XMPPError.from(
+                            XMPPError.Condition.bad_request,
+                            "missing mandatory attribute 'machineUID'");
             return org.jivesoftware.smack.packet.IQ
                     .createErrorResponse(authUrlIq, error);
         }
 
         String authUrl
-            = authAuthority.createLoginUrl(
-                machineUID, peerFullJid, roomName, popup);
+                = authAuthority.createLoginUrl(
+                        machineUID, peerFullJid, roomName, popup);
 
         result.setUrl(authUrl);
 
@@ -516,17 +470,17 @@ public class FocusComponent
 
     /**
      * Handles an IQ which contains a COLIBRI "stats" element.
+     *
      * @param iq the iq.
      * @return the response which should be returned.
      */
     private IQ handleColibriStatsIQ(ColibriStatsIQ iq)
-        throws Exception
-    {
+            throws Exception {
         // Reply with stats
         ColibriStatsIQ statsReply = new ColibriStatsIQ();
 
         statsReply.setType(
-            org.jivesoftware.smack.packet.IQ.Type.result);
+                org.jivesoftware.smack.packet.IQ.Type.result);
         statsReply.setStanzaId(iq.getStanzaId());
         statsReply.setTo(iq.getFrom());
 
@@ -534,14 +488,14 @@ public class FocusComponent
 
         // Return conference count
         statsReply.addStat(
-            new ColibriStatsExtension.Stat(
-                "conferences",
-                Integer.toString(conferenceCount)));
+                new ColibriStatsExtension.Stat(
+                        "conferences",
+                        Integer.toString(conferenceCount)));
         statsReply.addStat(
-            new ColibriStatsExtension.Stat(
-                "graceful_shutdown",
-                focusManager.isShutdownInProgress()
-                    ? "true" : "false"));
+                new ColibriStatsExtension.Stat(
+                        "graceful_shutdown",
+                        focusManager.isShutdownInProgress()
+                        ? "true" : "false"));
 
         return IQUtils.convert(statsReply);
     }

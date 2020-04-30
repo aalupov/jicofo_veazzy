@@ -25,14 +25,14 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class UserProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a User extension sub-packet and creates a {@link
-     * UserPacketExtension} instance. At the beginning of the method
-     * call, the xml parser will be positioned on the opening element of the
-     * packet extension. As required by the smack API, at the end of the method
-     * call, the parser will be positioned on the closing element of the packet
+     * UserPacketExtension} instance. At the beginning of the method call, the
+     * xml parser will be positioned on the opening element of the packet
+     * extension. As required by the smack API, at the end of the method call,
+     * the parser will be positioned on the closing element of the packet
      * extension.
      *
      * @param parser an XML parser positioned at the opening
@@ -43,8 +43,7 @@ public class UserProvider
      */
     @Override
     public UserPacketExtension parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
@@ -54,13 +53,11 @@ public class UserProvider
         String stateStr = parser.getAttributeValue("",
                 UserPacketExtension.STATE_ATTR_NAME);
 
-        if(stateStr != null)
-        {
+        if (stateStr != null) {
             state = StateType.parseString(stateStr);
         }
 
-        if(entity == null)
-        {
+        if (entity == null) {
             throw new Exception(
                     "Coin user element must contain entity attribute");
         }
@@ -68,32 +65,24 @@ public class UserProvider
         UserPacketExtension ext = new UserPacketExtension(entity);
         ext.setAttribute(UserPacketExtension.STATE_ATTR_NAME, state);
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(UserPacketExtension.ELEMENT_DISPLAY_TEXT))
-                {
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(UserPacketExtension.ELEMENT_DISPLAY_TEXT)) {
                     ext.setDisplayText(CoinIQProvider.parseText(parser));
-                }
-                else if(elementName.equals(
-                        EndpointPacketExtension.ELEMENT_NAME))
-                {
+                } else if (elementName.equals(
+                        EndpointPacketExtension.ELEMENT_NAME)) {
                     ExtensionElementProvider provider
-                        = new EndpointProvider();
-                    ExtensionElement childExtension = (ExtensionElement)provider.parse(
-                        parser);
+                            = new EndpointProvider();
+                    ExtensionElement childExtension = (ExtensionElement) provider.parse(
+                            parser);
                     ext.addChildExtension(childExtension);
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        UserPacketExtension.ELEMENT_NAME))
-                {
+                        UserPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }

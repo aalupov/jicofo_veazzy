@@ -18,8 +18,7 @@ package org.jitsi.xmpp.extensions.colibri;
 /**
  * Created by gp on 6/3/15.
  */
-public enum SimulcastMode
-{
+public enum SimulcastMode {
     REWRITING("REWRITING"),
     SWITCHING("SWITCHING");
 

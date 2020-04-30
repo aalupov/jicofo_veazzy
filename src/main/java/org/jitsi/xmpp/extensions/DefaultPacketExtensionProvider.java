@@ -29,14 +29,14 @@ import org.xmlpull.v1.*;
  * @author Emil Ivov
  */
 public class DefaultPacketExtensionProvider<C extends AbstractPacketExtension>
-    extends ExtensionElementProvider<C>
-{
+        extends ExtensionElementProvider<C> {
+
     /**
      * The <tt>Logger</tt> used by the <tt>DefaultPacketExtensionProvider</tt>
      * class and its instances for logging output.
      */
     private static final Logger logger = Logger
-                    .getLogger(DefaultPacketExtensionProvider.class.getName());
+            .getLogger(DefaultPacketExtensionProvider.class.getName());
 
     /**
      * The {@link Class} that the packets we will be parsing here belong to.
@@ -48,16 +48,15 @@ public class DefaultPacketExtensionProvider<C extends AbstractPacketExtension>
      *
      * @param c the {@link Class} that the packets we will be parsing belong to.
      */
-    public DefaultPacketExtensionProvider(Class<C> c)
-    {
+    public DefaultPacketExtensionProvider(Class<C> c) {
         this.packetClass = c;
     }
 
     /**
-     * Parse an extension sub-packet and create a <tt>C</tt> instance. At
-     * the beginning of the method call, the xml parser will be positioned on
-     * the opening element of the packet extension and at the end of the method
-     * call it will be on the closing element of the packet extension.
+     * Parse an extension sub-packet and create a <tt>C</tt> instance. At the
+     * beginning of the method call, the xml parser will be positioned on the
+     * opening element of the packet extension and at the end of the method call
+     * it will be on the closing element of the packet extension.
      *
      * @param parser an XML parser positioned at the packet's starting element.
      *
@@ -66,18 +65,16 @@ public class DefaultPacketExtensionProvider<C extends AbstractPacketExtension>
      * @throws java.lang.Exception if an error occurs parsing the XML.
      */
     @Override
-    public C parse(XmlPullParser parser, int depth) throws Exception
-    {
+    public C parse(XmlPullParser parser, int depth) throws Exception {
         C packetExtension = packetClass.getConstructor().newInstance();
 
         //first, set all attributes
         int attrCount = parser.getAttributeCount();
 
-        for (int i = 0; i < attrCount; i++)
-        {
+        for (int i = 0; i < attrCount; i++) {
             packetExtension.setAttribute(
-                            parser.getAttributeName(i),
-                            parser.getAttributeValue(i));
+                    parser.getAttributeName(i),
+                    parser.getAttributeValue(i));
         }
 
         //now parse the sub elements
@@ -86,58 +83,50 @@ public class DefaultPacketExtensionProvider<C extends AbstractPacketExtension>
         String elementName;
         String namespace;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
             namespace = parser.getNamespace();
 
-            if (logger.isLoggable(Level.FINEST))
+            if (logger.isLoggable(Level.FINEST)) {
                 logger.finest("Will parse " + elementName
-                    + " ns=" + namespace
-                    + " class=" + packetExtension.getClass().getSimpleName());
+                        + " ns=" + namespace
+                        + " class=" + packetExtension.getClass().getSimpleName());
+            }
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
+            if (eventType == XmlPullParser.START_TAG) {
                 ExtensionElementProvider<ExtensionElement> provider = ProviderManager
-                        .getExtensionProvider( elementName, namespace );
+                        .getExtensionProvider(elementName, namespace);
 
-                if(provider == null)
-                {
+                if (provider == null) {
                     //we don't know how to handle this kind of extensions.
                     logger.fine("Could not add a provider for element "
-                        + elementName + " from namespace " + namespace);
-                }
-                else
-                {
+                            + elementName + " from namespace " + namespace);
+                } else {
                     ExtensionElement childExtension = provider.parse(parser);
 
-                    if(namespace != null)
-                    {
-                        if(childExtension instanceof AbstractPacketExtension)
-                        {
-                            ((AbstractPacketExtension)childExtension).
-                                setNamespace(namespace);
+                    if (namespace != null) {
+                        if (childExtension instanceof AbstractPacketExtension) {
+                            ((AbstractPacketExtension) childExtension).
+                                    setNamespace(namespace);
                         }
                     }
                     packetExtension.addChildExtension(childExtension);
                 }
             }
-            if (eventType == XmlPullParser.END_TAG)
-            {
-                if (parser.getName().equals(packetExtension.getElementName()))
-                {
+            if (eventType == XmlPullParser.END_TAG) {
+                if (parser.getName().equals(packetExtension.getElementName())) {
                     done = true;
                 }
             }
-            if (eventType == XmlPullParser.TEXT)
-            {
+            if (eventType == XmlPullParser.TEXT) {
                 String text = parser.getText();
                 packetExtension.setText(text);
             }
 
-            if (logger.isLoggable(Level.FINEST))
+            if (logger.isLoggable(Level.FINEST)) {
                 logger.finest("Done parsing " + elementName);
+            }
         }
 
         return packetExtension;

@@ -25,22 +25,22 @@ import org.jitsi.utils.logging.*;
 
 /**
  * Represents an entity in a {@link JitsiMeetConferenceImpl} which has
- * associated Colibri channels, and a set of SSRCs described as "sources"
- * and "source groups". This can be associated either with an actual participant
- * in the conference (which has a chat room member, and a Jingle session), or
- * a bridge-to-bridge (Octo) channel on a particular bridge instance.
+ * associated Colibri channels, and a set of SSRCs described as "sources" and
+ * "source groups". This can be associated either with an actual participant in
+ * the conference (which has a chat room member, and a Jingle session), or a
+ * bridge-to-bridge (Octo) channel on a particular bridge instance.
  *
  * @author Pawel Domas
  * @author Boris Grozev
  */
-public abstract class AbstractParticipant
-{
+public abstract class AbstractParticipant {
+
     /**
      * The class logger which can be used to override logging level inherited
      * from {@link JitsiMeetConference}.
      */
     private final static Logger classLogger
-        = Logger.getLogger(AbstractParticipant.class);
+            = Logger.getLogger(AbstractParticipant.class);
 
     /**
      * Information about Colibri channels allocated for this peer (if any).
@@ -65,43 +65,46 @@ public abstract class AbstractParticipant
 
     /**
      * sources received from other peers scheduled for later addition, because
-     * of the Jingle session not being ready at the point when sources appeared in
-     * the conference.
+     * of the Jingle session not being ready at the point when sources appeared
+     * in the conference.
      */
     private MediaSourceMap sourcesToAdd = new MediaSourceMap();
 
     /**
      * source groups received from other peers scheduled for later addition.
+     *
      * @see #sourcesToAdd
      */
     private MediaSourceGroupMap sourceGroupsToAdd = new MediaSourceGroupMap();
 
     /**
-     * sources received from other peers scheduled for later removal, because
-     * of the Jingle session not being ready at the point when sources appeared in
-     * the conference.
-     * FIXME: do we need that since these were never added ? - check
+     * sources received from other peers scheduled for later removal, because of
+     * the Jingle session not being ready at the point when sources appeared in
+     * the conference. FIXME: do we need that since these were never added ? -
+     * check
      */
     private MediaSourceMap sourcesToRemove = new MediaSourceMap();
 
     /**
      * source groups received from other peers scheduled for later removal.
+     *
      * @see #sourcesToRemove
      */
     private MediaSourceGroupMap sourceGroupsToRemove = new MediaSourceGroupMap();
 
     /**
-     * Tells how many unique sources per media participant is allowed to advertise
+     * Tells how many unique sources per media participant is allowed to
+     * advertise
      */
     protected int maxSourceCount = -1;
 
     /**
      * Returns currently stored map of RTP description to Colibri content name.
+     *
      * @return a <tt>Map<String,RtpDescriptionPacketExtension></tt> which maps
-     *         the RTP descriptions to the corresponding Colibri content names.
+     * the RTP descriptions to the corresponding Colibri content names.
      */
-    public Map<String, RtpDescriptionPacketExtension> getRtpDescriptionMap()
-    {
+    public Map<String, RtpDescriptionPacketExtension> getRtpDescriptionMap() {
         return rtpDescriptionMap;
     }
 
@@ -118,34 +121,31 @@ public abstract class AbstractParticipant
 
     /**
      * The logger for this instance. Uses the logging level either of the
-     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()}
-     * whichever is higher.
+     * {@link #classLogger} or {@link JitsiMeetConference#getLogger()} whichever
+     * is higher.
      */
     private final Logger logger;
 
-    protected AbstractParticipant(Logger conferenceLogger)
-    {
+    protected AbstractParticipant(Logger conferenceLogger) {
         this.logger = Logger.getLogger(classLogger, conferenceLogger);
     }
 
     /**
      * Extracts and stores RTP description for each content type from given
      * Jingle contents.
+     *
      * @param jingleContents the list of Jingle content packet extension from
-     *        <tt>Participant</tt>'s answer.
+     * <tt>Participant</tt>'s answer.
      */
-    public void setRTPDescription(List<ContentPacketExtension> jingleContents)
-    {
+    public void setRTPDescription(List<ContentPacketExtension> jingleContents) {
         Map<String, RtpDescriptionPacketExtension> rtpDescMap = new HashMap<>();
 
-        for (ContentPacketExtension content : jingleContents)
-        {
+        for (ContentPacketExtension content : jingleContents) {
             RtpDescriptionPacketExtension rtpDesc
-                = content.getFirstChildOfType(
-                RtpDescriptionPacketExtension.class);
+                    = content.getFirstChildOfType(
+                            RtpDescriptionPacketExtension.class);
 
-            if (rtpDesc != null)
-            {
+            if (rtpDesc != null) {
                 rtpDescMap.put(content.getName(), rtpDesc);
             }
         }
@@ -155,27 +155,26 @@ public abstract class AbstractParticipant
 
     /**
      * Removes given media sources from this peer state.
+     *
      * @param sourceMap the source map that contains the sources to be removed.
-     * @return <tt>MediaSourceMap</tt> which contains sources removed from this map.
+     * @return <tt>MediaSourceMap</tt> which contains sources removed from this
+     * map.
      */
-    public MediaSourceMap removeSources(MediaSourceMap sourceMap)
-    {
+    public MediaSourceMap removeSources(MediaSourceMap sourceMap) {
         return sources.remove(sourceMap);
     }
 
     /**
      * Returns deep copy of this peer's media source map.
      */
-    public MediaSourceMap getSourcesCopy()
-    {
+    public MediaSourceMap getSourcesCopy() {
         return sources.copyDeep();
     }
 
     /**
      * Returns deep copy of this peer's media source group map.
      */
-    public MediaSourceGroupMap getSourceGroupsCopy()
-    {
+    public MediaSourceGroupMap getSourceGroupsCopy() {
         return sourceGroups.copy();
     }
 
@@ -183,8 +182,7 @@ public abstract class AbstractParticipant
      * Returns <tt>true</tt> if this peer has any not synchronized sources
      * scheduled for addition.
      */
-    public boolean hasSourcesToAdd()
-    {
+    public boolean hasSourcesToAdd() {
         return !sourcesToAdd.isEmpty() || !sourceGroupsToAdd.isEmpty();
     }
 
@@ -192,8 +190,7 @@ public abstract class AbstractParticipant
      * Reset the queue that holds not synchronized sources scheduled for future
      * addition.
      */
-    public void clearSourcesToAdd()
-    {
+    public void clearSourcesToAdd() {
         sourcesToAdd = new MediaSourceMap();
         sourceGroupsToAdd = new MediaSourceGroupMap();
     }
@@ -202,8 +199,7 @@ public abstract class AbstractParticipant
      * Reset the queue that holds not synchronized sources scheduled for future
      * removal.
      */
-    public void clearSourcesToRemove()
-    {
+    public void clearSourcesToRemove() {
         sourcesToRemove = new MediaSourceMap();
         sourceGroupsToRemove = new MediaSourceGroupMap();
     }
@@ -212,8 +208,7 @@ public abstract class AbstractParticipant
      * Returns <tt>true</tt> if this peer has any not synchronized sources
      * scheduled for removal.
      */
-    public boolean hasSourcesToRemove()
-    {
+    public boolean hasSourcesToRemove() {
         return !sourcesToRemove.isEmpty() || !sourceGroupsToRemove.isEmpty();
     }
 
@@ -221,8 +216,7 @@ public abstract class AbstractParticipant
      * Returns <tt>true</tt> if this peer has any not synchronized sources
      * scheduled for addition.
      */
-    public MediaSourceMap getSourcesToAdd()
-    {
+    public MediaSourceMap getSourcesToAdd() {
         return sourcesToAdd;
     }
 
@@ -230,8 +224,7 @@ public abstract class AbstractParticipant
      * Returns <tt>true</tt> if this peer has any not synchronized sources
      * scheduled for removal.
      */
-    public MediaSourceMap getSourcesToRemove()
-    {
+    public MediaSourceMap getSourcesToRemove() {
         return sourcesToRemove;
     }
 
@@ -242,8 +235,7 @@ public abstract class AbstractParticipant
      * @param sourceMap the media source map that contains sources for future
      * updates.
      */
-    public void scheduleSourcesToAdd(MediaSourceMap sourceMap)
-    {
+    public void scheduleSourcesToAdd(MediaSourceMap sourceMap) {
         sourcesToAdd.add(sourceMap);
     }
 
@@ -254,8 +246,7 @@ public abstract class AbstractParticipant
      * @param sourceMap the media source map that contains sources for future
      * updates.
      */
-    public void scheduleSourcesToRemove(MediaSourceMap sourceMap)
-    {
+    public void scheduleSourcesToRemove(MediaSourceMap sourceMap) {
         sourcesToRemove.add(sourceMap);
     }
 
@@ -264,8 +255,7 @@ public abstract class AbstractParticipant
      *
      * @param colibriChannelsInfo the IQ that holds colibri channels state.
      */
-    public void setColibriChannelsInfo(ColibriConferenceIQ colibriChannelsInfo)
-    {
+    public void setColibriChannelsInfo(ColibriConferenceIQ colibriChannelsInfo) {
         this.colibriChannelsInfo = colibriChannelsInfo;
     }
 
@@ -273,19 +263,18 @@ public abstract class AbstractParticipant
      * Returns {@link ColibriConferenceIQ} that describes Colibri channels
      * allocated for this participant.
      */
-    public ColibriConferenceIQ getColibriChannelsInfo()
-    {
+    public ColibriConferenceIQ getColibriChannelsInfo() {
         return colibriChannelsInfo;
     }
 
     /**
      * Returns the list of source groups of given media type that belong ot this
      * participant.
+     *
      * @param media the name of media type("audio","video", ...)
      * @return the list of {@link SourceGroup} for given media type.
      */
-    public List<SourceGroup> getSourceGroupsForMedia(String media)
-    {
+    public List<SourceGroup> getSourceGroupsForMedia(String media) {
         return sourceGroups.getSourceGroupsForMedia(media);
     }
 
@@ -293,36 +282,34 @@ public abstract class AbstractParticipant
      * Returns <tt>MediaSourceGroupMap</tt> that contains the mapping of media
      * source groups that describe media of this participant.
      */
-    public MediaSourceGroupMap getSourceGroups()
-    {
+    public MediaSourceGroupMap getSourceGroups() {
         return sourceGroups;
     }
 
     /**
      * Schedules given media source groups for later addition.
+     *
      * @param sourceGroups the <tt>MediaSourceGroupMap</tt> to be scheduled for
-     *                   later addition.
+     * later addition.
      */
-    public void scheduleSourceGroupsToAdd(MediaSourceGroupMap sourceGroups)
-    {
+    public void scheduleSourceGroupsToAdd(MediaSourceGroupMap sourceGroups) {
         sourceGroupsToAdd.add(sourceGroups);
     }
 
     /**
      * Schedules given media source groups for later removal.
+     *
      * @param sourceGroups the <tt>MediaSourceGroupMap</tt> to be scheduled for
-     *                   later removal.
+     * later removal.
      */
-    public void scheduleSourceGroupsToRemove(MediaSourceGroupMap sourceGroups)
-    {
+    public void scheduleSourceGroupsToRemove(MediaSourceGroupMap sourceGroups) {
         sourceGroupsToRemove.add(sourceGroups);
     }
 
     /**
      * Returns the map of source groups that are waiting for synchronization.
      */
-    public MediaSourceGroupMap getSourceGroupsToAdd()
-    {
+    public MediaSourceGroupMap getSourceGroupsToAdd() {
         return sourceGroupsToAdd;
     }
 
@@ -330,20 +317,19 @@ public abstract class AbstractParticipant
      * Returns the map of source groups that are waiting for being removed from
      * peer session.
      */
-    public MediaSourceGroupMap getSourceGroupsToRemove()
-    {
+    public MediaSourceGroupMap getSourceGroupsToRemove() {
         return sourceGroupsToRemove;
     }
 
     /**
      * Removes source groups from this participant state.
-     * @param groupsToRemove the map of source groups that will be removed
-     *                       from this participant media state description.
+     *
+     * @param groupsToRemove the map of source groups that will be removed from
+     * this participant media state description.
      * @return <tt>MediaSourceGroupMap</tt> which contains source groups removed
-     *         from this map.
+     * from this map.
      */
-    public MediaSourceGroupMap removeSourceGroups(MediaSourceGroupMap groupsToRemove)
-    {
+    public MediaSourceGroupMap removeSourceGroups(MediaSourceGroupMap groupsToRemove) {
         return sourceGroups.remove(groupsToRemove);
     }
 
@@ -351,16 +337,14 @@ public abstract class AbstractParticipant
      * Replaces the {@link AbstractChannelAllocator}, which is currently
      * allocating channels for this participant (if any) with the specified
      * channel allocator (if any).
-     * @param channelAllocator the channel allocator to set, or {@code null}
-     * to clear it.
+     *
+     * @param channelAllocator the channel allocator to set, or {@code null} to
+     * clear it.
      */
     public void setChannelAllocator(
-        AbstractChannelAllocator channelAllocator)
-    {
-        synchronized (channelAllocatorSyncRoot)
-        {
-            if (this.channelAllocator != null)
-            {
+            AbstractChannelAllocator channelAllocator) {
+        synchronized (channelAllocatorSyncRoot) {
+            if (this.channelAllocator != null) {
                 // There is an ongoing thread allocating channels and sending
                 // an invite for this participant. Tell it to stop.
                 logger.warn("Canceling " + this.channelAllocator);
@@ -373,26 +357,23 @@ public abstract class AbstractParticipant
 
     /**
      * Signals to this {@link Participant} that a specific
-     * {@link AbstractChannelAllocator} has completed its task and its thread
-     * is about to terminate.
+     * {@link AbstractChannelAllocator} has completed its task and its thread is
+     * about to terminate.
+     *
      * @param channelAllocator the {@link AbstractChannelAllocator} which has
      * completed its task and its thread is about to terminate.
      */
     void channelAllocatorCompleted(
-        AbstractChannelAllocator channelAllocator)
-    {
-        synchronized (channelAllocatorSyncRoot)
-        {
-            if (this.channelAllocator == channelAllocator)
-            {
+            AbstractChannelAllocator channelAllocator) {
+        synchronized (channelAllocatorSyncRoot) {
+            if (this.channelAllocator == channelAllocator) {
                 this.channelAllocator = null;
             }
         }
     }
 
-    public void addSourcesAndGroups(MediaSourceMap         addedSources,
-                                    MediaSourceGroupMap    addedGroups)
-    {
+    public void addSourcesAndGroups(MediaSourceMap addedSources,
+            MediaSourceGroupMap addedGroups) {
         this.sources.add(addedSources);
         this.sourceGroups.add(addedGroups);
     }

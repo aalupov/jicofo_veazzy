@@ -32,8 +32,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockActivator
-    implements BundleActivator
-{
+        implements BundleActivator {
+
     private ServiceRegistration<?> xmppRegistration;
 
     private ServiceRegistration<?> sipRegistration;
@@ -44,17 +44,16 @@ public class MockActivator
 
     @Override
     public void start(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         XmppProtocolActivator.registerXmppExtensions();
 
         sipFactory
-            = new MockProtocolProviderFactory(
-                    bundleContext, ProtocolNames.SIP);
+                = new MockProtocolProviderFactory(
+                        bundleContext, ProtocolNames.SIP);
 
         xmppFactory
-            = new MockProtocolProviderFactory(
-                    bundleContext, ProtocolNames.JABBER);
+                = new MockProtocolProviderFactory(
+                        bundleContext, ProtocolNames.JABBER);
 
         Hashtable<String, String> hashtable = new Hashtable<String, String>();
 
@@ -62,32 +61,33 @@ public class MockActivator
         hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.JABBER);
 
         xmppRegistration = bundleContext.registerService(
-            ProtocolProviderFactory.class.getName(),
-            xmppFactory,
-            hashtable);
+                ProtocolProviderFactory.class.getName(),
+                xmppFactory,
+                hashtable);
 
         // Register SIP
         hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.SIP);
 
         sipRegistration = bundleContext.registerService(
-            ProtocolProviderFactory.class.getName(),
-            sipFactory,
-            hashtable);
+                ProtocolProviderFactory.class.getName(),
+                sipFactory,
+                hashtable);
     }
 
     @Override
     public void stop(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         xmppFactory.stop();
 
         sipFactory.stop();
 
-        if (xmppRegistration != null)
+        if (xmppRegistration != null) {
             xmppRegistration.unregister();
+        }
 
-        if (sipRegistration != null)
+        if (sipRegistration != null) {
             sipRegistration.unregister();
+        }
 
         MockMultiUserChatOpSet.cleanMucSharing();
     }

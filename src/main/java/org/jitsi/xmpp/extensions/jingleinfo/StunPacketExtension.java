@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class StunPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace.
      */
@@ -38,8 +38,7 @@ public class StunPacketExtension
     /**
      * Constructor.
      */
-    public StunPacketExtension()
-    {
+    public StunPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 }

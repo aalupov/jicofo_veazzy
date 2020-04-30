@@ -28,8 +28,8 @@ import org.jivesoftware.smack.packet.*;
  * @author Emil Ivov
  */
 public class EncryptionPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of the "encryption" element.
      */
@@ -50,13 +50,12 @@ public class EncryptionPacketExtension
      * <tt>encryption</tt> element.
      */
     private List<CryptoPacketExtension> cryptoList
-                            = new ArrayList<CryptoPacketExtension>();
+            = new ArrayList<CryptoPacketExtension>();
 
     /**
      * Creates a new instance of this <tt>EncryptionPacketExtension</tt>.
      */
-    public EncryptionPacketExtension()
-    {
+    public EncryptionPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -65,10 +64,8 @@ public class EncryptionPacketExtension
      *
      * @param crypto the new <tt>crypto</tt> element to add.
      */
-    public void addCrypto(CryptoPacketExtension crypto)
-    {
-        if(!cryptoList.contains(crypto))
-        {
+    public void addCrypto(CryptoPacketExtension crypto) {
+        if (!cryptoList.contains(crypto)) {
             cryptoList.add(crypto);
         }
     }
@@ -77,11 +74,10 @@ public class EncryptionPacketExtension
      * Returns a <b>reference</b> to the list of <tt>crypto</tt> elements that
      * we have registered with this encryption element so far.
      *
-     * @return  a <b>reference</b> to the list of <tt>crypto</tt> elements that
+     * @return a <b>reference</b> to the list of <tt>crypto</tt> elements that
      * we have registered with this encryption element so far.
      */
-    public List<CryptoPacketExtension> getCryptoList()
-    {
+    public List<CryptoPacketExtension> getCryptoList() {
         return cryptoList;
     }
 
@@ -91,12 +87,12 @@ public class EncryptionPacketExtension
      * @param required <tt>true</tt> if encryption is required for this session
      * and <tt>false</tt> otherwise.
      */
-    public void setRequired(boolean required)
-    {
-        if(required)
+    public void setRequired(boolean required) {
+        if (required) {
             super.setAttribute(REQUIRED_ATTR_NAME, required);
-        else
+        } else {
             super.removeAttribute(REQUIRED_ATTR_NAME);
+        }
     }
 
     /**
@@ -106,8 +102,7 @@ public class EncryptionPacketExtension
      * @return <tt>true</tt> if encryption is required for this session and
      * <tt>false</tt> otherwise.
      */
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         String required = getAttributeAsString(REQUIRED_ATTR_NAME);
 
         return Boolean.valueOf(required) || "1".equals(required);
@@ -119,8 +114,7 @@ public class EncryptionPacketExtension
      * @return a {@link List} containing all our <tt>crypto</tt> sub-elements.
      */
     @Override
-    public List<? extends ExtensionElement> getChildExtensions()
-    {
+    public List<? extends ExtensionElement> getChildExtensions() {
         List<ExtensionElement> ret = new ArrayList<ExtensionElement>();
 
         ret.addAll(super.getChildExtensions());
@@ -138,12 +132,10 @@ public class EncryptionPacketExtension
      * @param childExtension the extension we'd like to add here.
      */
     @Override
-    public void addChildExtension(ExtensionElement childExtension)
-    {
+    public void addChildExtension(ExtensionElement childExtension) {
         super.addChildExtension(childExtension);
 
-        if(childExtension instanceof CryptoPacketExtension)
-        {
+        if (childExtension instanceof CryptoPacketExtension) {
             this.addCrypto(((CryptoPacketExtension) childExtension));
         }
     }

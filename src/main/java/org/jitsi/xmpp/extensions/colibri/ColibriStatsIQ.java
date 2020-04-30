@@ -18,38 +18,35 @@ package org.jitsi.xmpp.extensions.colibri;
 import org.jivesoftware.smack.packet.*;
 
 /**
- * The stats IQ that can be used to request Colibri stats on demand
- * (used in server side focus).
+ * The stats IQ that can be used to request Colibri stats on demand (used in
+ * server side focus).
  *
  * @author Pawel Domas
  */
 public class ColibriStatsIQ
-    extends IQ
-{
+        extends IQ {
+
     /**
      * The XML element name of the Jitsi Videobridge <tt>stats</tt> extension.
      */
     public static final String ELEMENT_NAME
-        = ColibriStatsExtension.ELEMENT_NAME;
+            = ColibriStatsExtension.ELEMENT_NAME;
 
     /**
      * The XML COnferencing with LIghtweight BRIdging namespace of the Jitsi
      * Videobridge <tt>stats</tt> extension.
      */
     public static final String NAMESPACE
-        = ColibriStatsExtension.NAMESPACE;
-
+            = ColibriStatsExtension.NAMESPACE;
 
     private final ColibriStatsExtension backEnd = new ColibriStatsExtension();
 
-    public ColibriStatsIQ()
-    {
+    public ColibriStatsIQ() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     @Override
-    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder buf)
-    {
+    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder buf) {
         buf.rightAngleBracket();
         buf.append(backEnd.toXML());
         return buf;
@@ -57,10 +54,10 @@ public class ColibriStatsIQ
 
     /**
      * Adds stat extension.
+     *
      * @param stat the stat to be added
      */
-    public void addStat(ColibriStatsExtension.Stat stat)
-    {
+    public void addStat(ColibriStatsExtension.Stat stat) {
         backEnd.addStat(stat);
     }
 }

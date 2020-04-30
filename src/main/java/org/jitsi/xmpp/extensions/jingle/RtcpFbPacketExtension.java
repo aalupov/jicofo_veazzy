@@ -24,8 +24,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class RtcpFbPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name space for RTP feedback elements.
      */
@@ -42,57 +42,54 @@ public class RtcpFbPacketExtension
     public static final String TYPE_ATTR_NAME = "type";
 
     /**
-     *  The name the attribute that holds the feedback subtype.
+     * The name the attribute that holds the feedback subtype.
      */
     public static final String SUBTYPE_ATTR_NAME = "subtype";
 
     /**
      * Creates new empty instance of <tt>RtcpFbPacketExtension</tt>.
      */
-    public RtcpFbPacketExtension()
-    {
+    public RtcpFbPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Sets RTCP feedback type attribute.
+     *
      * @param feedbackType the RTCP feedback type to set.
      */
-    public void setFeedbackType(String feedbackType)
-    {
+    public void setFeedbackType(String feedbackType) {
         setAttribute(TYPE_ATTR_NAME, feedbackType);
     }
 
     /**
-     * Returns RTCP feedback type attribute value if already set
-     * or <tt>null</tt> otherwise.
+     * Returns RTCP feedback type attribute value if already set or
+     * <tt>null</tt> otherwise.
      *
      * @return RTCP feedback type attribute if already set or <tt>null</tt>
-     *         otherwise.
+     * otherwise.
      */
-    public String getFeedbackType()
-    {
+    public String getFeedbackType() {
         return getAttributeAsString(TYPE_ATTR_NAME);
     }
 
     /**
      * Sets RTCP feedback subtype attribute.
+     *
      * @param feedbackSubType the RTCP feedback subtype to set.
      */
-    public void setFeedbackSubtype(String feedbackSubType)
-    {
+    public void setFeedbackSubtype(String feedbackSubType) {
         setAttribute(SUBTYPE_ATTR_NAME, feedbackSubType);
     }
 
     /**
-     * Returns RTCP feedback subtype attribute value if already set
-     * or <tt>null</tt> otherwise.
+     * Returns RTCP feedback subtype attribute value if already set or
+     * <tt>null</tt> otherwise.
      *
      * @return RTCP feedback subtype attribute if already set or <tt>null</tt>
-     *         otherwise.
+     * otherwise.
      */
-    public String getFeedbackSubtype()
-    {
+    public String getFeedbackSubtype() {
         return getAttributeAsString(SUBTYPE_ATTR_NAME);
     }
 }

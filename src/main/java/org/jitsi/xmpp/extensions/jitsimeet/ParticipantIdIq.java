@@ -20,28 +20,26 @@ import org.jivesoftware.smack.packet.*;
 import org.jxmpp.jid.*;
 
 /**
- * IQ used for the signaling of moderator ID in Jitsi Meet
- * conferences.
+ * IQ used for the signaling of moderator ID in Jitsi Meet conferences.
  *
  * @author Pawel Domas
  */
 public class ParticipantIdIq
-    extends IQ
-{
-    
+        extends IQ {
+
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-        = Logger.getLogger(ParticipantIdIq.class);
+            = Logger.getLogger(ParticipantIdIq.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
-     * {@link #classLogger} or the one passed to the constructor, whichever
-     * is higher.
+     * {@link #classLogger} or the one passed to the constructor, whichever is
+     * higher.
      */
     private final Logger logger = Logger.getLogger(classLogger, null);
-    
+
     /**
      * Name space of participantId packet extension.
      */
@@ -61,7 +59,7 @@ public class ParticipantIdIq
      * Attribute name of "actor".
      */
     public static final String ACTOR_ATTR_NAME = "actor";
-    
+
     /**
      * Attribute name of "with_me".
      */
@@ -90,45 +88,40 @@ public class ParticipantIdIq
     /**
      * Creates a new instance of this class.
      */
-    public ParticipantIdIq()
-    {
+    public ParticipantIdIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(
-            IQChildElementXmlStringBuilder xml)
-    {
-        
-        if (jid != null)
-        {
+            IQChildElementXmlStringBuilder xml) {
+
+        if (jid != null) {
             xml.attribute(JID_ATTR_NAME, jid);
         }
 
-        if (actor != null)
-        {
+        if (actor != null) {
             xml.attribute(ACTOR_ATTR_NAME, actor);
         }
-        
-        if (withMe != null)
-        {
+
+        if (withMe != null) {
             xml.attribute(WITH_ME_ATTR_NAME, withMe);
         }
-        
+
         xml.rightAngleBracket()
-            .append(participantId);
+                .append(participantId);
 
         logger.warn("Building xml ParticipantId " + xml.toString());
-        
+
         return xml;
     }
 
     /**
      * Sets the MUC jid of the user.
+     *
      * @param jid muc jid in the form of room_name@muc.server.net/nickname.
      */
-    public void setJid(Jid jid)
-    {
+    public void setJid(Jid jid) {
         this.jid = jid;
     }
 
@@ -136,64 +129,63 @@ public class ParticipantIdIq
      * Returns MUC jid of the participant in the form of
      * "room_name@muc.server.net/nickname".
      */
-    public Jid getJid()
-    {
+    public Jid getJid() {
         return jid;
     }
 
     /**
-     * The action contained in the text part of 'participantId' XML element body.
-     * @param participantId 
+     * The action contained in the text part of 'participantId' XML element
+     * body.
+     *
+     * @param participantId
      */
-    public void setParticipantId(String participantId)
-    {
+    public void setParticipantId(String participantId) {
         this.participantId = participantId;
     }
 
     /**
-     * Returns participantId
-     * or <tt>null</tt> if the action has not been specified(which is invalid).
+     * Returns participantId or <tt>null</tt> if the action has not been
+     * specified(which is invalid).
      */
-    public String getParticipantId()
-    {
+    public String getParticipantId() {
         return participantId;
     }
 
-
     /**
      * Returns the peer jid that initiated the participantId, if any.
+     *
      * @return the peer jid that initiated the participantId.
      */
-    public Jid getActor()
-    {
+    public Jid getActor() {
         return actor;
     }
 
     /**
      * Sets jid for the peer that initiated the participantId.
+     *
      * @param actor the jid of the peer doing the participantId.
      */
-    public void setActor(Jid actor)
-    {
+    public void setActor(Jid actor) {
         this.actor = actor;
     }
-    
+
     /**
-     * The action contained in the text part of 'participantId' XML element body.
-     * @param with_me <tt>true</tt> to translate with moderator. <tt>null</tt> means no
-     *             action is included in result XML.
+     * The action contained in the text part of 'participantId' XML element
+     * body.
+     *
+     * @param with_me <tt>true</tt> to translate with moderator. <tt>null</tt>
+     * means no action is included in result XML.
      */
-    public void setWithMe(Boolean withMe)
-    {
+    public void setWithMe(Boolean withMe) {
         this.withMe = withMe;
     }
 
     /**
-     * Returns <tt>true</tt> to translate with moderato, <tt>false</tt> to translate the one participant only
-     * or <tt>null</tt> if the action has not been specified(which is invalid).
+     * Returns <tt>true</tt> to translate with moderato, <tt>false</tt> to
+     * translate the one participant only or <tt>null</tt> if the action has not
+     * been specified(which is invalid).
      */
-    public Boolean getWithMe()
-    {
+    public Boolean getWithMe() {
         return withMe;
     }
 }

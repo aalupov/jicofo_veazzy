@@ -25,54 +25,43 @@ import java.util.concurrent.*;
 /**
  *
  */
-public class MockCapsNode
-{
+public class MockCapsNode {
+
     private final Jid nodeName;
 
     private final String[] features;
 
     protected List<MockCapsNode> childNodes
-        = new CopyOnWriteArrayList<>();
+            = new CopyOnWriteArrayList<>();
 
-    public MockCapsNode(Jid nodeName, String[] features)
-    {
+    public MockCapsNode(Jid nodeName, String[] features) {
         this.nodeName = nodeName;
         this.features = features;
     }
 
-    public Jid getNodeName()
-    {
+    public Jid getNodeName() {
         return nodeName;
     }
 
-    public String[] getFeatures()
-    {
+    public String[] getFeatures() {
         return features;
     }
 
-    public void addChildNode(MockCapsNode node)
-    {
+    public void addChildNode(MockCapsNode node) {
         childNodes.add(node);
     }
 
-    public Collection<MockCapsNode> getChildNodes()
-    {
+    public Collection<MockCapsNode> getChildNodes() {
         return Collections.unmodifiableCollection(childNodes);
     }
 
-    public MockCapsNode findChild(Jid name)
-    {
-        for (MockCapsNode node : childNodes)
-        {
-            if (node.getNodeName().equals(name))
-            {
+    public MockCapsNode findChild(Jid name) {
+        for (MockCapsNode node : childNodes) {
+            if (node.getNodeName().equals(name)) {
                 return node;
-            }
-            else
-            {
+            } else {
                 MockCapsNode child = node.findChild(name);
-                if (child != null)
-                {
+                if (child != null) {
                     return child;
                 }
             }

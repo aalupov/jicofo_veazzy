@@ -24,54 +24,47 @@ import java.util.*;
 
 /**
  * A class is a wrapper for BundleContext which will make every call crash with
- * a <tt>RuntimeException</tt> once the failure mode has been turned on.
- * The purpose of that is to abort all tests after we have detected a deadlock.
- * Otherwise any tests started after the deadlock had failed will block
- * the main thread forever.
+ * a <tt>RuntimeException</tt> once the failure mode has been turned on. The
+ * purpose of that is to abort all tests after we have detected a deadlock.
+ * Otherwise any tests started after the deadlock had failed will block the main
+ * thread forever.
  *
  * @author Pawel Domas
  */
 public class FailureAwareBundleContext
-    implements BundleContext
-{
+        implements BundleContext {
+
     private final BundleContext bc;
 
     private String failureMessage;
 
-    public FailureAwareBundleContext(BundleContext bc)
-    {
+    public FailureAwareBundleContext(BundleContext bc) {
         this.bc = bc;
     }
 
-    public String getFailureMessage()
-    {
+    public String getFailureMessage() {
         return failureMessage;
     }
 
-    public void setFailureMessage(String failureMessage)
-    {
+    public void setFailureMessage(String failureMessage) {
         this.failureMessage = failureMessage;
     }
 
-    private void assertNotFaulty()
-    {
-        if (failureMessage != null)
-        {
+    private void assertNotFaulty() {
+        if (failureMessage != null) {
             throw new RuntimeException(failureMessage);
         }
     }
 
     @Override
-    public String getProperty(String s)
-    {
+    public String getProperty(String s) {
         assertNotFaulty();
 
         return bc.getProperty(s);
     }
 
     @Override
-    public Bundle getBundle()
-    {
+    public Bundle getBundle() {
         assertNotFaulty();
 
         return bc.getBundle();
@@ -79,8 +72,7 @@ public class FailureAwareBundleContext
 
     @Override
     public Bundle installBundle(String s, InputStream inputStream)
-        throws BundleException
-    {
+            throws BundleException {
         assertNotFaulty();
 
         return bc.installBundle(s, inputStream);
@@ -88,24 +80,21 @@ public class FailureAwareBundleContext
 
     @Override
     public Bundle installBundle(String s)
-        throws BundleException
-    {
+            throws BundleException {
         assertNotFaulty();
 
         return bc.installBundle(s);
     }
 
     @Override
-    public Bundle getBundle(long l)
-    {
+    public Bundle getBundle(long l) {
         assertNotFaulty();
 
         return bc.getBundle(l);
     }
 
     @Override
-    public Bundle[] getBundles()
-    {
+    public Bundle[] getBundles() {
         assertNotFaulty();
 
         return bc.getBundles();
@@ -113,56 +102,49 @@ public class FailureAwareBundleContext
 
     @Override
     public void addServiceListener(ServiceListener serviceListener, String s)
-        throws InvalidSyntaxException
-    {
+            throws InvalidSyntaxException {
         assertNotFaulty();
 
         bc.addServiceListener(serviceListener, s);
     }
 
     @Override
-    public void addServiceListener(ServiceListener serviceListener)
-    {
+    public void addServiceListener(ServiceListener serviceListener) {
         assertNotFaulty();
 
         bc.addServiceListener(serviceListener);
     }
 
     @Override
-    public void removeServiceListener(ServiceListener serviceListener)
-    {
+    public void removeServiceListener(ServiceListener serviceListener) {
         assertNotFaulty();
 
         bc.removeServiceListener(serviceListener);
     }
 
     @Override
-    public void addBundleListener(BundleListener bundleListener)
-    {
+    public void addBundleListener(BundleListener bundleListener) {
         assertNotFaulty();
 
         bc.addBundleListener(bundleListener);
     }
 
     @Override
-    public void removeBundleListener(BundleListener bundleListener)
-    {
+    public void removeBundleListener(BundleListener bundleListener) {
         assertNotFaulty();
 
         bc.removeBundleListener(bundleListener);
     }
 
     @Override
-    public void addFrameworkListener(FrameworkListener frameworkListener)
-    {
+    public void addFrameworkListener(FrameworkListener frameworkListener) {
         assertNotFaulty();
 
         bc.addFrameworkListener(frameworkListener);
     }
 
     @Override
-    public void removeFrameworkListener(FrameworkListener frameworkListener)
-    {
+    public void removeFrameworkListener(FrameworkListener frameworkListener) {
         assertNotFaulty();
 
         bc.removeFrameworkListener(frameworkListener);
@@ -170,8 +152,7 @@ public class FailureAwareBundleContext
 
     @Override
     public ServiceRegistration<?> registerService(
-        String[] strings, Object o, Dictionary<String, ?> dictionary)
-    {
+            String[] strings, Object o, Dictionary<String, ?> dictionary) {
         assertNotFaulty();
 
         return bc.registerService(strings, o, dictionary);
@@ -179,8 +160,7 @@ public class FailureAwareBundleContext
 
     @Override
     public ServiceRegistration<?> registerService(
-        String s, Object o, Dictionary<String, ?> dictionary)
-    {
+            String s, Object o, Dictionary<String, ?> dictionary) {
         assertNotFaulty();
 
         return bc.registerService(s, o, dictionary);
@@ -188,8 +168,7 @@ public class FailureAwareBundleContext
 
     @Override
     public <S> ServiceRegistration<S> registerService(
-        Class<S> aClass, S s, Dictionary<String, ?> dictionary)
-    {
+            Class<S> aClass, S s, Dictionary<String, ?> dictionary) {
         assertNotFaulty();
 
         return bc.registerService(aClass, s, dictionary);
@@ -197,8 +176,7 @@ public class FailureAwareBundleContext
 
     @Override
     public ServiceReference<?>[] getServiceReferences(String s, String s1)
-        throws InvalidSyntaxException
-    {
+            throws InvalidSyntaxException {
         assertNotFaulty();
 
         return bc.getServiceReferences(s, s1);
@@ -206,25 +184,22 @@ public class FailureAwareBundleContext
 
     @Override
     public ServiceReference<?>[] getAllServiceReferences(
-        String s, String s1)
-        throws InvalidSyntaxException
-    {
+            String s, String s1)
+            throws InvalidSyntaxException {
         assertNotFaulty();
 
         return bc.getAllServiceReferences(s, s1);
     }
 
     @Override
-    public ServiceReference<?> getServiceReference(String s)
-    {
+    public ServiceReference<?> getServiceReference(String s) {
         assertNotFaulty();
 
         return bc.getServiceReference(s);
     }
 
     @Override
-    public <S> ServiceReference<S> getServiceReference(Class<S> aClass)
-    {
+    public <S> ServiceReference<S> getServiceReference(Class<S> aClass) {
         assertNotFaulty();
 
         return bc.getServiceReference(aClass);
@@ -232,17 +207,15 @@ public class FailureAwareBundleContext
 
     @Override
     public <S> Collection<ServiceReference<S>> getServiceReferences(
-        Class<S> aClass, String s)
-        throws InvalidSyntaxException
-    {
+            Class<S> aClass, String s)
+            throws InvalidSyntaxException {
         assertNotFaulty();
 
         return bc.getServiceReferences(aClass, s);
     }
 
     @Override
-    public <S> S getService(ServiceReference<S> serviceReference)
-    {
+    public <S> S getService(ServiceReference<S> serviceReference) {
         assertNotFaulty();
 
         return bc.getService(serviceReference);
@@ -250,16 +223,14 @@ public class FailureAwareBundleContext
 
     @Override
     public boolean ungetService(
-        ServiceReference<?> serviceReference)
-    {
+            ServiceReference<?> serviceReference) {
         assertNotFaulty();
 
         return bc.ungetService(serviceReference);
     }
 
     @Override
-    public File getDataFile(String s)
-    {
+    public File getDataFile(String s) {
         assertNotFaulty();
 
         return bc.getDataFile(s);
@@ -267,16 +238,14 @@ public class FailureAwareBundleContext
 
     @Override
     public Filter createFilter(String s)
-        throws InvalidSyntaxException
-    {
+            throws InvalidSyntaxException {
         assertNotFaulty();
 
         return bc.createFilter(s);
     }
 
     @Override
-    public Bundle getBundle(String s)
-    {
+    public Bundle getBundle(String s) {
         assertNotFaulty();
 
         return bc.getBundle(s);

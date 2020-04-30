@@ -28,70 +28,55 @@ import org.jxmpp.stringprep.*;
 import java.util.*;
 
 public class XmppPeer
-    implements IQRequestHandler
-{
+        implements IQRequestHandler {
+
     private final XmppConnection connection;
 
     private final List<IQ> iqs = new ArrayList<>();
 
-    public XmppPeer(String jid)
-    {
+    public XmppPeer(String jid) {
         this(jidCreate(jid), new MockXmppConnection(jidCreate(jid)));
     }
 
-    private static Jid jidCreate(String jid)
-    {
-        try
-        {
+    private static Jid jidCreate(String jid) {
+        try {
             return JidCreate.from(jid);
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public XmppPeer(Jid jid, XmppConnection connection)
-    {
+    public XmppPeer(Jid jid, XmppConnection connection) {
         this.connection = connection;
     }
 
-    public XmppConnection getConnection()
-    {
+    public XmppConnection getConnection() {
         return connection;
     }
 
-    public void start()
-    {
+    public void start() {
         this.connection.registerIQRequestHandler(this);
     }
 
-    public void stop()
-    {
+    public void stop() {
         this.connection.unregisterIQRequestHandler(this);
     }
 
-    public int getIqCount()
-    {
-        synchronized (iqs)
-        {
+    public int getIqCount() {
+        synchronized (iqs) {
             return iqs.size();
         }
     }
 
-    public IQ getIq(int idx)
-    {
-        synchronized (iqs)
-        {
+    public IQ getIq(int idx) {
+        synchronized (iqs) {
             return iqs.get(idx);
         }
     }
 
     @Override
-    public IQ handleIQRequest(IQ iqRequest)
-    {
-        synchronized (iqs)
-        {
+    public IQ handleIQRequest(IQ iqRequest) {
+        synchronized (iqs) {
             iqs.add(iqRequest);
         }
 
@@ -101,26 +86,22 @@ public class XmppPeer
     }
 
     @Override
-    public Mode getMode()
-    {
+    public Mode getMode() {
         return Mode.sync;
     }
 
     @Override
-    public IQ.Type getType()
-    {
+    public IQ.Type getType() {
         return IQ.Type.get;
     }
 
     @Override
-    public String getElement()
-    {
+    public String getElement() {
         return JingleIQ.ELEMENT_NAME;
     }
 
     @Override
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return JingleIQ.NAMESPACE;
     }
 }

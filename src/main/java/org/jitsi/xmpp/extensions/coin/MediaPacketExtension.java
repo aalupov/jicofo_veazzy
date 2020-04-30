@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class MediaPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that media belongs to.
      */
@@ -97,8 +97,7 @@ public class MediaPacketExtension
      *
      * @param id media ID
      */
-    public MediaPacketExtension(String id)
-    {
+    public MediaPacketExtension(String id) {
         super(NAMESPACE, ELEMENT_NAME);
 
         setAttribute(ID_ATTR_NAME, id);
@@ -109,8 +108,7 @@ public class MediaPacketExtension
      *
      * @param label label
      */
-    public void setLabel(String label)
-    {
+    public void setLabel(String label) {
         this.label = label;
     }
 
@@ -119,8 +117,7 @@ public class MediaPacketExtension
      *
      * @param status status.
      */
-    public void setStatus(String status)
-    {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -129,8 +126,7 @@ public class MediaPacketExtension
      *
      * @param srcId src-id
      */
-    public void setSrcID(String srcId)
-    {
+    public void setSrcID(String srcId) {
         this.srcId = srcId;
     }
 
@@ -139,17 +135,16 @@ public class MediaPacketExtension
      *
      * @param type type
      */
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 
     /**
      * Set display text.
+     *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -158,8 +153,7 @@ public class MediaPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
@@ -168,8 +162,7 @@ public class MediaPacketExtension
      *
      * @return type
      */
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
@@ -178,8 +171,7 @@ public class MediaPacketExtension
      *
      * @return label
      */
-    public String getLabel()
-    {
+    public String getLabel() {
         return label;
     }
 
@@ -188,8 +180,7 @@ public class MediaPacketExtension
      *
      * @return status.
      */
-    public String getStatus()
-    {
+    public String getStatus() {
         return status;
     }
 
@@ -198,18 +189,17 @@ public class MediaPacketExtension
      *
      * @return src-id
      */
-    public String getSrcID()
-    {
+    public String getSrcID() {
         return srcId;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

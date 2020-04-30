@@ -24,8 +24,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class VideoMutedExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -39,18 +39,17 @@ public class VideoMutedExtension
     /**
      * Creates new instance of <tt>VideoMutedExtension</tt>.
      */
-    public VideoMutedExtension()
-    {
+    public VideoMutedExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Check whether or not user's video is in muted status.
+     *
      * @return <tt>true</tt> if muted, <tt>false</tt> if unmuted or
-     *         <tt>null</tt> if no valid info found in the extension body.
+     * <tt>null</tt> if no valid info found in the extension body.
      */
-    public Boolean isVideoMuted()
-    {
+    public Boolean isVideoMuted() {
         return Boolean.valueOf(getText());
     }
 
@@ -58,12 +57,11 @@ public class VideoMutedExtension
      * Sets user's video muted status.
      *
      * @param videoMuted <tt>true</tt> or <tt>false</tt> which indicates video
-     *                   muted status of the user.
+     * muted status of the user.
      */
-    public void setVideoMuted(Boolean videoMuted)
-    {
+    public void setVideoMuted(Boolean videoMuted) {
         setText(
-            videoMuted == null
-                ? "false" : videoMuted.toString());
+                videoMuted == null
+                        ? "false" : videoMuted.toString());
     }
 }

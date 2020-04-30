@@ -35,8 +35,8 @@ import org.jivesoftware.smack.provider.*;
  * @author Pawel Domas
  */
 public class OperationSetColibriConferenceImpl
-    implements OperationSetColibriConference
-{
+        implements OperationSetColibriConference {
+
     private final static Logger logger
             = Logger.getLogger(OperationSetColibriConferenceImpl.class);
 
@@ -48,36 +48,34 @@ public class OperationSetColibriConferenceImpl
      * Initializes this operation set.
      *
      * @param connection Smack XMPP connection impl that will be used to send
-     *                   and receive XMPP packets.
-     * @param eventAdmin the <tt>EventAdmin</tt> which will be used by
-     *                   the underlying components to emit events.
+     * and receive XMPP packets.
+     * @param eventAdmin the <tt>EventAdmin</tt> which will be used by the
+     * underlying components to emit events.
      */
-    public void initialize(XmppConnection connection, EventAdmin eventAdmin)
-    {
+    public void initialize(XmppConnection connection, EventAdmin eventAdmin) {
         this.connection = connection;
         this.eventAdmin = eventAdmin;
 
         // Register Colibri
         ProviderManager.addIQProvider(
-            ColibriConferenceIQ.ELEMENT_NAME,
-            ColibriConferenceIQ.NAMESPACE,
-            new ColibriIQProvider());
+                ColibriConferenceIQ.ELEMENT_NAME,
+                ColibriConferenceIQ.NAMESPACE,
+                new ColibriIQProvider());
 
         // register Jingle
         ProviderManager.addIQProvider(
-            JingleIQ.ELEMENT_NAME,
-            JingleIQ.NAMESPACE,
-            new JingleIQProvider());
+                JingleIQ.ELEMENT_NAME,
+                JingleIQ.NAMESPACE,
+                new JingleIQProvider());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ColibriConference createNewConference()
-    {
+    public ColibriConference createNewConference() {
         ColibriConference conf
-            = new ColibriConferenceImpl(connection, eventAdmin);
+                = new ColibriConferenceImpl(connection, eventAdmin);
         logger.info("Conference created: " + conf);
         return conf;
     }

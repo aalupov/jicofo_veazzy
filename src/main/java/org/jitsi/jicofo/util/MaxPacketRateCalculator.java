@@ -24,8 +24,8 @@ import java.util.*;
  * We use maxes because it allows us to compute worst case scenarios in our
  * load-balancing scheme.
  */
-public class MaxPacketRateCalculator
-{
+public class MaxPacketRateCalculator {
+
     /**
      * Ctor.
      *
@@ -36,12 +36,11 @@ public class MaxPacketRateCalculator
      * @param numberOfLocalReceivers the local receivers (recvonly)
      */
     public MaxPacketRateCalculator(
-        int numberOfConferenceBridges,
-        int numberOfGlobalSenders,
-        int numberOfSpeakers,
-        int numberOfLocalSenders,
-        int numberOfLocalReceivers)
-    {
+            int numberOfConferenceBridges,
+            int numberOfGlobalSenders,
+            int numberOfSpeakers,
+            int numberOfLocalSenders,
+            int numberOfLocalReceivers) {
         this.numberOfConferenceBridges = numberOfConferenceBridges;
         this.numberOfGlobalSenders = numberOfGlobalSenders;
         this.numberOfSpeakers = numberOfSpeakers;
@@ -59,8 +58,7 @@ public class MaxPacketRateCalculator
         50, /* max audio pps of a participant sending audio */
         70, /* max 180p pps of a participant sending simulcast */
         90, /* max 360p pps of a participant sending simulcast */
-        280 /* max 720p pps of a participant sending simulcast */
-    };
+        280 /* max 720p pps of a participant sending simulcast */};
 
     /**
      * Computes the (max) total packet rate of a bridge that serves
@@ -71,40 +69,34 @@ public class MaxPacketRateCalculator
      * numberOfLocalSenders local senders and numberOfLocalReceivers local
      * receivers.
      */
-    public int computeEgressPacketRatePps()
-    {
+    public int computeEgressPacketRatePps() {
         // regardless of the participant distribution, in a 100 people/20
         // senders call each sender receivers 19 other senders, 1 in HD and 18
         // in LD.
         return (numberOfLocalSenders + numberOfLocalReceivers)
-            * computeParticipantEgressPacketRatePps();
+                * computeParticipantEgressPacketRatePps();
     }
 
-    public int computeSenderIngressPacketRatePps()
-    {
+    public int computeSenderIngressPacketRatePps() {
         return Arrays.stream(maxPacketRatePps).sum();
     }
 
-    public int computeParticipantEgressPacketRatePps()
-    {
+    public int computeParticipantEgressPacketRatePps() {
         return (numberOfSpeakers * maxPacketRatePps[0] + (numberOfGlobalSenders - 2) * maxPacketRatePps[1] + maxPacketRatePps[3]);
     }
 
-    public int computeIngressPacketRatePps()
-    {
-        return numberOfLocalSenders* computeSenderIngressPacketRatePps();
+    public int computeIngressPacketRatePps() {
+        return numberOfLocalSenders * computeSenderIngressPacketRatePps();
     }
 
-    public int computeOctoEgressPacketRate()
-    {
+    public int computeOctoEgressPacketRate() {
         // the octo packet rate depends on how many local senders there are.
         return numberOfConferenceBridges * computeIngressPacketRatePps();
     }
 
-    public int computeOctoIngressPacketRate()
-    {
+    public int computeOctoIngressPacketRate() {
         // the octo packet rate depends on how many local senders there are.
-        return (numberOfGlobalSenders - numberOfLocalSenders)*Arrays.stream(maxPacketRatePps).sum();
+        return (numberOfGlobalSenders - numberOfLocalSenders) * Arrays.stream(maxPacketRatePps).sum();
     }
 
 }

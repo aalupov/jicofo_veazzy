@@ -24,8 +24,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Emil Ivov
  */
 public class BandwidthPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "bandwidth" element.
      */
@@ -39,8 +39,7 @@ public class BandwidthPacketExtension
     /**
      * Creates a new {@link BandwidthPacketExtension} instance.
      */
-    public BandwidthPacketExtension()
-    {
+    public BandwidthPacketExtension() {
         super(null, ELEMENT_NAME);
     }
 
@@ -51,8 +50,7 @@ public class BandwidthPacketExtension
      * @param type a <tt>String</tt> value which would often be one of the
      * <tt>bwtype</tt> values specified by SDP
      */
-    public void setType(String type)
-    {
+    public void setType(String type) {
         setAttribute(TYPE_ATTR_NAME, type);
     }
 
@@ -63,8 +61,7 @@ public class BandwidthPacketExtension
      * @return a <tt>String</tt> value which would often be one of the
      * <tt>bwtype</tt> values specified by SDP
      */
-    public String getType()
-    {
+    public String getType() {
         return getAttributeAsString(TYPE_ATTR_NAME);
     }
 
@@ -73,8 +70,7 @@ public class BandwidthPacketExtension
      *
      * @param bw the value of this bandwidth extension.
      */
-    public void setBandwidth(String bw)
-    {
+    public void setBandwidth(String bw) {
         super.setText(bw);
     }
 
@@ -83,8 +79,7 @@ public class BandwidthPacketExtension
      *
      * @return the value of this bandwidth extension.
      */
-    public String getBandwidth()
-    {
+    public String getBandwidth() {
         return super.getText();
     }
 }

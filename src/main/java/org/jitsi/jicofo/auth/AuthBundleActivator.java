@@ -39,8 +39,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class AuthBundleActivator
-    extends AbstractJettyBundleActivator
-{
+        extends AbstractJettyBundleActivator {
+
     /**
      * The prefix of the names of {@code ConfigurationService} and/or
      * {@code System} properties defined by {@code AuthBundleActivator}.
@@ -67,34 +67,32 @@ public class AuthBundleActivator
      * conference ends.
      */
     public static final String DISABLE_AUTOLOGIN_PNAME
-        = AUTH_PNAME + ".DISABLE_AUTOLOGIN";
+            = AUTH_PNAME + ".DISABLE_AUTOLOGIN";
 
     /**
      * Name of configuration property that controls authentication session
      * lifetime.
      */
     private final static String AUTHENTICATION_LIFETIME_PNAME
-        = "org.jitsi.jicofo.auth.AUTH_LIFETIME";
+            = "org.jitsi.jicofo.auth.AUTH_LIFETIME";
 
     /**
      * Default lifetime of authentication session(24H).
      */
     private final static long DEFAULT_AUTHENTICATION_LIFETIME
-        = 24 * 60 * 60 * 1000;
+            = 24 * 60 * 60 * 1000;
 
     /**
      * The {@code Logger} used by the {@code AuthBundleActivator} class and its
      * instances to print debug information.
      */
     private static final Logger logger
-        = Logger.getLogger(AuthBundleActivator.class);
+            = Logger.getLogger(AuthBundleActivator.class);
 
     /**
      * Reference to service registration of {@link AuthenticationAuthority}.
      */
-    private
-        ServiceRegistration<AuthenticationAuthority>
-            authAuthorityServiceRegistration;
+    private ServiceRegistration<AuthenticationAuthority> authAuthorityServiceRegistration;
 
     /**
      * The instance of {@link AuthenticationAuthority}.
@@ -106,8 +104,7 @@ public class AuthBundleActivator
     /**
      * Initializes a new {@code AuthBundleActivator} instance.
      */
-    public AuthBundleActivator()
-    {
+    public AuthBundleActivator() {
         super(AUTH_PNAME);
     }
 
@@ -115,8 +112,7 @@ public class AuthBundleActivator
      * {@inheritDoc}
      */
     @Override
-    protected int getDefaultPort()
-    {
+    protected int getDefaultPort() {
         // The idea of overriding Videobridge's default is probably an attempt
         // to have Videobridge and Jicofo running on the same machine with their
         // defaults and without them clashing.
@@ -127,8 +123,7 @@ public class AuthBundleActivator
      * {@inheritDoc}
      */
     @Override
-    protected int getDefaultTlsPort()
-    {
+    protected int getDefaultTlsPort() {
         // The idea of overriding Videobridge's default is probably an attempt
         // to have Videobridge and Jicofo running on the same machine with their
         // defaults and without them clashing.
@@ -142,16 +137,14 @@ public class AuthBundleActivator
     protected Handler initializeHandlerList(
             BundleContext bundleContext,
             Server server)
-        throws Exception
-    {
+            throws Exception {
         List<Handler> handlers = new ArrayList<>();
 
         // Shibboleth
-        if (authAuthority instanceof ShibbolethAuthAuthority)
-        {
+        if (authAuthority instanceof ShibbolethAuthAuthority) {
             logger.info("Adding Shibboleth handler");
             ShibbolethAuthAuthority shibbolethAuthAuthority
-                = (ShibbolethAuthAuthority) authAuthority;
+                    = (ShibbolethAuthAuthority) authAuthority;
 
             handlers.add(new ShibbolethHandler(shibbolethAuthAuthority));
         }
@@ -160,10 +153,10 @@ public class AuthBundleActivator
         // REST) are mandatory at the time of this writing. Make the latter
         // optional as well (in a way similar to Videobridge, for example).
         ServletContextHandler appHandler
-            = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+                = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         appHandler.setContextPath("/");
         appHandler.addServlet(new ServletHolder(new ServletContainer(
-            new Application(bundleContext))), "/*");
+                new Application(bundleContext))), "/*");
         handlers.add(appHandler);
 
         return initializeHandlerList(handlers);
@@ -174,61 +167,53 @@ public class AuthBundleActivator
      */
     @Override
     public void start(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         AuthBundleActivator.bundleContext = bundleContext;
 
         ConfigurationService cfg
-            = ServiceUtils.getService(
-                    bundleContext,
-                    ConfigurationService.class);
+                = ServiceUtils.getService(
+                        bundleContext,
+                        ConfigurationService.class);
         String loginUrl = cfg.getString(LOGIN_URL_PNAME);
         long authenticationLifetime
-            = cfg.getLong(
-                    AUTHENTICATION_LIFETIME_PNAME,
-                    DEFAULT_AUTHENTICATION_LIFETIME);
+                = cfg.getLong(
+                        AUTHENTICATION_LIFETIME_PNAME,
+                        DEFAULT_AUTHENTICATION_LIFETIME);
         boolean disableAutoLogin
-            = cfg.getBoolean(
-                    DISABLE_AUTOLOGIN_PNAME, false);
+                = cfg.getBoolean(
+                        DISABLE_AUTOLOGIN_PNAME, false);
 
-        if (!StringUtils.isNullOrEmpty(loginUrl))
-        {
+        if (!StringUtils.isNullOrEmpty(loginUrl)) {
             logger.info("Starting authentication service... URL: " + loginUrl);
 
-            if (loginUrl.toUpperCase().startsWith("XMPP:"))
-            {
+            if (loginUrl.toUpperCase().startsWith("XMPP:")) {
                 authAuthority
-                    = new XMPPDomainAuthAuthority(
-                            disableAutoLogin,
-                            authenticationLifetime,
-                            JidCreate.domainBareFrom(loginUrl.substring(5)));
-            }
-            else if (loginUrl.toUpperCase().startsWith("EXT_JWT:"))
-            {
+                        = new XMPPDomainAuthAuthority(
+                                disableAutoLogin,
+                                authenticationLifetime,
+                                JidCreate.domainBareFrom(loginUrl.substring(5)));
+            } else if (loginUrl.toUpperCase().startsWith("EXT_JWT:")) {
                 authAuthority
-                    = new ExternalJWTAuthority(
-                            JidCreate.domainBareFrom(loginUrl.substring(8)));
-            }
-            else
-            {
+                        = new ExternalJWTAuthority(
+                                JidCreate.domainBareFrom(loginUrl.substring(8)));
+            } else {
                 String logoutUrl = cfg.getString(LOGOUT_URL_PNAME);
 
                 authAuthority
-                    = new ShibbolethAuthAuthority(
-                            disableAutoLogin,
-                            authenticationLifetime, loginUrl, logoutUrl);
+                        = new ShibbolethAuthAuthority(
+                                disableAutoLogin,
+                                authenticationLifetime, loginUrl, logoutUrl);
             }
         }
 
-        if (authAuthority != null)
-        {
+        if (authAuthority != null) {
             logger.info("Auth authority: " + authAuthority);
 
             authAuthorityServiceRegistration
-                = bundleContext.registerService(
-                        AuthenticationAuthority.class,
-                        authAuthority,
-                        null);
+                    = bundleContext.registerService(
+                            AuthenticationAuthority.class,
+                            authAuthority,
+                            null);
 
             authAuthority.start();
         }
@@ -241,15 +226,12 @@ public class AuthBundleActivator
      */
     @Override
     public void stop(BundleContext bundleContext)
-        throws Exception
-    {
-        if (authAuthorityServiceRegistration != null)
-        {
+            throws Exception {
+        if (authAuthorityServiceRegistration != null) {
             authAuthorityServiceRegistration.unregister();
             authAuthorityServiceRegistration = null;
         }
-        if (authAuthority != null)
-        {
+        if (authAuthority != null) {
             authAuthority.stop();
             authAuthority = null;
         }
@@ -264,12 +246,10 @@ public class AuthBundleActivator
      */
     @Override
     protected boolean willStart(BundleContext bundleContext)
-        throws Exception
-    {
+            throws Exception {
         boolean b = super.willStart(bundleContext);
 
-        if (b)
-        {
+        if (b) {
             // Shibboleth works the same as every other web-based Single Sign-on
             // (SSO) system so it requires the Jetty HTTP server.
             b = (authAuthority instanceof ShibbolethAuthAuthority);
@@ -278,8 +258,9 @@ public class AuthBundleActivator
             // (over REST) are mandatory at the time of this writing. Make the
             // latter optional as well (in a way similar to Videobridge, for
             // example).
-            if (!b)
+            if (!b) {
                 b = true;
+            }
         }
         return b;
     }

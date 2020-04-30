@@ -24,56 +24,48 @@ import org.jivesoftware.smack.packet.*;
  * @author Pawel Domas
  */
 public class MockJitsiMeetTools
-    implements OperationSetJitsiMeetTools
-{
+        implements OperationSetJitsiMeetTools {
+
     private final MockProtocolProvider parentProvider;
 
-    public MockJitsiMeetTools(MockProtocolProvider pps)
-    {
+    public MockJitsiMeetTools(MockProtocolProvider pps) {
         this.parentProvider = pps;
     }
 
     @Override
-    public void addSupportedFeature(String s)
-    {
+    public void addSupportedFeature(String s) {
         //FIXME: not used in tests yet
     }
 
     @Override
-    public void removeSupportedFeature(String s)
-    {
+    public void removeSupportedFeature(String s) {
         //FIXME: not used in tests yet
     }
 
     @Override
     public void sendPresenceExtension(ChatRoom chatRoom,
-                                      ExtensionElement extension)
-    {
+            ExtensionElement extension) {
         //FIXME: to be tested
     }
 
     @Override
     public void removePresenceExtension(
-        ChatRoom chatRoom, ExtensionElement packetExtension)
-    {
+            ChatRoom chatRoom, ExtensionElement packetExtension) {
         //FIXME: to be tested
     }
 
     @Override
-    public void setPresenceStatus(ChatRoom chatRoom, String statusName)
-    {
+    public void setPresenceStatus(ChatRoom chatRoom, String statusName) {
         //FIXME: to be tested
     }
 
     @Override
     public void addRequestListener(
-            JitsiMeetRequestListener jitsiMeetRequestListener)
-    {
+            JitsiMeetRequestListener jitsiMeetRequestListener) {
     }
 
     @Override
     public void removeRequestListener(
-            JitsiMeetRequestListener jitsiMeetRequestListener)
-    {
+            JitsiMeetRequestListener jitsiMeetRequestListener) {
     }
 }

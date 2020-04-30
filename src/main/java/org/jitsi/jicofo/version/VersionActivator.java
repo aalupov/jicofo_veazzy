@@ -25,14 +25,13 @@ import org.jitsi.version.*;
  * @author Pawel Domas
  */
 public class VersionActivator
-    extends AbstractVersionActivator
-{
+        extends AbstractVersionActivator {
+
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Version getCurrentVersion()
-    {
+    protected Version getCurrentVersion() {
         return CurrentVersionImpl.VERSION;
     }
 }

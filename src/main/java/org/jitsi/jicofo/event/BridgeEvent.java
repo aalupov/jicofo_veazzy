@@ -29,8 +29,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class BridgeEvent
-    extends Event
-{
+        extends Event {
+
     /**
      * The event is triggered by {@link BridgeSelector} whenever new functional
      * bridge has been discovered.
@@ -49,18 +49,18 @@ public class BridgeEvent
      * {@link BridgeSelector}.
      */
     public static final String HEALTH_CHECK_FAILED
-        = "org/jitsi/jicofo/JVB/UNHEALTHY";
+            = "org/jitsi/jicofo/JVB/UNHEALTHY";
 
     /**
      * The event is emitted by
-     * {@link org.jitsi.impl.protocol.xmpp.colibri.ColibriConferenceImpl}
-     * when new video channels are allocated or expired.
-     * It is consumed by {@link BridgeSelector} to estimate the net number of
-     * new video channels allocated on the bridge since the last update from
-     * that bridge was received.
+     * {@link org.jitsi.impl.protocol.xmpp.colibri.ColibriConferenceImpl} when
+     * new video channels are allocated or expired. It is consumed by
+     * {@link BridgeSelector} to estimate the net number of new video channels
+     * allocated on the bridge since the last update from that bridge was
+     * received.
      */
     public static final String VIDEO_CHANNELS_CHANGED
-        = "org/jitsi/jicofo/JVB/VIDEO_CHANNELS_CHANGED";
+            = "org/jitsi/jicofo/JVB/VIDEO_CHANNELS_CHANGED";
 
     /**
      * The key for event property
@@ -74,10 +74,10 @@ public class BridgeEvent
 
     /**
      * Used to init the properties passed to the constructor.
+     *
      * @param bridgeJid
      */
-    static private Dictionary<String, Object> initDictionary(Jid bridgeJid)
-    {
+    static private Dictionary<String, Object> initDictionary(Jid bridgeJid) {
         Dictionary<String, Object> props = new Hashtable<>();
         props.put(JVB_JID_KEY, bridgeJid);
         return props;
@@ -85,37 +85,37 @@ public class BridgeEvent
 
     /**
      * Creates {@link #BRIDGE_UP} <tt>BridgeEvent</tt>.
+     *
      * @param bridgeJid the JID of the bridge for which the event will be
-     *                  created.
+     * created.
      * @return {@link #BRIDGE_UP} <tt>BridgeEvent</tt> for given
-     *         <tt>bridgeJid</tt>.
+     * <tt>bridgeJid</tt>.
      */
-    static public BridgeEvent createBridgeUp(Jid bridgeJid)
-    {
+    static public BridgeEvent createBridgeUp(Jid bridgeJid) {
         return new BridgeEvent(BRIDGE_UP, bridgeJid);
     }
 
     /**
      * Creates {@link #BRIDGE_DOWN} <tt>BridgeEvent</tt>.
+     *
      * @param bridgeJid the JID of the bridge for which the event will be
-     *                  created.
+     * created.
      * @return {@link #BRIDGE_DOWN} <tt>BridgeEvent</tt> for given
-     *         <tt>bridgeJid</tt>.
+     * <tt>bridgeJid</tt>.
      */
-    static public BridgeEvent createBridgeDown(Jid bridgeJid)
-    {
+    static public BridgeEvent createBridgeDown(Jid bridgeJid) {
         return new BridgeEvent(BRIDGE_DOWN, bridgeJid);
     }
 
     /**
      * Creates {@link #HEALTH_CHECK_FAILED} <tt>BridgeEvent</tt>.
+     *
      * @param bridgeJid the JID of the bridge for which the event will be
-     *                  created.
+     * created.
      * @return {@link #HEALTH_CHECK_FAILED} <tt>BridgeEvent</tt> for given
-     *         <tt>bridgeJid</tt>.
+     * <tt>bridgeJid</tt>.
      */
-    static public BridgeEvent createHealthFailed(Jid bridgeJid)
-    {
+    static public BridgeEvent createHealthFailed(Jid bridgeJid) {
         return new BridgeEvent(HEALTH_CHECK_FAILED, bridgeJid);
     }
 
@@ -128,8 +128,7 @@ public class BridgeEvent
      * @param videoChannelDiff how many video channels were added/removed.
      */
     static public BridgeEvent createVideoChannelsChanged(Jid bridgeJid,
-                                                         int videoChannelDiff)
-    {
+            int videoChannelDiff) {
         Dictionary<String, Object> dict = initDictionary(bridgeJid);
         dict.put(VIDEO_CHANNEL_COUNT_KEY, videoChannelDiff);
         return new BridgeEvent(VIDEO_CHANNELS_CHANGED, dict);
@@ -141,29 +140,25 @@ public class BridgeEvent
      * @param event the <tt>Event</tt> instance to be checked.
      *
      * @return <tt>true</tt> if given <tt>Event</tt> instance is one of bridge
-     *         events or <tt>false</tt> otherwise.
+     * events or <tt>false</tt> otherwise.
      */
-    static public boolean isBridgeEvent(Event event)
-    {
-        switch (event.getTopic())
-        {
-        case BRIDGE_DOWN:
-        case BRIDGE_UP:
-        case HEALTH_CHECK_FAILED:
-        case VIDEO_CHANNELS_CHANGED:
-            return true;
-        default:
-            return false;
+    static public boolean isBridgeEvent(Event event) {
+        switch (event.getTopic()) {
+            case BRIDGE_DOWN:
+            case BRIDGE_UP:
+            case HEALTH_CHECK_FAILED:
+            case VIDEO_CHANNELS_CHANGED:
+                return true;
+            default:
+                return false;
         }
     }
 
-    private BridgeEvent(String topic, Dictionary<String, Object> dict)
-    {
+    private BridgeEvent(String topic, Dictionary<String, Object> dict) {
         super(topic, dict);
     }
 
-    private BridgeEvent(String topic, Jid bridgeJid)
-    {
+    private BridgeEvent(String topic, Jid bridgeJid) {
         super(topic, initDictionary(bridgeJid));
     }
 
@@ -172,19 +167,18 @@ public class BridgeEvent
      *
      * @return The JID of the jitsi-videobridge instance for this event.
      */
-    public Jid getBridgeJid()
-    {
+    public Jid getBridgeJid() {
         return (Jid) getProperty(JVB_JID_KEY);
     }
 
     /**
      * Obtains the value of video stream count associated with the current
      * <tt>BridgeEvent</tt>.
+     *
      * @return <tt>Integer</tt> or <tt>null</tt> if attribute not present for
      * given event.
      */
-    public Integer getVideoChannelCount()
-    {
+    public Integer getVideoChannelCount() {
         return (Integer) getProperty(VIDEO_CHANNEL_COUNT_KEY);
     }
 
@@ -192,20 +186,17 @@ public class BridgeEvent
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof BridgeEvent))
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BridgeEvent)) {
             return false;
         }
 
         BridgeEvent other = (BridgeEvent) obj;
         // Verify topic and JID
         boolean sameTopicAndJid
-            = getTopic().equals(other.getTopic()) &&
-                    getBridgeJid().equals(other.getBridgeJid());
-        if (!sameTopicAndJid)
-        {
+                = getTopic().equals(other.getTopic())
+                && getBridgeJid().equals(other.getBridgeJid());
+        if (!sameTopicAndJid) {
             return false;
         }
         // Compare streams added/remove

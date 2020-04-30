@@ -42,8 +42,8 @@ import static org.junit.Assert.*;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class BridgeSelectorTest
-{
+public class BridgeSelectorTest {
+
     private static OSGiHandler osgi = OSGiHandler.getInstance();
 
     private static Jid jvb1Jid;
@@ -58,46 +58,43 @@ public class BridgeSelectorTest
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         // Everything should work regardless of the type of jid.
         jvb1Jid = JidCreate.from("jvb.example.com");
         jvb2Jid = JidCreate.from("jvb@example.com");
         jvb3Jid = JidCreate.from("jvb@example.com/goldengate");
         String bridgeMapping
-            = jvb1Jid + ":" + jvb1PubSubNode + ";" +
-              jvb2Jid + ":" + jvb2PubSubNode + ";" +
-              jvb3Jid + ":" + jvb3PubSubNode + ";";
+                = jvb1Jid + ":" + jvb1PubSubNode + ";"
+                + jvb2Jid + ":" + jvb2PubSubNode + ";"
+                + jvb3Jid + ":" + jvb3PubSubNode + ";";
 
         System.setProperty(
-            BridgeSelector.BRIDGE_TO_PUBSUB_PNAME, bridgeMapping);
+                BridgeSelector.BRIDGE_TO_PUBSUB_PNAME, bridgeMapping);
 
         osgi.init();
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
     private void createMockJvbNodes(JitsiMeetServices meetServices,
-                                    MockProtocolProvider protocolProvider)
-    {
+            MockProtocolProvider protocolProvider) {
         MockSetSimpleCapsOpSet capsOpSet = protocolProvider.getMockCapsOpSet();
 
         MockCapsNode jvb1Node
-            = new MockCapsNode(
-                    jvb1Jid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
+                = new MockCapsNode(
+                        jvb1Jid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
 
         MockCapsNode jvb2Node
-            = new MockCapsNode(
-                    jvb2Jid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
+                = new MockCapsNode(
+                        jvb2Jid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
 
         MockCapsNode jvb3Node
-            = new MockCapsNode(
-                    jvb3Jid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
+                = new MockCapsNode(
+                        jvb3Jid, JitsiMeetServices.VIDEOBRIDGE_FEATURES);
 
         capsOpSet.addChildNode(jvb1Node);
         capsOpSet.addChildNode(jvb2Node);
@@ -110,16 +107,15 @@ public class BridgeSelectorTest
 
     @Test
     public void selectorTest()
-        throws InterruptedException
-    {
+            throws InterruptedException {
         JitsiMeetServices meetServices
-            = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
+                = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
 
         ProviderListener providerListener
-            = new ProviderListener(FocusBundleActivator.bundleContext);
+                = new ProviderListener(FocusBundleActivator.bundleContext);
 
         MockProtocolProvider mockProvider
-            = (MockProtocolProvider) providerListener.obtainProvider(1000);
+                = (MockProtocolProvider) providerListener.obtainProvider(1000);
 
         createMockJvbNodes(meetServices, mockProvider);
 
@@ -128,11 +124,11 @@ public class BridgeSelectorTest
 
         // Check pub-sub nodes mapping
         assertEquals(jvb1Jid,
-                     selector.getBridgeForPubSubNode(jvb1PubSubNode));
+                selector.getBridgeForPubSubNode(jvb1PubSubNode));
         assertEquals(jvb2Jid,
-                     selector.getBridgeForPubSubNode(jvb2PubSubNode));
+                selector.getBridgeForPubSubNode(jvb2PubSubNode));
         assertEquals(jvb3Jid,
-                     selector.getBridgeForPubSubNode(jvb3PubSubNode));
+                selector.getBridgeForPubSubNode(jvb3PubSubNode));
 
         // Test bridge operational status
         List<Jid> workingBridges = new ArrayList<>();
@@ -175,24 +171,24 @@ public class BridgeSelectorTest
         jvb3.setIsOperational(true);
 
         MockSubscriptionOpSetImpl mockSubscriptions
-            = mockProvider.getMockSubscriptionOpSet();
+                = mockProvider.getMockSubscriptionOpSet();
 
         // When PubSub mapping is used itemId is not important
         String itemId = "randomNodeForMappingTest";
 
         // Jvb 1 and 3 are occupied by some conferences, 2 is free
         mockSubscriptions.fireSubscriptionNotification(
-            jvb1PubSubNode,itemId, createJvbStats(10));
+                jvb1PubSubNode, itemId, createJvbStats(10));
         mockSubscriptions.fireSubscriptionNotification(
-            jvb2PubSubNode, itemId, createJvbStats(23));
+                jvb2PubSubNode, itemId, createJvbStats(23));
         mockSubscriptions.fireSubscriptionNotification(
-            jvb3PubSubNode, itemId, createJvbStats(0));
+                jvb3PubSubNode, itemId, createJvbStats(0));
 
         assertEquals(jvb3Jid, selector.selectBridge(conference).getJid());
 
         // Now Jvb 3 gets occupied the most
         mockSubscriptions.fireSubscriptionNotification(
-            jvb3PubSubNode, itemId, createJvbStats(300));
+                jvb3PubSubNode, itemId, createJvbStats(300));
 
         assertEquals(jvb1Jid, selector.selectBridge(conference).getJid());
 
@@ -238,42 +234,37 @@ public class BridgeSelectorTest
 
         // Test drain bridges queue
         int maxCount = selector.getKnownBridgesCount();
-        while (selector.selectBridge(conference) != null)
-        {
+        while (selector.selectBridge(conference) != null) {
             Bridge bridge = selector.selectBridge(conference);
             bridge.setIsOperational(false);
-            if (--maxCount < 0)
-            {
+            if (--maxCount < 0) {
                 fail("Max count exceeded");
             }
         }
     }
 
     private void testFailureResetThreshold(
-        BridgeSelector selector, MockSubscriptionOpSetImpl mockSubscriptions)
-            throws InterruptedException
-    {
-        Jid[] nodes = new Jid[]{ jvb1Jid, jvb2Jid, jvb3Jid};
+            BridgeSelector selector, MockSubscriptionOpSetImpl mockSubscriptions)
+            throws InterruptedException {
+        Jid[] nodes = new Jid[]{jvb1Jid, jvb2Jid, jvb3Jid};
         Bridge[] states
-            = new Bridge[] {jvb1, jvb2, jvb3};
+                = new Bridge[]{jvb1, jvb2, jvb3};
 
         String[] pubSubNodes
-            = new String[] { jvb1PubSubNode, jvb2PubSubNode, jvb3PubSubNode};
+                = new String[]{jvb1PubSubNode, jvb2PubSubNode, jvb3PubSubNode};
 
         // Will restore failure status after 100 ms
         selector.setFailureResetThreshold(100);
 
-        for (int testNode = 0; testNode < nodes.length; testNode++)
-        {
-            for (int idx=0; idx < nodes.length; idx++)
-            {
+        for (int testNode = 0; testNode < nodes.length; testNode++) {
+            for (int idx = 0; idx < nodes.length; idx++) {
                 boolean isTestNode = idx == testNode;
 
                 // Test node has 0 load...
                 mockSubscriptions.fireSubscriptionNotification(
-                    pubSubNodes[idx],
-                    "randomItemId",
-                    createJvbStats(isTestNode ? 0 : 100));
+                        pubSubNodes[idx],
+                        "randomItemId",
+                        createJvbStats(isTestNode ? 0 : 100));
 
                 // ... and is not operational
                 states[idx].setIsOperational(!isTestNode);
@@ -291,36 +282,33 @@ public class BridgeSelectorTest
         }
 
         selector.setFailureResetThreshold(
-            BridgeSelector.DEFAULT_FAILURE_RESET_THRESHOLD);
+                BridgeSelector.DEFAULT_FAILURE_RESET_THRESHOLD);
     }
 
-    private ColibriStatsExtension createJvbStats(int bitrate)
-    {
+    private ColibriStatsExtension createJvbStats(int bitrate) {
         return createJvbStats(bitrate, null);
     }
 
-    private ColibriStatsExtension createJvbStats(int bitrate, String region)
-    {
+    private ColibriStatsExtension createJvbStats(int bitrate, String region) {
         ColibriStatsExtension statsExtension = new ColibriStatsExtension();
 
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                BITRATE_DOWNLOAD, bitrate));
+                new ColibriStatsExtension.Stat(
+                        BITRATE_DOWNLOAD, bitrate));
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                BITRATE_UPLOAD, bitrate));
+                new ColibriStatsExtension.Stat(
+                        BITRATE_UPLOAD, bitrate));
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                PACKET_RATE_DOWNLOAD, bitrate));
+                new ColibriStatsExtension.Stat(
+                        PACKET_RATE_DOWNLOAD, bitrate));
         statsExtension.addStat(
-            new ColibriStatsExtension.Stat(
-                PACKET_RATE_UPLOAD, bitrate));
+                new ColibriStatsExtension.Stat(
+                        PACKET_RATE_UPLOAD, bitrate));
 
-        if (region != null)
-        {
+        if (region != null) {
             statsExtension.addStat(
                     new ColibriStatsExtension.Stat(
-                           REGION, region));
+                            REGION, region));
             statsExtension.addStat(
                     new ColibriStatsExtension.Stat(
                             RELAY_ID, region));
@@ -331,8 +319,7 @@ public class BridgeSelectorTest
 
     @Test
     public void testRegionBasedSelection()
-            throws Exception
-    {
+            throws Exception {
         JitsiMeetServices meetServices
                 = ServiceUtils.getService(osgi.bc, JitsiMeetServices.class);
         BridgeSelector selector = meetServices.getBridgeSelector();
@@ -354,7 +341,6 @@ public class BridgeSelectorTest
                 = new RegionBasedBridgeSelectionStrategy();
         strategy.setLocalRegion(localBridge.getRegion());
 
-
         List<Bridge> allBridges
                 = Arrays.asList(bridge1, bridge2, bridge3);
         Map<Bridge, Integer> conferenceBridges = new HashMap<>();
@@ -362,18 +348,18 @@ public class BridgeSelectorTest
         // Initial selection should select a bridge in the participant's region
         // if possible
         assertEquals(
-            bridge1,
-            strategy.select(allBridges, conferenceBridges, region1, true));
+                bridge1,
+                strategy.select(allBridges, conferenceBridges, region1, true));
         assertEquals(
-            bridge2,
-            strategy.select(allBridges, conferenceBridges, region2, true));
+                bridge2,
+                strategy.select(allBridges, conferenceBridges, region2, true));
         // Or a bridge in the local region otherwise
         assertEquals(
-            localBridge,
-            strategy.select(allBridges, conferenceBridges, "invalid region", true));
+                localBridge,
+                strategy.select(allBridges, conferenceBridges, "invalid region", true));
         assertEquals(
-            localBridge,
-            strategy.select(allBridges, conferenceBridges, null, true));
+                localBridge,
+                strategy.select(allBridges, conferenceBridges, null, true));
 
         conferenceBridges.put(bridge3, 1);
         assertEquals(
@@ -403,4 +389,3 @@ public class BridgeSelectorTest
                 strategy.select(allBridges, conferenceBridges, "invalid region", true));
     }
 }
-

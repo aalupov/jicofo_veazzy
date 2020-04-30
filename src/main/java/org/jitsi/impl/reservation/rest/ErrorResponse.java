@@ -22,8 +22,8 @@ package org.jitsi.impl.reservation.rest;
  *
  * @author Pawel Domas
  */
-public class ErrorResponse
-{
+public class ErrorResponse {
+
     /**
      * Error name returned by the reservation system.
      */
@@ -43,37 +43,35 @@ public class ErrorResponse
 
     /**
      * Sets error name returned by the reservation system.
+     *
      * @param error error <tt>String</tt> returned in reservation system
-     *              response.
+     * response.
      */
-    public void setError(String error)
-    {
+    public void setError(String error) {
         this.error = error;
     }
 
     /**
      * Returns error name contained in reservation system response.
      */
-    public String getError()
-    {
+    public String getError() {
         return error;
     }
 
     /**
      * Sets given <tt>String</tt> as error message of this response.
-     * @param message error message string returned by the reservation system
-     *                to be set on this instance.
+     *
+     * @param message error message string returned by the reservation system to
+     * be set on this instance.
      */
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 
     /**
      * Returns error message contained in reservation system response.
      */
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
@@ -82,10 +80,9 @@ public class ErrorResponse
      * POST request.
      *
      * @param conflictId conflicting conference identifier to set on this
-     *                   instance.
+     * instance.
      */
-    public void setConflictId(Number conflictId)
-    {
+    public void setConflictId(Number conflictId) {
         this.conflictId = conflictId;
     }
 
@@ -93,8 +90,7 @@ public class ErrorResponse
      * Returns the ID of conflicting conference supplied in reservation system
      * response 409 to Conference POST request.
      */
-    public Number getConflictId()
-    {
+    public Number getConflictId() {
         return conflictId;
     }
 
@@ -102,8 +98,7 @@ public class ErrorResponse
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ErrorResponse[e: " + error + ", m: " + message
                 + ", conflict: " + conflictId + "]@" + hashCode();
     }

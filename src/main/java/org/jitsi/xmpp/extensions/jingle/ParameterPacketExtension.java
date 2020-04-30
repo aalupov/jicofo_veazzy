@@ -22,8 +22,8 @@ import org.jitsi.xmpp.extensions.*;
  *
  * @author Emil Ivov
  */
-public class ParameterPacketExtension extends AbstractPacketExtension
-{
+public class ParameterPacketExtension extends AbstractPacketExtension {
+
     /**
      * The name of the "parameter" element.
      */
@@ -44,8 +44,7 @@ public class ParameterPacketExtension extends AbstractPacketExtension
     /**
      * Creates a new {@link ParameterPacketExtension} instance.
      */
-    public ParameterPacketExtension()
-    {
+    public ParameterPacketExtension() {
         super(null, ELEMENT_NAME);
     }
 
@@ -53,8 +52,7 @@ public class ParameterPacketExtension extends AbstractPacketExtension
      * Creates a new {@link ParameterPacketExtension} instance and sets the
      * given name and value.
      */
-    public ParameterPacketExtension(String name, String value)
-    {
+    public ParameterPacketExtension(String name, String value) {
         super(null, ELEMENT_NAME);
 
         setName(name);
@@ -66,8 +64,7 @@ public class ParameterPacketExtension extends AbstractPacketExtension
      *
      * @param name the name of the format parameter we are representing here.
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         super.setAttribute(NAME_ATTR_NAME, name);
     }
 
@@ -76,8 +73,7 @@ public class ParameterPacketExtension extends AbstractPacketExtension
      *
      * @return the name of the format parameter we are representing here.
      */
-    public String getName()
-    {
+    public String getName() {
         return super.getAttributeAsString(NAME_ATTR_NAME);
     }
 
@@ -86,8 +82,7 @@ public class ParameterPacketExtension extends AbstractPacketExtension
      *
      * @param value the value of the format parameter we are representing here.
      */
-    public void setValue(String value)
-    {
+    public void setValue(String value) {
         super.setAttribute(VALUE_ATTR_NAME, value);
     }
 
@@ -96,8 +91,7 @@ public class ParameterPacketExtension extends AbstractPacketExtension
      *
      * @return the value of the format parameter we are representing here.
      */
-    public String getValue()
-    {
+    public String getValue() {
         return super.getAttributeAsString(VALUE_ATTR_NAME);
     }
 }

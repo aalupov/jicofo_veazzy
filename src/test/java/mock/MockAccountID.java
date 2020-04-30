@@ -27,25 +27,23 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockAccountID
-    extends AccountID
-{
+        extends AccountID {
+
     /**
      * Creates an account id for the specified provider userid and
-     * accountProperties.
-     * If account uid exists in account properties, we are loading the account
-     * and so load its value from there, prevent changing account uid
-     * when server changed (serviceName has changed).
+     * accountProperties. If account uid exists in account properties, we are
+     * loading the account and so load its value from there, prevent changing
+     * account uid when server changed (serviceName has changed).
      *
-     * @param userID            a String that uniquely identifies the user.
+     * @param userID a String that uniquely identifies the user.
      * @param accountProperties a Map containing any other protocol and
-     *                          implementation specific account initialization properties
-     * @param protocolName      the name of the protocol implemented by the provider
-     *                          that this id is meant for.
+     * implementation specific account initialization properties
+     * @param protocolName the name of the protocol implemented by the provider
+     * that this id is meant for.
      */
     public MockAccountID(String userID,
-                            Map<String, String> accountProperties,
-                            String protocolName)
-    {
+            Map<String, String> accountProperties,
+            String protocolName) {
         super(userID, accountProperties, protocolName, "mock");
     }
 }

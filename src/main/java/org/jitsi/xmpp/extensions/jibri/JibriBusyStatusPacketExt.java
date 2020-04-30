@@ -25,13 +25,13 @@ import org.jivesoftware.smack.provider.ProviderManager;
  * One of:
  * <li>idle</li> - the instance is idle and can be used for recording
  * <li>busy</li> - the instance is currently recording or doing something very
- *                 important and should not be disturbed
+ * important and should not be disturbed
  *
  *
  */
 public class JibriBusyStatusPacketExt
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -47,13 +47,11 @@ public class JibriBusyStatusPacketExt
     /**
      * Creates new instance of <tt>VideoMutedExtension</tt>.
      */
-    public JibriBusyStatusPacketExt()
-    {
+    public JibriBusyStatusPacketExt() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
-    static public void registerExtensionProvider()
-    {
+    static public void registerExtensionProvider() {
         ProviderManager.addExtensionProvider(
                 ELEMENT_NAME,
                 NAMESPACE,
@@ -61,32 +59,27 @@ public class JibriBusyStatusPacketExt
         );
     }
 
-    public BusyStatus getStatus()
-    {
+    public BusyStatus getStatus() {
         return BusyStatus.parse(getAttributeAsString(STATUS_ATTRIBUTE));
     }
 
-    public void setStatus(BusyStatus status)
-    {
+    public void setStatus(BusyStatus status) {
         setAttribute(STATUS_ATTRIBUTE, status);
     }
 
-    public enum BusyStatus
-    {
+    public enum BusyStatus {
         IDLE("idle"),
         BUSY("busy"),
         UNDEFINED("undefined");
 
         private String name;
 
-        BusyStatus(String name)
-        {
+        BusyStatus(String name) {
             this.name = name;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name;
         }
 
@@ -95,21 +88,17 @@ public class JibriBusyStatusPacketExt
          *
          * @param status the string representation of <tt>Status</tt>.
          *
-         * @return <tt>Status</tt> value for given string or
-         *         {@link #UNDEFINED} if given string does not
-         *         reflect any of valid values.
+         * @return <tt>Status</tt> value for given string or {@link #UNDEFINED}
+         * if given string does not reflect any of valid values.
          */
-        public static BusyStatus parse(String status)
-        {
-            if (StringUtils.isEmpty(status))
+        public static BusyStatus parse(String status) {
+            if (StringUtils.isEmpty(status)) {
                 return UNDEFINED;
-
-            try
-            {
-                return BusyStatus.valueOf(status.toUpperCase());
             }
-            catch(IllegalArgumentException e)
-            {
+
+            try {
+                return BusyStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
                 return UNDEFINED;
             }
         }

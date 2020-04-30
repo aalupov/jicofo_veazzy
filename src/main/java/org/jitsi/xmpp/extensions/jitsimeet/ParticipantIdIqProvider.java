@@ -27,17 +27,16 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class ParticipantIdIqProvider
-    extends IQProvider<ParticipantIdIq>
-{
+        extends IQProvider<ParticipantIdIq> {
+
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerParticipantIdIqProvider()
-    {
+    public static void registerParticipantIdIqProvider() {
         ProviderManager.addIQProvider(
-        	ParticipantIdIq.ELEMENT_NAME,
-        	ParticipantIdIq.NAMESPACE,
-            new ParticipantIdIqProvider());
+                ParticipantIdIq.ELEMENT_NAME,
+                ParticipantIdIq.NAMESPACE,
+                new ParticipantIdIqProvider());
     }
 
     /**
@@ -45,13 +44,11 @@ public class ParticipantIdIqProvider
      */
     @Override
     public ParticipantIdIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!ParticipantIdIq.NAMESPACE.equals(namespace))
-        {
+        if (!ParticipantIdIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
@@ -59,57 +56,46 @@ public class ParticipantIdIqProvider
 
         ParticipantIdIq iq;
 
-        if (ParticipantIdIq.ELEMENT_NAME.equals(rootElement))
-        {
+        if (ParticipantIdIq.ELEMENT_NAME.equals(rootElement)) {
             iq = new ParticipantIdIq();
             String jidStr = parser.getAttributeValue("", ParticipantIdIq.JID_ATTR_NAME);
-            if (jidStr != null)
-            {
+            if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                = parser.getAttributeValue("", ParticipantIdIq.ACTOR_ATTR_NAME);
-            if (actorStr != null)
-            {
+                    = parser.getAttributeValue("", ParticipantIdIq.ACTOR_ATTR_NAME);
+            if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
-            }            
+            }
 
             String withMeStr
-                = parser.getAttributeValue("", ParticipantIdIq.WITH_ME_ATTR_NAME);
-            if (withMeStr != null)
-            {
+                    = parser.getAttributeValue("", ParticipantIdIq.WITH_ME_ATTR_NAME);
+            if (withMeStr != null) {
                 iq.setWithMe(Boolean.valueOf(withMeStr));
             }
-            
-        }
-        else
-        {
+
+        } else {
             return null;
         }
 
         boolean done = false;
 
-        while (!done)
-        {
-            switch (parser.next())
-            {
-                case XmlPullParser.END_TAG:
-                {
+        while (!done) {
+            switch (parser.next()) {
+                case XmlPullParser.END_TAG: {
                     String name = parser.getName();
 
-                    if (rootElement.equals(name))
-                    {
+                    if (rootElement.equals(name)) {
                         done = true;
                     }
                     break;
                 }
 
-                case XmlPullParser.TEXT:
-                {
-                	String participantId = parser.getText();
+                case XmlPullParser.TEXT: {
+                    String participantId = parser.getText();
                     iq.setParticipantId(participantId);
                     break;
                 }

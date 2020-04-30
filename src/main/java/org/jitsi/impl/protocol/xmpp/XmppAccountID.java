@@ -24,16 +24,15 @@ import java.util.*;
 /**
  * Account ID used by Jitsi Meet focus XMPP accounts.
  *
- * FIXME: move code related to account properties initialization here,
- * protocol provider or factory. Eventually remove this class.
+ * FIXME: move code related to account properties initialization here, protocol
+ * provider or factory. Eventually remove this class.
  *
  * @author Pawel Domas
  */
 public class XmppAccountID
-    extends JabberAccountID
-{
-    public XmppAccountID(String id, Map<String, String> accountProperties)
-    {
+        extends JabberAccountID {
+
+    public XmppAccountID(String id, Map<String, String> accountProperties) {
         super(id, accountProperties);
     }
 }

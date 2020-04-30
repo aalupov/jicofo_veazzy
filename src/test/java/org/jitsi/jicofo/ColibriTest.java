@@ -45,42 +45,39 @@ import static org.junit.Assert.assertEquals;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class ColibriTest
-{
+public class ColibriTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
     @Test
     public void testChannelAllocation()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testroom@conference.pawel.jitsi.net");
         String serverName = "test-server";
         JitsiMeetConfig config = new JitsiMeetConfig(new HashMap<>());
 
         TestConference testConference
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
         MockVideobridge mockBridge = testConference.getMockVideoBridge();
 
         MockProtocolProvider pps
-            = testConference.getFocusProtocolProvider();
+                = testConference.getFocusProtocolProvider();
 
         OperationSetColibriConference colibriTool
-            = pps.getOperationSet(OperationSetColibriConference.class);
+                = pps.getOperationSet(OperationSetColibriConference.class);
 
         ColibriConference colibriConf = colibriTool.createNewConference();
 
@@ -91,15 +88,15 @@ public class ColibriTest
         List<ContentPacketExtension> contents = new ArrayList<>();
 
         JingleOfferFactory jingleOfferFactory
-            = FocusBundleActivator.getJingleOfferFactory();
+                = FocusBundleActivator.getJingleOfferFactory();
         ContentPacketExtension audio
-            = jingleOfferFactory.createAudioContent(
-                    false, true, false, false, false);
+                = jingleOfferFactory.createAudioContent(
+                        false, true, false, false, false);
         ContentPacketExtension video
-            = jingleOfferFactory.createVideoContent(
-                    false, true, false, false, false, -1, -1);
+                = jingleOfferFactory.createVideoContent(
+                        false, true, false, false, false, -1, -1);
         ContentPacketExtension data
-            = jingleOfferFactory.createDataContent(false, true);
+                = jingleOfferFactory.createDataContent(false, true);
 
         contents.add(audio);
         contents.add(video);
@@ -111,34 +108,34 @@ public class ColibriTest
         String peer2 = "endpoint2";
 
         ColibriConferenceIQ peer1Channels
-            = colibriConf.createColibriChannels(
-                peer1UseBundle, peer1, null, true, contents);
+                = colibriConf.createColibriChannels(
+                        peer1UseBundle, peer1, null, true, contents);
 
-        assertEquals(3 , mockBridge.getChannelsCount());
+        assertEquals(3, mockBridge.getChannelsCount());
 
         ColibriConferenceIQ peer2Channels
-            = colibriConf.createColibriChannels(
-                peer2UseBundle, peer2, null, true, contents);
+                = colibriConf.createColibriChannels(
+                        peer2UseBundle, peer2, null, true, contents);
 
-        assertEquals(6 , mockBridge.getChannelsCount());
+        assertEquals(6, mockBridge.getChannelsCount());
 
         assertEquals("Peer 1 should have 3 channels allocated",
-                     3, countChannels(peer1Channels));
+                3, countChannels(peer1Channels));
         assertEquals("Peer 2 should have 3 channels allocated",
-                     3, countChannels(peer2Channels));
+                3, countChannels(peer2Channels));
 
         assertEquals("Peer 1 should have single bundle allocated !",
-                     1, peer1Channels.getChannelBundles().size());
+                1, peer1Channels.getChannelBundles().size());
         assertEquals("Peer 2 should have single bundle allocated !",
-                     1, peer2Channels.getChannelBundles().size());
+                1, peer2Channels.getChannelBundles().size());
         assertEquals("Peer 1 should have single endpoint allocated !",
-            1, peer1Channels.getEndpoints().size());
+                1, peer1Channels.getEndpoints().size());
         assertEquals("Peer 2 should have single endpoint allocated !",
-            1, peer2Channels.getEndpoints().size());
+                1, peer2Channels.getEndpoints().size());
         assertEquals("Peer 1 have wrong endpoint id allocated !",
-            peer1, peer1Channels.getEndpoints().get(0).getId());
+                peer1, peer1Channels.getEndpoints().get(0).getId());
         assertEquals("Peer 2 have wrong endpoint id allocated !",
-            peer2, peer2Channels.getEndpoints().get(0).getId());
+                peer2, peer2Channels.getEndpoints().get(0).getId());
 
         colibriConf.expireChannels(peer2Channels);
 
@@ -152,16 +149,14 @@ public class ColibriTest
         //FIXME: fix unreliable sleep call
         Thread.sleep(1000);
 
-        assertEquals(0 , mockBridge.getChannelsCount());
+        assertEquals(0, mockBridge.getChannelsCount());
 
         testConference.stop();
     }
 
-    private static int countChannels(ColibriConferenceIQ conferenceIq)
-    {
+    private static int countChannels(ColibriConferenceIQ conferenceIq) {
         int count = 0;
-        for (ColibriConferenceIQ.Content content : conferenceIq.getContents())
-        {
+        for (ColibriConferenceIQ.Content content : conferenceIq.getContents()) {
             count += content.getChannelCount();
             count += content.getSctpConnections().size();
         }

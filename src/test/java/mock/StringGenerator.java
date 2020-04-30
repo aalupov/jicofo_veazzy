@@ -24,12 +24,11 @@ import java.security.*;
  *
  * @author Pawel Domas
  */
-public class StringGenerator
-{
+public class StringGenerator {
+
     static private SecureRandom random = new SecureRandom();
 
-    static public String nextRandomStr()
-    {
+    static public String nextRandomStr() {
         return new BigInteger(130, random).toString(32);
     }
 }

@@ -27,27 +27,24 @@ import org.xmlpull.v1.*;
  * @see SctpMapExtension
  */
 public class SctpMapExtensionProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public ExtensionElement parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         SctpMapExtension result = new SctpMapExtension();
 
         if (parser.getName().equals(SctpMapExtension.ELEMENT_NAME)
-            && parser.getNamespace().equals(SctpMapExtension.NAMESPACE))
-        {
+                && parser.getNamespace().equals(SctpMapExtension.NAMESPACE)) {
             result.setPort(Integer.parseInt(parser.getAttributeValue(null,
-                SctpMapExtension.PORT_ATTR_NAME)));
+                    SctpMapExtension.PORT_ATTR_NAME)));
             result.setProtocol(parser.getAttributeValue(null,
-                SctpMapExtension.PROTOCOL_ATTR_NAME));
+                    SctpMapExtension.PROTOCOL_ATTR_NAME));
             result.setStreams(Integer.parseInt(parser.getAttributeValue(null,
-                SctpMapExtension.STREAMS_ATTR_NAME)));
+                    SctpMapExtension.STREAMS_ATTR_NAME)));
         }
 
         return result;

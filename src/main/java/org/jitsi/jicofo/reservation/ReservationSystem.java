@@ -25,16 +25,17 @@ import org.jxmpp.jid.*;
  * FIXME: work in progress
  *
  * Interface for reservation system implementation. If room does not exist
- * {@link FocusComponent} will call {@link #createConference(String, EntityBareJid)}
- * method in order to verify that given user is allowed to create the room.
+ * {@link FocusComponent} will call
+ * {@link #createConference(String, EntityBareJid)} method in order to verify
+ * that given user is allowed to create the room.
  * <tt>ReservationSystem</tt> itself is responsible for destroying conference
  * when it should expire by calling the method
  * {@link FocusManager#destroyConference(EntityBareJid, String)}.
  *
  * @author Pawel Domas
  */
-public interface ReservationSystem
-{
+public interface ReservationSystem {
+
     /**
      * Room created successfully.
      */
@@ -72,8 +73,8 @@ public interface ReservationSystem
     /**
      * Structure for returning result details.
      */
-    class Result
-    {
+    class Result {
+
         /**
          * One of {@link ReservationSystem} RESULT_... constants.
          */
@@ -86,23 +87,23 @@ public interface ReservationSystem
 
         /**
          * Creates result without error message.
+         *
          * @param resultCode one of {@link ReservationSystem} RESULT_...
-         *                   constants.
+         * constants.
          */
-        public Result(int resultCode)
-        {
+        public Result(int resultCode) {
             this(resultCode, null);
         }
 
         /**
          * Creates result structure with error code and message.
+         *
          * @param errorCode one of {@link ReservationSystem} RESULT_...
-         *                  constants.
+         * constants.
          * @param errorMessage error message which will be displayed to the
-         *                     user.
+         * user.
          */
-        public Result(int errorCode, String errorMessage)
-        {
+        public Result(int errorCode, String errorMessage) {
             this.code = errorCode;
             this.errorMessage = errorMessage;
         }
@@ -111,25 +112,22 @@ public interface ReservationSystem
          * Returns reservation system result code. One of
          * {@link ReservationSystem} RESULT_... constants.
          */
-        public int getCode()
-        {
+        public int getCode() {
             return code;
         }
 
         /**
-         * Error message string(if any) which will be displayed to the user
-         * in case of error result code.
+         * Error message string(if any) which will be displayed to the user in
+         * case of error result code.
          */
-        public String getErrorMessage()
-        {
+        public String getErrorMessage() {
             return errorMessage;
         }
 
         @Override
-        public String toString()
-        {
-            return "Result[c=" + code + ", msg=" + errorMessage + "]@" +
-                    hashCode();
+        public String toString() {
+            return "Result[c=" + code + ", msg=" + errorMessage + "]@"
+                    + hashCode();
         }
     }
 }

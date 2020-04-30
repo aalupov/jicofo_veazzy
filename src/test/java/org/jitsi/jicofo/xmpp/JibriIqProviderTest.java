@@ -35,24 +35,22 @@ import static org.junit.Assert.*;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class JibriIqProviderTest
-{
+public class JibriIqProviderTest {
+
     @Test
     public void testParseIQ()
-        throws Exception
-    {
+            throws Exception {
         JibriIqProvider provider = new JibriIqProvider();
 
         // JibriIq
-        String iqXml =
-            "<iq to='t' from='f' type='set'>" +
-                "<jibri xmlns='http://jitsi.org/protocol/jibri'" +
-                "   status='off' action='stop' failure_reason='error'" +
-                "   should_retry='true'" +
-                "   session_id='abcd'" +
-                "/>" +
-
-                "</iq>";
+        String iqXml
+                = "<iq to='t' from='f' type='set'>"
+                + "<jibri xmlns='http://jitsi.org/protocol/jibri'"
+                + "   status='off' action='stop' failure_reason='error'"
+                + "   should_retry='true'"
+                + "   session_id='abcd'"
+                + "/>"
+                + "</iq>";
 
         JibriIq jibriIq = IQUtils.parse(iqXml, provider);
 

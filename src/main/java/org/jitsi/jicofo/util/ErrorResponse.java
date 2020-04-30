@@ -5,8 +5,8 @@ import org.jivesoftware.smack.packet.*;
 /**
  * Utility for Error IQ.
  */
-public class ErrorResponse
-{
+public class ErrorResponse {
+
     /**
      * A convenience method for creating error responses.
      *
@@ -17,8 +17,7 @@ public class ErrorResponse
      * @return ErrorIQ
      */
     static public ErrorIQ create(
-            IQ request, XMPPError.Condition condition, String text)
-    {
+            IQ request, XMPPError.Condition condition, String text) {
         return IQ.createErrorResponse(
                 request,
                 XMPPError.from(condition, text));

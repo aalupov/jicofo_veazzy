@@ -23,16 +23,16 @@ import org.jivesoftware.smack.packet.*;
 import org.jxmpp.jid.*;
 
 /**
- * XMPP domain authentication authority that authorizes user who are logged
- * in on specified domain.
+ * XMPP domain authentication authority that authorizes user who are logged in
+ * on specified domain.
  *
  * FIXME move to separate package
  *
  * @author Pawel Domas
  */
 public class XMPPDomainAuthAuthority
-    extends AbstractAuthAuthority
-{
+        extends AbstractAuthAuthority {
+
     /**
      * Trusted domain for which users are considered authenticated.
      */
@@ -46,55 +46,48 @@ public class XMPPDomainAuthAuthority
      * @param authenticationLifetime specifies how long authentication sessions
      * will be stored in Jicofo's memory. Interval in milliseconds.
      * @param domain a string with XMPP domain name for which users will be
-     *               considered authenticated.
+     * considered authenticated.
      */
-    public XMPPDomainAuthAuthority(boolean       disableAutoLogin,
-                                   long          authenticationLifetime,
-                                   DomainBareJid domain)
-    {
+    public XMPPDomainAuthAuthority(boolean disableAutoLogin,
+            long authenticationLifetime,
+            DomainBareJid domain) {
         super(disableAutoLogin, authenticationLifetime);
 
         this.domain = domain;
     }
 
-    private boolean verifyJid(Jid fullJid)
-    {
+    private boolean verifyJid(Jid fullJid) {
         return fullJid.asDomainBareJid().equals(domain);
     }
 
     @Override
-    protected IQ processAuthLocked(ConferenceIq query, ConferenceIq response)
-    {
+    protected IQ processAuthLocked(ConferenceIq query, ConferenceIq response) {
         Jid peerJid = query.getFrom();
         String sessionId = query.getSessionId();
         AuthenticationSession session = getSession(sessionId);
 
         // Check for invalid session
         IQ error = verifySession(query);
-        if (error != null)
-        {
+        if (error != null) {
             return error;
         }
 
         // Create new session if JID is valid
-        if (session == null && verifyJid(peerJid))
-        {
+        if (session == null && verifyJid(peerJid)) {
             // Create new session
             BareJid bareJid = peerJid.asBareJid();
             String machineUID = query.getMachineUID();
-            if (StringUtils.isNullOrEmpty(machineUID))
-            {
+            if (StringUtils.isNullOrEmpty(machineUID)) {
                 return ErrorFactory.createNotAcceptableError(query,
                         "Missing mandatory attribute '"
-                                + ConferenceIq.MACHINE_UID_ATTR_NAME + "'");
+                        + ConferenceIq.MACHINE_UID_ATTR_NAME + "'");
             }
             session = createNewSession(
-                machineUID, bareJid.toString(), query.getRoom(), null);
+                    machineUID, bareJid.toString(), query.getRoom(), null);
         }
 
         // Authenticate JID with session(if it exists)
-        if (session != null)
-        {
+        if (session != null) {
             authenticateJidWithSession(session, peerJid, response);
         }
 
@@ -106,20 +99,17 @@ public class XMPPDomainAuthAuthority
             String machineUID,
             EntityFullJid peerFullJid,
             EntityBareJid roomName,
-            boolean popup)
-    {
+            boolean popup) {
         return "./" + roomName.getLocalpartOrThrow() + "?login=true";
     }
 
     @Override
-    public boolean isExternal()
-    {
+    public boolean isExternal() {
         return false;
     }
 
     @Override
-    protected String createLogoutUrl(String sessionId)
-    {
+    protected String createLogoutUrl(String sessionId) {
         return null;
     }
 }

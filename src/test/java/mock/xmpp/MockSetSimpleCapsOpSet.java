@@ -26,27 +26,22 @@ import java.util.*;
  *
  */
 public class MockSetSimpleCapsOpSet
-    extends MockCapsNode
-    implements OperationSetSimpleCaps
-{
+        extends MockCapsNode
+        implements OperationSetSimpleCaps {
+
     private long discoveryDelay = 0;
 
-    public MockSetSimpleCapsOpSet(Jid domain)
-    {
+    public MockSetSimpleCapsOpSet(Jid domain) {
         super(domain, new String[]{});
     }
 
-    public void addDiscoveryDelay(long millis)
-    {
+    public void addDiscoveryDelay(long millis) {
         this.discoveryDelay = millis;
     }
 
-    private MockCapsNode findFirstLevel(Jid name)
-    {
-        for (MockCapsNode node : childNodes)
-        {
-            if (node.getNodeName().equals(name))
-            {
+    private MockCapsNode findFirstLevel(Jid name) {
+        for (MockCapsNode node : childNodes) {
+            if (node.getNodeName().equals(name)) {
                 return node;
             }
         }
@@ -55,23 +50,17 @@ public class MockSetSimpleCapsOpSet
     }
 
     @Override
-    public Set<Jid> getItems(Jid nodeName)
-    {
+    public Set<Jid> getItems(Jid nodeName) {
         Set<Jid> result = new HashSet<>(childNodes.size());
 
         MockCapsNode node;
-        if (nodeName.toString().endsWith(getNodeName().toString()))
-        {
+        if (nodeName.toString().endsWith(getNodeName().toString())) {
             node = this;
-        }
-        else
-        {
+        } else {
             node = findFirstLevel(nodeName);
         }
-        if (node != null)
-        {
-            for (MockCapsNode child : node.getChildNodes())
-            {
+        if (node != null) {
+            for (MockCapsNode child : node.getChildNodes()) {
                 result.add(child.getNodeName());
             }
         }
@@ -80,29 +69,23 @@ public class MockSetSimpleCapsOpSet
     }
 
     @Override
-    public boolean hasFeatureSupport(Jid contactAddress, String[] features)
-    {
+    public boolean hasFeatureSupport(Jid contactAddress, String[] features) {
         MockCapsNode node = findChild(contactAddress);
-        if (node == null)
-        {
+        if (node == null) {
             return false;
         }
 
         String[] nodeFeatures = node.getFeatures();
 
-        for (String feature : features)
-        {
+        for (String feature : features) {
             boolean found = false;
-            for (String toCheck : nodeFeatures)
-            {
-                if (toCheck.equals(feature))
-                {
+            for (String toCheck : nodeFeatures) {
+                if (toCheck.equals(feature)) {
                     found = true;
                     break;
                 }
             }
-            if (!found)
-            {
+            if (!found) {
                 return false;
             }
         }
@@ -110,23 +93,17 @@ public class MockSetSimpleCapsOpSet
     }
 
     @Override
-    public List<String> getFeatures(Jid node)
-    {
-        if (discoveryDelay > 0)
-        {
-            try
-            {
+    public List<String> getFeatures(Jid node) {
+        if (discoveryDelay > 0) {
+            try {
                 Thread.sleep(discoveryDelay);
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
 
         MockCapsNode capsNode = findChild(node);
-        if (capsNode == null)
-        {
+        if (capsNode == null) {
             return null;
         }
 
@@ -135,8 +112,7 @@ public class MockSetSimpleCapsOpSet
 
     //@Override
     public boolean hasFeatureSupport(String Jid, String subnode,
-                                     String[] features)
-    {
+            String[] features) {
         return false;
     }
 }

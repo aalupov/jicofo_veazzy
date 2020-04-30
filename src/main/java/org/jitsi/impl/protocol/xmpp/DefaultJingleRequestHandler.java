@@ -31,18 +31,17 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class DefaultJingleRequestHandler
-    implements JingleRequestHandler
-{
+        implements JingleRequestHandler {
+
     /**
      * The logger used by this instance.
      */
     private final static Logger logger
-        = Logger.getLogger(DefaultJingleRequestHandler.class);
+            = Logger.getLogger(DefaultJingleRequestHandler.class);
 
     @Override
     public XMPPError onAddSource(JingleSession jingleSession,
-                                 List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         logger.warn("Ignored Jingle 'source-add'");
 
         return null;
@@ -50,8 +49,7 @@ public class DefaultJingleRequestHandler
 
     @Override
     public XMPPError onRemoveSource(JingleSession jingleSession,
-                               List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         logger.warn("Ignored Jingle 'source-remove'");
 
         return null;
@@ -59,16 +57,14 @@ public class DefaultJingleRequestHandler
 
     @Override
     public XMPPError onSessionAccept(JingleSession jingleSession,
-                                List<ContentPacketExtension> answer)
-    {
+            List<ContentPacketExtension> answer) {
         logger.warn("Ignored Jingle 'session-accept'");
 
         return null;
     }
 
     @Override
-    public XMPPError onSessionInfo(JingleSession session, JingleIQ iq)
-    {
+    public XMPPError onSessionInfo(JingleSession session, JingleIQ iq) {
         logger.warn("Ignored Jingle 'session-info'");
 
         return null;
@@ -76,8 +72,7 @@ public class DefaultJingleRequestHandler
 
     @Override
     public XMPPError onTransportAccept(JingleSession jingleSession,
-                                  List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         logger.warn("Ignored Jingle 'transport-accept'");
 
         return null;
@@ -85,15 +80,13 @@ public class DefaultJingleRequestHandler
 
     @Override
     public void onTransportInfo(JingleSession jingleSession,
-                                List<ContentPacketExtension> contents)
-    {
+            List<ContentPacketExtension> contents) {
         logger.warn("Ignored Jingle 'transport-info'");
     }
 
     @Override
     public void onTransportReject(JingleSession jingleSession,
-                                  JingleIQ      rejectIQ)
-    {
+            JingleIQ rejectIQ) {
         logger.warn("Ignored Jingle 'transport-reject'");
     }
 }

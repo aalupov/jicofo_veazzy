@@ -32,8 +32,8 @@ import java.util.*;
 
 /**
  * Implements a Jetty <tt>Handler</tt> which is meant to be used as a servlet
- * that runs on "server path" secured by Shibboleth authentication. It should
- * be integrated with Apache through AJP connection which will provide valid
+ * that runs on "server path" secured by Shibboleth authentication. It should be
+ * integrated with Apache through AJP connection which will provide valid
  * Shibboleth attributes to servlet session. Attributes can be used to obtain
  * user's identity provided by Shibboleth SP.
  * <br/><br/>
@@ -43,8 +43,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 class ShibbolethHandler
-    extends AbstractHandler
-{
+        extends AbstractHandler {
+
     /**
      * The logger instance used by Shibboleth handler.
      */
@@ -58,14 +58,12 @@ class ShibbolethHandler
 
     private final ShibbolethAuthAuthority shibbolethAuthAuthority;
 
-
     /**
      * Initializes a new <tt>ShibbolethHandler</tt> instance.
      *
      * @param shibbolethAuthAuthority parent Shibboleth authentication authority
      */
-    public ShibbolethHandler(ShibbolethAuthAuthority shibbolethAuthAuthority)
-    {
+    public ShibbolethHandler(ShibbolethAuthAuthority shibbolethAuthAuthority) {
         this.shibbolethAuthAuthority = shibbolethAuthAuthority;
     }
 
@@ -79,70 +77,60 @@ class ShibbolethHandler
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException,
-            ServletException
-    {
-        if (!target.startsWith(SHIBBOLETH_TARGET))
-        {
+            ServletException {
+        if (!target.startsWith(SHIBBOLETH_TARGET)) {
             return;
         }
 
-        try
-        {
+        try {
             doHandle(target, baseRequest, request, response);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             logger.error(e, e);
 
             response.sendError(
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     /**
      * Method prints to the log debug information about HTTP request
-     * @param request <tt>HttpServletRequest</tt> for which debug info will
-     *                be logged.
+     *
+     * @param request <tt>HttpServletRequest</tt> for which debug info will be
+     * logged.
      */
-    private void dumpRequestInfo(HttpServletRequest request)
-    {
+    private void dumpRequestInfo(HttpServletRequest request) {
         logger.debug(request.getRequestURL());
         logger.debug("REMOTE USER: " + request.getRemoteUser());
         logger.debug("Headers: ");
         Enumeration<String> headers = request.getHeaderNames();
-        while (headers.hasMoreElements())
-        {
+        while (headers.hasMoreElements()) {
             String headerName = headers.nextElement();
             logger.debug(headerName + ": " + request.getHeader(headerName));
         }
         logger.debug("Attributes: ");
         Enumeration<String> attributes = request.getAttributeNames();
-        while (attributes.hasMoreElements())
-        {
+        while (attributes.hasMoreElements()) {
             String attributeName = attributes.nextElement();
             logger.debug(
-                attributeName + ": " + request.getAttribute(attributeName));
+                    attributeName + ": " + request.getAttribute(attributeName));
         }
     }
 
-    private Map<String, String> createPropertiesMap(HttpServletRequest request)
-    {
+    private Map<String, String> createPropertiesMap(HttpServletRequest request) {
         HashMap<String, String> propertiesMap = new HashMap<>();
 
         Enumeration<String> headers = request.getHeaderNames();
-        while (headers.hasMoreElements())
-        {
+        while (headers.hasMoreElements()) {
             String headerName = headers.nextElement();
             propertiesMap.put(headerName, request.getHeader(headerName));
         }
 
         Enumeration<String> attributes = request.getAttributeNames();
-        while (attributes.hasMoreElements())
-        {
+        while (attributes.hasMoreElements()) {
             String attributeName = attributes.nextElement();
             propertiesMap.put(
-                attributeName,
-                String.valueOf(request.getAttribute(attributeName)));
+                    attributeName,
+                    String.valueOf(request.getAttribute(attributeName)));
         }
 
         return propertiesMap;
@@ -151,78 +139,70 @@ class ShibbolethHandler
     /**
      * Retrieves Shibboleth attribute value for given name. In case of
      * Apache+Shibboleth deployment attributes are retrieved with
-     * <tt>getAttribute</tt> while when nginx+Shibboleth is used then they
-     * are passed as request headers.
+     * <tt>getAttribute</tt> while when nginx+Shibboleth is used then they are
+     * passed as request headers.
      *
      * @param request <tt>HttpServletRequest</tt> instance used to obtain
-     *                Shibboleth attributes.
+     * Shibboleth attributes.
      * @param name the name of Shibboleth attribute to get.
      *
      * @return Shibboleth attribute value retrieved from the request or
-     *         <tt>null</tt> if there is no value for given <tt>name</tt>.
+     * <tt>null</tt> if there is no value for given <tt>name</tt>.
      */
-    private String getShibAttr(HttpServletRequest request, String name)
-    {
+    private String getShibAttr(HttpServletRequest request, String name) {
         String value = (String) request.getAttribute(name);
-        if (value == null)
-        {
+        if (value == null) {
             value = request.getHeader(name);
         }
         return value;
     }
 
     private void doHandle(
-        String target,
-        Request baseRequest,
-        HttpServletRequest request,
-        HttpServletResponse response)
-        throws IOException,
-               ServletException
-    {
-        if (logger.isDebugEnabled())
-        {
+            String target,
+            Request baseRequest,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws IOException,
+            ServletException {
+        if (logger.isDebugEnabled()) {
             dumpRequestInfo(request);
         }
 
-        if (request.getParameter("room") == null)
-        {
+        if (request.getParameter("room") == null) {
             response.sendError(
-                HttpServletResponse.SC_BAD_REQUEST,
-                "Missing mandatory parameter 'room'");
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Missing mandatory parameter 'room'");
             return;
         }
 
         EntityBareJid roomName
-            = JidCreate.entityBareFrom(request.getParameter("room"));
+                = JidCreate.entityBareFrom(request.getParameter("room"));
 
         String machineUID = request.getParameter("machineUID");
-        if (StringUtils.isNullOrEmpty(machineUID))
-        {
+        if (StringUtils.isNullOrEmpty(machineUID)) {
             response.sendError(
-                HttpServletResponse.SC_BAD_REQUEST,
-                "Missing mandatory parameter 'machineUID'");
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Missing mandatory parameter 'machineUID'");
             return;
         }
 
         // Check 'mail' attribute which should be set by Shibboleth through AJP
         String email = getShibAttr(request, "mail");
-        if (StringUtils.isNullOrEmpty(email))
-        {
+        if (StringUtils.isNullOrEmpty(email)) {
             response.sendError(
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                "Attribute 'mail' not provided - check server configuration");
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Attribute 'mail' not provided - check server configuration");
             return;
         }
 
         // User authenticated
         String sessionId
-            = shibbolethAuthAuthority.authenticateUser(
-                    machineUID, email, roomName, createPropertiesMap(request));
+                = shibbolethAuthAuthority.authenticateUser(
+                        machineUID, email, roomName, createPropertiesMap(request));
 
-        if (sessionId == null)
-        {
+        if (sessionId == null) {
             response.sendError(
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "Authentication failed");
             return;
         }
@@ -230,8 +210,7 @@ class ShibbolethHandler
         PrintWriter responseWriter = response.getWriter();
 
         String displayName = getShibAttr(request, "displayName");
-        if (displayName == null)
-        {
+        if (displayName == null) {
             displayName = email;
         }
 
@@ -240,43 +219,39 @@ class ShibbolethHandler
 
         responseWriter.println("<html><head><head/><body>");
         responseWriter.println("<h1>Hello " + displayName + "!<h1/>");
-        if (!close)
-        {
+        if (!close) {
             responseWriter.println(
-                "<h2>You should be redirected back to the conference soon..." +
-                        "<h2/>");
+                    "<h2>You should be redirected back to the conference soon..."
+                    + "<h2/>");
         }
 
         // Store session-id script
-        String script =
-            "<script>\n" +
-                "(function() {\n" +
-                " var sessionId = '" + sessionId + "';\n" +
-                " localStorage.setItem('sessionId', sessionId);\n" +
-                " console.info('sessionID :' + sessionId);\n";
+        String script
+                = "<script>\n"
+                + "(function() {\n"
+                + " var sessionId = '" + sessionId + "';\n"
+                + " localStorage.setItem('sessionId', sessionId);\n"
+                + " console.info('sessionID :' + sessionId);\n";
 
-        if (close)
-        {
+        if (close) {
             // Pass session id and close the popup
-            script += "var opener = window.opener;\n"+
-                      "if (opener) {\n"+
-                      "   var res = opener.postMessage(" +
-                      "      { sessionId: sessionId },\n" +
-                      "      window.opener.location.href);\n"+
-                      "   console.info('res: ', res);\n" +
-                      "   window.close();\n"+
-                      "} else {\n" +
-                      "   console.error('No opener !');\n"+
-                      "}\n";
-        }
-        else
-        {
+            script += "var opener = window.opener;\n"
+                    + "if (opener) {\n"
+                    + "   var res = opener.postMessage("
+                    + "      { sessionId: sessionId },\n"
+                    + "      window.opener.location.href);\n"
+                    + "   console.info('res: ', res);\n"
+                    + "   window.close();\n"
+                    + "} else {\n"
+                    + "   console.error('No opener !');\n"
+                    + "}\n";
+        } else {
             // Redirect back to the conference room
-            script += " window.location.href='../" +
-                    roomName.getLocalpart() + "';\n";
+            script += " window.location.href='../"
+                    + roomName.getLocalpart() + "';\n";
         }
 
-        responseWriter.println(script +"})();\n</script>\n");
+        responseWriter.println(script + "})();\n</script>\n");
 
         responseWriter.println("</body></html>");
 

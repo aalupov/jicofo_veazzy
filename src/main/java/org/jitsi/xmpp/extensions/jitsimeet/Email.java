@@ -26,16 +26,15 @@ import org.xmlpull.v1.*;
  * @author Damian Minkov
  */
 public class Email
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     public static final String NAMESPACE = "jabber:client";
 
     public static final String ELEMENT_NAME = "email";
 
     private String address = null;
 
-    public Email(String address)
-    {
+    public Email(String address) {
         this.address = address;
     }
 
@@ -44,8 +43,7 @@ public class Email
      *
      * @return the email address
      */
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
@@ -54,55 +52,52 @@ public class Email
      *
      * @param address the address to set
      */
-    public void setAddress(String address)
-    {
+    public void setAddress(String address) {
         this.address = address;
     }
 
     /**
      * Element name.
+     *
      * @return element name for this extension.
      */
-    public String getElementName()
-    {
+    public String getElementName() {
         return ELEMENT_NAME;
     }
 
     /**
      * Returns the namespace for this extension.
+     *
      * @return the namespace for this extension.
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return NAMESPACE;
     }
 
     /**
      * Returns xml representation of this extension.
+     *
      * @return xml representation of this extension.
      */
-    public String toXML()
-    {
+    public String toXML() {
         return new XmlStringBuilder()
-            .element(ELEMENT_NAME, getAddress())
-            .toString();
+                .element(ELEMENT_NAME, getAddress())
+                .toString();
     }
 
     /**
      * The provider.
      */
     public static class Provider
-        extends ExtensionElementProvider<Email>
-    {
+            extends ExtensionElementProvider<Email> {
+
         @Override
-        public Email parse(XmlPullParser parser, int depth) throws Exception
-        {
+        public Email parse(XmlPullParser parser, int depth) throws Exception {
             parser.next();
             final String address = parser.getText();
 
             // Advance to end of extension.
-            while(parser.getEventType() != XmlPullParser.END_TAG)
-            {
+            while (parser.getEventType() != XmlPullParser.END_TAG) {
                 parser.next();
             }
 

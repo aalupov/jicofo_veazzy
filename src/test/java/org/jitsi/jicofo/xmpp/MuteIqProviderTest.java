@@ -38,26 +38,24 @@ import static org.junit.Assert.assertEquals;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class MuteIqProviderTest
-{
+public class MuteIqProviderTest {
 
-@Test
+    @Test
     public void testParseIq()
-        throws Exception
-    {
-        String iqXml =
-            "<iq to='t' from='f' type='set'>" +
-                "<mute xmlns='http://jitsi.org/jitmeet/audio'" +
-                    " jid='somejid'" +
-                    " block='true'" +
-                    " video='true' >" +
-                "true" +
-                "</mute>" +
-                "</iq>";
+            throws Exception {
+        String iqXml
+                = "<iq to='t' from='f' type='set'>"
+                + "<mute xmlns='http://jitsi.org/jitmeet/audio'"
+                + " jid='somejid'"
+                + " block='true'"
+                + " video='true' >"
+                + "true"
+                + "</mute>"
+                + "</iq>";
 
         MuteIqProvider provider = new MuteIqProvider();
         MuteIq mute
-            = (MuteIq) IQUtils.parse(iqXml, provider);
+                = (MuteIq) IQUtils.parse(iqXml, provider);
 
         assertEquals("f", mute.getFrom().toString());
         assertEquals("t", mute.getTo().toString());
@@ -71,8 +69,7 @@ public class MuteIqProviderTest
 
     @Test
     public void testToXml()
-            throws IOException, SAXException
-    {
+            throws IOException, SAXException {
         MuteIq muteIq = new MuteIq();
 
         muteIq.setStanzaId("123xyz");
@@ -82,18 +79,18 @@ public class MuteIqProviderTest
         muteIq.setJid(JidCreate.from("mucjid1234"));
         muteIq.setBlock(true);
         muteIq.setVideo(true);
-        
+
         muteIq.setMute(true);
-        
-        assertXMLEqual(new Diff("<iq to='tojid' from='fromjid' " +
-                         "type='get' id='123xyz'>" +
-                         "<mute " +
-                         "xmlns='http://jitsi.org/jitmeet/audio' " +
-                         "jid='mucjid1234' " +
-                         "block='true' " +
-                         "video='true' " +
-                         ">true</mute>" +
-                         "</iq>",
-                     muteIq.toXML().toString()), true);
+
+        assertXMLEqual(new Diff("<iq to='tojid' from='fromjid' "
+                + "type='get' id='123xyz'>"
+                + "<mute "
+                + "xmlns='http://jitsi.org/jitmeet/audio' "
+                + "jid='mucjid1234' "
+                + "block='true' "
+                + "video='true' "
+                + ">true</mute>"
+                + "</iq>",
+                muteIq.toXML().toString()), true);
     }
 }

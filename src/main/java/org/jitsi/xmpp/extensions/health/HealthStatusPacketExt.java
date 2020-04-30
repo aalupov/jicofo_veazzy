@@ -21,21 +21,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.provider.ProviderManager;
 
 /**
- * A generic extension for a component to represent its current health.
- * NOTE: 'component' here does not refer to XMPP component, but any logical component of
- * a system.
- * One of:
- * <li>healthy</li> - the component is healthy and can be considered as usable (other,
- * component-specific factors should of course also be considered.  A component may be
- * healthy but perhaps busy/unavailable to handle further requests at the moment).
- * <li>unhealthy</li> - the component is not in a healthy state and should not be considered
- * usable (despite what any other component-specific statuses may say).
+ * A generic extension for a component to represent its current health. NOTE:
+ * 'component' here does not refer to XMPP component, but any logical component
+ * of a system. One of:
+ * <li>healthy</li> - the component is healthy and can be considered as usable
+ * (other, component-specific factors should of course also be considered. A
+ * component may be healthy but perhaps busy/unavailable to handle further
+ * requests at the moment).
+ * <li>unhealthy</li> - the component is not in a healthy state and should not
+ * be considered usable (despite what any other component-specific statuses may
+ * say).
  *
  * @author bbaldino
  */
 public class HealthStatusPacketExt
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML namespace name for health check IQs.
      */
@@ -46,10 +47,11 @@ public class HealthStatusPacketExt
 
     private static final String HEALTH_ATTRIBUTE = "status";
 
-    public HealthStatusPacketExt() { super(NAMESPACE, ELEMENT_NAME); }
+    public HealthStatusPacketExt() {
+        super(NAMESPACE, ELEMENT_NAME);
+    }
 
-    static public void registerExtensionProvider()
-    {
+    static public void registerExtensionProvider() {
         ProviderManager.addExtensionProvider(
                 ELEMENT_NAME,
                 NAMESPACE,
@@ -57,29 +59,27 @@ public class HealthStatusPacketExt
         );
     }
 
-    public Health getStatus()
-    {
+    public Health getStatus() {
         return Health.parse(getAttributeAsString(HEALTH_ATTRIBUTE));
     }
 
-    public void setStatus(Health health)
-    {
+    public void setStatus(Health health) {
         setAttribute(HEALTH_ATTRIBUTE, health);
     }
 
-    public enum Health
-    {
+    public enum Health {
         HEALTHY("healthy"),
         UNHEALTHY("unhealthy"),
         UNDEFINED("undefined");
 
         private String health;
 
-        Health(String health) { this.health = health; }
+        Health(String health) {
+            this.health = health;
+        }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return health;
         }
 
@@ -88,21 +88,16 @@ public class HealthStatusPacketExt
          *
          * @param health the string representation of <tt>Health</tt>.
          *
-         * @return <tt>Health</tt> value for given string or
-         *         {@link #UNDEFINED} if given string does not
-         *         reflect any of valid values.
+         * @return <tt>Health</tt> value for given string or {@link #UNDEFINED}
+         * if given string does not reflect any of valid values.
          */
-        public static Health parse(String health)
-        {
-            if (StringUtils.isEmpty(health))
-            {
+        public static Health parse(String health) {
+            if (StringUtils.isEmpty(health)) {
                 return UNDEFINED;
             }
-            try
-            {
+            try {
                 return Health.valueOf(health.toUpperCase());
-            } catch (IllegalArgumentException e)
-            {
+            } catch (IllegalArgumentException e) {
                 return UNDEFINED;
             }
         }

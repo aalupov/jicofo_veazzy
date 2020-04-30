@@ -27,8 +27,8 @@ import org.jxmpp.util.*;
  * @author Yana Stamcheva
  */
 public class ThumbnailFile
-    extends StreamInitiation.File
-{
+        extends StreamInitiation.File {
+
     private Thumbnail thumbnail;
 
     /**
@@ -38,8 +38,7 @@ public class ThumbnailFile
      * @param baseFile the file used as a base
      * @param thumbnail the thumbnail to add
      */
-    public ThumbnailFile(StreamInitiation.File baseFile, Thumbnail thumbnail)
-    {
+    public ThumbnailFile(StreamInitiation.File baseFile, Thumbnail thumbnail) {
         this(baseFile.getName(), baseFile.getSize());
 
         this.thumbnail = thumbnail;
@@ -52,8 +51,7 @@ public class ThumbnailFile
      * @param name the name of the file
      * @param size the size of the file
      */
-    public ThumbnailFile(String name, long size)
-    {
+    public ThumbnailFile(String name, long size) {
         super(name, size);
     }
 
@@ -61,23 +59,20 @@ public class ThumbnailFile
      * Represents this <tt>FileElement</tt> in an XML.
      */
     @Override
-    public String toXML()
-    {
+    public String toXML() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.halfOpenElement(getElementName());
         xml.xmlnsAttribute(getNamespace());
 
-        if (getSize() > 0)
-        {
+        if (getSize() > 0) {
             xml.attribute("size", String.valueOf(getSize()));
         }
 
-        if (getDate() != null)
-        {
+        if (getDate() != null) {
             xml.attribute(
-                "date",
-                XmppDateTime.formatXEP0082Date(this.getDate()));
+                    "date",
+                    XmppDateTime.formatXEP0082Date(this.getDate()));
         }
 
         xml.optAttribute("hash", getHash());
@@ -86,27 +81,21 @@ public class ThumbnailFile
         String desc = this.getDesc();
         if (StringUtils.isNotEmpty(desc)
                 || isRanged()
-                || thumbnail != null)
-        {
-            if (StringUtils.isNotEmpty(desc))
-            {
+                || thumbnail != null) {
+            if (StringUtils.isNotEmpty(desc)) {
                 xml.element("desc", desc);
             }
 
-            if (isRanged())
-            {
+            if (isRanged()) {
                 xml.emptyElement("range");
             }
 
-            if (thumbnail != null)
-            {
+            if (thumbnail != null) {
                 xml.append(thumbnail.toXML());
             }
 
             xml.closeElement(getElementName());
-        }
-        else
-        {
+        } else {
             xml.closeEmptyElement();
         }
 
@@ -115,19 +104,19 @@ public class ThumbnailFile
 
     /**
      * Returns the <tt>Thumbnail</tt> contained in this <tt>FileElement</tt>.
+     *
      * @return the <tt>Thumbnail</tt> contained in this <tt>FileElement</tt>
      */
-    public Thumbnail getThumbnail()
-    {
+    public Thumbnail getThumbnail() {
         return thumbnail;
     }
 
     /**
      * Sets the given <tt>thumbnail</tt> to this <tt>File</tt>.
+     *
      * @param thumbnail the <tt>Thumbnail</tt> to set
      */
-    void setThumbnail(Thumbnail thumbnail)
-    {
+    void setThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
     }
 }

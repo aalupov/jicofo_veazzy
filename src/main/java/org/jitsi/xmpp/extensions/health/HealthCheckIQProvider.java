@@ -26,19 +26,18 @@ import org.xmlpull.v1.*;
  * @author Pawel Domas
  */
 public class HealthCheckIQProvider
-    extends IQProvider
-{
+        extends IQProvider {
+
     /**
      * Registers <tt>HealthCheckIQProvider</tt> as an <tt>IQProvider</tt>
      * in {@link AbstractSmackInteroperabilityLayer}.
      */
-    public static void registerIQProvider()
-    {
+    public static void registerIQProvider() {
         // ColibriStatsIQ
         ProviderManager.addIQProvider(
-            HealthCheckIQ.ELEMENT_NAME,
-            HealthCheckIQ.NAMESPACE,
-            new HealthCheckIQProvider());
+                HealthCheckIQ.ELEMENT_NAME,
+                HealthCheckIQ.NAMESPACE,
+                new HealthCheckIQProvider());
     }
 
     /**
@@ -48,39 +47,33 @@ public class HealthCheckIQProvider
      */
     @Override
     public IQ parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         String namespace = parser.getNamespace();
         IQ iq;
 
         if (HealthCheckIQ.ELEMENT_NAME.equals(parser.getName())
-            && HealthCheckIQ.NAMESPACE.equals(namespace))
-        {
+                && HealthCheckIQ.NAMESPACE.equals(namespace)) {
             String rootElement = parser.getName();
 
             iq = new HealthCheckIQ();
 
             boolean done = false;
 
-            while (!done)
-            {
-                switch (parser.next())
-                {
-                    case XmlPullParser.END_TAG:
-                    {
+            while (!done) {
+                switch (parser.next()) {
+                    case XmlPullParser.END_TAG: {
                         String name = parser.getName();
 
-                        if (rootElement.equals(name))
-                        {
+                        if (rootElement.equals(name)) {
                             done = true;
                         }
                         break;
                     }
                 }
             }
-        }
-        else
+        } else {
             iq = null;
+        }
 
         return iq;
     }

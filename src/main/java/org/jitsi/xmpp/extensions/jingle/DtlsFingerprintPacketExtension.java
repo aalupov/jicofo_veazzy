@@ -25,8 +25,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class DtlsFingerprintPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The XML name of the <tt>fingerprint</tt> element defined by XEP-0320: Use
      * of DTLS-SRTP in Jingle Sessions.
@@ -60,18 +60,19 @@ public class DtlsFingerprintPacketExtension
      * </li><li>
      * 'passive': The endpoint will accept an incoming connection.
      * </li><li>
-     * 'actpass': The endpoint is willing to accept an incoming connection or
-     *            to initiate an outgoing connection.
+     * 'actpass': The endpoint is willing to accept an incoming connection or to
+     * initiate an outgoing connection.
      * </li><li>
      * 'holdconn': The endpoint does not want the connection to be established
-     *             for the time being.
+     * for the time being.
      * </li>
      */
     private static final String SETUP_ATTR_NAME = "setup";
 
-    /** Initializes a new <tt>DtlsFingerprintPacketExtension</tt> instance. */
-    public DtlsFingerprintPacketExtension()
-    {
+    /**
+     * Initializes a new <tt>DtlsFingerprintPacketExtension</tt> instance.
+     */
+    public DtlsFingerprintPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -80,8 +81,7 @@ public class DtlsFingerprintPacketExtension
      *
      * @return the fingerprint carried/represented by this instance
      */
-    public String getFingerprint()
-    {
+    public String getFingerprint() {
         return getText();
     }
 
@@ -92,8 +92,7 @@ public class DtlsFingerprintPacketExtension
      * @return the hash function utilized to calculate the fingerprint
      * carried/represented by this instance
      */
-    public String getHash()
-    {
+    public String getHash() {
         return getAttributeAsString(HASH_ATTR_NAME);
     }
 
@@ -101,8 +100,7 @@ public class DtlsFingerprintPacketExtension
      * The <tt>required</tt> attribute has been removed in version 0.2 of
      * XEP-0320: Use of DTLS-SRTP in Jingle Sessions.
      */
-    public boolean getRequired()
-    {
+    public boolean getRequired() {
         String attr = getAttributeAsString(REQUIRED_ATTR_NAME);
 
         return (attr == null) ? false : Boolean.parseBoolean(attr);
@@ -112,8 +110,7 @@ public class DtlsFingerprintPacketExtension
      * Returns value of 'setup' attribute. See {@link #SETUP_ATTR_NAME} for more
      * info.
      */
-    public String getSetup()
-    {
+    public String getSetup() {
         return getAttributeAsString(SETUP_ATTR_NAME);
     }
 
@@ -123,8 +120,7 @@ public class DtlsFingerprintPacketExtension
      * @param fingerprint the fingerprint to be carried/represented by this
      * instance
      */
-    public void setFingerprint(String fingerprint)
-    {
+    public void setFingerprint(String fingerprint) {
         setText(fingerprint);
     }
 
@@ -135,8 +131,7 @@ public class DtlsFingerprintPacketExtension
      * @param hash the hash function utilized to calculate the fingerprint
      * carried/represented by this instance
      */
-    public void setHash(String hash)
-    {
+    public void setHash(String hash) {
         setAttribute(HASH_ATTR_NAME, hash);
     }
 
@@ -144,17 +139,16 @@ public class DtlsFingerprintPacketExtension
      * The <tt>required</tt> attribute has been removed in version 0.2 of
      * XEP-0320: Use of DTLS-SRTP in Jingle Sessions.
      */
-    public void setRequired(boolean required)
-    {
+    public void setRequired(boolean required) {
         setAttribute(REQUIRED_ATTR_NAME, Boolean.valueOf(required));
     }
 
     /**
      * Sets new value for 'setup' attribute.
+     *
      * @param setup see {@link #SETUP_ATTR_NAME} for the list of allowed values.
      */
-    public void setSetup(String setup)
-    {
+    public void setSetup(String setup) {
         setAttribute(SETUP_ATTR_NAME, setup);
     }
 }

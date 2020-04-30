@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class ConferenceMediumPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that conference medium belongs to.
      */
@@ -78,8 +78,7 @@ public class ConferenceMediumPacketExtension
      * @param elementName element name
      * @param label label
      */
-    public ConferenceMediumPacketExtension(String elementName, String label)
-    {
+    public ConferenceMediumPacketExtension(String elementName, String label) {
         super(NAMESPACE, elementName);
         setAttribute(LABEL_ATTR_NAME, label);
     }
@@ -89,8 +88,7 @@ public class ConferenceMediumPacketExtension
      *
      * @param status status.
      */
-    public void setStatus(String status)
-    {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -99,17 +97,16 @@ public class ConferenceMediumPacketExtension
      *
      * @param type type
      */
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 
     /**
      * Set display text.
+     *
      * @param displayText display text
      */
-    public void setDisplayText(String displayText)
-    {
+    public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
 
@@ -118,8 +115,7 @@ public class ConferenceMediumPacketExtension
      *
      * @return display text
      */
-    public String getDisplayText()
-    {
+    public String getDisplayText() {
         return displayText;
     }
 
@@ -128,8 +124,7 @@ public class ConferenceMediumPacketExtension
      *
      * @return type
      */
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
@@ -138,18 +133,17 @@ public class ConferenceMediumPacketExtension
      *
      * @return status.
      */
-    public String getStatus()
-    {
+    public String getStatus() {
         return status;
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_DISPLAY_TEXT, displayText);

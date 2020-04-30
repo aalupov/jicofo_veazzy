@@ -31,8 +31,8 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class EventFactory
-    extends AbstractEventFactory
-{
+        extends AbstractEventFactory {
+
     /**
      * The name of the key for additional authentication properties.
      */
@@ -88,44 +88,44 @@ public class EventFactory
      * The name of the topic of a "conference room" event.
      */
     public static final String CONFERENCE_ROOM_TOPIC
-        = "org/jitsi/jicofo/CONFERENCE_ROOM_CREATED";
+            = "org/jitsi/jicofo/CONFERENCE_ROOM_CREATED";
 
     /**
      * The name of the topic of an "authentication session created" event.
      */
     public static final String AUTH_SESSION_CREATED_TOPIC
-        = "org/jitsi/jicofo/AUTH_SESSION_CREATED";
+            = "org/jitsi/jicofo/AUTH_SESSION_CREATED";
 
     /**
      * The name of the topic of an "authentication session destroyed" event.
      */
     public static final String AUTH_SESSION_DESTROYED_TOPIC
-        = "org/jitsi/jicofo/AUTH_SESSION_DESTROYED";
+            = "org/jitsi/jicofo/AUTH_SESSION_DESTROYED";
 
     /**
      * The name of the topic of an "endpoint authenticated" event.
      */
     public static final String ENDPOINT_AUTHENTICATED_TOPIC
-        = "org/jitsi/jicofo/ENDPOINT_AUTHENTICATED";
+            = "org/jitsi/jicofo/ENDPOINT_AUTHENTICATED";
 
     /**
      * The name of the topic of a "focus instance created" event.
      */
     public static final String FOCUS_CREATED_TOPIC
-        = "org/jitsi/jicofo/FOCUS_CREATED";
+            = "org/jitsi/jicofo/FOCUS_CREATED";
 
     /**
      * The name of the topic of a "focus joined MUC room" event which is fired
      * just after Jicofo joins the MUC room.
      */
     public static final String FOCUS_JOINED_ROOM_TOPIC
-        = "org/jitsi/jicofo/FOCUS_JOINED_ROOM";
+            = "org/jitsi/jicofo/FOCUS_JOINED_ROOM";
 
     /**
      * The name of the topic of a "focus instance destroyed" event.
      */
     public static final String FOCUS_DESTROYED_TOPIC
-        = "org/jitsi/jicofo/FOCUS_DESTROYED";
+            = "org/jitsi/jicofo/FOCUS_DESTROYED";
 
     /**
      * Creates new <tt>Event</tt> for {@link #FOCUS_JOINED_ROOM_TOPIC}.
@@ -137,8 +137,7 @@ public class EventFactory
      */
     public static Event focusJoinedRoom(
             EntityBareJid roomJid,
-            String focusId)
-    {
+            String focusId) {
         Dictionary<String, Object> props = new Hashtable<>(2);
 
         props.put(ROOM_JID_KEY, roomJid);
@@ -161,8 +160,7 @@ public class EventFactory
             String conferenceId,
             EntityBareJid roomJid,
             String focus,
-            Jid bridgeJid)
-    {
+            Jid bridgeJid) {
         Dictionary<String, Object> props = new Hashtable<>(4);
 
         props.put(CONFERENCE_ID_KEY, conferenceId);
@@ -179,16 +177,15 @@ public class EventFactory
      * @param sessionId authentication session identifier.
      * @param userIdentity authenticated user identity
      * @param machineUid machine unique identifier used to distinguish session
-     *                   for the same user on different machines.
+     * for the same user on different machines.
      * @param properties the map of additional properties to be logged provided
-     *                   during authentication.
+     * during authentication.
      *
      * @return "authentication session created" <tt>Event</tt>
      */
     public static Event authSessionCreated(
-            String sessionId,  String              userIdentity,
-            String machineUid, Map<String, String> properties )
-    {
+            String sessionId, String userIdentity,
+            String machineUid, Map<String, String> properties) {
         Dictionary<String, Object> props = new Hashtable<>(4);
 
         props.put(AUTH_SESSION_ID_KEY, sessionId);
@@ -206,8 +203,7 @@ public class EventFactory
      *
      * @return created "authentication session destroyed" <tt>Event</tt>.
      */
-    public static Event authSessionDestroyed(String sessionId)
-    {
+    public static Event authSessionDestroyed(String sessionId) {
         Dictionary<String, Object> props = new Hashtable<>(1);
 
         props.put(AUTH_SESSION_ID_KEY, sessionId);
@@ -225,9 +221,8 @@ public class EventFactory
      * @return created "endpoint authenticated" <tt>Event</tt>.
      */
     public static Event endpointAuthenticated(String sessionId,
-                                              String focusId,
-                                              String endpointId)
-    {
+            String focusId,
+            String endpointId) {
         Dictionary<String, Object> props = new Hashtable<>(3);
 
         props.put(AUTH_SESSION_ID_KEY, sessionId);
@@ -245,8 +240,7 @@ public class EventFactory
      *
      * @return new "focus created" <tt>Event</tt>.
      */
-    public static Event focusCreated(String focusId, EntityBareJid roomName)
-    {
+    public static Event focusCreated(String focusId, EntityBareJid roomName) {
         Dictionary<String, Object> props = new Hashtable<>(2);
 
         props.put(FOCUS_ID_KEY, focusId);
@@ -263,8 +257,7 @@ public class EventFactory
      *
      * @return new "focus destroyed" <tt>Event</tt> instance.
      */
-    public static Event focusDestroyed(String focusId, EntityBareJid roomName)
-    {
+    public static Event focusDestroyed(String focusId, EntityBareJid roomName) {
         Dictionary<String, Object> props = new Hashtable<>(2);
 
         props.put(FOCUS_ID_KEY, focusId);
@@ -282,15 +275,13 @@ public class EventFactory
      *
      * @return authentication properties map merged into single <tt>String</tt>.
      */
-    public static String mergeProperties(Map<String, String> properties)
-    {
+    public static String mergeProperties(Map<String, String> properties) {
         StringBuilder out = new StringBuilder();
-        for (Map.Entry<String, String> entry : properties.entrySet())
-        {
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
             out.append(entry.getKey())
-                .append(":")
-                .append(entry.getValue())
-                .append("\r\n");
+                    .append(":")
+                    .append(entry.getValue())
+                    .append("\r\n");
         }
         return out.toString();
     }
@@ -300,18 +291,17 @@ public class EventFactory
      * key/value map.
      *
      * @param merged a <tt>String</tt> that contains merged authentication
-     *               properties(with {@link #mergeProperties(Map) method}).
+     * properties(with {@link #mergeProperties(Map) method}).
      *
      * @return key/value map of authentication properties.
      */
-    public static Map<String, String> splitProperties(String merged)
-    {
+    public static Map<String, String> splitProperties(String merged) {
         String[] entries = merged.split("\r\n");
         Map<String, String> map = new Hashtable<>(entries.length);
-        for (String entry : entries)
-        {
-            if (StringUtils.isNullOrEmpty(entry))
+        for (String entry : entries) {
+            if (StringUtils.isNullOrEmpty(entry)) {
                 continue;
+            }
 
             int colonIdx = entry.indexOf(":");
             String key = entry.substring(0, colonIdx);

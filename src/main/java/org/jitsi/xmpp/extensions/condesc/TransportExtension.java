@@ -21,8 +21,8 @@ import org.jitsi.xmpp.extensions.AbstractPacketExtension;
  * A <tt>ExtensionElement</tt> that represents a "transport" child element.
  */
 public class TransportExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "transport" element.
      */
@@ -34,8 +34,7 @@ public class TransportExtension
      *
      * @param namespace the XML namespace of the "transport" element.
      */
-    public TransportExtension(String namespace)
-    {
+    public TransportExtension(String namespace) {
         super(namespace, TransportExtension.ELEMENT_NAME);
     }
 }

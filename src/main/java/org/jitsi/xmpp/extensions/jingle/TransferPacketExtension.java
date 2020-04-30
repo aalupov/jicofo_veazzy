@@ -27,8 +27,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
  * @author Lyubomir Marinov
  */
 public class TransferPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "transfer" element.
      */
@@ -57,8 +57,7 @@ public class TransferPacketExtension
     /**
      * Initializes a new <tt>TransferPacketExtension</tt> instance.
      */
-    public TransferPacketExtension()
-    {
+    public TransferPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -67,14 +66,10 @@ public class TransferPacketExtension
      *
      * @return the value of the "from" attribute of this "transfer" element
      */
-    public Jid getFrom()
-    {
-        try
-        {
+    public Jid getFrom() {
+        try {
             return JidCreate.from(getAttributeAsString(FROM_ATTR_NAME));
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             return null;
         }
     }
@@ -84,8 +79,7 @@ public class TransferPacketExtension
      *
      * @param from the value of the "from" attribute of this "transfer" element
      */
-    public void setFrom(Jid from)
-    {
+    public void setFrom(Jid from) {
         setAttribute(FROM_ATTR_NAME, from);
     }
 
@@ -94,8 +88,7 @@ public class TransferPacketExtension
      *
      * @return the value of the "sid" attribute of this "transfer" element
      */
-    public String getSID()
-    {
+    public String getSID() {
         return getAttributeAsString(SID_ATTR_NAME);
     }
 
@@ -104,8 +97,7 @@ public class TransferPacketExtension
      *
      * @param sid the value of the "sid" attribute of this "transfer" element
      */
-    public void setSID(String sid)
-    {
+    public void setSID(String sid) {
         setAttribute(SID_ATTR_NAME, sid);
     }
 
@@ -114,14 +106,10 @@ public class TransferPacketExtension
      *
      * @return the value of the "to" attribute of this "transfer" element
      */
-    public Jid getTo()
-    {
-        try
-        {
+    public Jid getTo() {
+        try {
             return JidCreate.from(getAttributeAsString(TO_ATTR_NAME));
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             return null;
         }
     }
@@ -131,8 +119,7 @@ public class TransferPacketExtension
      *
      * @param to the value of the "to" attribute of this "transfer" element
      */
-    public void setTo(Jid to)
-    {
+    public void setTo(Jid to) {
         setAttribute(TO_ATTR_NAME, to);
     }
 }

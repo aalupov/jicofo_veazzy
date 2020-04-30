@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class RedirectPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "redirect" element.
      */
@@ -43,8 +43,7 @@ public class RedirectPacketExtension
     /**
      * Creates a new {@link RedirectPacketExtension} instance.
      */
-    public RedirectPacketExtension()
-    {
+    public RedirectPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -53,8 +52,7 @@ public class RedirectPacketExtension
      *
      * @param redir redirection
      */
-    public void setRedir(String redir)
-    {
+    public void setRedir(String redir) {
         this.setText(redir);
         this.redir = redir;
     }
@@ -64,8 +62,7 @@ public class RedirectPacketExtension
      *
      * @return redirection
      */
-    public String getRedir()
-    {
+    public String getRedir() {
         return redir;
     }
 }

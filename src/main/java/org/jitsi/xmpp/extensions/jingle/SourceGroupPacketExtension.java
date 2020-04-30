@@ -24,12 +24,13 @@ import java.util.*;
  * Represents <tt>ssrc-group</tt> elements described in XEP-0339.
  *
  * Created by gp on 07/08/14.
+ *
  * @author George Politis
  * @author Pawel Domas
  */
 public class SourceGroupPacketExtension
-        extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "ssrc-group" element.
      */
@@ -64,10 +65,9 @@ public class SourceGroupPacketExtension
      * Return new instance of <tt>SourceGroupPacketExtension</tt> with simulcast
      * semantics pre-configured.
      */
-    public static SourceGroupPacketExtension createSimulcastGroup()
-    {
+    public static SourceGroupPacketExtension createSimulcastGroup() {
         SourceGroupPacketExtension simulcastGroupPe
-            = new SourceGroupPacketExtension();
+                = new SourceGroupPacketExtension();
 
         simulcastGroupPe.setSemantics(SEMANTICS_SIMULCAST);
 
@@ -78,13 +78,11 @@ public class SourceGroupPacketExtension
      * Creates a new {@link SourceGroupPacketExtension} instance with the proper
      * element name and namespace.
      */
-    public SourceGroupPacketExtension()
-    {
+    public SourceGroupPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
-    public SourceGroupPacketExtension(String elementName)
-    {
+    public SourceGroupPacketExtension(String elementName) {
         super(NAMESPACE, elementName);
     }
 
@@ -93,16 +91,14 @@ public class SourceGroupPacketExtension
      *
      * @return the semantics of this source group.
      */
-    public String getSemantics()
-    {
+    public String getSemantics() {
         return getAttributeAsString(SEMANTICS_ATTR_NAME);
     }
 
     /**
      * Sets the semantics of this source group.
      */
-    public void setSemantics(String semantics)
-    {
+    public void setSemantics(String semantics) {
         this.setAttribute(SEMANTICS_ATTR_NAME, semantics);
     }
 
@@ -111,8 +107,7 @@ public class SourceGroupPacketExtension
      *
      * @return the sources of this source group.
      */
-    public List<SourcePacketExtension> getSources()
-    {
+    public List<SourcePacketExtension> getSources() {
         return getChildExtensionsOfType(SourcePacketExtension.class);
     }
 
@@ -121,12 +116,11 @@ public class SourceGroupPacketExtension
      *
      * @param sources the sources of this source group.
      */
-    public void addSources(List<SourcePacketExtension> sources)
-    {
-        if (sources != null && sources.size() != 0)
-        {
-            for (SourcePacketExtension source : sources)
+    public void addSources(List<SourcePacketExtension> sources) {
+        if (sources != null && sources.size() != 0) {
+            for (SourcePacketExtension source : sources) {
                 this.addChildExtension(source);
+            }
         }
 
     }
@@ -134,20 +128,18 @@ public class SourceGroupPacketExtension
     /**
      * Returns deep copy of this <tt>SourceGroupPacketExtension</tt> instance.
      */
-    public SourceGroupPacketExtension copy()
-    {
+    public SourceGroupPacketExtension copy() {
         SourceGroupPacketExtension copy
-            = AbstractPacketExtension.clone(this);
+                = AbstractPacketExtension.clone(this);
 
         copy.setSemantics(getSemantics());
 
         List<SourcePacketExtension> sources = getSources();
 
         List<SourcePacketExtension> sourcesCopy
-            = new ArrayList<SourcePacketExtension>(sources.size());
+                = new ArrayList<SourcePacketExtension>(sources.size());
 
-        for (SourcePacketExtension source : sources)
-        {
+        for (SourcePacketExtension source : sources) {
             sourcesCopy.add(source.copy());
         }
 

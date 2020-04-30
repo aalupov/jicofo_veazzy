@@ -36,13 +36,12 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-
 /**
  *
  */
 @RunWith(JUnit4.class)
-public class BundleTest
-{
+public class BundleTest {
+
     /**
      * The logger
      */
@@ -52,15 +51,13 @@ public class BundleTest
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.init();
     }
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
     }
 
@@ -69,22 +66,21 @@ public class BundleTest
      */
     @Test
     public void testBundle()
-        throws Exception
-    {
+            throws Exception {
         EntityBareJid roomName = JidCreate.entityBareFrom(
                 "testroom@conference.pawel.jitsi.net");
         String serverName = "test-server";
 
         TestConference testConference
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+                = TestConference.allocate(osgi.bc, serverName, roomName);
 
         MockProtocolProvider pps
-            = testConference.getFocusProtocolProvider();
+                = testConference.getFocusProtocolProvider();
 
         MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
         MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+                = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
         MockParticipant user1 = new MockParticipant("user1", true);
 
@@ -115,110 +111,98 @@ public class BundleTest
         testConference.stop();
     }
 
-    static void validateSessionInit(JingleIQ sessionInit, boolean isBundle)
-    {
-        if (isBundle)
-        {
+    static void validateSessionInit(JingleIQ sessionInit, boolean isBundle) {
+        if (isBundle) {
             validateBundleGroup(sessionInit);
-        }
-        else
-        {
+        } else {
             assertNull(
-                sessionInit.getExtension(
-                    GroupPacketExtension.ELEMENT_NAME,
-                    GroupPacketExtension.NAMESPACE));
+                    sessionInit.getExtension(
+                            GroupPacketExtension.ELEMENT_NAME,
+                            GroupPacketExtension.NAMESPACE));
         }
 
         ContentPacketExtension firstContent
-            = sessionInit.getContentList().get(0);
+                = sessionInit.getContentList().get(0);
 
-        for (ContentPacketExtension content : sessionInit.getContentList())
-        {
+        for (ContentPacketExtension content : sessionInit.getContentList()) {
             validateInitContent(content, firstContent, isBundle);
         }
     }
 
     static void validateInitContent(ContentPacketExtension content,
-                                    ContentPacketExtension firstContent,
-                                    boolean isBundle)
-    {
+            ContentPacketExtension firstContent,
+            boolean isBundle) {
         // We expect to find estos bundle
         BundlePacketExtension bundle
-            = content.getFirstChildOfType(
-                    BundlePacketExtension.class);
+                = content.getFirstChildOfType(
+                        BundlePacketExtension.class);
 
-        if (isBundle)
-        {
+        if (isBundle) {
             assertNotNull(bundle);
-        }
-        else
-        {
+        } else {
             assertNull(bundle);
         }
 
         // We expect to find rtcp-mux if there is an RTP description
         RtpDescriptionPacketExtension rtpDesc
-            = JingleUtils.getRtpDescription(content);
-        if (rtpDesc != null)
-        {
-            if (isBundle)
-            {
+                = JingleUtils.getRtpDescription(content);
+        if (rtpDesc != null) {
+            if (isBundle) {
                 assertNotNull(
-                    rtpDesc.getFirstChildOfType(
-                        RtcpmuxPacketExtension.class));
+                        rtpDesc.getFirstChildOfType(
+                                RtcpmuxPacketExtension.class));
             }
             // else is optional
         }
 
         // FIXME: check transport is different if non bundle
-        if (!isBundle)
+        if (!isBundle) {
             return;
+        }
 
         // Transport should be the same for each content
-        if (content == firstContent)
+        if (content == firstContent) {
             return;
+        }
 
         IceUdpTransportPacketExtension firstTransport
-            = firstContent.getFirstChildOfType(
-                    IceUdpTransportPacketExtension.class);
+                = firstContent.getFirstChildOfType(
+                        IceUdpTransportPacketExtension.class);
 
         IceUdpTransportPacketExtension transport
-            = content.getFirstChildOfType(
-                    IceUdpTransportPacketExtension.class);
+                = content.getFirstChildOfType(
+                        IceUdpTransportPacketExtension.class);
 
         assertTransportTheSame(firstTransport, transport);
     }
 
     /**
      * FIXME: ID is not compared, but that's ok ?
+     *
      * @param a
      * @param b
      */
     static void assertTransportTheSame(IceUdpTransportPacketExtension a,
-                                       IceUdpTransportPacketExtension b)
-    {
+            IceUdpTransportPacketExtension b) {
         assertEquals(a.isRtcpMux(), b.isRtcpMux());
 
         assertEquals(a.getPassword(), b.getPassword());
         assertEquals(a.getUfrag(), b.getUfrag());
 
-        for (CandidatePacketExtension toFind : a.getCandidateList())
-        {
+        for (CandidatePacketExtension toFind : a.getCandidateList()) {
             findMatchingCandidateOrFail(b.getCandidateList(), toFind);
         }
     }
 
     static void findMatchingCandidateOrFail(
-        List<CandidatePacketExtension> candidates,
-        CandidatePacketExtension toFind)
-    {
-        for (CandidatePacketExtension toCheck : candidates)
-        {
+            List<CandidatePacketExtension> candidates,
+            CandidatePacketExtension toFind) {
+        for (CandidatePacketExtension toCheck : candidates) {
             boolean typeEq
-                = toFind.getType().equals(toCheck.getType());
+                    = toFind.getType().equals(toCheck.getType());
 
             boolean protoEq
-                = Objects.equals(toFind.getProtocol(), toCheck.getProtocol());
+                    = Objects.equals(toFind.getProtocol(), toCheck.getProtocol());
 
             boolean ipEq = Objects.equals(toFind.getIP(), toCheck.getIP());
 
@@ -232,21 +216,20 @@ public class BundleTest
             boolean prioEq = toFind.getPriority() == toCheck.getPriority();
 
             boolean componentEq
-                = toFind.getComponent() == toCheck.getComponent();
+                    = toFind.getComponent() == toCheck.getComponent();
 
             boolean generationEq
-                = toFind.getGeneration() == toCheck.getGeneration();
+                    = toFind.getGeneration() == toCheck.getGeneration();
 
             boolean networkEq = toFind.getNetwork() == toCheck.getNetwork();
 
             boolean fundEq
-                = Objects.equals(
-                        toFind.getFoundation(), toCheck.getFoundation());
+                    = Objects.equals(
+                            toFind.getFoundation(), toCheck.getFoundation());
 
             if (typeEq && protoEq && ipEq && portEq
-                && relAddrEq && relPortEq && prioEq
-                && componentEq && generationEq && networkEq && fundEq)
-            {
+                    && relAddrEq && relPortEq && prioEq
+                    && componentEq && generationEq && networkEq && fundEq) {
                 return;
             }
         }
@@ -254,19 +237,17 @@ public class BundleTest
         fail("No candidate found for " + toFind.toXML());
     }
 
-    static void validateBundleGroup(JingleIQ sessionInit)
-    {
+    static void validateBundleGroup(JingleIQ sessionInit) {
         GroupPacketExtension group
-            = (GroupPacketExtension)
-                    sessionInit.getExtension(
-                            GroupPacketExtension.ELEMENT_NAME,
-                            GroupPacketExtension.NAMESPACE);
+                = (GroupPacketExtension) sessionInit.getExtension(
+                        GroupPacketExtension.ELEMENT_NAME,
+                        GroupPacketExtension.NAMESPACE);
 
         assertNotNull("No group extension in session init", group);
 
         assertEquals("Invalid group semantics",
-                     GroupPacketExtension.SEMANTICS_BUNDLE,
-                     group.getSemantics());
+                GroupPacketExtension.SEMANTICS_BUNDLE,
+                group.getSemantics());
 
         List<ContentPacketExtension> groupContents = group.getContents();
 
@@ -276,12 +257,11 @@ public class BundleTest
     }
 
     static void findContentByNameOrFail(List<ContentPacketExtension> content,
-                                         String name)
-    {
-        for (ContentPacketExtension cpe : content)
-        {
-            if (name.equals(cpe.getName()))
+            String name) {
+        for (ContentPacketExtension cpe : content) {
+            if (name.equals(cpe.getName())) {
                 return;
+            }
         }
         fail("No content found for name: " + name);
     }

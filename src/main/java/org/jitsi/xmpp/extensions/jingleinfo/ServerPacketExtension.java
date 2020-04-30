@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Sebastien Vincent
  */
 public class ServerPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace.
      */
@@ -58,8 +58,7 @@ public class ServerPacketExtension
     /**
      * Constructor.
      */
-    public ServerPacketExtension()
-    {
+    public ServerPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
@@ -68,8 +67,7 @@ public class ServerPacketExtension
      *
      * @return this host address
      */
-    public String getHost()
-    {
+    public String getHost() {
         return super.getAttributeAsString(HOST_ATTR_NAME);
     }
 
@@ -78,8 +76,7 @@ public class ServerPacketExtension
      *
      * @return the UDP port
      */
-    public int getUdp()
-    {
+    public int getUdp() {
         return Integer.parseInt(super.getAttributeAsString(UDP_ATTR_NAME));
     }
 
@@ -88,8 +85,7 @@ public class ServerPacketExtension
      *
      * @return the TCP port
      */
-    public int getTcp()
-    {
+    public int getTcp() {
         return Integer.parseInt(super.getAttributeAsString(TCP_ATTR_NAME));
     }
 
@@ -98,8 +94,7 @@ public class ServerPacketExtension
      *
      * @return the SSL port
      */
-    public int getSsl()
-    {
+    public int getSsl() {
         return Integer.parseInt(super.getAttributeAsString(SSL_ATTR_NAME));
     }
 }

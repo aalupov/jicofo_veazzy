@@ -25,14 +25,14 @@ import org.xmlpull.v1.*;
  * @author Sebastien Vincent
  */
 public class RelayProvider
-    extends ExtensionElementProvider
-{
+        extends ExtensionElementProvider {
+
     /**
      * Parses a users extension sub-packet and creates a {@link
-     * StunPacketExtension} instance. At the beginning of the method
-     * call, the xml parser will be positioned on the opening element of the
-     * packet extension. As required by the smack API, at the end of the method
-     * call, the parser will be positioned on the closing element of the packet
+     * StunPacketExtension} instance. At the beginning of the method call, the
+     * xml parser will be positioned on the opening element of the packet
+     * extension. As required by the smack API, at the end of the method call,
+     * the parser will be positioned on the closing element of the packet
      * extension.
      *
      * @param parser an XML parser positioned at the opening
@@ -43,41 +43,31 @@ public class RelayProvider
      */
     @Override
     public ExtensionElement parse(XmlPullParser parser, int depth)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
         int eventType;
         String elementName = null;
         RelayPacketExtension ext
-            = new RelayPacketExtension();
+                = new RelayPacketExtension();
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
             elementName = parser.getName();
 
-            if (eventType == XmlPullParser.START_TAG)
-            {
-                if(elementName.equals(ServerPacketExtension.ELEMENT_NAME))
-                {
-                    ExtensionElementProvider provider = (ExtensionElementProvider)
-                        ProviderManager.getExtensionProvider(
-                                ServerPacketExtension.ELEMENT_NAME,
-                                ServerPacketExtension.NAMESPACE);
-                    ExtensionElement childExtension =
-                            (ExtensionElement) provider.parse(parser);
+            if (eventType == XmlPullParser.START_TAG) {
+                if (elementName.equals(ServerPacketExtension.ELEMENT_NAME)) {
+                    ExtensionElementProvider provider = (ExtensionElementProvider) ProviderManager.getExtensionProvider(
+                            ServerPacketExtension.ELEMENT_NAME,
+                            ServerPacketExtension.NAMESPACE);
+                    ExtensionElement childExtension
+                            = (ExtensionElement) provider.parse(parser);
                     ext.addChildExtension(childExtension);
-                }
-                else if(elementName.equals("token"))
-                {
+                } else if (elementName.equals("token")) {
                     ext.setToken(parseText(parser));
                 }
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 if (parser.getName().equals(
-                        RelayPacketExtension.ELEMENT_NAME))
-                {
+                        RelayPacketExtension.ELEMENT_NAME)) {
                     done = true;
                 }
             }
@@ -98,23 +88,18 @@ public class RelayProvider
      * @throws java.lang.Exception if an error occurs parsing the XML.
      */
     public static String parseText(XmlPullParser parser)
-        throws Exception
-    {
+            throws Exception {
         boolean done = false;
 
         int eventType;
         String text = null;
 
-        while (!done)
-        {
+        while (!done) {
             eventType = parser.next();
 
-            if (eventType == XmlPullParser.TEXT)
-            {
+            if (eventType == XmlPullParser.TEXT) {
                 text = parser.getText();
-            }
-            else if (eventType == XmlPullParser.END_TAG)
-            {
+            } else if (eventType == XmlPullParser.END_TAG) {
                 done = true;
             }
         }

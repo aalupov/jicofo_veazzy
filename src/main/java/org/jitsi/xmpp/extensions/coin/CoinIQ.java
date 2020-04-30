@@ -18,14 +18,14 @@ package org.jitsi.xmpp.extensions.coin;
 import org.jivesoftware.smack.packet.*;
 
 /**
- * Coin (Conference Info) IQ. It is used to inform conference participants
- * about useful information (users, ...).
+ * Coin (Conference Info) IQ. It is used to inform conference participants about
+ * useful information (users, ...).
  *
  * @author Sebastien Vincent
  */
 public class CoinIQ
-    extends IQ
-{
+        extends IQ {
+
     /**
      * The name of the element that contains the coin data.
      */
@@ -39,8 +39,8 @@ public class CoinIQ
     /**
      * The namespace that coin belongs to.
      */
-    public static final String NAMESPACE =
-        "urn:ietf:params:xml:ns:conference-info";
+    public static final String NAMESPACE
+            = "urn:ietf:params:xml:ns:conference-info";
 
     /**
      * Jingle session ID attribute name.
@@ -77,8 +77,7 @@ public class CoinIQ
      */
     private Integer version = 0;
 
-    public CoinIQ()
-    {
+    public CoinIQ() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
@@ -90,8 +89,7 @@ public class CoinIQ
      * @return the child element section of the IQ XML.
      */
     @Override
-    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder bldr)
-    {
+    protected IQ.IQChildElementXmlStringBuilder getIQChildElementBuilder(IQ.IQChildElementXmlStringBuilder bldr) {
         bldr.attribute("state", state.toString());
         bldr.attribute("entity", entity);
         bldr.attribute("version", version);
@@ -106,8 +104,7 @@ public class CoinIQ
      *
      * @return entity
      */
-    public String getEntity()
-    {
+    public String getEntity() {
         return entity;
     }
 
@@ -116,8 +113,7 @@ public class CoinIQ
      *
      * @return session ID
      */
-    public String getSID()
-    {
+    public String getSID() {
         return sid;
     }
 
@@ -126,8 +122,7 @@ public class CoinIQ
      *
      * @return state
      */
-    public StateType getState()
-    {
+    public StateType getState() {
         return state;
     }
 
@@ -136,8 +131,7 @@ public class CoinIQ
      *
      * @return version
      */
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
@@ -146,8 +140,7 @@ public class CoinIQ
      *
      * @param entity entity
      */
-    public void setEntity(String entity)
-    {
+    public void setEntity(String entity) {
         this.entity = entity;
     }
 
@@ -156,8 +149,7 @@ public class CoinIQ
      *
      * @param sid session ID to set
      */
-    public void setSID(String sid)
-    {
+    public void setSID(String sid) {
         this.sid = sid;
     }
 
@@ -166,8 +158,7 @@ public class CoinIQ
      *
      * @param state state to set
      */
-    public void setState(StateType state)
-    {
+    public void setState(StateType state) {
         this.state = state;
     }
 
@@ -176,8 +167,7 @@ public class CoinIQ
      *
      * @param version version
      */
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 }

@@ -38,14 +38,13 @@ import static org.junit.Assert.*;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class ShibbolethAuthenticationAuthorityTest
-{
+public class ShibbolethAuthenticationAuthorityTest {
+
     static OSGiHandler osgi = OSGiHandler.getInstance();
 
     @BeforeClass
     public static void setUpClass()
-        throws Exception
-    {
+            throws Exception {
         // Enable shibboleth authentication
         System.setProperty(
                 AuthBundleActivator.LOGIN_URL_PNAME, "shibboleth:default");
@@ -56,8 +55,7 @@ public class ShibbolethAuthenticationAuthorityTest
 
     @AfterClass
     public static void tearDownClass()
-        throws Exception
-    {
+            throws Exception {
         osgi.shutdown();
         System.clearProperty(AuthBundleActivator.LOGIN_URL_PNAME);
         System.clearProperty(AuthBundleActivator.LOGOUT_URL_PNAME);
@@ -65,24 +63,23 @@ public class ShibbolethAuthenticationAuthorityTest
 
     @Test
     public void testShibbolethAuthenticationModule()
-        throws Exception
-    {
+            throws Exception {
         FocusComponent focusComponent
-            = MockMainMethodActivator.getFocusComponent();
+                = MockMainMethodActivator.getFocusComponent();
 
         ShibbolethAuthAuthority shibbolethAuth
-            = (ShibbolethAuthAuthority) ServiceUtils.getService(
-                    FocusBundleActivator.bundleContext,
-                    AuthenticationAuthority.class);
+                = (ShibbolethAuthAuthority) ServiceUtils.getService(
+                        FocusBundleActivator.bundleContext,
+                        AuthenticationAuthority.class);
 
         assertNotNull(shibbolethAuth);
 
         EntityBareJid user1Jid = JidCreate.entityBareFrom("user1@server.net");
-        String user1MachineUid="machine1uid";
+        String user1MachineUid = "machine1uid";
         String user1ShibbolethIdentity = "user1@shibboleth.idp.com";
 
         Jid user2Jid = JidCreate.from("user2@server.net");
-        String user2MachineUid="machine2uid";
+        String user2MachineUid = "machine2uid";
         String user2ShibbolethIdentity = "user2@shibboleth.idp.com";
 
         boolean roomExists = false;
@@ -97,7 +94,7 @@ public class ShibbolethAuthenticationAuthorityTest
 
         // CASE 1: No session-id passed and room does not exist
         IQ authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY WITH: 'not-authorized'
         assertNotNull(authError);
@@ -106,16 +103,14 @@ public class ShibbolethAuthenticationAuthorityTest
                 authError.getError().getCondition());
 
         // CASE 2: Valid session-id passed and room does not exist
-
         // create session-id
         String user1Session
-            = shibbolethAuth.authenticateUser
-                (user1MachineUid, user1ShibbolethIdentity, room1, null);
+                = shibbolethAuth.authenticateUser(user1MachineUid, user1ShibbolethIdentity, room1, null);
 
         query.setSessionId(user1Session);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY WITH: null - no errors
         assertNull(authError);
@@ -127,7 +122,7 @@ public class ShibbolethAuthenticationAuthorityTest
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY with null - no errors
         assertNull(authError);
@@ -139,7 +134,7 @@ public class ShibbolethAuthenticationAuthorityTest
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // REPLY with session-invalid
         assertNotNull(authError);
@@ -150,15 +145,15 @@ public class ShibbolethAuthenticationAuthorityTest
         // CASE 5: valid session, room exists
         roomExists = true;
         String user2Session
-            = shibbolethAuth.authenticateUser(
-                    user2MachineUid, user2ShibbolethIdentity, room1, null);
+                = shibbolethAuth.authenticateUser(
+                        user2MachineUid, user2ShibbolethIdentity, room1, null);
 
         query.setSessionId(user2Session);
         query.setFrom(user2Jid);
         query.setMachineUID(user2MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
         // REPLY with null - no error
         assertNull(authError);
 
@@ -168,7 +163,7 @@ public class ShibbolethAuthenticationAuthorityTest
         query.setMachineUID(user1MachineUid);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // not-acceptable
         assertNotNull(authError);
@@ -182,7 +177,7 @@ public class ShibbolethAuthenticationAuthorityTest
         query.setMachineUID(null);
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         // not-acceptable
         assertNotNull(authError);
@@ -193,10 +188,10 @@ public class ShibbolethAuthenticationAuthorityTest
         // CASE 9: authenticate for the same user from different machine
         String user3machineUID = "machine3UID";
         String user3Session
-            = shibbolethAuth.authenticateUser(
-                    user3machineUID,
-                    user1ShibbolethIdentity,
-                    room1, null);
+                = shibbolethAuth.authenticateUser(
+                        user3machineUID,
+                        user1ShibbolethIdentity,
+                        room1, null);
 
         assertNotNull(user3Session);
         assertNotEquals(user1Session, user3Session);
@@ -208,7 +203,7 @@ public class ShibbolethAuthenticationAuthorityTest
         roomExists = false;
 
         authError
-            = focusComponent.processExtensions(query, response, roomExists);
+                = focusComponent.processExtensions(query, response, roomExists);
 
         assertNull(authError);
     }

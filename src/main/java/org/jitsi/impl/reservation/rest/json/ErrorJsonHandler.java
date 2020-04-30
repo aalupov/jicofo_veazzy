@@ -28,38 +28,31 @@ import java.io.*;
  * @author Pawel Domas
  */
 public class ErrorJsonHandler
-    extends AbstractJsonHandler<ErrorResponse>
-{
+        extends AbstractJsonHandler<ErrorResponse> {
+
     /**
      * {@inheritDoc}
      */
     @Override
-    protected ErrorResponse createNewObject()
-    {
+    protected ErrorResponse createNewObject() {
         return new ErrorResponse();
     }
 
     @Override
     public boolean primitive(Object primitive)
-            throws ParseException, IOException
-    {
-        if ("error".equals(currentKey))
-        {
+            throws ParseException, IOException {
+        if ("error".equals(currentKey)) {
             assertString(primitive);
 
-            editedInstance.setError((String)primitive);
-        }
-        else if ("message".equals(currentKey))
-        {
+            editedInstance.setError((String) primitive);
+        } else if ("message".equals(currentKey)) {
             assertString(primitive);
 
-            editedInstance.setMessage((String)primitive);
-        }
-        else if ("conflict_id".equals(currentKey))
-        {
+            editedInstance.setMessage((String) primitive);
+        } else if ("conflict_id".equals(currentKey)) {
             assertNumber(primitive);
 
-            editedInstance.setConflictId((Number)primitive);
+            editedInstance.setConflictId((Number) primitive);
         }
         return true;
     }

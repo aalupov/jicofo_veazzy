@@ -26,8 +26,8 @@ import org.jivesoftware.smack.packet.*;
  * @author Sebastien Vincent
  */
 public class RemoteControlExtension
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     /**
      * AWT event that represents our <tt>RemoteControlExtension</tt>.
      */
@@ -42,8 +42,7 @@ public class RemoteControlExtension
      * Constructor.
      *
      */
-    public RemoteControlExtension()
-    {
+    public RemoteControlExtension() {
         videoPanelSize = null;
         event = null;
     }
@@ -53,8 +52,7 @@ public class RemoteControlExtension
      *
      * @param videoPanelSize size of the panel that contains video
      */
-    public RemoteControlExtension(Dimension videoPanelSize)
-    {
+    public RemoteControlExtension(Dimension videoPanelSize) {
         this.videoPanelSize = videoPanelSize;
         this.event = null;
     }
@@ -64,8 +62,7 @@ public class RemoteControlExtension
      *
      * @param event AWT event
      */
-    public RemoteControlExtension(ComponentEvent event)
-    {
+    public RemoteControlExtension(ComponentEvent event) {
         this.event = event;
         this.videoPanelSize = null;
     }
@@ -77,8 +74,7 @@ public class RemoteControlExtension
      * @param event AWT event
      */
     public RemoteControlExtension(InputEvent event,
-            Dimension videoPanelSize)
-    {
+            Dimension videoPanelSize) {
         this.videoPanelSize = videoPanelSize;
         this.event = event;
     }
@@ -89,8 +85,7 @@ public class RemoteControlExtension
      *
      * @return AWT <tt>ComponentEvent</tt>
      */
-    public ComponentEvent getEvent()
-    {
+    public ComponentEvent getEvent() {
         return event;
     }
 
@@ -99,19 +94,17 @@ public class RemoteControlExtension
      *
      * @return "remote-control"
      */
-    public String getElementName()
-    {
+    public String getElementName() {
         return RemoteControlExtensionProvider.ELEMENT_REMOTE_CONTROL;
     }
 
     /**
-     * Returns the XML namespace of the extension sub-packet root element.
-     * The namespace is always "http://jitsi.org/protocol/inputevt".
+     * Returns the XML namespace of the extension sub-packet root element. The
+     * namespace is always "http://jitsi.org/protocol/inputevt".
      *
      * @return the XML namespace of the packet extension.
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return RemoteControlExtensionProvider.NAMESPACE;
     }
 
@@ -120,81 +113,69 @@ public class RemoteControlExtension
      *
      * @return XML representation of the item
      */
-    public String toXML()
-    {
+    public String toXML() {
         String ret = null;
 
-        if(event == null)
-        {
+        if (event == null) {
             return null;
         }
 
-        if(event instanceof MouseEvent)
-        {
-            MouseEvent e = (MouseEvent)event;
+        if (event instanceof MouseEvent) {
+            MouseEvent e = (MouseEvent) event;
 
-            switch(e.getID())
-            {
-            case MouseEvent.MOUSE_DRAGGED:
-            case MouseEvent.MOUSE_MOVED:
-                if(videoPanelSize != null)
-                {
-                    Point p = e.getPoint();
-                    double x = (p.getX() / videoPanelSize.width);
-                    double y = (p.getY() / videoPanelSize.height);
-                    ret = RemoteControlExtensionProvider.getMouseMovedXML(x, y);
-                }
-                break;
-            case MouseEvent.MOUSE_WHEEL:
-                MouseWheelEvent ew = (MouseWheelEvent)e;
-                ret = RemoteControlExtensionProvider.getMouseWheelXML(
-                        ew.getWheelRotation());
-                break;
-            case MouseEvent.MOUSE_PRESSED:
-                ret = RemoteControlExtensionProvider.getMousePressedXML(
-                        e.getModifiers());
-                break;
-            case MouseEvent.MOUSE_RELEASED:
-                ret = RemoteControlExtensionProvider.getMouseReleasedXML(
-                        e.getModifiers());
-                break;
-            default:
-                break;
+            switch (e.getID()) {
+                case MouseEvent.MOUSE_DRAGGED:
+                case MouseEvent.MOUSE_MOVED:
+                    if (videoPanelSize != null) {
+                        Point p = e.getPoint();
+                        double x = (p.getX() / videoPanelSize.width);
+                        double y = (p.getY() / videoPanelSize.height);
+                        ret = RemoteControlExtensionProvider.getMouseMovedXML(x, y);
+                    }
+                    break;
+                case MouseEvent.MOUSE_WHEEL:
+                    MouseWheelEvent ew = (MouseWheelEvent) e;
+                    ret = RemoteControlExtensionProvider.getMouseWheelXML(
+                            ew.getWheelRotation());
+                    break;
+                case MouseEvent.MOUSE_PRESSED:
+                    ret = RemoteControlExtensionProvider.getMousePressedXML(
+                            e.getModifiers());
+                    break;
+                case MouseEvent.MOUSE_RELEASED:
+                    ret = RemoteControlExtensionProvider.getMouseReleasedXML(
+                            e.getModifiers());
+                    break;
+                default:
+                    break;
             }
-        }
-        else if(event instanceof KeyEvent)
-        {
-            KeyEvent e = (KeyEvent)event;
+        } else if (event instanceof KeyEvent) {
+            KeyEvent e = (KeyEvent) event;
             int keycode = e.getKeyCode();
             int key = e.getKeyChar();
 
-            if(key != KeyEvent.CHAR_UNDEFINED)
-            {
+            if (key != KeyEvent.CHAR_UNDEFINED) {
                 keycode = e.getKeyChar();
-            }
-            else
-            {
+            } else {
                 keycode = e.getKeyCode();
             }
 
-            if(keycode == 0)
-            {
+            if (keycode == 0) {
                 return null;
             }
 
-            switch(e.getID())
-            {
-            case KeyEvent.KEY_PRESSED:
-                ret = RemoteControlExtensionProvider.getKeyPressedXML(keycode);
-                break;
-            case KeyEvent.KEY_RELEASED:
-                ret = RemoteControlExtensionProvider.getKeyReleasedXML(keycode);
-                break;
-            case KeyEvent.KEY_TYPED:
-                ret = RemoteControlExtensionProvider.getKeyTypedXML(keycode);
-                break;
-            default:
-                break;
+            switch (e.getID()) {
+                case KeyEvent.KEY_PRESSED:
+                    ret = RemoteControlExtensionProvider.getKeyPressedXML(keycode);
+                    break;
+                case KeyEvent.KEY_RELEASED:
+                    ret = RemoteControlExtensionProvider.getKeyReleasedXML(keycode);
+                    break;
+                case KeyEvent.KEY_TYPED:
+                    ret = RemoteControlExtensionProvider.getKeyTypedXML(keycode);
+                    break;
+                default:
+                    break;
             }
         }
 

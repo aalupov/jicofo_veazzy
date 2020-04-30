@@ -20,8 +20,8 @@ package org.jitsi.xmpp.extensions.jingle;
  *
  * @author Emil Ivov
  */
-public class RemoteCandidatePacketExtension extends CandidatePacketExtension
-{
+public class RemoteCandidatePacketExtension extends CandidatePacketExtension {
+
     /**
      * The name of the "candidate" element.
      */
@@ -30,8 +30,7 @@ public class RemoteCandidatePacketExtension extends CandidatePacketExtension
     /**
      * Creates a new {@link CandidatePacketExtension}
      */
-    public RemoteCandidatePacketExtension()
-    {
+    public RemoteCandidatePacketExtension() {
         super(ELEMENT_NAME);
     }
 }

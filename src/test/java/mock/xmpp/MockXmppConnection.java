@@ -33,9 +33,9 @@ import java.util.*;
 import static org.jivesoftware.smack.SmackException.*;
 
 public class MockXmppConnection
-    extends AbstractXMPPConnection
-    implements XmppConnection
-{
+        extends AbstractXMPPConnection
+        implements XmppConnection {
+
     private final static Logger logger
             = Logger.getLogger(MockXmppConnection.class);
 
@@ -44,33 +44,26 @@ public class MockXmppConnection
                     new HashMap<Jid, MockXmppConnection>());
 
     private static class MockXmppConnectionConfiguration
-            extends ConnectionConfiguration
-    {
-        MockXmppConnectionConfiguration(Builder builder)
-        {
+            extends ConnectionConfiguration {
+
+        MockXmppConnectionConfiguration(Builder builder) {
             super(builder);
         }
 
         public static final class Builder
                 extends
-                ConnectionConfiguration.Builder<Builder,
-                        MockXmppConnectionConfiguration>
-        {
+                ConnectionConfiguration.Builder<Builder, MockXmppConnectionConfiguration> {
+
             @Override
-            public MockXmppConnectionConfiguration build()
-            {
+            public MockXmppConnectionConfiguration build() {
                 return new MockXmppConnectionConfiguration(this);
             }
 
             @Override
-            public Builder setXmppDomain(String xmppServiceDomain)
-            {
-                try
-                {
+            public Builder setXmppDomain(String xmppServiceDomain) {
+                try {
                     return super.setXmppDomain(xmppServiceDomain);
-                }
-                catch (XmppStringprepException e)
-                {
+                } catch (XmppStringprepException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -82,61 +75,50 @@ public class MockXmppConnection
         }
     }
 
-    public MockXmppConnection(final Jid ourJid)
-    {
+    public MockXmppConnection(final Jid ourJid) {
         super(new MockXmppConnectionConfiguration.Builder()
                 .setXmppDomain("example.com")
                 .setUsernameAndPassword("mock", "mockpass")
                 .build());
-        if (ourJid instanceof EntityFullJid)
-        {
+        if (ourJid instanceof EntityFullJid) {
             user = (EntityFullJid) ourJid;
-        }
-        else
-        {
+        } else {
             user = new AnyJidAsEntityFullJid(ourJid);
         }
 
-        try
-        {
+        try {
             setFromMode(FromMode.UNCHANGED);
             // FIXME smack4: wait for Smack#163
             setReplyToUnknownIq(false);
             connect();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public void sendNonza(Nonza element)
-            throws NotConnectedException, InterruptedException
-    {
+            throws NotConnectedException, InterruptedException {
     }
 
     @Override
-    public boolean isUsingCompression()
-    {
+    public boolean isUsingCompression() {
         return false;
     }
 
     @Override
     protected void loginInternal(String username,
-                                 String password,
-                                 Resourcepart resource)
+            String password,
+            Resourcepart resource)
             throws XMPPException, SmackException,
-            IOException, InterruptedException
-    {
+            IOException, InterruptedException {
         // nothing to do
     }
 
     @Override
     protected void connectInternal()
             throws SmackException, IOException,
-            XMPPException, InterruptedException
-    {
+            XMPPException, InterruptedException {
         sharedStanzaQueue.put(user, this);
         tlsHandled.reportSuccess();
         saslFeatureReceived.reportSuccess();
@@ -144,20 +126,17 @@ public class MockXmppConnection
 
     @Override
     protected void sendStanzaInternal(final Stanza packet)
-            throws NotConnectedException, InterruptedException
-    {
+            throws NotConnectedException, InterruptedException {
         packet.setFrom(user);
         final MockXmppConnection target = sharedStanzaQueue.get(packet.getTo());
-        if (target == null)
-        {
+        if (target == null) {
             System.out.println("Connection for " + packet.getTo() + " not found!");
             return;
         }
 
         Thread t = new Thread(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 target.invokeStanzaCollectorsAndNotifyRecvListeners(packet);
             }
         });
@@ -165,32 +144,24 @@ public class MockXmppConnection
     }
 
     @Override
-    protected void shutdown()
-    {
+    protected void shutdown() {
         sharedStanzaQueue.remove(user);
         connected = false;
     }
 
     @Override
-    public boolean isSecureConnection()
-    {
+    public boolean isSecureConnection() {
         return false;
     }
 
     @Override
-    public void sendStanza(Stanza packet)
-    {
-        try
-        {
+    public void sendStanza(Stanza packet) {
+        try {
             super.sendStanza(packet);
-        }
-        catch (NotConnectedException e)
-        {
+        } catch (NotConnectedException e) {
             logger.error("No connection - unable to send packet: "
                     + packet.toXML(), e);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             logger.error("Failed to send packet: "
                     + packet.toXML().toString(), e);
         }
@@ -198,36 +169,26 @@ public class MockXmppConnection
 
     @Override
     public IQ sendPacketAndGetReply(IQ packet)
-            throws OperationFailedException
-    {
+            throws OperationFailedException {
         Objects.requireNonNull(packet, "packet");
 
-        try
-        {
+        try {
             packet.setFrom(user);
             StanzaCollector packetCollector
                     = createStanzaCollectorAndSend(packet);
-            try
-            {
+            try {
                 //FIXME: retry allocation on timeout
                 return packetCollector.nextResult();
-            }
-            finally
-            {
+            } finally {
                 packetCollector.cancel();
             }
-        }
-        catch (InterruptedException
-               /* |XMPPException.XMPPErrorException
-                | NoResponseException*/ e)
-        {
+        } catch (InterruptedException /* |XMPPException.XMPPErrorException
+                | NoResponseException*/ e) {
             throw new OperationFailedException(
                     "No response or failed otherwise: " + packet.toXML(),
                     OperationFailedException.GENERAL_ERROR,
                     e);
-        }
-        catch (NotConnectedException e)
-        {
+        } catch (NotConnectedException e) {
             throw new OperationFailedException(
                     "No connection - unable to send packet: " + packet.toXML(),
                     OperationFailedException.PROVIDER_NOT_REGISTERED,
@@ -236,11 +197,9 @@ public class MockXmppConnection
     }
 
     @Override
-    public IQRequestHandler registerIQRequestHandler(IQRequestHandler iqRequestHandler)
-    {
+    public IQRequestHandler registerIQRequestHandler(IQRequestHandler iqRequestHandler) {
         IQRequestHandler previous = super.registerIQRequestHandler(iqRequestHandler);
-        if (previous != null && previous != iqRequestHandler)
-        {
+        if (previous != null && previous != iqRequestHandler) {
             throw new RuntimeException("A IQ handler for "
                     + iqRequestHandler.getElement()
                     + " was already registered! Old: "

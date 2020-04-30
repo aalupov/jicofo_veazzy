@@ -28,12 +28,11 @@ import org.jitsi.utils.*;
  *
  * @author Pawel Domas
  */
-public class Main
-{
-    
+public class Main {
+
     /**
-     * The name of the command-line argument which specifies the XMPP domain
-     * to use for the XMPP client connection.
+     * The name of the command-line argument which specifies the XMPP domain to
+     * use for the XMPP client connection.
      */
     private static final String DOMAIN_ARG_NAME = "domain";
 
@@ -55,8 +54,8 @@ public class Main
     private static final String USER_NAME_ARG_VALUE = "focus";
 
     /**
-     * The name of the command-line argument which specifies the password
-     * used by focus XMPP user to login. If not provided then focus will use
+     * The name of the command-line argument which specifies the password used
+     * by focus XMPP user to login. If not provided then focus will use
      * anonymous authentication method.
      */
     private static final String USER_PASSWORD_ARG_NAME = "--user_password";
@@ -106,11 +105,11 @@ public class Main
 
     /**
      * Program entry point.
+     *
      * @param args command-line arguments.
      */
     public static void main(String[] args)
-        throws ParseException
-    {
+            throws ParseException {
         CmdLine cmdLine = new CmdLine();
 
         cmdLine.addRequiredArgument(SECRET_ARG_NAME);
@@ -128,15 +127,14 @@ public class Main
                 HOST_ARG_NAME,
                 componentDomain == null ? HOST_ARG_VALUE : componentDomain);
         // Try to fix component domain
-        if (StringUtils.isNullOrEmpty(componentDomain))
-        {
+        if (StringUtils.isNullOrEmpty(componentDomain)) {
             componentDomain = host;
         }
 
         // Jicofo XMPP component
         String componentSubDomain
-            = cmdLine.getOptionValue(
-                    SUBDOMAIN_ARG_NAME, SUBDOMAIN_ARG_VALUE);
+                = cmdLine.getOptionValue(
+                        SUBDOMAIN_ARG_NAME, SUBDOMAIN_ARG_VALUE);
 
         int port = cmdLine.getIntOptionValue(PORT_ARG_NAME, PORT_ARG_VALUE);
 
@@ -146,8 +144,8 @@ public class Main
         String focusDomain = cmdLine.getOptionValue(USER_DOMAIN_ARG_NAME);
 
         String focusUserName
-            = cmdLine.getOptionValue(
-                    USER_NAME_ARG_NAME, USER_NAME_ARG_VALUE);
+                = cmdLine.getOptionValue(
+                        USER_NAME_ARG_NAME, USER_NAME_ARG_VALUE);
 
         String focusPassword = cmdLine.getOptionValue(USER_PASSWORD_ARG_NAME);
 
@@ -156,8 +154,7 @@ public class Main
         System.setProperty(FocusManager.XMPP_DOMAIN_PNAME, componentDomain);
         System.setProperty(FocusManager.FOCUS_USER_DOMAIN_PNAME, focusDomain);
         System.setProperty(FocusManager.FOCUS_USER_NAME_PNAME, focusUserName);
-        if (!StringUtils.isNullOrEmpty(focusPassword))
-        {
+        if (!StringUtils.isNullOrEmpty(focusPassword)) {
             System.setProperty(
                     FocusManager.FOCUS_USER_PASSWORD_PNAME, focusPassword);
         }
@@ -167,9 +164,9 @@ public class Main
         boolean focusAnonymous = StringUtils.isNullOrEmpty(focusPassword);
 
         FocusComponent component
-            = new FocusComponent(
-                    host, port, componentDomain, componentSubDomain,
-                    secret, focusAnonymous, focusUserName + "@" + focusDomain);
+                = new FocusComponent(
+                        host, port, componentDomain, componentSubDomain,
+                        secret, focusAnonymous, focusUserName + "@" + focusDomain);
 
         JicofoBundleConfig osgiBundles = new JicofoBundleConfig();
 

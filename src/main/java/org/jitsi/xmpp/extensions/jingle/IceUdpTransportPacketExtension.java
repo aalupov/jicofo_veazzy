@@ -29,13 +29,13 @@ import org.jivesoftware.smack.packet.*;
  * @author Lyubomir Marinov
  */
 public class IceUdpTransportPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The name of the "transport" element.
      */
     public static final String NAMESPACE
-        = "urn:xmpp:jingle:transports:ice-udp:1";
+            = "urn:xmpp:jingle:transports:ice-udp:1";
 
     /**
      * The name of the "transport" element.
@@ -54,16 +54,16 @@ public class IceUdpTransportPacketExtension
 
     /**
      * A list of one or more candidates representing each of the initiator's
-     * higher-priority transport candidates as determined in accordance with
-     * the ICE methodology.
+     * higher-priority transport candidates as determined in accordance with the
+     * ICE methodology.
      */
     private final List<CandidatePacketExtension> candidateList
-        = new ArrayList<CandidatePacketExtension>();
+            = new ArrayList<CandidatePacketExtension>();
 
     /**
      * Once the parties have connectivity and therefore the initiator has
-     * completed ICE as explained in RFC 5245, the initiator MAY communicate
-     * the in-use candidate pair in the signalling channel by sending a
+     * completed ICE as explained in RFC 5245, the initiator MAY communicate the
+     * in-use candidate pair in the signalling channel by sending a
      * transport-info message that contains a "remote-candidate" element
      */
     private RemoteCandidatePacketExtension remoteCandidate;
@@ -71,23 +71,21 @@ public class IceUdpTransportPacketExtension
     /**
      * Creates a new {@link IceUdpTransportPacketExtension} instance.
      */
-    public IceUdpTransportPacketExtension()
-    {
+    public IceUdpTransportPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Creates a new {@link IceUdpTransportPacketExtension} instance with the
      * specified <tt>namespace</tt> and <tt>elementName</tt>. The purpose of
-     * this method is to allow {@link RawUdpTransportPacketExtension} to
-     * extend this class.
+     * this method is to allow {@link RawUdpTransportPacketExtension} to extend
+     * this class.
      *
      * @param namespace the XML namespace that the instance should belong to.
      * @param elementName the name of the element that we would be representing.
      */
     protected IceUdpTransportPacketExtension(String namespace,
-                                             String elementName)
-    {
+            String elementName) {
         super(namespace, elementName);
     }
 
@@ -96,8 +94,7 @@ public class IceUdpTransportPacketExtension
      *
      * @param pwd a password <tt>String</tt> as defined in RFC 5245
      */
-    public void setPassword(String pwd)
-    {
+    public void setPassword(String pwd) {
         super.setAttribute(PWD_ATTR_NAME, pwd);
     }
 
@@ -106,8 +103,7 @@ public class IceUdpTransportPacketExtension
      *
      * @return a password <tt>String</tt> as defined in RFC 5245
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return super.getAttributeAsString(PWD_ATTR_NAME);
     }
 
@@ -116,8 +112,7 @@ public class IceUdpTransportPacketExtension
      *
      * @param ufrag a user fragment <tt>String</tt> as defined in RFC 5245
      */
-    public void setUfrag(String ufrag)
-    {
+    public void setUfrag(String ufrag) {
         super.setAttribute(UFRAG_ATTR_NAME, ufrag);
     }
 
@@ -126,8 +121,7 @@ public class IceUdpTransportPacketExtension
      *
      * @return a user fragment <tt>String</tt> as defined in RFC 5245
      */
-    public String getUfrag()
-    {
+    public String getUfrag() {
         return super.getAttributeAsString(UFRAG_ATTR_NAME);
     }
 
@@ -137,20 +131,19 @@ public class IceUdpTransportPacketExtension
      * @return this element's child (local or remote) candidate elements.
      */
     @Override
-    public List<? extends ExtensionElement> getChildExtensions()
-    {
+    public List<? extends ExtensionElement> getChildExtensions() {
         List<ExtensionElement> childExtensions = new ArrayList<>();
         List<? extends ExtensionElement> superChildExtensions
-            = super.getChildExtensions();
+                = super.getChildExtensions();
 
         childExtensions.addAll(superChildExtensions);
 
-        synchronized (candidateList)
-        {
-            if (candidateList.size() > 0)
+        synchronized (candidateList) {
+            if (candidateList.size() > 0) {
                 childExtensions.addAll(candidateList);
-            else if (remoteCandidate != null)
+            } else if (remoteCandidate != null) {
                 childExtensions.add(remoteCandidate);
+            }
         }
 
         return childExtensions;
@@ -163,10 +156,8 @@ public class IceUdpTransportPacketExtension
      * @param candidate the new {@link CandidatePacketExtension} to add to this
      * transport element.
      */
-    public void addCandidate(CandidatePacketExtension candidate)
-    {
-        synchronized(candidateList)
-        {
+    public void addCandidate(CandidatePacketExtension candidate) {
+        synchronized (candidateList) {
             candidateList.add(candidate);
         }
     }
@@ -180,10 +171,8 @@ public class IceUdpTransportPacketExtension
      * @return <tt>true</tt> if the list of <tt>CandidatePacketExtension</tt>s
      * registered with this transport contained the specified <tt>candidate</tt>
      */
-    public boolean removeCandidate(CandidatePacketExtension candidate)
-    {
-        synchronized (candidateList)
-        {
+    public boolean removeCandidate(CandidatePacketExtension candidate) {
+        synchronized (candidateList) {
             return candidateList.remove(candidate);
         }
     }
@@ -195,10 +184,8 @@ public class IceUdpTransportPacketExtension
      * @return the list of {@link CandidatePacketExtension}s currently
      * registered with this transport.
      */
-    public List<CandidatePacketExtension> getCandidateList()
-    {
-        synchronized(candidateList)
-        {
+    public List<CandidatePacketExtension> getCandidateList() {
+        synchronized (candidateList) {
             return new ArrayList<>(candidateList);
         }
     }
@@ -209,8 +196,7 @@ public class IceUdpTransportPacketExtension
      * @param candidate the new {@link CandidatePacketExtension} to set as an
      * in-use candidate for this session.
      */
-    public void setRemoteCandidate(RemoteCandidatePacketExtension candidate)
-    {
+    public void setRemoteCandidate(RemoteCandidatePacketExtension candidate) {
         this.remoteCandidate = candidate;
     }
 
@@ -219,8 +205,7 @@ public class IceUdpTransportPacketExtension
      *
      * @return Returns the in-use <tt>candidate</tt> for this session.
      */
-    public RemoteCandidatePacketExtension getRemoteCandidate()
-    {
+    public RemoteCandidatePacketExtension getRemoteCandidate() {
         return remoteCandidate;
     }
 
@@ -232,32 +217,30 @@ public class IceUdpTransportPacketExtension
      * @param childExtension the extension we'd like to add here.
      */
     @Override
-    public void addChildExtension(ExtensionElement childExtension)
-    {
+    public void addChildExtension(ExtensionElement childExtension) {
         //first check for RemoteCandidate because they extend Candidate.
-        if(childExtension instanceof RemoteCandidatePacketExtension)
+        if (childExtension instanceof RemoteCandidatePacketExtension) {
             setRemoteCandidate((RemoteCandidatePacketExtension) childExtension);
-
-        else if(childExtension instanceof CandidatePacketExtension)
+        } else if (childExtension instanceof CandidatePacketExtension) {
             addCandidate((CandidatePacketExtension) childExtension);
-
-        else
+        } else {
             super.addChildExtension(childExtension);
+        }
     }
 
     /**
      * Checks whether an 'rtcp-mux' extension has been added to this
      * <tt>IceUdpTransportPacketExtension</tt>.
+     *
      * @return <tt>true</tt> if this <tt>IceUdpTransportPacketExtension</tt>
      * has a child with the 'rtcp-mux' name.
      */
-    public boolean isRtcpMux()
-    {
-        for (ExtensionElement packetExtension : getChildExtensions())
-        {
+    public boolean isRtcpMux() {
+        for (ExtensionElement packetExtension : getChildExtensions()) {
             if (RtcpmuxPacketExtension.ELEMENT_NAME
-                    .equals(packetExtension.getElementName()))
+                    .equals(packetExtension.getElementName())) {
                 return true;
+            }
         }
         return false;
     }
@@ -274,8 +257,7 @@ public class IceUdpTransportPacketExtension
      * <tt>src</tt> and its candidates
      */
     public static IceUdpTransportPacketExtension cloneTransportAndCandidates(
-            IceUdpTransportPacketExtension src)
-    {
+            IceUdpTransportPacketExtension src) {
         return cloneTransportAndCandidates(src, false);
     }
 
@@ -285,7 +267,7 @@ public class IceUdpTransportPacketExtension
      *
      * @param src the <tt>IceUdpTransportPacketExtension</tt> to be cloned
      * @param copyDtls if <tt>true</tt> will also copy
-     *                 {@link DtlsFingerprintPacketExtension}.
+     * {@link DtlsFingerprintPacketExtension}.
      * @return a new <tt>IceUdpTransportPacketExtension</tt> instance which has
      * the same run-time type, attributes, namespace, text and candidates as the
      * specified <tt>src</tt>
@@ -293,39 +275,35 @@ public class IceUdpTransportPacketExtension
      * <tt>src</tt> and its candidates
      */
     public static IceUdpTransportPacketExtension cloneTransportAndCandidates(
-            IceUdpTransportPacketExtension src, boolean copyDtls)
-    {
-        if (src == null)
+            IceUdpTransportPacketExtension src, boolean copyDtls) {
+        if (src == null) {
             return null;
+        }
 
         IceUdpTransportPacketExtension dst = AbstractPacketExtension.clone(src);
         // Copy candidates
-        for (CandidatePacketExtension srcCand : src.getCandidateList())
-        {
-            if (!(srcCand instanceof RemoteCandidatePacketExtension))
+        for (CandidatePacketExtension srcCand : src.getCandidateList()) {
+            if (!(srcCand instanceof RemoteCandidatePacketExtension)) {
                 dst.addCandidate(
-                    AbstractPacketExtension.clone(srcCand));
+                        AbstractPacketExtension.clone(srcCand));
+            }
         }
         // Copy "web-socket" extensions.
         for (WebSocketPacketExtension wspe : src.getChildExtensionsOfType(
-            WebSocketPacketExtension.class))
-        {
+                WebSocketPacketExtension.class)) {
             dst.addChildExtension(new WebSocketPacketExtension(wspe.getUrl()));
         }
         // Copy RTCP MUX
-        if (src.isRtcpMux())
-        {
+        if (src.isRtcpMux()) {
             dst.addChildExtension(new RtcpmuxPacketExtension());
         }
         // Optionally copy DTLS
-        if (copyDtls)
-        {
+        if (copyDtls) {
             for (DtlsFingerprintPacketExtension dtlsFingerprint
-                : src.getChildExtensionsOfType(
-                DtlsFingerprintPacketExtension.class))
-            {
+                    : src.getChildExtensionsOfType(
+                            DtlsFingerprintPacketExtension.class)) {
                 DtlsFingerprintPacketExtension copy
-                    = new DtlsFingerprintPacketExtension();
+                        = new DtlsFingerprintPacketExtension();
 
                 copy.setFingerprint(dtlsFingerprint.getFingerprint());
                 copy.setHash(dtlsFingerprint.getHash());

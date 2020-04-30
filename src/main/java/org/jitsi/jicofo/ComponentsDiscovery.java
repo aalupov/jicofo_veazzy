@@ -49,13 +49,13 @@ import java.util.concurrent.*;
  * @author Pawel Domas
  */
 public class ComponentsDiscovery
-    implements RegistrationStateChangeListener
-{
+        implements RegistrationStateChangeListener {
+
     /**
      * The logger
      */
     private final static Logger logger
-        = Logger.getLogger(ComponentsDiscovery.class);
+            = Logger.getLogger(ComponentsDiscovery.class);
 
     /**
      * Re-discovers every 30 seconds.
@@ -67,7 +67,7 @@ public class ComponentsDiscovery
      * components re-discovery will be performed. Time interval in millis.
      */
     private final static String REDISCOVERY_INTERVAL_PNAME
-        = "org.jitsi.jicofo.SERVICE_REDISCOVERY_INTERVAL";
+            = "org.jitsi.jicofo.SERVICE_REDISCOVERY_INTERVAL";
 
     /**
      * {@link JitsiMeetServices} which is notified about new components
@@ -120,50 +120,44 @@ public class ComponentsDiscovery
      * Creates new instance of <tt>ComponentsDiscovery</tt>.
      *
      * @param meetServices {@link JitsiMeetServices} instance which will be
-     *                     notified about XMPP components available on XMPP
-     *                     domain.
+     * notified about XMPP components available on XMPP domain.
      */
-    public ComponentsDiscovery(JitsiMeetServices meetServices)
-    {
+    public ComponentsDiscovery(JitsiMeetServices meetServices) {
         this.meetServices
-            = Objects.requireNonNull(meetServices, "meetServices");
+                = Objects.requireNonNull(meetServices, "meetServices");
     }
 
     /**
      * Starts this instance.
      *
      * @param xmppDomain server address/main service XMPP xmppDomain that hosts
-     *                      the conference system.
+     * the conference system.
      * @param statsPubSubNode the name of PubSub node where video bridges are
-     *        publishing their stats. It will be used to discover videobridges
-     *        automatically based on item's IDs(each bridges used it's JID as
-     *        item ID).
+     * publishing their stats. It will be used to discover videobridges
+     * automatically based on item's IDs(each bridges used it's JID as item ID).
      * @param protocolProviderHandler protocol provider handler that provides
-     *                                XMPP connection
+     * XMPP connection
      * @throws java.lang.IllegalStateException if started already.
      */
-    public void start(DomainBareJid           xmppDomain,
-                      String                  statsPubSubNode,
-                      ProtocolProviderHandler protocolProviderHandler)
-    {
-        if (this.protocolProviderHandler != null)
-        {
+    public void start(DomainBareJid xmppDomain,
+            String statsPubSubNode,
+            ProtocolProviderHandler protocolProviderHandler) {
+        if (this.protocolProviderHandler != null) {
             throw new IllegalStateException("Already started");
         }
 
         this.xmppDomain = Objects.requireNonNull(xmppDomain, "xmppDomain");
         this.protocolProviderHandler
-            = Objects.requireNonNull(
-                    protocolProviderHandler, "protocolProviderHandler");
+                = Objects.requireNonNull(
+                        protocolProviderHandler, "protocolProviderHandler");
 
         this.statsPubSubNode = statsPubSubNode;
 
         this.capsOpSet
-            = protocolProviderHandler.getOperationSet(
-                    OperationSetSimpleCaps.class);
+                = protocolProviderHandler.getOperationSet(
+                        OperationSetSimpleCaps.class);
 
-        if (protocolProviderHandler.isRegistered())
-        {
+        if (protocolProviderHandler.isRegistered()) {
             firstTimeDiscovery();
         }
 
@@ -171,19 +165,16 @@ public class ComponentsDiscovery
         protocolProviderHandler.addRegistrationListener(this);
     }
 
-    private void scheduleRediscovery()
-    {
+    private void scheduleRediscovery() {
         long interval
-            = FocusBundleActivator.getConfigService()
-                    .getLong(
-                        REDISCOVERY_INTERVAL_PNAME, DEFAULT_REDISCOVERY_INT);
+                = FocusBundleActivator.getConfigService()
+                        .getLong(
+                                REDISCOVERY_INTERVAL_PNAME, DEFAULT_REDISCOVERY_INT);
 
-        if (interval > 0)
-        {
-            if (rediscoveryTimer != null)
-            {
+        if (interval > 0) {
+            if (rediscoveryTimer != null) {
                 logger.warn(
-                    "Attempt to schedule rediscovery when it's already done");
+                        "Attempt to schedule rediscovery when it's already done");
                 return;
             }
 
@@ -192,40 +183,34 @@ public class ComponentsDiscovery
             rediscoveryTimer = new Timer();
 
             rediscoveryTimer.schedule(
-                new RediscoveryTask(), interval, interval);
-        }
-        else
-        {
+                    new RediscoveryTask(), interval, interval);
+        } else {
             logger.info("Service rediscovery disabled");
         }
 
         if (pubSubBridgeDiscovery == null
-                && !StringUtils.isNullOrEmpty(statsPubSubNode))
-        {
+                && !StringUtils.isNullOrEmpty(statsPubSubNode)) {
             OperationSetSubscription subOpSet
-                = protocolProviderHandler.getOperationSet(
-                       OperationSetSubscription.class);
+                    = protocolProviderHandler.getOperationSet(
+                            OperationSetSubscription.class);
 
             pubSubBridgeDiscovery
-                = new ThroughPubSubDiscovery(
-                        subOpSet, capsOpSet,
-                        FocusBundleActivator.getSharedThreadPool());
+                    = new ThroughPubSubDiscovery(
+                            subOpSet, capsOpSet,
+                            FocusBundleActivator.getSharedThreadPool());
 
             pubSubBridgeDiscovery.start(
                     FocusBundleActivator.bundleContext);
         }
     }
 
-    private void cancelRediscovery()
-    {
-        if (rediscoveryTimer != null)
-        {
+    private void cancelRediscovery() {
+        if (rediscoveryTimer != null) {
             rediscoveryTimer.cancel();
             rediscoveryTimer = null;
         }
 
-        if (pubSubBridgeDiscovery != null)
-        {
+        if (pubSubBridgeDiscovery != null) {
             pubSubBridgeDiscovery.stop();
             pubSubBridgeDiscovery = null;
         }
@@ -234,22 +219,18 @@ public class ComponentsDiscovery
     /**
      * Initializes this instance and discovers Jitsi Meet services.
      */
-    public void discoverServices()
-    {
+    public void discoverServices() {
         Set<Jid> nodes = capsOpSet.getItems(xmppDomain);
-        if (nodes == null)
-        {
+        if (nodes == null) {
             logger.error("Failed to discover services on " + xmppDomain);
             return;
         }
 
         List<Jid> onlineNodes = new ArrayList<>();
-        for (Jid node : nodes)
-        {
+        for (Jid node : nodes) {
             List<String> features = capsOpSet.getFeatures(node);
 
-            if (features == null)
-            {
+            if (features == null) {
                 // Component unavailable
                 continue;
             }
@@ -257,27 +238,23 @@ public class ComponentsDiscovery
             // Node is considered online when we get its feature list
             onlineNodes.add(node);
 
-            if (!itemMap.containsKey(node))
-            {
+            if (!itemMap.containsKey(node)) {
                 itemMap.put(node, features);
 
                 // Try discovering version
                 Version version
-                    = DiscoveryUtil.discoverVersion(connection, node, features);
+                        = DiscoveryUtil.discoverVersion(connection, node, features);
 
                 String verStr
-                    = version != null
-                        ? version.getNameVersionOsString() : "null";
+                        = version != null
+                                ? version.getNameVersionOsString() : "null";
                 logger.info(
-                    "New component discovered: " + node + ", " + verStr);
+                        "New component discovered: " + node + ", " + verStr);
 
                 meetServices.newNodeDiscovered(node, features, version);
-            }
-            else
-            {
+            } else {
                 // Check if there are changes in feature list
-                if (!DiscoveryUtil.areTheSame(itemMap.get(node), features))
-                {
+                if (!DiscoveryUtil.areTheSame(itemMap.get(node), features)) {
                     // FIXME: we do not care for feature list change yet, as
                     // components should have constant addresses configured,
                     // but want to detect eventual problems here
@@ -295,11 +272,9 @@ public class ComponentsDiscovery
         offlineNodes.removeAll(onlineNodes);
         itemMap.keySet().removeAll(offlineNodes);
 
-        if (offlineNodes.size() > 0)
-        {
+        if (offlineNodes.size() > 0) {
             // There are disconnected nodes
-            for (Jid offlineNode : offlineNodes)
-            {
+            for (Jid offlineNode : offlineNodes) {
                 logger.info("Component went offline: " + offlineNode);
 
                 meetServices.nodeNoLongerAvailable(offlineNode);
@@ -307,11 +282,10 @@ public class ComponentsDiscovery
         }
     }
 
-    private void firstTimeDiscovery()
-    {
+    private void firstTimeDiscovery() {
         this.connection
-            = Objects.requireNonNull(
-                    protocolProviderHandler.getXmppConnection(), "connection");
+                = Objects.requireNonNull(
+                        protocolProviderHandler.getXmppConnection(), "connection");
 
         discoverServices();
 
@@ -321,20 +295,16 @@ public class ComponentsDiscovery
     /**
      * Stops this instance and disposes XMPP connection.
      */
-    public void stop()
-    {
+    public void stop() {
         cancelRediscovery();
 
-        if (protocolProviderHandler != null)
-        {
+        if (protocolProviderHandler != null) {
             protocolProviderHandler.removeRegistrationListener(this);
         }
     }
 
-    private void setAllNodesOffline()
-    {
-        for (Jid node : itemMap.keySet())
-        {
+    private void setAllNodesOffline() {
+        for (Jid node : itemMap.keySet()) {
             logger.info("Connection lost - component offline: " + node);
 
             meetServices.nodeNoLongerAvailable(node);
@@ -344,31 +314,24 @@ public class ComponentsDiscovery
     }
 
     @Override
-    public void registrationStateChanged(RegistrationStateChangeEvent evt)
-    {
-        if (RegistrationState.REGISTERED.equals(evt.getNewState()))
-        {
+    public void registrationStateChanged(RegistrationStateChangeEvent evt) {
+        if (RegistrationState.REGISTERED.equals(evt.getNewState())) {
             firstTimeDiscovery();
-        }
-        else if (RegistrationState.UNREGISTERED.equals(evt.getNewState())
-            || RegistrationState.CONNECTION_FAILED.equals(evt.getNewState()))
-        {
+        } else if (RegistrationState.UNREGISTERED.equals(evt.getNewState())
+                || RegistrationState.CONNECTION_FAILED.equals(evt.getNewState())) {
             cancelRediscovery();
 
             setAllNodesOffline();
         }
     }
 
-    class RediscoveryTask extends TimerTask
-    {
+    class RediscoveryTask extends TimerTask {
 
         @Override
-        public void run()
-        {
-            if (!protocolProviderHandler.isRegistered())
-            {
+        public void run() {
+            if (!protocolProviderHandler.isRegistered()) {
                 logger.warn(
-                    "No XMPP connection - skipping service re-discovery.");
+                        "No XMPP connection - skipping service re-discovery.");
                 return;
             }
 
@@ -381,15 +344,15 @@ public class ComponentsDiscovery
      * discovers videobridges by listening to PubSub stats notifications.
      */
     class ThroughPubSubDiscovery
-        implements SubscriptionListener,
-                   EventHandler
-    {
+            implements SubscriptionListener,
+            EventHandler {
+
         /**
          * The name of configuration property used to configure max bridge stats
          * age.
          */
         public static final String MAX_STATS_REPORT_AGE_PNAME
-            = "org.jitsi.jicofo.MAX_STATS_REPORT_AGE";
+                = "org.jitsi.jicofo.MAX_STATS_REPORT_AGE";
 
         /**
          * 15 seconds by default. If bridge does not publish stats for longer
@@ -409,8 +372,8 @@ public class ComponentsDiscovery
 
         /**
          * Maps bridge JID to last received stats timestamp. Used to expire
-         * bridge which do not send stats for too long.
-         * TODO: move to BridgeSelector?
+         * bridge which do not send stats for too long. TODO: move to
+         * BridgeSelector?
          */
         private final Map<Jid, Long> bridgesMap = new HashMap<>();
 
@@ -432,15 +395,15 @@ public class ComponentsDiscovery
 
         /**
          * Creates new Instance of <tt>ThroughPubSubDiscovery</tt>.
+         *
          * @param subscriptionOpSet subscription operation set instance.
          * @param capsOpSet capabilities operation set instance.
          * @param executor scheduled executor service which will be used to run
-         *                 cyclic task.
+         * cyclic task.
          */
         public ThroughPubSubDiscovery(OperationSetSubscription subscriptionOpSet,
-                                      OperationSetSimpleCaps capsOpSet,
-                                      ScheduledExecutorService executor)
-        {
+                OperationSetSimpleCaps capsOpSet,
+                ScheduledExecutorService executor) {
             this.subOpSet = subscriptionOpSet;
             this.capsOpSet = capsOpSet;
             this.executor = Objects.requireNonNull(executor, "executor");
@@ -449,36 +412,31 @@ public class ComponentsDiscovery
         /**
          * Starts <tt>ThroughPubSubDiscovery</tt>.
          */
-        synchronized void start(BundleContext osgiCtx)
-        {
+        synchronized void start(BundleContext osgiCtx) {
             logger.info(
-                "Bridges will be discovered through" +
-                    " PubSub stats on node: " + statsPubSubNode);
+                    "Bridges will be discovered through"
+                    + " PubSub stats on node: " + statsPubSubNode);
 
             this.MAX_STATS_REPORT_AGE
-                = FocusBundleActivator.getConfigService()
-                    .getLong(MAX_STATS_REPORT_AGE_PNAME, MAX_STATS_REPORT_AGE);
+                    = FocusBundleActivator.getConfigService()
+                            .getLong(MAX_STATS_REPORT_AGE_PNAME, MAX_STATS_REPORT_AGE);
 
-            if (MAX_STATS_REPORT_AGE <= 0)
+            if (MAX_STATS_REPORT_AGE <= 0) {
                 throw new IllegalArgumentException(
                         "MAX STATS AGE: " + MAX_STATS_REPORT_AGE);
+            }
 
-            logger.info("Max stats age: " + MAX_STATS_REPORT_AGE +" ms");
+            logger.info("Max stats age: " + MAX_STATS_REPORT_AGE + " ms");
 
             // Fetch all items already discovered
             List<PayloadItem> items = subOpSet.getItems(statsPubSubNode);
-            if (items != null)
-            {
-                for (PayloadItem item : items)
-                {
+            if (items != null) {
+                for (PayloadItem item : items) {
                     // Potential bridge JID may be carried in item ID
-                    try
-                    {
+                    try {
                         Jid bridgeId = JidCreate.from(item.getId());
                         verifyJvbJid(bridgeId);
-                    }
-                    catch (XmppStringprepException e)
-                    {
+                    } catch (XmppStringprepException e) {
                         e.printStackTrace();
                     }
                 }
@@ -487,39 +445,32 @@ public class ComponentsDiscovery
             subOpSet.subscribe(statsPubSubNode, this);
 
             this.expireTask = executor.scheduleAtFixedRate(
-                new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            validateBridges();
-                        }
-                        catch (Throwable e)
-                        {
-                            logger.error(e, e);
-                        }
+                    new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        validateBridges();
+                    } catch (Throwable e) {
+                        logger.error(e, e);
                     }
-                },
-                MAX_STATS_REPORT_AGE / 2,
-                MAX_STATS_REPORT_AGE / 2,
-                TimeUnit.MILLISECONDS);
+                }
+            },
+                    MAX_STATS_REPORT_AGE / 2,
+                    MAX_STATS_REPORT_AGE / 2,
+                    TimeUnit.MILLISECONDS);
 
             evtHandlerReg
-                = EventUtil.registerEventHandler(
-                        osgiCtx,
-                        new String[] { BridgeEvent.BRIDGE_DOWN },
-                        this);
+                    = EventUtil.registerEventHandler(
+                            osgiCtx,
+                            new String[]{BridgeEvent.BRIDGE_DOWN},
+                            this);
         }
 
         /**
          * Stops <tt>ThroughPubSubDiscovery</tt>.
          */
-        synchronized void stop()
-        {
-            if (evtHandlerReg != null)
-            {
+        synchronized void stop() {
+            if (evtHandlerReg != null) {
                 evtHandlerReg.unregister();
                 evtHandlerReg = null;
             }
@@ -527,9 +478,8 @@ public class ComponentsDiscovery
             subOpSet.unSubscribe(statsPubSubNode, this);
 
             Iterator<Map.Entry<Jid, Long>> bridges
-                = bridgesMap.entrySet().iterator();
-            while (bridges.hasNext())
-            {
+                    = bridgesMap.entrySet().iterator();
+            while (bridges.hasNext()) {
                 Map.Entry<Jid, Long> bridge = bridges.next();
 
                 bridges.remove();
@@ -539,8 +489,7 @@ public class ComponentsDiscovery
 
             bridgesMap.clear();
 
-            if (expireTask != null)
-            {
+            if (expireTask != null) {
                 expireTask.cancel(true);
             }
         }
@@ -548,21 +497,18 @@ public class ComponentsDiscovery
         /**
          * Validates bridges timestamps and expires them.
          */
-        synchronized void validateBridges()
-        {
+        synchronized void validateBridges() {
             Iterator<Map.Entry<Jid, Long>> bridges
-                = bridgesMap.entrySet().iterator();
+                    = bridgesMap.entrySet().iterator();
 
-            while (bridges.hasNext())
-            {
+            while (bridges.hasNext()) {
                 Map.Entry<Jid, Long> bridge = bridges.next();
                 if (System.currentTimeMillis() - bridge.getValue()
-                    > MAX_STATS_REPORT_AGE)
-                {
+                        > MAX_STATS_REPORT_AGE) {
                     Jid bridgeJid = bridge.getKey();
 
                     logger.info(
-                        "No stats seen from " + bridgeJid + " for too long");
+                            "No stats seen from " + bridgeJid + " for too long");
 
                     bridges.remove();
 
@@ -572,10 +518,8 @@ public class ComponentsDiscovery
         }
 
         @Override
-        synchronized public void handleEvent(Event event)
-        {
-            if (!(event instanceof BridgeEvent))
-            {
+        synchronized public void handleEvent(Event event) {
+            if (!(event instanceof BridgeEvent)) {
                 return;
             }
 
@@ -583,11 +527,9 @@ public class ComponentsDiscovery
             // external reasons, so that we will re-discover it correctly if it
             // starts sending stats before we timeout it in 'validateBridges'.
             BridgeEvent bridgeEvent = (BridgeEvent) event;
-            if (BridgeEvent.BRIDGE_DOWN.equals(bridgeEvent.getTopic()))
-            {
+            if (BridgeEvent.BRIDGE_DOWN.equals(bridgeEvent.getTopic())) {
                 Jid bridgeJid = bridgeEvent.getBridgeJid();
-                if (bridgesMap.remove(bridgeJid) != null)
-                {
+                if (bridgesMap.remove(bridgeJid) != null) {
                     logger.info("Cleared info about: " + bridgeJid);
                 }
             }
@@ -595,77 +537,67 @@ public class ComponentsDiscovery
 
         /**
          * Verifies if given JID belongs to Jitsi videobridge XMPP component.
+         *
          * @param bridgeJid the JID to be verified.
          */
-        private void verifyJvbJid(Jid bridgeJid)
-        {
+        private void verifyJvbJid(Jid bridgeJid) {
             // Refresh bridge timestamp if it was discovered previously
-            if (bridgesMap.containsKey(bridgeJid))
-            {
+            if (bridgesMap.containsKey(bridgeJid)) {
                 // This indicate that the bridge is alive
                 refreshBridgeTimestamp(bridgeJid);
                 return;
             }
             // Is it JVB ?
-            if (!bridgeJid.toString().contains("."))
+            if (!bridgeJid.toString().contains(".")) {
                 return;
+            }
 
             List<String> jidFeatures = capsOpSet.getFeatures(bridgeJid);
-            if (jidFeatures == null)
-            {
+            if (jidFeatures == null) {
                 logger.warn(
                         "Failed to discover features for: " + bridgeJid);
                 return;
             }
 
-            if (JitsiMeetServices.isJitsiVideobridge(jidFeatures))
-            {
+            if (JitsiMeetServices.isJitsiVideobridge(jidFeatures)) {
                 logger.info("Bridge discovered from PubSub: " + bridgeJid);
 
                 refreshBridgeTimestamp(bridgeJid);
 
                 Version jvbVersion
-                    = DiscoveryUtil.discoverVersion(
-                            connection, bridgeJid, jidFeatures);
+                        = DiscoveryUtil.discoverVersion(
+                                connection, bridgeJid, jidFeatures);
 
                 meetServices.newBridgeDiscovered(bridgeJid, jvbVersion);
             }
         }
-        private void refreshBridgeTimestamp(Jid bridgeJid)
-        {
+
+        private void refreshBridgeTimestamp(Jid bridgeJid) {
             bridgesMap.put(bridgeJid, System.currentTimeMillis());
         }
 
-        private void bridgeWentOffline(Jid bridgeJid)
-        {
+        private void bridgeWentOffline(Jid bridgeJid) {
             meetServices.nodeNoLongerAvailable(bridgeJid);
         }
 
         @Override
         public void onSubscriptionUpdate(
-            String node, String itemId, ExtensionElement payload)
-        {
+                String node, String itemId, ExtensionElement payload) {
             Jid bridgeId;
-            try
-            {
+            try {
                 bridgeId = JidCreate.from(itemId);
-            }
-            catch (XmppStringprepException e)
-            {
+            } catch (XmppStringprepException e) {
                 logger.error("Invalid itemId", e);
                 return;
             }
 
-            synchronized (this)
-            {
+            synchronized (this) {
                 // JVB unavailable ?
-                if ("service-unavailable".equals(payload.getElementName()))
-                {
+                if ("service-unavailable".equals(payload.getElementName())) {
                     logger.info(
                             "Service unavailable through PubSub for " + bridgeId);
 
-                    if (bridgesMap.remove(bridgeId) != null)
-                    {
+                    if (bridgesMap.remove(bridgeId) != null) {
                         bridgeWentOffline(bridgeId);
                     }
                     return;
@@ -676,8 +608,7 @@ public class ComponentsDiscovery
 
                 // Trigger PubSub update for the shared node on BridgeSelector
                 BridgeSelector selector = meetServices.getBridgeSelector();
-                if (selector != null)
-                {
+                if (selector != null) {
                     selector.onSharedNodeUpdate(itemId, payload);
                 }
             }

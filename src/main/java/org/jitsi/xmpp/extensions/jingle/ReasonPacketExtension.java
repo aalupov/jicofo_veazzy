@@ -27,11 +27,11 @@ import org.jivesoftware.smack.util.*;
  * @author Lyubomir Marinov
  */
 public class ReasonPacketExtension
-    implements ExtensionElement
-{
+        implements ExtensionElement {
+
     /**
-     * The name space (or rather lack thereof ) that the reason element
-     * belongs to.
+     * The name space (or rather lack thereof ) that the reason element belongs
+     * to.
      */
     public static final String NAMESPACE = "";
 
@@ -76,10 +76,9 @@ public class ReasonPacketExtension
      * @param packetExtension any other element that MAY be providing further
      * information or <tt>null</tt> if no such element has been specified.
      */
-    public ReasonPacketExtension(Reason          reason,
-                                 String          text,
-                                 ExtensionElement packetExtension)
-    {
+    public ReasonPacketExtension(Reason reason,
+            String text,
+            ExtensionElement packetExtension) {
         this.reason = reason;
         this.text = text;
         this.otherExtension = packetExtension;
@@ -90,8 +89,7 @@ public class ReasonPacketExtension
      *
      * @return the reason string that this packet extension is transporting.
      */
-    public Reason getReason()
-    {
+    public Reason getReason() {
         return reason;
     }
 
@@ -102,8 +100,7 @@ public class ReasonPacketExtension
      * @return human-readable information about the reason for the action or
      * <tt>null</tt> if no such information is currently available.
      */
-    public String getText()
-    {
+    public String getText() {
         return text;
     }
 
@@ -114,24 +111,22 @@ public class ReasonPacketExtension
      * @param text the human-readable information about the reason for the
      * action or <tt>null</tt> if no such information is currently available
      */
-    public void setText(String text)
-    {
+    public void setText(String text) {
         this.text = text;
     }
 
     /**
      * Returns an extra extension containing further info about this action or
      * <tt>null</tt> if no such extension has been specified. This method
-     * returns the extension that XEP-0166 refers to the following way:
-     * the "reason" element MAY contain an element qualified by some other
-     * namespace that provides more detailed machine-readable information about
-     * the reason for the action.
+     * returns the extension that XEP-0166 refers to the following way: the
+     * "reason" element MAY contain an element qualified by some other namespace
+     * that provides more detailed machine-readable information about the reason
+     * for the action.
      *
      * @return an extra extension containing further info about this action or
      * <tt>null</tt> if no such extension has been specified.
      */
-    public ExtensionElement getOtherExtension()
-    {
+    public ExtensionElement getOtherExtension() {
         return otherExtension;
     }
 
@@ -142,8 +137,7 @@ public class ReasonPacketExtension
      * @param otherExtension the extra extension containing further info about
      * this action or <tt>null</tt> if no such extension has been specified
      */
-    public void setOtherExtension(ExtensionElement otherExtension)
-    {
+    public void setOtherExtension(ExtensionElement otherExtension) {
         this.otherExtension = otherExtension;
     }
 
@@ -152,8 +146,7 @@ public class ReasonPacketExtension
      *
      * @return the element name.
      */
-    public String getElementName()
-    {
+    public String getElementName() {
         return ELEMENT_NAME;
     }
 
@@ -162,8 +155,7 @@ public class ReasonPacketExtension
      *
      * @return the namespace.
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return NAMESPACE;
     }
 
@@ -172,22 +164,19 @@ public class ReasonPacketExtension
      *
      * @return the packet extension as XML.
      */
-    public String toXML()
-    {
+    public String toXML() {
         XmlStringBuilder xml = new XmlStringBuilder();
         xml.openElement(getElementName());
 
         xml.emptyElement(getReason().toString());
 
         //add reason "text" if we have it
-        if(getText() != null)
-        {
+        if (getText() != null) {
             xml.element("text", getText());
         }
 
         //add the extra element if it has been specified.
-        if(getOtherExtension() != null)
-        {
+        if (getOtherExtension() != null) {
             xml.append(getOtherExtension().toXML());
         }
 

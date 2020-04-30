@@ -36,8 +36,8 @@ import org.jxmpp.jid.parts.*;
  * @author Pawel Domas
  */
 public class ChatMemberImpl
-    implements XmppChatMember
-{
+        implements XmppChatMember {
+
     /**
      * The logger
      */
@@ -49,8 +49,8 @@ public class ChatMemberImpl
     private final Resourcepart resourcepart;
 
     /**
-     * The region (e.g. "us-east") of this {@link ChatMemberImpl}, advertised
-     * by the remote peer in presence.
+     * The region (e.g. "us-east") of this {@link ChatMemberImpl}, advertised by
+     * the remote peer in presence.
      */
     private String region;
 
@@ -65,8 +65,7 @@ public class ChatMemberImpl
     private final int joinOrderNumber;
 
     /**
-     * Full MUC address:
-     * room_name@muc.server.net/nickname
+     * Full MUC address: room_name@muc.server.net/nickname
      */
     private final EntityFullJid occupantJid;
 
@@ -100,8 +99,7 @@ public class ChatMemberImpl
     private String statsId;
 
     public ChatMemberImpl(EntityFullJid fullJid, ChatRoomImpl chatRoom,
-                          int joinOrderNumber)
-    {
+            int joinOrderNumber) {
         this.occupantJid = fullJid;
         this.resourcepart = fullJid.getResourceOrThrow();
         this.chatRoom = chatRoom;
@@ -109,8 +107,7 @@ public class ChatMemberImpl
     }
 
     @Override
-    public ChatRoom getChatRoom()
-    {
+    public ChatRoom getChatRoom() {
         return chatRoom;
     }
 
@@ -118,25 +115,21 @@ public class ChatMemberImpl
      * {@inheritDoc}
      */
     @Override
-    public Presence getPresence()
-    {
+    public Presence getPresence() {
         return presence;
     }
 
     @Override
-    public ProtocolProviderService getProtocolProvider()
-    {
+    public ProtocolProviderService getProtocolProvider() {
         return chatRoom.getParentProvider();
     }
 
     @Override
-    public String getContactAddress()
-    {
+    public String getContactAddress() {
         return occupantJid.toString();
     }
 
-    public EntityFullJid getOccupantJid()
-    {
+    public EntityFullJid getOccupantJid() {
         return occupantJid;
     }
 
@@ -145,39 +138,31 @@ public class ChatMemberImpl
      * as a string.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return resourcepart.toString();
     }
 
     @Override
-    public byte[] getAvatar()
-    {
+    public byte[] getAvatar() {
         return new byte[0];
     }
 
     @Override
-    public Contact getContact()
-    {
+    public Contact getContact() {
         return null;
     }
 
     @Override
-    public ChatRoomMemberRole getRole()
-    {
-        if (this.role == null)
-        {
+    public ChatRoomMemberRole getRole() {
+        if (this.role == null) {
             Occupant o = chatRoom.getOccupant(this);
 
-            if (o == null)
-            {
+            if (o == null) {
                 return ChatRoomMemberRole.GUEST;
-            }
-            else
-            {
+            } else {
                 this.role
-                    = ChatRoomJabberImpl.smackRoleToScRole(
-                        o.getRole(), o.getAffiliation());
+                        = ChatRoomJabberImpl.smackRoleToScRole(
+                                o.getRole(), o.getAffiliation());
             }
         }
         return this.role;
@@ -187,48 +172,40 @@ public class ChatMemberImpl
      * Reset cached user role so that it will be refreshed when {@link
      * #getRole()} is called.
      */
-    void resetCachedRole()
-    {
+    void resetCachedRole() {
         this.role = null;
     }
 
     @Override
-    public void setRole(ChatRoomMemberRole role)
-    {
+    public void setRole(ChatRoomMemberRole role) {
         throw new RuntimeException("Not implemented yet.");
     }
 
     @Override
-    public PresenceStatus getPresenceStatus()
-    {
+    public PresenceStatus getPresenceStatus() {
         return GlobalStatusEnum.ONLINE;
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return null;
     }
 
     @Override
-    public Jid getJid()
-    {
-        if (jid == null)
-        {
+    public Jid getJid() {
+        if (jid == null) {
             jid = chatRoom.getJid(occupantJid);
         }
         return jid;
     }
 
     @Override
-    public int getJoinOrderNumber()
-    {
+    public int getJoinOrderNumber() {
         return joinOrderNumber;
     }
 
     @Override
-    public Boolean hasVideoMuted()
-    {
+    public Boolean hasVideoMuted() {
         return videoMuted;
     }
 
@@ -236,8 +213,7 @@ public class ChatMemberImpl
      * {@inheritDoc}
      */
     @Override
-    public boolean isRobot()
-    {
+    public boolean isRobot() {
         return robot;
     }
 
@@ -245,85 +221,75 @@ public class ChatMemberImpl
      * Does presence processing.
      *
      * @param presence the instance of <tt>Presence</tt> packet extension sent
-     *                 by this chat member.
+     * by this chat member.
      *
      * @throws IllegalArgumentException if given <tt>Presence</tt> does not
-     *         belong to this <tt>ChatMemberImpl</tt>.
+     * belong to this <tt>ChatMemberImpl</tt>.
      */
-    void processPresence(Presence presence)
-    {
-        if (!occupantJid.equals(presence.getFrom()))
-        {
+    void processPresence(Presence presence) {
+        if (!occupantJid.equals(presence.getFrom())) {
             throw new IllegalArgumentException(
                     String.format("Presence for another member: %s, my jid: %s",
-                                  presence.getFrom(), occupantJid));
+                            presence.getFrom(), occupantJid));
         }
 
         this.presence = presence;
 
         VideoMutedExtension videoMutedExt
-            = presence.getExtension(
-                VideoMutedExtension.ELEMENT_NAME,
-                VideoMutedExtension.NAMESPACE);
+                = presence.getExtension(
+                        VideoMutedExtension.ELEMENT_NAME,
+                        VideoMutedExtension.NAMESPACE);
 
-        if (videoMutedExt != null)
-        {
+        if (videoMutedExt != null) {
             Boolean newStatus = videoMutedExt.isVideoMuted();
-            if (newStatus != videoMuted)
-            {
+            if (newStatus != videoMuted) {
                 logger.debug(
-                    getContactAddress() + " video muted: " + newStatus);
+                        getContactAddress() + " video muted: " + newStatus);
 
                 videoMuted = newStatus;
             }
         }
 
         UserInfoPacketExt userInfoPacketExt
-            = presence.getExtension(
-                    UserInfoPacketExt.ELEMENT_NAME,
-                    UserInfoPacketExt.NAMESPACE);
-        if (userInfoPacketExt != null)
-        {
+                = presence.getExtension(
+                        UserInfoPacketExt.ELEMENT_NAME,
+                        UserInfoPacketExt.NAMESPACE);
+        if (userInfoPacketExt != null) {
             Boolean newStatus = userInfoPacketExt.isRobot();
-            if (newStatus != null && this.robot != newStatus)
-            {
-                logger.debug(getContactAddress() +" robot: " + robot);
+            if (newStatus != null && this.robot != newStatus) {
+                logger.debug(getContactAddress() + " robot: " + robot);
 
                 this.robot = newStatus;
             }
         }
 
         RegionPacketExtension regionPE
-            = presence.getExtension(
-                    RegionPacketExtension.ELEMENT_NAME,
-                    RegionPacketExtension.NAMESPACE);
-        if (regionPE != null)
-        {
+                = presence.getExtension(
+                        RegionPacketExtension.ELEMENT_NAME,
+                        RegionPacketExtension.NAMESPACE);
+        if (regionPE != null) {
             region = regionPE.getRegionId();
         }
 
         StartMutedPacketExtension ext
-            = presence.getExtension(
-            StartMutedPacketExtension.ELEMENT_NAME,
-            StartMutedPacketExtension.NAMESPACE);
+                = presence.getExtension(
+                        StartMutedPacketExtension.ELEMENT_NAME,
+                        StartMutedPacketExtension.NAMESPACE);
 
-        if (ext != null)
-        {
+        if (ext != null) {
             boolean[] startMuted
-                = { ext.getAudioMuted(), ext.getVideoMuted() };
+                    = {ext.getAudioMuted(), ext.getVideoMuted()};
 
-            if (getRole().compareTo(ChatRoomMemberRole.MODERATOR) < 0)
-            {
+            if (getRole().compareTo(ChatRoomMemberRole.MODERATOR) < 0) {
                 chatRoom.setStartMuted(startMuted);
             }
         }
 
         StatsId statsIdPacketExt
-            = presence.getExtension(
-                    StatsId.ELEMENT_NAME,
-                    StatsId.NAMESPACE);
-        if (statsIdPacketExt != null)
-        {
+                = presence.getExtension(
+                        StatsId.ELEMENT_NAME,
+                        StatsId.NAMESPACE);
+        if (statsIdPacketExt != null) {
             statsId = statsIdPacketExt.getStatsId();
         }
     }
@@ -332,8 +298,7 @@ public class ChatMemberImpl
      * {@inheritDoc}
      */
     @Override
-    public String getRegion()
-    {
+    public String getRegion() {
         return region;
     }
 
@@ -341,8 +306,7 @@ public class ChatMemberImpl
      * {@inheritDoc}
      */
     @Override
-    public String getStatsId()
-    {
+    public String getStatsId() {
         return statsId;
     }
 
@@ -350,9 +314,8 @@ public class ChatMemberImpl
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format(
-            "ChatMember[%s, jid: %s]@%s", occupantJid, jid, hashCode());
+                "ChatMember[%s, jid: %s]@%s", occupantJid, jid, hashCode());
     }
 }

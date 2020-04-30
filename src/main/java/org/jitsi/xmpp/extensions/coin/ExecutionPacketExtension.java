@@ -25,8 +25,8 @@ import org.jivesoftware.smack.util.*;
  * @author Sebastien Vincent
  */
 public class ExecutionPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace that media belongs to.
      */
@@ -40,8 +40,8 @@ public class ExecutionPacketExtension
     /**
      * The name of the element that contains the media data.
      */
-    public static final String ELEMENT_DISCONNECTION_NAME =
-        "disconnection-info";
+    public static final String ELEMENT_DISCONNECTION_NAME
+            = "disconnection-info";
 
     /**
      * The name of the element that contains the media data.
@@ -88,8 +88,7 @@ public class ExecutionPacketExtension
      *
      * @param by string to set
      */
-    public void setBy(String by)
-    {
+    public void setBy(String by) {
         this.by = by;
     }
 
@@ -98,8 +97,7 @@ public class ExecutionPacketExtension
      *
      * @return "by" field
      */
-    public String getBy()
-    {
+    public String getBy() {
         return by;
     }
 
@@ -108,8 +106,7 @@ public class ExecutionPacketExtension
      *
      * @param when string to set
      */
-    public void setWhen(String when)
-    {
+    public void setWhen(String when) {
         this.when = when;
     }
 
@@ -118,8 +115,7 @@ public class ExecutionPacketExtension
      *
      * @return "when" field
      */
-    public String getWhen()
-    {
+    public String getWhen() {
         return when;
     }
 
@@ -128,8 +124,7 @@ public class ExecutionPacketExtension
      *
      * @param reason string to set
      */
-    public void setReason(String reason)
-    {
+    public void setReason(String reason) {
         this.reason = reason;
     }
 
@@ -138,8 +133,7 @@ public class ExecutionPacketExtension
      *
      * @return "reason" field
      */
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
     }
 
@@ -148,18 +142,17 @@ public class ExecutionPacketExtension
      *
      * @param elementName name of the element
      */
-    public ExecutionPacketExtension(String elementName)
-    {
+    public ExecutionPacketExtension(String elementName) {
         super(NAMESPACE, elementName);
     }
 
     /**
      * The child elements content.
+     *
      * @return the child elements content.
      */
     @Override
-    public XmlStringBuilder getChildElementBuilder()
-    {
+    public XmlStringBuilder getChildElementBuilder() {
         XmlStringBuilder xml = new XmlStringBuilder();
 
         xml.optElement(ELEMENT_BY, by);

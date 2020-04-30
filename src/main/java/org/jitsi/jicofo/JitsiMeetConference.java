@@ -33,16 +33,17 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public interface JitsiMeetConference
-{
+public interface JitsiMeetConference {
+
     /**
-     * @return the <tt>Logger</tt> instance which might be used to inherit
-     * the logging level assigned on the per conference basis.
+     * @return the <tt>Logger</tt> instance which might be used to inherit the
+     * logging level assigned on the per conference basis.
      */
     Logger getLogger();
 
     /**
      * Checks how many {@link Participant}s are in the conference.
+     *
      * @return an integer greater than 0.
      */
     int getParticipantCount();
@@ -57,8 +58,8 @@ public interface JitsiMeetConference
     Participant findParticipantForRoomJid(Jid mucJid);
 
     /**
-     * @return a map of the {@link Bridge}s currently used by this
-     * conference to the number of conference participants on each.
+     * @return a map of the {@link Bridge}s currently used by this conference to
+     * the number of conference participants on each.
      */
     Map<Bridge, Integer> getBridges();
 
@@ -89,6 +90,7 @@ public interface JitsiMeetConference
 
     /**
      * Gets the role of a member in the conference.
+     *
      * @param jid the member whose role is to be determined.
      * @return The member's role or <tt>null</tt> if the JID is not a member.
      */
@@ -100,7 +102,7 @@ public interface JitsiMeetConference
      * @param jid the full MUC address to check.
      *
      * @return <tt>true</tt> if given <tt>jid</tt> belongs to the focus
-     *         participant or <tt>false</tt> otherwise.
+     * participant or <tt>false</tt> otherwise.
      */
     boolean isFocusMember(Jid jid);
 

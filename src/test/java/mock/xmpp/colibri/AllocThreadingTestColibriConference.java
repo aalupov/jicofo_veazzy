@@ -39,8 +39,7 @@ import static org.junit.Assert.fail;
  * @author Pawel Domas
  */
 public class AllocThreadingTestColibriConference
-    extends ColibriConferenceImpl
-{
+        extends ColibriConferenceImpl {
 
     /**
      * Stores endpoint name of conference creator.
@@ -51,7 +50,7 @@ public class AllocThreadingTestColibriConference
      * Blocking queue used to put and acquire conference creator endpoint.
      */
     private BlockingQueue<String> confCreatorQueue
-        = new ArrayBlockingQueue<>(1);
+            = new ArrayBlockingQueue<>(1);
 
     /**
      * Indicates whether creator thread should be suspended before it sends it's
@@ -67,18 +66,18 @@ public class AllocThreadingTestColibriConference
 
     /**
      * The queue used to put and acquire endpoint names arriving on
-     * {@link ColibriConferenceImpl.ConferenceCreationSemaphore}.
-     * Used to verify if all running threads have reached the semaphore.
+     * {@link ColibriConferenceImpl.ConferenceCreationSemaphore}. Used to verify
+     * if all running threads have reached the semaphore.
      */
     private BlockingQueue<String> createConfSemaphoreQueue
-        = new LinkedBlockingQueue<>();
+            = new LinkedBlockingQueue<>();
 
     /**
      * Blocking queue used to put and acquire endpoints that have sent it's
      * request packets.
      */
     private BlockingQueue<String> requestsSentQueue
-        = new LinkedBlockingQueue<>();
+            = new LinkedBlockingQueue<>();
 
     /**
      * Indicates if threads should be blocked before response is received.
@@ -96,7 +95,7 @@ public class AllocThreadingTestColibriConference
      * response packets.
      */
     private BlockingQueue<String> responseReceivedQueue
-        = new LinkedBlockingQueue<>();
+            = new LinkedBlockingQueue<>();
 
     /**
      * If field is set XMPP error response will be returned to conference create
@@ -108,11 +107,10 @@ public class AllocThreadingTestColibriConference
      * Creates new instance of <tt>ColibriConferenceImpl</tt>.
      *
      * @param connection XMPP connection object that wil be used by new
-     *                   instance.
+     * instance.
      */
     public AllocThreadingTestColibriConference(
-        XmppConnection connection, EventAdmin eventAdmin)
-    {
+            XmppConnection connection, EventAdmin eventAdmin) {
         super(connection, eventAdmin);
     }
 
@@ -121,20 +119,17 @@ public class AllocThreadingTestColibriConference
      * before it manages to sent it's "create" request.
      *
      * @param block <tt>true</tt> to block creator thread or <tt>false</tt> to
-     *              leave it alone.
+     * leave it alone.
      */
-    public void blockConferenceCreator(boolean block)
-    {
+    public void blockConferenceCreator(boolean block) {
         blockConferenceCreation = block;
     }
 
     /**
      * Releases conference create thread if it was blocked.
      */
-    public void resumeConferenceCreate()
-    {
-        synchronized (createConferenceSync)
-        {
+    public void resumeConferenceCreate() {
+        synchronized (createConferenceSync) {
             blockConferenceCreation = false;
 
             createConferenceSync.notifyAll();
@@ -150,8 +145,7 @@ public class AllocThreadingTestColibriConference
      * @throws InterruptedException if thread has been interrupted while waiting
      */
     public String obtainConferenceCreator()
-        throws InterruptedException
-    {
+            throws InterruptedException {
         return confCreatorQueue.poll(5, TimeUnit.SECONDS);
     }
 
@@ -164,47 +158,39 @@ public class AllocThreadingTestColibriConference
      * endpoint has arrived on the semaphore).
      *
      * @param endpointToEnter the list of endpoint we want to be on the
-     *                        "conference creation semaphore".
+     * "conference creation semaphore".
      *
      * @throws InterruptedException if the thread has been interrupted while
-     *         waiting for endpoints.
+     * waiting for endpoints.
      */
     public void waitAllOnCreateConfSemaphore(List<String> endpointToEnter)
-        throws InterruptedException
-    {
+            throws InterruptedException {
         List<String> endpointsCopy = new ArrayList<>(endpointToEnter);
-        while (!endpointsCopy.isEmpty())
-        {
+        while (!endpointsCopy.isEmpty()) {
             String endpoint = nextOnCreateConfSemaphore(5);
-            if (endpoint != null)
-            {
+            if (endpoint != null) {
                 endpointsCopy.remove(endpoint);
-            }
-            else
-            {
-                fail("Endpoints have not reached " +
-                     "create conf semaphore: " + endpointsCopy);
+            } else {
+                fail("Endpoints have not reached "
+                        + "create conf semaphore: " + endpointsCopy);
             }
         }
     }
 
     public String nextOnCreateConfSemaphore(long timeoutSec)
-        throws InterruptedException
-    {
+            throws InterruptedException {
         return createConfSemaphoreQueue.poll(timeoutSec, TimeUnit.SECONDS);
     }
 
     @Override
     protected boolean acquireCreateConferenceSemaphore(String endpointId)
-        throws ColibriException
-    {
+            throws ColibriException {
         createConfSemaphoreQueue.add(endpointId);
 
         boolean isCreator
-            =  super.acquireCreateConferenceSemaphore(endpointId);
+                = super.acquireCreateConferenceSemaphore(endpointId);
 
-        if (isCreator)
-        {
+        if (isCreator) {
             confCreator = endpointId;
             confCreatorQueue.add(endpointId);
         }
@@ -212,44 +198,34 @@ public class AllocThreadingTestColibriConference
         return isCreator;
     }
 
-    public int allocRequestsSentCount()
-    {
+    public int allocRequestsSentCount() {
         return requestsSentQueue.size();
     }
 
-    public void blockResponseReceive(boolean blockResponseReceive)
-    {
+    public void blockResponseReceive(boolean blockResponseReceive) {
         this.blockResponseReceive = blockResponseReceive;
     }
 
     public String nextRequestSent(long timeoutSeconds)
-        throws InterruptedException
-    {
+            throws InterruptedException {
         return requestsSentQueue.poll(timeoutSeconds, TimeUnit.SECONDS);
     }
 
     public String nextResponseReceived(long timeoutSeconds)
-        throws InterruptedException
-    {
+            throws InterruptedException {
         return responseReceivedQueue.poll(timeoutSeconds, TimeUnit.SECONDS);
     }
 
     @Override
     protected Stanza sendAllocRequest(String endpointId,
-                                      ColibriConferenceIQ request)
-        throws ColibriException
-    {
+            ColibriConferenceIQ request)
+            throws ColibriException {
         boolean isCreator = confCreator.equals(endpointId);
-        synchronized (createConferenceSync)
-        {
-            if (isCreator && blockConferenceCreation)
-            {
-                try
-                {
+        synchronized (createConferenceSync) {
+            if (isCreator && blockConferenceCreation) {
+                try {
                     createConferenceSync.wait();
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -258,27 +234,19 @@ public class AllocThreadingTestColibriConference
         requestsSentQueue.add(endpointId);
 
         Stanza response;
-        if (responseError == null)
-        {
+        if (responseError == null) {
             response = super.sendAllocRequest(endpointId, request);
-        }
-        else
-        {
+        } else {
             response = IQ.createErrorResponse(
-                request,
-                XMPPError.getBuilder(responseError));
+                    request,
+                    XMPPError.getBuilder(responseError));
         }
 
-        synchronized (blockResponseReceiveLock)
-        {
-            if (blockResponseReceive && !isCreator)
-            {
-                try
-                {
+        synchronized (blockResponseReceiveLock) {
+            if (blockResponseReceive && !isCreator) {
+                try {
                     blockResponseReceiveLock.wait();
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -289,10 +257,8 @@ public class AllocThreadingTestColibriConference
         return response;
     }
 
-    public void resumeResponses()
-    {
-        synchronized (blockResponseReceiveLock)
-        {
+    public void resumeResponses() {
+        synchronized (blockResponseReceiveLock) {
             blockResponseReceive = false;
 
             blockResponseReceiveLock.notifyAll();
@@ -303,8 +269,7 @@ public class AllocThreadingTestColibriConference
      * Returns the type of error which will be returned as a response to
      * conference create request.
      */
-    public XMPPError.Condition getResponseError()
-    {
+    public XMPPError.Condition getResponseError() {
         return responseError;
     }
 
@@ -315,8 +280,7 @@ public class AllocThreadingTestColibriConference
      * @param responseError the type fo the error to be returned or
      * <tt>null</tt> to not interfere into the response returned by the bridge.
      */
-    public void setResponseError(XMPPError.Condition responseError)
-    {
+    public void setResponseError(XMPPError.Condition responseError) {
         this.responseError = responseError;
     }
 }

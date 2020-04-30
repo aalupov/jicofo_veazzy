@@ -31,14 +31,13 @@ import java.util.*;
  * @author Pawel Domas
  */
 public class MockJitsiMeetConference
-    implements JitsiMeetConference
-{
+        implements JitsiMeetConference {
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public Logger getLogger()
-    {
+    public Logger getLogger() {
         return null;
     }
 
@@ -46,49 +45,41 @@ public class MockJitsiMeetConference
      * {@inheritDoc}
      */
     @Override
-    public Participant findParticipantForRoomJid(Jid jid)
-    {
+    public Participant findParticipantForRoomJid(Jid jid) {
         return null;
     }
 
     @Override
-    public Map<Bridge, Integer> getBridges()
-    {
+    public Map<Bridge, Integer> getBridges() {
         return new HashMap<>();
     }
 
     @Override
-    public EntityBareJid getRoomName()
-    {
+    public EntityBareJid getRoomName() {
         return null;
     }
 
     @Override
-    public EntityFullJid getFocusJid()
-    {
+    public EntityFullJid getFocusJid() {
         return null;
     }
 
     @Override
-    public ChatRoom2 getChatRoom()
-    {
+    public ChatRoom2 getChatRoom() {
         return null;
     }
 
     @Override
-    public void setStartMuted(boolean[] startMuted)
-    {
+    public void setStartMuted(boolean[] startMuted) {
     }
 
     @Override
-    public ChatRoomMemberRole getRoleForMucJid(Jid jid)
-    {
+    public ChatRoomMemberRole getRoleForMucJid(Jid jid) {
         return null;
     }
 
     @Override
-    public boolean isFocusMember(Jid jid)
-    {
+    public boolean isFocusMember(Jid jid) {
         return false;
     }
 
@@ -96,14 +87,12 @@ public class MockJitsiMeetConference
      * {@inheritDoc}
      */
     @Override
-    public int getParticipantCount()
-    {
+    public int getParticipantCount() {
         return 0;
     }
 
     @Override
-    public boolean includeInStatistics()
-    {
+    public boolean includeInStatistics() {
         return true;
     }
 }

@@ -23,8 +23,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Boris Grozev
  */
 public class RegionPacketExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML element name of this packet extension.
      */
@@ -38,25 +38,23 @@ public class RegionPacketExtension
     /**
      * Creates new instance of <tt>EtherpadPacketExt</tt>.
      */
-    public RegionPacketExtension()
-    {
+    public RegionPacketExtension() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * @return the value of the "id" attribute.
      */
-    public String getRegionId()
-    {
+    public String getRegionId() {
         return getAttributeAsString("id");
     }
 
     /**
      * Sets the value for the region in the id attribute.
+     *
      * @param value
      */
-    public void setRegionId(String value)
-    {
+    public void setRegionId(String value) {
         setAttribute("id", value);
     }
 }

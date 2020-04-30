@@ -24,14 +24,14 @@ import org.jitsi.xmpp.extensions.*;
  * Status meaning:
  * <tt>{@link JibriIq.Status#PENDING}</tt> - (initial) SIP call is being started
  * <tt>{@link JibriIq.Status#ON}</tt> - SIP call in progress
- * <tt>{@link JibriIq.Status#OFF}</tt> - SIP call has been stopped.  If it was
+ * <tt>{@link JibriIq.Status#OFF}</tt> - SIP call has been stopped. If it was
  * not a graceful transition to OFF, a FailureReason will also be given
  *
  * @author Pawel Domas
  */
 public class SipCallState
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * The namespace of this packet extension.
      */
@@ -52,86 +52,83 @@ public class SipCallState
      */
     private static final String SIPADDRESS_ATTRIBUTE = "sipaddress";
 
-    public SipCallState()
-    {
+    public SipCallState() {
         super(NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * @return value of {@link #SIPADDRESS_ATTRIBUTE}.
      */
-    public String getSipAddress()
-    {
+    public String getSipAddress() {
         return getAttributeAsString(SIPADDRESS_ATTRIBUTE);
     }
 
     /**
      * Sets new value for {@link #SIPADDRESS_ATTRIBUTE}
+     *
      * @param sipAddress a SIP address
      */
-    public void setSipAddress(String sipAddress)
-    {
+    public void setSipAddress(String sipAddress) {
         setAttribute(SIPADDRESS_ATTRIBUTE, sipAddress);
     }
 
     /**
      * Returns the value of current SIP call status stored in it's attribute.
      * Check {@link SipCallState} description for status description.
+     *
      * @return one of {@link JibriIq.Status}
      */
-    public JibriIq.Status getStatus()
-    {
+    public JibriIq.Status getStatus() {
         String statusAttr = getAttributeAsString(STATE_ATTRIBUTE);
 
         return JibriIq.Status.parse(statusAttr);
     }
 
     /**
-     * Sets new value for the recording status.
-     * Check {@link SipCallState} description for status description.
+     * Sets new value for the recording status. Check {@link SipCallState}
+     * description for status description.
+     *
      * @param status one of {@link JibriIq.Status}
      */
-    public void setState(JibriIq.Status status)
-    {
+    public void setState(JibriIq.Status status) {
         setAttribute(STATE_ATTRIBUTE, status);
     }
 
     /**
      * Returns the session ID stored in this element
+     *
      * @return the session ID
      */
-    public String getSessionId()
-    {
+    public String getSessionId() {
         return getAttributeAsString(JibriIq.SESSION_ID_ATTR_NAME);
     }
 
     /**
      * Set the session ID for this recording status element
+     *
      * @param sessionId the session ID
      */
-    public void setSessionId(String sessionId)
-    {
+    public void setSessionId(String sessionId) {
         setAttribute(JibriIq.SESSION_ID_ATTR_NAME, sessionId);
     }
 
     /**
      * Get the failure reason in this status, or UNDEFINED if there isn't one
+     *
      * @return the failure reason
      */
-    public JibriIq.FailureReason getFailureReason()
-    {
+    public JibriIq.FailureReason getFailureReason() {
         String failureReasonStr = getAttributeAsString(JibriIq.FAILURE_REASON_ATTR_NAME);
         return JibriIq.FailureReason.parse(failureReasonStr);
     }
 
     /**
      * Set the failure reason in this status
+     *
      * @param failureReason the failure reason
      */
-    public void setFailureReason(JibriIq.FailureReason failureReason)
-    {
-        if (failureReason != null)
-        {
+    public void setFailureReason(JibriIq.FailureReason failureReason) {
+        if (failureReason != null) {
             setAttribute(JibriIq.FAILURE_REASON_ATTR_NAME, failureReason.toString());
         }
     }

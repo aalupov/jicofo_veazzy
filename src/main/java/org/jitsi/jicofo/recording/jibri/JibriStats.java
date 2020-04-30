@@ -26,8 +26,8 @@ import org.osgi.framework.*;
  * Service listens for {@link JibriSession} events and computes statistics.
  */
 public class JibriStats
-    extends EventHandlerActivator
-{
+        extends EventHandlerActivator {
+
     /**
      * The class logger used by {@link JibriStats}.
      */
@@ -51,9 +51,8 @@ public class JibriStats
     /**
      * Creates new instance.
      */
-    public JibriStats()
-    {
-        super(new String[] { JibriSessionEvent.FAILED_TO_START });
+    public JibriStats() {
+        super(new String[]{JibriSessionEvent.FAILED_TO_START});
     }
 
     /**
@@ -61,8 +60,7 @@ public class JibriStats
      */
     @Override
     public void start(BundleContext bundleContext)
-            throws Exception
-    {
+            throws Exception {
         super.start(bundleContext);
 
         bundleContext.registerService(JibriStats.class, this, null);
@@ -70,29 +68,26 @@ public class JibriStats
 
     /**
      * Handles Jibri events.
+     *
      * @param event the event to process.
      */
     @SuppressWarnings("NonAtomicOperationOnVolatileField")
     @Override
-    public void handleEvent(Event event)
-    {
-        if (!(event instanceof JibriSessionEvent))
-        {
+    public void handleEvent(Event event) {
+        if (!(event instanceof JibriSessionEvent)) {
             return;
         }
 
         JibriSessionEvent jibriSessionEvent = (JibriSessionEvent) event;
         JibriSessionEvent.Type type = jibriSessionEvent.getType();
 
-        if (type == null)
-        {
+        if (type == null) {
             logger.error("No event type passed for JibriSessionEvent");
             return;
         }
 
         // It's only ever 1 thread writing, so it's fine to do ++ on a volatile
-        switch(type)
-        {
+        switch (type) {
             case SIP_CALL:
                 totalSipCallFailures++;
                 break;
@@ -111,29 +106,25 @@ public class JibriStats
     /**
      * @return how many times a Jibri SIP call has failed to start.
      */
-    public int getTotalSipCallFailures()
-    {
+    public int getTotalSipCallFailures() {
         return totalSipCallFailures;
     }
 
     /**
      * @return how many times Jibri live streaming has failed to start.
      */
-    public int getTotalLiveStreamingFailures()
-    {
+    public int getTotalLiveStreamingFailures() {
         return totalLiveStreamingFailures;
     }
 
     /**
      * @return how many times Jibri recording has failed to start.
      */
-    public int getTotalRecordingFailures()
-    {
+    public int getTotalRecordingFailures() {
         return totalRecordingFailures;
     }
 
-    public JSONObject getStats()
-    {
+    public JSONObject getStats() {
         JSONObject stats = new JSONObject();
         stats.put("total_live_streaming_failures", getTotalLiveStreamingFailures());
         stats.put("total_recording_failures", getTotalRecordingFailures());

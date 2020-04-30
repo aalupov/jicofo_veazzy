@@ -24,18 +24,16 @@ import org.jitsi.protocol.xmpp.*;
  *
  */
 public class MockSmackXmppOpSet
-    implements OperationSetDirectSmackXmpp
-{
+        implements OperationSetDirectSmackXmpp {
+
     private final MockProtocolProvider protocolProvider;
 
-    public MockSmackXmppOpSet(MockProtocolProvider protocolProvider)
-    {
+    public MockSmackXmppOpSet(MockProtocolProvider protocolProvider) {
         this.protocolProvider = protocolProvider;
     }
 
     @Override
-    public XmppConnection getXmppConnection()
-    {
+    public XmppConnection getXmppConnection() {
         return protocolProvider.getXmppConnection();
     }
 }

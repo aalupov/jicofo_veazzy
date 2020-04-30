@@ -26,8 +26,8 @@ import org.xmlpull.v1.*;
  *
  * @author Yana Stamcheva
  */
-public class Thumbnail
-{
+public class Thumbnail {
+
     /**
      * The name of the XML element used for transport of thumbnail parameters.
      */
@@ -75,11 +75,10 @@ public class Thumbnail
      * @param width the width of the thumbnail
      * @param height the height of the thumbnail
      */
-    public Thumbnail(       byte[] thumbnailData,
-                            String mimeType,
-                            int width,
-                            int height)
-    {
+    public Thumbnail(byte[] thumbnailData,
+            String mimeType,
+            int width,
+            int height) {
         this.cid = createCid(thumbnailData);
         this.mimeType = mimeType;
         this.width = width;
@@ -88,30 +87,25 @@ public class Thumbnail
 
     /**
      * Creates a new empty <tt>ThumbnailElement</tt>.
+     *
      * @param parser
      */
-    public Thumbnail(XmlPullParser parser)
-    {
+    public Thumbnail(XmlPullParser parser) {
         cid = parseCid(parser.getAttributeValue("", CID));
         mimeType = parser.getAttributeValue("", MIME_TYPE);
         String parserWidth = parser.getAttributeValue("", WIDTH);
         String parserHeight = parser.getAttributeValue("", HEIGHT);
-        try
-        {
+        try {
             width = Integer.parseInt(parserWidth);
             height = Integer.parseInt(parserHeight);
-        }
-        catch (NumberFormatException nfe)
-        {
+        } catch (NumberFormatException nfe) {
             // ignore, width and height are optional
         }
     }
 
-    private BoBHash parseCid(String cid)
-    {
+    private BoBHash parseCid(String cid) {
         // previous Jitsi versions used to send <hashType>-<hash>@<server>
-        if (!cid.endsWith("@bob.xmpp.org"))
-        {
+        if (!cid.endsWith("@bob.xmpp.org")) {
             cid = cid.substring(0, cid.indexOf('@')) + "@bob.xmpp.org";
         }
 
@@ -123,13 +117,12 @@ public class Thumbnail
      *
      * @return the packet extension as XML.
      */
-    public String toXML()
-    {
+    public String toXML() {
         StringBuffer buf = new StringBuffer();
 
         // open element
         buf.append("<").append(ELEMENT_NAME).
-            append(" xmlns=\"").append(NAMESPACE).append("\"");
+                append(" xmlns=\"").append(NAMESPACE).append("\"");
 
         // adding thumbnail parameters
         buf = addXmlAttribute(buf, CID, this.getCid().getCid());
@@ -145,73 +138,73 @@ public class Thumbnail
 
     /**
      * Returns the Content-ID, corresponding to this <tt>ThumbnailElement</tt>.
+     *
      * @return the Content-ID, corresponding to this <tt>ThumbnailElement</tt>
      */
-    public BoBHash getCid()
-    {
+    public BoBHash getCid() {
         return cid;
     }
 
     /**
      * Returns the mime type of this <tt>ThumbnailElement</tt>.
+     *
      * @return the mime type of this <tt>ThumbnailElement</tt>
      */
-    public String getMimeType()
-    {
+    public String getMimeType() {
         return mimeType;
     }
 
     /**
      * Returns the width of this <tt>ThumbnailElement</tt>.
+     *
      * @return the width of this <tt>ThumbnailElement</tt>
      */
-    public int getWidth()
-    {
+    public int getWidth() {
         return width;
     }
 
     /**
      * Returns the height of this <tt>ThumbnailElement</tt>.
+     *
      * @return the height of this <tt>ThumbnailElement</tt>
      */
-    public int getHeight()
-    {
+    public int getHeight() {
         return height;
     }
 
     /**
      * Sets the content-ID of this <tt>ThumbnailElement</tt>.
+     *
      * @param cid the content-ID to set
      */
-    public void setCid(BoBHash cid)
-    {
+    public void setCid(BoBHash cid) {
         this.cid = cid;
     }
 
     /**
      * Sets the mime type of the thumbnail.
+     *
      * @param mimeType the mime type of the thumbnail
      */
-    public void setMimeType(String mimeType)
-    {
+    public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
 
     /**
      * Sets the width of the thumbnail
+     *
      * @param width the width of the thumbnail
      */
-    public void setWidth(int width)
-    {
+    public void setWidth(int width) {
         this.width = width;
     }
 
     /**
      * Sets the height of the thumbnail
+     *
      * @param height the height of the thumbnail
      */
-    public void setHeight(int height)
-    {
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -226,10 +219,9 @@ public class Thumbnail
      * @return the <tt>StringBuffer</tt> that we've added the attribute and its
      * value to.
      */
-    private StringBuffer addXmlAttribute(   StringBuffer buff,
-                                            String attrName,
-                                            String attrValue)
-    {
+    private StringBuffer addXmlAttribute(StringBuffer buff,
+            String attrName,
+            String attrValue) {
         buff.append(" " + attrName + "=\"").append(attrValue).append("\"");
 
         return buff;
@@ -247,9 +239,8 @@ public class Thumbnail
      * value to.
      */
     private StringBuffer addXmlIntAttribute(StringBuffer buff,
-                                            String attrName,
-                                            int attrValue)
-    {
+            String attrName,
+            int attrValue) {
 
         return addXmlAttribute(buff, attrName, String.valueOf(attrValue));
     }
@@ -260,8 +251,7 @@ public class Thumbnail
      * @param thumbnailData the byte array containing the data
      * @return the cid attribute value for the thumbnail extension
      */
-    private BoBHash createCid(byte[] thumbnailData)
-    {
+    private BoBHash createCid(byte[] thumbnailData) {
         return new BoBHash(SHA1.hex(thumbnailData), "sha1");
     }
 }

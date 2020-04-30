@@ -24,8 +24,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Pawel Domas
  */
 public class HeaderExtension
-    extends AbstractPacketExtension
-{
+        extends AbstractPacketExtension {
+
     /**
      * XML element name.
      */
@@ -44,44 +44,43 @@ public class HeaderExtension
     /**
      * Creates new instance of <tt>HeaderPacketExtension</tt>.
      */
-    public HeaderExtension()
-    {
+    public HeaderExtension() {
         super(RayoIqProvider.NAMESPACE, ELEMENT_NAME);
     }
 
     /**
      * Return the value of 'name' attribute.
+     *
      * @return the value of 'name' attribute.
      */
-    public String getName()
-    {
+    public String getName() {
         return getAttributeAsString(NAME_ATTR_NAME);
     }
 
     /**
      * Sets new value for 'name' attribute of this extension.
+     *
      * @param name the new value to set for 'name' attribute.
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         setAttribute(NAME_ATTR_NAME, name);
     }
 
     /**
      * Returns the value of 'value' attribute.
+     *
      * @return the value of 'value' attribute.
      */
-    public String getValue()
-    {
+    public String getValue() {
         return getAttributeAsString(VALUE_ATTR_NAME);
     }
 
     /**
      * Sets new value for the 'value' attribute.
+     *
      * @param value new value for the 'value' attribute to set.
      */
-    public void setValue(String value)
-    {
+    public void setValue(String value) {
         setAttribute(VALUE_ATTR_NAME, value);
     }
 }

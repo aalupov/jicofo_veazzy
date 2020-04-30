@@ -20,23 +20,19 @@ package org.jitsi.xmpp.extensions.coin;
  *
  * @author Sebastien Vincent
  */
-public enum MediaStatusType
-{
+public enum MediaStatusType {
     /**
      * Receive only.
      */
     recvonly,
-
     /**
      * Send only.
      */
     sendonly,
-
     /**
      * Send and receive.
      */
     sendrecv,
-
     /**
      * Inactive.
      */

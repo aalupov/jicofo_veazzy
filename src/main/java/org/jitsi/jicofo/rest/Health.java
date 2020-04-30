@@ -42,8 +42,8 @@ import java.util.stream.*;
  */
 @Path("/about/health")
 @Singleton()
-public class Health
-{
+public class Health {
+
     @Inject
     protected FocusManagerProvider focusManagerProvider;
 
@@ -60,15 +60,15 @@ public class Health
      * The {@code JitsiMeetConfig} properties to be utilized for the purposes of
      * checking the health (status) of Jicofo.
      */
-    private static final Map<String,String> JITSI_MEET_CONFIG
-        = Collections.emptyMap();
+    private static final Map<String, String> JITSI_MEET_CONFIG
+            = Collections.emptyMap();
 
     /**
-     * Interval which we consider bad for a health check and we will print
-     * some debug information.
+     * Interval which we consider bad for a health check and we will print some
+     * debug information.
      */
     private static final Duration BAD_HEALTH_CHECK_INTERVAL
-        = Duration.ofSeconds(3);
+            = Duration.ofSeconds(3);
 
     /**
      * The pseudo-random generator used to generate random input for
@@ -93,61 +93,49 @@ public class Health
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getHealth(@QueryParam("list_jvb") boolean listJvbs)
-    {
+    public Response getHealth(@QueryParam("list_jvb") boolean listJvbs) {
         JSONObject activeJvbsJson = new JSONObject();
-        try
-        {
+        try {
             FocusManager focusManager = focusManagerProvider.get();
-            if (listJvbs)
-            {
+            if (listJvbs) {
                 List<Jid> activeJvbs = listBridges(focusManager);
-                if (activeJvbs.isEmpty())
-                {
+                if (activeJvbs.isEmpty()) {
                     logger.error(
-                        "The health check failed - 0 active JVB instances !");
+                            "The health check failed - 0 active JVB instances !");
                     throw new InternalServerErrorException();
                 }
                 activeJvbsJson.put("jvbs",
-                    activeJvbs.stream().map(j -> j.toString())
-                        .collect(Collectors.toList()));
+                        activeJvbs.stream().map(j -> j.toString())
+                                .collect(Collectors.toList()));
             }
 
             if (Duration.between(
                     lastHealthCheckTime,
                     clock.instant()).compareTo(STATUS_CACHE_INTERVAL) < 0
-                && cachedStatus > 0)
-            {
+                    && cachedStatus > 0) {
                 return Response.status(cachedStatus)
-                    .entity(activeJvbsJson.toJSONString()).build();
+                        .entity(activeJvbsJson.toJSONString()).build();
             }
 
             HealthChecksMonitor monitor = null;
-            if (focusManager.isHealthChecksDebugEnabled())
-            {
+            if (focusManager.isHealthChecksDebugEnabled()) {
                 monitor = new HealthChecksMonitor();
                 monitor.start();
             }
-            try
-            {
+            try {
                 check(focusManager);
                 cacheStatus(HttpServletResponse.SC_OK);
                 return Response.ok(activeJvbsJson.toJSONString()).build();
-            }
-            finally
-            {
-                if (monitor != null)
-                {
+            } finally {
+                if (monitor != null) {
                     monitor.stop();
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.error("Health check of Jicofo failed!", ex);
             cacheStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return Response.serverError()
-                .entity(activeJvbsJson.toJSONString()).build();
+                    .entity(activeJvbsJson.toJSONString()).build();
         }
     }
 
@@ -157,27 +145,26 @@ public class Health
      *
      * @param status the health check response status code we'd like to cache
      */
-    private void cacheStatus(int status)
-    {
+    private void cacheStatus(int status) {
         cachedStatus = status;
         lastHealthCheckTime = clock.instant();
     }
 
     /**
-     * Returns a list of currently healthy JVBs known to Jicofo and
-     * kept alive by our {@link JvbDoctor}.
+     * Returns a list of currently healthy JVBs known to Jicofo and kept alive
+     * by our {@link JvbDoctor}.
+     *
      * @param focusManager our current context
      * @return the list of healthy bridges currently known to this focus.
      */
-    private static List<Jid> listBridges(FocusManager focusManager)
-    {
+    private static List<Jid> listBridges(FocusManager focusManager) {
         JitsiMeetServices services
-            = Objects.requireNonNull(
-            focusManager.getJitsiMeetServices(), "services");
+                = Objects.requireNonNull(
+                        focusManager.getJitsiMeetServices(), "services");
 
         BridgeSelector bridgeSelector
-            = Objects.requireNonNull(
-            services.getBridgeSelector(), "bridgeSelector");
+                = Objects.requireNonNull(
+                        services.getBridgeSelector(), "bridgeSelector");
 
         return bridgeSelector.listActiveJVBs();
     }
@@ -192,18 +179,16 @@ public class Health
      * is not healthy
      */
     private static void check(FocusManager focusManager)
-        throws Exception
-    {
+            throws Exception {
         // Get the MUC service to perform the check on.
         JitsiMeetServices services = focusManager.getJitsiMeetServices();
 
         Jid mucService = services != null ? services.getMucService() : null;
 
-        if (mucService == null)
-        {
+        if (mucService == null) {
             logger.error(
-                "No MUC service found on XMPP domain or Jicofo has not" +
-                    " finished initial components discovery yet");
+                    "No MUC service found on XMPP domain or Jicofo has not"
+                    + " finished initial components discovery yet");
 
             throw new RuntimeException("No MUC component");
         }
@@ -212,24 +197,21 @@ public class Health
         // with existing conferences.
         EntityBareJid roomName;
 
-        do
-        {
+        do {
             roomName = JidCreate.entityBareFrom(
-                generateRoomName(),
-                mucService.asDomainBareJid()
+                    generateRoomName(),
+                    mucService.asDomainBareJid()
             );
-        }
-        while (focusManager.getConference(roomName) != null);
+        } while (focusManager.getConference(roomName) != null);
 
         // Create a conference with the generated room name.
         if (!focusManager.conferenceRequest(
                 roomName,
                 JITSI_MEET_CONFIG,
                 Level.WARNING /* conference logging level */,
-                false /* don't include in statistics */))
-        {
+                false /* don't include in statistics */)) {
             throw new RuntimeException(
-                "Failed to create conference with room name " + roomName);
+                    "Failed to create conference with room name " + roomName);
         }
     }
 
@@ -238,31 +220,27 @@ public class Health
      *
      * @return a pseudo-random room name which is not guaranteed to be unique
      */
-    private static Localpart generateRoomName()
-    {
-        try
-        {
-            return
-                Localpart.from(Health.class.getName()
+    private static Localpart generateRoomName() {
+        try {
+            return Localpart.from(Health.class.getName()
                     + "-"
                     + Long.toHexString(
-                        System.currentTimeMillis() + RANDOM.nextLong()));
-        }
-        catch (XmppStringprepException e)
-        {
+                            System.currentTimeMillis() + RANDOM.nextLong()));
+        } catch (XmppStringprepException e) {
             // ignore, cannot happen
             return null;
         }
     }
+
     /**
      * Health check monitor schedules execution with a delay
-     * {@link Health#BAD_HEALTH_CHECK_INTERVAL} if monitor is not stopped
-     * by the time it executes we consider a health check was taking too much
-     * time executing and we dump the stack trace in the logs.
+     * {@link Health#BAD_HEALTH_CHECK_INTERVAL} if monitor is not stopped by the
+     * time it executes we consider a health check was taking too much time
+     * executing and we dump the stack trace in the logs.
      */
     private static class HealthChecksMonitor
-        extends TimerTask
-    {
+            extends TimerTask {
+
         /**
          * The timer that will check for slow health executions.
          */
@@ -274,11 +252,9 @@ public class Health
         private long startedAt = -1;
 
         @Override
-        public void run()
-        {
+        public void run() {
             // if there is no timer, this means we were stopped
-            if (this.monitorTimer == null)
-            {
+            if (this.monitorTimer == null) {
                 return;
             }
 
@@ -287,31 +263,28 @@ public class Health
             String threadDump = ThreadDump.takeThreadDump();
 
             logger.error("Health check took "
-                + (System.currentTimeMillis() - this.startedAt)
-                + " ms. \n"
-                + threadDump);
+                    + (System.currentTimeMillis() - this.startedAt)
+                    + " ms. \n"
+                    + threadDump);
         }
 
         /**
-         * Starts the monitor. Schedules execution in separate thread
-         * after some interval, if monitor is not stopped and it executes
-         * we consider the health check took too much time.
+         * Starts the monitor. Schedules execution in separate thread after some
+         * interval, if monitor is not stopped and it executes we consider the
+         * health check took too much time.
          */
-        public void start()
-        {
+        public void start() {
             this.startedAt = System.currentTimeMillis();
             this.monitorTimer = new Timer(getClass().getSimpleName(), true);
             this.monitorTimer
-                .schedule(this, BAD_HEALTH_CHECK_INTERVAL.toMillis());
+                    .schedule(this, BAD_HEALTH_CHECK_INTERVAL.toMillis());
         }
 
         /**
          * Stops the monitor execution time.
          */
-        public void stop()
-        {
-            if (this.monitorTimer != null)
-            {
+        public void stop() {
+            if (this.monitorTimer != null) {
                 this.monitorTimer.cancel();
                 this.monitorTimer = null;
             }

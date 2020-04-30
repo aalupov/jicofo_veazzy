@@ -21,8 +21,8 @@ import org.jitsi.xmpp.extensions.*;
  * @author Emil Ivov
  */
 public class CandidatePacketExtension extends AbstractPacketExtension
-    implements Comparable<CandidatePacketExtension>
-{
+        implements Comparable<CandidatePacketExtension> {
+
     /**
      * The name of the "candidate" element.
      */
@@ -106,8 +106,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
     /**
      * Creates a new {@link CandidatePacketExtension}
      */
-    public CandidatePacketExtension()
-    {
+    public CandidatePacketExtension() {
         super(null, ELEMENT_NAME);
     }
 
@@ -118,8 +117,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param elementName the element name that this instance should be using.
      */
-    protected CandidatePacketExtension(String elementName)
-    {
+    protected CandidatePacketExtension(String elementName) {
         super(null, elementName);
     }
 
@@ -128,8 +126,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param component a component ID as defined in ICE-CORE.
      */
-    public void setComponent(int component)
-    {
+    public void setComponent(int component) {
         super.setAttribute(COMPONENT_ATTR_NAME, component);
     }
 
@@ -138,8 +135,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return a component ID as defined in ICE-CORE.
      */
-    public int getComponent()
-    {
+    public int getComponent() {
         return super.getAttributeAsInt(COMPONENT_ATTR_NAME);
     }
 
@@ -148,8 +144,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param foundation the candidate foundation as defined in ICE-CORE.
      */
-    public void setFoundation(String foundation)
-    {
+    public void setFoundation(String foundation) {
         super.setAttribute(FOUNDATION_ATTR_NAME, foundation);
     }
 
@@ -158,8 +153,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return the candidate foundation as defined in ICE-CORE.
      */
-    public String getFoundation()
-    {
+    public String getFoundation() {
         return super.getAttributeAsString(FOUNDATION_ATTR_NAME);
     }
 
@@ -171,21 +165,19 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param generation this candidate's generation index.
      */
-    public void setGeneration(int generation)
-    {
+    public void setGeneration(int generation) {
         super.setAttribute(GENERATION_ATTR_NAME, generation);
     }
 
     /**
-     * Returns this candidate's generation. A generation is an index, starting at
-     * 0, that enables the parties to keep track of updates to the candidate
+     * Returns this candidate's generation. A generation is an index, starting
+     * at 0, that enables the parties to keep track of updates to the candidate
      * throughout the life of the session. For details, see the ICE Restarts
      * section of XEP-0176.
      *
      * @return this candidate's generation index.
      */
-    public int getGeneration()
-    {
+    public int getGeneration() {
         return super.getAttributeAsInt(GENERATION_ATTR_NAME);
     }
 
@@ -194,8 +186,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param id this candidates's unique identifier <tt>String</tt>
      */
-    public void setID(String id)
-    {
+    public void setID(String id) {
         super.setAttribute(ID_ATTR_NAME, id);
     }
 
@@ -204,8 +195,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidates's unique identifier <tt>String</tt>
      */
-    public String getID()
-    {
+    public String getID() {
         return super.getAttributeAsString(ID_ATTR_NAME);
     }
 
@@ -215,8 +205,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param ip this candidate's IPv4 or IPv6 address.
      */
-    public void setIP(String ip)
-    {
+    public void setIP(String ip) {
         super.setAttribute(IP_ATTR_NAME, ip);
     }
 
@@ -226,8 +215,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidate's IPv4 or IPv6 address.
      */
-    public String getIP()
-    {
+    public String getIP() {
         return super.getAttributeAsString(IP_ATTR_NAME);
     }
 
@@ -239,8 +227,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      * @param network the network index indicating the interface that the
      * candidate belongs to.
      */
-    public void setNetwork(int network)
-    {
+    public void setNetwork(int network) {
         super.setAttribute(NETWORK_ATTR_NAME, network);
     }
 
@@ -252,8 +239,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      * @return the network index indicating the interface that the candidate
      * belongs to.
      */
-    public int getNetwork()
-    {
+    public int getNetwork() {
         return super.getAttributeAsInt(NETWORK_ATTR_NAME);
     }
 
@@ -262,8 +248,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param port this candidate's port number.
      */
-    public void setPort(int port)
-    {
+    public void setPort(int port) {
         super.setAttribute(PORT_ATTR_NAME, port);
     }
 
@@ -272,8 +257,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidate's port number.
      */
-    public int getPort()
-    {
+    public int getPort() {
         return super.getAttributeAsInt(PORT_ATTR_NAME);
     }
 
@@ -282,8 +266,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param priority this candidate's priority
      */
-    public void setPriority(long priority)
-    {
+    public void setPriority(long priority) {
         super.setAttribute(PRIORITY_ATTR_NAME, priority);
     }
 
@@ -292,8 +275,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidate's priority
      */
-    public int getPriority()
-    {
+    public int getPriority() {
         return super.getAttributeAsInt(PRIORITY_ATTR_NAME);
     }
 
@@ -302,8 +284,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param protocol this candidate's transport protocol.
      */
-    public void setProtocol(String protocol)
-    {
+    public void setProtocol(String protocol) {
         super.setAttribute(PROTOCOL_ATTR_NAME, protocol);
     }
 
@@ -312,19 +293,17 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidate's transport protocol.
      */
-    public String getProtocol()
-    {
+    public String getProtocol() {
         return super.getAttributeAsString(PROTOCOL_ATTR_NAME);
     }
 
     /**
      * Sets this candidate's related address as described by ICE's RFC 5245.
      *
-     * @param relAddr this candidate's related address as described by ICE's
-     * RFC 5245.
+     * @param relAddr this candidate's related address as described by ICE's RFC
+     * 5245.
      */
-    public void setRelAddr(String relAddr)
-    {
+    public void setRelAddr(String relAddr) {
         super.setAttribute(REL_ADDR_ATTR_NAME, relAddr);
     }
 
@@ -333,19 +312,17 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidate's related address as described by ICE's RFC 5245.
      */
-    public String getRelAddr()
-    {
+    public String getRelAddr() {
         return super.getAttributeAsString(REL_ADDR_ATTR_NAME);
     }
 
     /**
      * Sets this candidate's related port as described by ICE's RFC 5245.
      *
-     * @param relPort this candidate's related port as described by ICE's
-     * RFC 5245.
+     * @param relPort this candidate's related port as described by ICE's RFC
+     * 5245.
      */
-    public void setRelPort(int relPort)
-    {
+    public void setRelPort(int relPort) {
         super.setAttribute(REL_PORT_ATTR_NAME, relPort);
     }
 
@@ -354,8 +331,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidate's related port as described by ICE's RFC 5245.
      */
-    public int getRelPort()
-    {
+    public int getRelPort() {
         return super.getAttributeAsInt(REL_PORT_ATTR_NAME);
     }
 
@@ -368,8 +344,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @param type this candidates' type as per ICE's RFC 5245.
      */
-    public void setType(CandidateType type)
-    {
+    public void setType(CandidateType type) {
         super.setAttribute(TYPE_ATTR_NAME, type);
     }
 
@@ -382,8 +357,7 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      *
      * @return this candidates' type as per ICE's RFC 5245.
      */
-    public CandidateType getType()
-    {
+    public CandidateType getType() {
         return CandidateType.valueOf(getAttributeAsString(TYPE_ATTR_NAME));
     }
 
@@ -394,11 +368,9 @@ public class CandidatePacketExtension extends AbstractPacketExtension
      * @return 0 if the type are equal. -1 if this instance type is preferred.
      * Otherwise 1.
      */
-    public int compareTo(CandidatePacketExtension candidatePacketExtension)
-    {
+    public int compareTo(CandidatePacketExtension candidatePacketExtension) {
         // If the types are different.
-        if(this.getType() != candidatePacketExtension.getType())
-        {
+        if (this.getType() != candidatePacketExtension.getType()) {
             CandidateType[] types = {
                 CandidateType.host,
                 CandidateType.local,
@@ -407,16 +379,12 @@ public class CandidatePacketExtension extends AbstractPacketExtension
                 CandidateType.stun,
                 CandidateType.relay
             };
-            for(int i = 0; i < types.length; ++i)
-            {
+            for (int i = 0; i < types.length; ++i) {
                 // this object is preferred.
-                if(types[i] == this.getType())
-                {
+                if (types[i] == this.getType()) {
                     return -1;
-                }
-                // the candidatePacketExtension is preferred.
-                else if(types[i] == candidatePacketExtension.getType())
-                {
+                } // the candidatePacketExtension is preferred.
+                else if (types[i] == candidatePacketExtension.getType()) {
                     return 1;
                 }
             }
@@ -428,17 +396,16 @@ public class CandidatePacketExtension extends AbstractPacketExtension
     /**
      * Gets the TCP type for this <tt>CandidatePacketExtension</tt>.
      */
-    public String getTcpType()
-    {
+    public String getTcpType() {
         return getAttributeAsString(TCPTYPE_ATTR_NAME);
     }
 
     /**
      * Sets the TCP type for this <tt>CandidatePacketExtension</tt>.
+     *
      * @param tcpType
      */
-    public void setTcpType(String tcpType)
-    {
+    public void setTcpType(String tcpType) {
         setAttribute(TCPTYPE_ATTR_NAME, tcpType);
     }
 }
