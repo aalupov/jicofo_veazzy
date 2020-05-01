@@ -1041,7 +1041,7 @@ public class JitsiMeetConferenceImpl
             logger.info("Member " + contactAddress + " is leaving");
             if (chatRoomMember.getRole() != null) {
                 logger.info("Member has a role of " + chatRoomMember.getRole().getRoleName() + " - " + chatRoomMember.getRole().getRoleIndex());
-                if (chatRoomMember.getRole().compareTo(ChatRoomMemberRole.OWNER) == 0) {
+                if (chatRoomMember.getRole().compareTo(ChatRoomMemberRole.MODERATOR) >= 0) { // (OWNER, ADMINISTRATOR, MODERATOR)
 
                     String room_name = chatRoom.getRoomJid().toString();
                     //String room_name = fromJid.toString();
