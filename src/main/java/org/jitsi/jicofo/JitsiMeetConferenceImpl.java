@@ -1036,12 +1036,32 @@ public class JitsiMeetConferenceImpl
     protected void onMemberLeft(ChatRoomMember chatRoomMember) {
         
         synchronized (participantLock) {
+            
             String contactAddress = chatRoomMember.getContactAddress();
-
             logger.info("Member " + contactAddress + " is leaving");
+            if (chatRoomMember.getRole() != null) {
+                logger.info("Member has a role of " + chatRoomMember.getRole().getRoleName() + " - " + chatRoomMember.getRole().getRoleIndex());
+                if (chatRoomMember.getRole().compareTo(ChatRoomMemberRole.OWNER) == 0) {
 
+                    String room_name = chatRoom.getRoomJid().toString();
+                    //String room_name = fromJid.toString();
+
+                    if(room_name.contains("@")) {
+                        room_name = room_name.substring(0, room_name.indexOf("@"));
+                    }
+
+                    String cmd = "/usr/share/jitsi-meet/stream.sh " + room_name + " 1";
+                    logger.info("Owner has left running cmd " + cmd);
+                    runScriptCmd(cmd);
+                }
+            }
+            else {
+                logger.info("Member has no role");
+            }
+                
             Participant leftParticipant = findParticipantForChatMember(chatRoomMember);
             if (leftParticipant != null) {
+                
                 terminateParticipant(leftParticipant, Reason.GONE, null);
             } else {
                 logger.warn("Participant not found for " + contactAddress + " terminated already or never started ?");
