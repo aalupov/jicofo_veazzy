@@ -85,6 +85,7 @@ public class MeetExtensionsHandler {
         RoomStatusIqProvider.registerRoomStatusIqProvider();
         ModeratorIdIqProvider.registerModeratorIdIqProvider();
         ParticipantIdIqProvider.registerParticipantIdIqProvider();
+        StreamIqProvider.registerStreamIqProvider();
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
     }
