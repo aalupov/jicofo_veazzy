@@ -1066,7 +1066,7 @@ public class JitsiMeetConferenceImpl
                 }
             } else if (participants.size() == 0) {
                 
-                String room_name = chatRoom.getRoomJid().toString();
+                /*String room_name = chatRoom.getRoomJid().toString();
                 //String room_name = fromJid.toString();
 
                 if(room_name.contains("@")) {
@@ -1075,7 +1075,7 @@ public class JitsiMeetConferenceImpl
             
                 String cmd = "/usr/share/jitsi-meet/stream.sh " + room_name + " 0";
                 logger.info("All participant left running cmd " + cmd);
-                runScriptCmd(cmd);
+                runScriptCmd(cmd);*/
                 
                 stop();
             }
@@ -1093,7 +1093,7 @@ public class JitsiMeetConferenceImpl
                 JingleSession jingleSession = participant.getJingleSession();
                 logger.info("Terminating: " + contactAddress);
                 
-                if(participants.size() > 1) {
+                /*if(participants.size() > 1) {
                     
                     logger.info("There is more than one participant left before terminating");
                     String shortRoomName = chatRoom.getRoomJid().toString();
@@ -1105,7 +1105,7 @@ public class JitsiMeetConferenceImpl
                         logger.info("Participant was terminate running cmd " + cmd);
                         runScriptCmd(cmd);
                     }
-                }
+                }*/
                 
                 jingle.terminateSession(jingleSession, reason, message);
 
@@ -1999,14 +1999,12 @@ public class JitsiMeetConferenceImpl
 
         logger.info("Will " + (doRoomStatusOpen ? "open room" : "close room") + " on behalf of " + fromJid);
 
-        //chatRoom.setVeazzyRoomStatus(doRoomStatusOpen);
-        chatRoom.setRoomStatus(doRoomStatusOpen);
+        chatRoom.setVeazzyRoomStatus(doRoomStatusOpen);
         return true;
     }
 
     boolean getVeazzyRoomStatus() {
-        //return chatRoom.getVeazzyRoomStatus();
-        return chatRoom.getRoomStatus();
+        return chatRoom.getVeazzyRoomStatus();
     }
 
     boolean handleModeratorIdRequest(Jid fromJid,
@@ -2072,14 +2070,12 @@ public class JitsiMeetConferenceImpl
             }
         }
 
-        //chatRoom.setVeazzyRoomManagerId(doModeratorIdOpen);
-        chatRoom.setModeratorId(doModeratorIdOpen);
+        chatRoom.setVeazzyRoomManagerId(doModeratorIdOpen);
         return true;
     }
 
     String getVeazzyRoomManagerId() {
-        //return chatRoom.getVeazzyRoomManagerId();
-        return chatRoom.getModeratorId();
+        return chatRoom.getVeazzyRoomManagerId();
     }
 
     boolean handleStreamIdRequest(Jid jid, Jid fromJid,
@@ -2095,7 +2091,7 @@ public class JitsiMeetConferenceImpl
             // if false
             // /usr/share/jitsi-meet/stream.sh $room_name 0
             
-            String room_name = jid.toString();
+            /*String room_name = jid.toString();
             //String room_name = fromJid.toString();
             
             if(room_name.contains("@")) {
@@ -2123,7 +2119,7 @@ public class JitsiMeetConferenceImpl
                 else {
                     logger.info("handleStreamId " + stream + " running cmd " + cmd);
                 }
-            }
+            }*/
             return true;
         }
         logger.info("handleStreamId but stream NULL");
@@ -2193,8 +2189,8 @@ public class JitsiMeetConferenceImpl
             }
         }
 
-        //chatRoom.setVeazzyMainScreenParticipantId(doParticipantIdOpen);
-        chatRoom.setParticipantId(doParticipantIdOpen);
+        chatRoom.setVeazzyMainScreenParticipantId(doParticipantIdOpen);
+        
         return true;
     }
 
@@ -2900,23 +2896,17 @@ public class JitsiMeetConferenceImpl
             if(participantId.contains("/")) {
                 participantShortId = participantId.substring(participantId.lastIndexOf("/") + 1);
             }
-            //logger.debug("Check isVeazzyRoomManager() for participantShortId " 
-            //        + participantShortId + " (" + participantId + ") - Manager " + chatRoom.getVeazzyRoomManagerId());
-            //if(chatRoom.getVeazzyRoomManagerId() != null) {
-            //    return chatRoom.getVeazzyRoomManagerId().equals(participantShortId);
-            //}
             logger.debug("Check isVeazzyRoomManager() for participantShortId " 
-                    + participantShortId + " (" + participantId + ") - Manager " + chatRoom.getModeratorId());
-            if(chatRoom.getModeratorId() != null) {
-                return chatRoom.getModeratorId().equals(participantShortId);
+                    + participantShortId + " (" + participantId + ") - Manager " + chatRoom.getVeazzyRoomManagerId());
+            if(chatRoom.getVeazzyRoomManagerId() != null) {
+                return chatRoom.getVeazzyRoomManagerId().equals(participantShortId);
             }
             else {
                 return false;
             }
         }
         else {
-            //logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + chatRoom.getVeazzyRoomManagerId());
-            logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + chatRoom.getModeratorId());
+            logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + chatRoom.getVeazzyRoomManagerId());
             return false;
         }
     }

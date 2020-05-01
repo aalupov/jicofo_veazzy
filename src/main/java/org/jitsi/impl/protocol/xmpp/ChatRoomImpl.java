@@ -139,7 +139,7 @@ public class ChatRoomImpl
      */
     private JitsiMeetConference conference;
 
-    private boolean roomStatus = true;
+    private boolean veazzyRoomRoomStatus = true;
     private String veazzyRoomManagerId = "00000000";
     private String veazzyMainScreenParticipantId = "00000000";
 
@@ -749,26 +749,26 @@ public class ChatRoomImpl
     }
 
     /**
-     * @return the roomStatus
+     * @return the veazzyRoomRoomStatus
      */
     @Override
-    public boolean getRoomStatus() {
-        return roomStatus;
+    public boolean getVeazzyRoomStatus() {
+        return veazzyRoomRoomStatus;
     }
 
     /**
-     * @param roomStatus the roomStatus to set
+     * @param veazzyRoomRoomStatus the veazzyRoomRoomStatus to set
      */
     @Override
-    public void setRoomStatus(boolean roomStatus) {
-        this.roomStatus = roomStatus;
+    public void setVeazzyRoomStatus(boolean veazzyRoomRoomStatus) {
+        this.veazzyRoomRoomStatus = veazzyRoomRoomStatus;
     }
 
     /**
      * @return the veazzyRoomManagerId
      */
     @Override
-    public String getModeratorId() {
+    public String getVeazzyRoomManagerId() {
         return veazzyRoomManagerId;
     }
 
@@ -776,7 +776,7 @@ public class ChatRoomImpl
      * @param veazzyRoomManagerId to set
      */
     @Override
-    public void setModeratorId(String veazzyRoomManagerId) {
+    public void setVeazzyRoomManagerId(String veazzyRoomManagerId) {
         this.veazzyRoomManagerId = veazzyRoomManagerId;
     }
 
@@ -784,7 +784,7 @@ public class ChatRoomImpl
      * @return the veazzyMainScreenParticipantId
      */
     @Override
-    public String getParticipantId() {
+    public String getVeazzyMainScreenParticipantId() {
         return veazzyMainScreenParticipantId;
     }
 
@@ -792,7 +792,7 @@ public class ChatRoomImpl
      * @param veazzyMainScreenParticipantId to set
      */
     @Override
-    public void setParticipantId(String veazzyMainScreenParticipantId) {
+    public void setVeazzyMainScreenParticipantId(String veazzyMainScreenParticipantId) {
         this.veazzyMainScreenParticipantId = veazzyMainScreenParticipantId;
     }
 

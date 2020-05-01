@@ -654,32 +654,32 @@ public class MockMultiUserChat
     }
 
     @Override
-    public void setRoomStatus(boolean roomStatus) {
+    public void setVeazzyRoomStatus(boolean veazzyRoomStatus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean getRoomStatus() {
+    public boolean getVeazzyRoomStatus() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setModeratorId(String moderatorId) {
+    public void setVeazzyRoomManagerId(String moderatorId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public String getModeratorId() {
+    public String getVeazzyRoomManagerId() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setParticipantId(String participantId) {
+    public void setVeazzyMainScreenParticipantId(String participantId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public String getParticipantId() {
+    public String getVeazzyMainScreenParticipantId() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
