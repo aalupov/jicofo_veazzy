@@ -169,8 +169,13 @@ public class JDBCPostgreSQL {
         return new java.sql.Date(today.getTime());
     }
     
-    private static java.sql.Date getCurrentDate(java.util.Date date) {
-        return new java.sql.Date(date.getTime());
+    private static java.sql.Timestamp getCurrentTimestamp() {
+        java.util.Date today = new java.util.Date();
+        return new java.sql.Timestamp(today.getTime());
+    }
+    
+    private static java.sql.Timestamp getTimestamp(java.util.Date date) {
+        return new java.sql.Timestamp(date.getTime());
     }
     
     public String getStringValue(String value) {
@@ -364,8 +369,8 @@ public class JDBCPostgreSQL {
                 pStatement.setString(1, participantStatus.getJid());
                 pStatement.setString(2, participantStatus.getRoomName());
                 pStatement.setBoolean(3, participantStatus.getActive());
-                pStatement.setDate(4, participantStatus.getJoinDate() != null ? getCurrentDate(participantStatus.getJoinDate()) : null);
-                pStatement.setDate(5, participantStatus.getLeaveDate() != null ? getCurrentDate(participantStatus.getLeaveDate()) : null);
+                pStatement.setTimestamp(4, participantStatus.getJoinDate() != null ? getTimestamp(participantStatus.getJoinDate()) : null);
+                pStatement.setTimestamp(5, participantStatus.getLeaveDate() != null ? getTimestamp(participantStatus.getLeaveDate()) : null);
                 pStatement.setString(6, participantStatus.getLeaveReason());
                 pStatement.addBatch();
             } catch (SQLException ex) {
@@ -413,7 +418,7 @@ public class JDBCPostgreSQL {
             if(pStatement != null) {
                 try {
                     pStatement.setBoolean(1, participantStatus.getActive());
-                    pStatement.setDate(2, participantStatus.getLeaveDate() != null ? getCurrentDate(participantStatus.getLeaveDate()) : null);
+                    pStatement.setTimestamp(2, participantStatus.getLeaveDate() != null ? getTimestamp(participantStatus.getLeaveDate()) : null);
                     pStatement.setString(3, participantStatus.getLeaveReason());
                     pStatement.addBatch();
                 } catch (SQLException ex) {

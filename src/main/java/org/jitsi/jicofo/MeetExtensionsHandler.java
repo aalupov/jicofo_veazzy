@@ -63,6 +63,7 @@ public class MeetExtensionsHandler {
     private ModeratorIdIqHandler moderatorIdIqHandler;
     private ParticipantIdIqHandler participantIdIqHandler;
     private DialIqHandler dialIqHandler;
+    private StreamIqHandler streamIqHandler;
 
     /**
      * The currently used DB connection.
@@ -101,13 +102,17 @@ public class MeetExtensionsHandler {
         moderatorIdIqHandler = new ModeratorIdIqHandler();
         participantIdIqHandler = new ParticipantIdIqHandler();
         dialIqHandler = new DialIqHandler();
+        streamIqHandler = new StreamIqHandler();
+        
         clientSql = new JDBCPostgreSQL();
         roomStatusFromDb = true;
+        
         connection.registerIQRequestHandler(muteIqHandler);
         connection.registerIQRequestHandler(roomStatusIqHandler);
         connection.registerIQRequestHandler(moderatorIdIqHandler);
         connection.registerIQRequestHandler(participantIdIqHandler);
         connection.registerIQRequestHandler(dialIqHandler);
+        connection.registerIQRequestHandler(streamIqHandler);
     }
 
     private class MuteIqHandler extends AbstractIqRequestHandler {
@@ -174,6 +179,22 @@ public class MeetExtensionsHandler {
         }
     }
 
+    private class StreamIqHandler extends AbstractIqRequestHandler {
+
+        StreamIqHandler() {
+            super(
+                    StreamIq.ELEMENT_NAME,
+                    StreamIq.NAMESPACE,
+                    IQ.Type.set,
+                    IQRequestHandler.Mode.sync);
+        }
+
+        @Override
+        public IQ handleIQRequest(IQ iqRequest) {
+            return handleStreamIq((StreamIq) iqRequest);
+        }
+    }
+    
     private class DialIqHandler extends AbstractIqRequestHandler {
 
         DialIqHandler() {
@@ -202,6 +223,7 @@ public class MeetExtensionsHandler {
             connection.unregisterIQRequestHandler(moderatorIdIqHandler);
             connection.unregisterIQRequestHandler(participantIdIqHandler);
             connection.unregisterIQRequestHandler(dialIqHandler);
+            connection.unregisterIQRequestHandler(streamIqHandler);
             connection = null;
         }
     }
@@ -499,6 +521,58 @@ public class MeetExtensionsHandler {
         return result;
     }
 
+    
+    private IQ handleStreamIq(StreamIq streamIq) {
+        
+        Boolean stream = streamIq.getStream();
+
+        Jid jid = streamIq.getJid();
+
+        if (jid == null) {
+            logger.debug("jid null");
+            return IQ.createErrorResponse(streamIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+        if (stream == null) {
+            logger.debug("stream  null");
+            return IQ.createErrorResponse(streamIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        Jid from = streamIq.getFrom();
+        JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
+        if (conference == null) {
+            logger.debug("Stream Id error: room not found for JID: " + from);
+            return IQ.createErrorResponse(streamIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        IQ result;
+
+        if (conference.handleStreamIdRequest(jid, streamIq.getFrom(), stream)) {
+            
+            result = IQ.createResultIQ(streamIq);
+
+            if (!streamIq.getFrom().equals(jid)) {
+                
+                StreamIq streamIdUpdate = new StreamIq();
+                streamIdUpdate.setActor(from);
+                streamIdUpdate.setType(IQ.Type.set);
+                streamIdUpdate.setTo(jid);
+                streamIdUpdate.setStream(stream);
+
+                connection.sendStanza(streamIdUpdate);
+            }
+        } else {
+            result = IQ.createErrorResponse(
+                    streamIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+        }
+
+        return result;
+    }
+
+    
     /**
      * Checks whether sending the rayo message is ok (checks member, moderators)
      * and sends the message to the selected jigasi (from brewery muc or to the

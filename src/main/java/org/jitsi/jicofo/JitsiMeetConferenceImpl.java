@@ -17,6 +17,10 @@
  */
 package org.jitsi.jicofo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import org.jitsi.jicofo.bridge.*;
 import org.jitsi.utils.*;
 import org.jitsi.xmpp.extensions.colibri.*;
@@ -48,6 +52,7 @@ import java.util.concurrent.*;
 import java.util.logging.*;
 import java.util.stream.*;
 import org.jitsi.protocol.xmpp.colibri.exception.RoomClosedException;
+import sun.tools.jar.CommandLine;
 
 /**
  * Represents a Jitsi Meet conference. Manages the Jingle sessions with the
@@ -2028,6 +2033,42 @@ public class JitsiMeetConferenceImpl
         return chatRoom.getModeratorId();
     }
 
+    boolean handleStreamIdRequest(Jid jid, Jid fromJid,
+            Boolean stream) {
+        
+        if(stream != null) {
+            
+            // if true
+            // /usr/share/jitsi-meet/stream.sh $room_name 1
+            
+            // if false
+            // /usr/share/jitsi-meet/stream.sh $room_name 0
+            
+            String room_name = jid.toString();
+            //String room_name = fromJid.toString();
+            
+            if(room_name.contains("@")) {
+                room_name = room_name.substring(0, room_name.indexOf("@"));
+            }
+            
+            String cmd = "/usr/share/jitsi-meet/stream.sh $" + room_name;
+            
+            if(stream.equals(Boolean.TRUE)) {
+                cmd += " 1";
+                logger.info("handleStreamId running cmd " + cmd);
+                runScriptCmd(cmd);
+            }
+            else if(stream.equals(Boolean.FALSE)) {
+                cmd += " 0";
+                logger.info("handleStreamId running cmd " + cmd);
+                runScriptCmd(cmd);
+            }
+            return true;
+        }
+        logger.info("handleStreamId but stream NULL");
+        return false;
+    }
+    
     boolean handleParticipantIdRequest(Jid fromJid,
             // Jid toBeMutedJid,
             String doParticipantIdOpen) {
@@ -2726,5 +2767,68 @@ public class JitsiMeetConferenceImpl
     @Override
     public String toString() {
         return String.format("JitsiMeetConferenceImpl[id=%s, name=%s]", id, getRoomName().toString());
+    }
+    
+    
+    // https://stackoverflow.com/questions/525212/how-to-run-unix-shell-script-from-java-code
+    
+    public void runScriptCmd(String myCommand){
+        try {
+            Runtime.getRuntime().exec(myCommand);
+        } catch (IOException ex) {
+            Logger.getLogger(JitsiMeetConferenceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void runCommandFile1(String filePath) throws IOException{
+        File file = new File(filePath);
+        if(!file.isFile()){
+            throw new IllegalArgumentException("The file " + filePath + " does not exist");
+        }
+        if(isLinux()){
+            Runtime.getRuntime().exec(new String[] {"/bin/sh", "-c", filePath}, null);
+        }else if(isWindows()){
+            Runtime.getRuntime().exec("cmd /c start " + filePath);
+        }
+    }
+    
+    public static boolean isLinux(){
+        String os = System.getProperty("os.name");  
+        return os.toLowerCase().indexOf("linux") >= 0;
+    }
+
+    public static boolean isWindows(){
+        String os = System.getProperty("os.name");
+        return os.toLowerCase().indexOf("windows") >= 0;
+    }
+    
+    public void runCommandFile2(String fileName) { //"myshellScript.sh"
+        ProcessBuilder pb = new ProcessBuilder(fileName, "myArg1", "myArg2");
+        Map<String, String> env = pb.environment();
+        env.put("VAR1", "myValue");
+        env.remove("OTHERVAR");
+        env.put("VAR2", env.get("VAR1") + "suffix");
+        pb.directory(new File("myDir"));
+        try {
+            Process p = pb.start();
+        } catch (IOException ex) {
+            Logger.getLogger(JitsiMeetConferenceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public static void readBashScript() {
+        try {
+            Process proc = Runtime.getRuntime().exec("/home/destino/workspace/JavaProject/listing.sh /"); //Whatever you want to execute
+            BufferedReader read = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            try {
+                proc.waitFor();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+            while (read.ready()) {
+                System.out.println(read.readLine());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
