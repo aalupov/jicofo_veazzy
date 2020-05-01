@@ -2051,7 +2051,7 @@ public class JitsiMeetConferenceImpl
                 room_name = room_name.substring(0, room_name.indexOf("@"));
             }
             
-            String cmd = "/usr/share/jitsi-meet/stream.sh $" + room_name;
+            String cmd = "/usr/share/jitsi-meet/stream.sh " + room_name;
             
             if(stream.equals(Boolean.TRUE)) {
                 cmd += " 1";
