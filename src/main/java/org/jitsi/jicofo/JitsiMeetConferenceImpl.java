@@ -1034,6 +1034,7 @@ public class JitsiMeetConferenceImpl
      * @param chatRoomMember the member that has left the room.
      */
     protected void onMemberLeft(ChatRoomMember chatRoomMember) {
+        
         synchronized (participantLock) {
             String contactAddress = chatRoomMember.getContactAddress();
 
@@ -1049,6 +1050,18 @@ public class JitsiMeetConferenceImpl
             if (participants.size() == 1) {
                 rescheduleSingleParticipantTimeout();
             } else if (participants.size() == 0) {
+                
+                String room_name = chatRoom.getRoomJid().toString();
+                //String room_name = fromJid.toString();
+
+                if(room_name.contains("@")) {
+                    room_name = room_name.substring(0, room_name.indexOf("@"));
+                }
+            
+                String cmd = "/usr/share/jitsi-meet/stream.sh " + room_name + " 0";
+                logger.info("All participaent left running cmd " + cmd);
+                runScriptCmd(cmd);
+                
                 stop();
             }
         }
