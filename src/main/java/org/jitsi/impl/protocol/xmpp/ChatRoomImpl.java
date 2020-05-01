@@ -140,8 +140,8 @@ public class ChatRoomImpl
     private JitsiMeetConference conference;
 
     private boolean roomStatus = true;
-    private String moderatorId = "00000000";
-    private String participantId = "00000000";
+    private String veazzyRoomManagerId = "00000000";
+    private String veazzyMainScreenParticipantId = "00000000";
 
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.
@@ -752,7 +752,7 @@ public class ChatRoomImpl
      * @return the roomStatus
      */
     @Override
-    public boolean getRoomStatus() {
+    public boolean getVeazzyRoomStatus() {
         return roomStatus;
     }
 
@@ -760,40 +760,40 @@ public class ChatRoomImpl
      * @param roomStatus the roomStatus to set
      */
     @Override
-    public void setRoomStatus(boolean roomStatus) {
+    public void setVeazzyRoomStatus(boolean roomStatus) {
         this.roomStatus = roomStatus;
     }
 
     /**
-     * @return the moderatorId
+     * @return the veazzyRoomManagerId
      */
     @Override
-    public String getModeratorId() {
-        return moderatorId;
+    public String getVeazzyRoomManagerId() {
+        return veazzyRoomManagerId;
     }
 
     /**
-     * @param moderatorId to set
+     * @param veazzyRoomManagerId to set
      */
     @Override
-    public void setModeratorId(String moderatorId) {
-        this.moderatorId = moderatorId;
+    public void setVeazzyRoomManagerId(String veazzyRoomManagerId) {
+        this.veazzyRoomManagerId = veazzyRoomManagerId;
     }
 
     /**
-     * @return the participantId
+     * @return the veazzyMainScreenParticipantId
      */
     @Override
-    public String getParticipantId() {
-        return participantId;
+    public String getVeazzyMainScreenParticipantId() {
+        return veazzyMainScreenParticipantId;
     }
 
     /**
-     * @param participantId to set
+     * @param veazzyMainScreenParticipantId to set
      */
     @Override
-    public void setParticipantId(String participantId) {
-        this.participantId = participantId;
+    public void setVeazzyMainScreenParticipantId(String veazzyMainScreenParticipantId) {
+        this.veazzyMainScreenParticipantId = veazzyMainScreenParticipantId;
     }
 
     @Override
