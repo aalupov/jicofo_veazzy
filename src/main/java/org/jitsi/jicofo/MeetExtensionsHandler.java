@@ -525,6 +525,7 @@ public class MeetExtensionsHandler {
     
     private IQ handleStreamIq(StreamIq streamIq) {
         
+        logger.info("handleStreamIq");
         Boolean stream = streamIq.getStream();
 
         Jid jid = streamIq.getJid();
@@ -550,6 +551,8 @@ public class MeetExtensionsHandler {
 
         IQ result;
 
+        logger.info("handleStreamIq condition OK");
+        
         if (conference.handleStreamIdRequest(jid, streamIq.getFrom(), stream)) {
             
             result = IQ.createResultIQ(streamIq);

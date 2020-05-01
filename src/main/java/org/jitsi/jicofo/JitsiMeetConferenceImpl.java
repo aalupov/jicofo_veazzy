@@ -2036,6 +2036,8 @@ public class JitsiMeetConferenceImpl
     boolean handleStreamIdRequest(Jid jid, Jid fromJid,
             Boolean stream) {
         
+        logger.info("handleStreamIdRequest");
+        
         if(stream != null) {
             
             // if true
@@ -2055,13 +2057,23 @@ public class JitsiMeetConferenceImpl
             
             if(stream.equals(Boolean.TRUE)) {
                 cmd += " 1";
-                logger.info("handleStreamId running cmd " + cmd);
+                logger.info("handleStreamId Boolean.TRUE running cmd " + cmd);
                 runScriptCmd(cmd);
             }
             else if(stream.equals(Boolean.FALSE)) {
                 cmd += " 0";
-                logger.info("handleStreamId running cmd " + cmd);
+                logger.info("handleStreamId Boolean.FALSE running cmd " + cmd);
                 runScriptCmd(cmd);
+            }
+            else {
+                if(stream == true) {
+                    cmd += " 1";
+                    logger.info("handleStreamId true running cmd " + cmd);
+                    runScriptCmd(cmd);
+                }
+                else {
+                    logger.info("handleStreamId " + stream + " running cmd " + cmd);
+                }
             }
             return true;
         }
