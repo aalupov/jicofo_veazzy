@@ -453,7 +453,7 @@ public class MeetExtensionsHandler {
                         XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
             }
         } else {
-            String moderatorId = conference.getChatModeratorId();
+            String moderatorId = conference.getVeazzyRoomManagerId();
             result = IQ.createResultIQ(moderatorIdIq);
 
             ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
