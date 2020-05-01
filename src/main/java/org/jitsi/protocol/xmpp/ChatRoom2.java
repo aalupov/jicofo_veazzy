@@ -85,16 +85,16 @@ public interface ChatRoom2
 
     void setConference(JitsiMeetConference conference);
 
-    void setVeazzyRoomStatus(boolean veazzyRoomStatus);
+    void setRoomStatus(boolean veazzyRoomStatus);
 
-    boolean getVeazzyRoomStatus();
+    boolean getRoomStatus();
 
-    void setVeazzyRoomManagerId(String veazzyRoomManagerId);
+    void setModeratorId(String veazzyRoomManagerId);
 
-    String getVeazzyRoomManagerId();
+    String getModeratorId();
 
-    void setVeazzyMainScreenParticipantId(String veazzyParticipantId);
+    void setParticipantId(String veazzyParticipantId);
 
-    String getVeazzyMainScreenParticipantId();
+    String getParticipantId();
 
 }

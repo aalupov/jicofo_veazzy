@@ -752,7 +752,7 @@ public class ChatRoomImpl
      * @return the roomStatus
      */
     @Override
-    public boolean getVeazzyRoomStatus() {
+    public boolean getRoomStatus() {
         return roomStatus;
     }
 
@@ -760,7 +760,7 @@ public class ChatRoomImpl
      * @param roomStatus the roomStatus to set
      */
     @Override
-    public void setVeazzyRoomStatus(boolean roomStatus) {
+    public void setRoomStatus(boolean roomStatus) {
         this.roomStatus = roomStatus;
     }
 
@@ -768,7 +768,7 @@ public class ChatRoomImpl
      * @return the veazzyRoomManagerId
      */
     @Override
-    public String getVeazzyRoomManagerId() {
+    public String getModeratorId() {
         return veazzyRoomManagerId;
     }
 
@@ -776,7 +776,7 @@ public class ChatRoomImpl
      * @param veazzyRoomManagerId to set
      */
     @Override
-    public void setVeazzyRoomManagerId(String veazzyRoomManagerId) {
+    public void setModeratorId(String veazzyRoomManagerId) {
         this.veazzyRoomManagerId = veazzyRoomManagerId;
     }
 
@@ -784,7 +784,7 @@ public class ChatRoomImpl
      * @return the veazzyMainScreenParticipantId
      */
     @Override
-    public String getVeazzyMainScreenParticipantId() {
+    public String getParticipantId() {
         return veazzyMainScreenParticipantId;
     }
 
@@ -792,7 +792,7 @@ public class ChatRoomImpl
      * @param veazzyMainScreenParticipantId to set
      */
     @Override
-    public void setVeazzyMainScreenParticipantId(String veazzyMainScreenParticipantId) {
+    public void setParticipantId(String veazzyMainScreenParticipantId) {
         this.veazzyMainScreenParticipantId = veazzyMainScreenParticipantId;
     }
 
