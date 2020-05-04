@@ -43,12 +43,13 @@ public class VeazzyRoomManagerIq
     /**
      * Name space of moderatorId packet extension.
      */
-    public static final String NAMESPACE = "http://jitsi.org/jitmeet/moderator";
+    public static final String NAMESPACE = "http://jitsi.org/jitmeet/roommanager";
+    public static final String ELEMENT_CHECK_VALUE = "get";
 
     /**
      * XML element name of moderatorId packet extension.
      */
-    public static final String ELEMENT_NAME = "moderatorId";
+    public static final String ELEMENT_NAME = "roomManager";
 
     /**
      * Attribute name of "jid".
@@ -71,15 +72,15 @@ public class VeazzyRoomManagerIq
     private Jid actor;
 
     /**
-     * moderatorId.
+     * The Manager Id.
      */
-    private String moderatorId;
+    private String roomManagerId;
 
     /**
-     * ModeratorIdRequest.
+     * Check Room Manager Id
      */
-    private Boolean moderatorIdRequest;
-
+    private Boolean checkRoomManagerIdRequest;
+    
     /**
      * Creates a new instance of this class.
      */
@@ -100,9 +101,9 @@ public class VeazzyRoomManagerIq
         }
 
         xml.rightAngleBracket()
-                .append(moderatorId);
+                .append(roomManagerId);
 
-        logger.warn("Building xml ModeratorId " + xml.toString());
+        logger.warn("Building xml RoomManagerId " + xml.toString());
 
         return xml;
     }
@@ -125,30 +126,30 @@ public class VeazzyRoomManagerIq
     }
 
     /**
-     * The action contained in the text part of 'moderatorId' XML element body.
+     * The action contained in the text part of 'roomManagerId' XML element body.
      *
-     * @param moderatorId
+     * @param roomManagerId
      */
-    public void setModeratorId(String moderatorId) {
-        this.moderatorId = moderatorId;
+    public void setRoomManagerId(String roomManagerId) {
+        this.roomManagerId = roomManagerId;
     }
 
     /**
-     * Returns moderatorId or <tt>null</tt> if the action has not been
+     * Returns roomManagerId or <tt>null</tt> if the action has not been
      * specified(which is invalid).
      */
-    public String getModeratorId() {
-        return moderatorId;
+    public String getRoomManagerId() {
+        return roomManagerId;
     }
 
-    public void setModeratorIdRequest(Boolean moderatorIdRequest) {
-        this.moderatorIdRequest = moderatorIdRequest;
+    public void setCheckRoomManagerIdRequest(Boolean checkRoomManagerIdRequest) {
+        this.checkRoomManagerIdRequest = checkRoomManagerIdRequest;
     }
 
-    public Boolean getModeratorIdRequest() {
-        return moderatorIdRequest;
+    public Boolean isCheckRoomManagerIdRequest() {
+        return checkRoomManagerIdRequest;
     }
-
+    
     /**
      * Returns the peer jid that initiated the moderatorId, if any.
      *

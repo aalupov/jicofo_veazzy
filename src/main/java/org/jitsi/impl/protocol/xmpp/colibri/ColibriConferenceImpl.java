@@ -816,6 +816,63 @@ public class ColibriConferenceImpl
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean blindParticipant(ColibriConferenceIQ channelsInfo,
+            boolean blind) {
+        
+        /*if (checkIfDisposed("muteParticipant")) {
+            return false;
+        }
+
+        ColibriConferenceIQ request = new ColibriConferenceIQ();
+        request.setID(conferenceState.getID());
+        request.setName(conferenceState.getName());
+
+        ColibriConferenceIQ.Content audioContent
+                = channelsInfo.getContent("audio");
+
+        if (audioContent == null || StringUtils.isNullOrEmpty(request.getID())) {
+            logger.error("Failed to mute - no audio content."
+                    + " Conf ID: " + request.getID());
+            return false;
+        }
+
+        ColibriConferenceIQ.Content requestContent
+                = new ColibriConferenceIQ.Content(audioContent.getName());
+
+        for (ColibriConferenceIQ.Channel channel : audioContent.getChannels()) {
+            ColibriConferenceIQ.Channel requestChannel
+                    = new ColibriConferenceIQ.Channel();
+
+            requestChannel.setID(channel.getID());
+
+            requestChannel.setDirection(
+                    blind ? MediaDirection.SENDONLY.toString()
+                            : MediaDirection.SENDRECV.toString());
+
+            requestContent.addChannel(requestChannel);
+        }
+
+        if (requestContent.getChannelCount() == 0) {
+            logger.error("Failed to mute - no channels to modify."
+                    + " ConfID:" + request.getID());
+            return false;
+        }
+
+        request.setType(IQ.Type.set);
+        request.setTo(jitsiVideobridge);
+
+        request.addContent(requestContent);
+
+        connection.sendStanza(request);*/
+
+        // FIXME wait for response and set local status
+        return true;
+    }
+    
+    /**
      * Sets world readable name that identifies the conference.
      *
      * @param name the new name.

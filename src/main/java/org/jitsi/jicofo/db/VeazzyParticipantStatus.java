@@ -11,14 +11,17 @@ import java.util.Date;
  *
  * @author micka_3tyuvpx
  */
-public class ParticipantStatus {
+public class VeazzyParticipantStatus {
     
     static public final String TABLE_PARTICIPANT_STATUS = "participant_status";
+    
+    public static final int PARTICIPANT_STATUS_INACTIVE = 0;
+    public static final int PARTICIPANT_STATUS_ACTIVE = 1;
     
     static public final String COLUMN_ID = "id";
     static public final String COLUMN_JID = "jid";
     static public final String COLUMN_ROOM_NAME = "room_name";
-    static public final String COLUMN_ACTIVE = "active";
+    static public final String COLUMN_STATUS = "status";
     static public final String COLUMN_JOIN_DATE = "join_date";
     static public final String COLUMN_LEAVE_DATE = "leave_date";
     static public final String COLUMN_LEAVE_REASON = "leave_reason";
@@ -29,19 +32,19 @@ public class ParticipantStatus {
     
     private String jid;
     private String roomName;
-    private Boolean active;
+    private int status = PARTICIPANT_STATUS_ACTIVE;
     private Date joinDate;
     private Date leaveDate;
     private String leaveReason;
 
-    public ParticipantStatus() {
+    public VeazzyParticipantStatus() {
     }
     
-    public ParticipantStatus(String jid, String roomName, Date joinDate, Boolean active) {
+    public VeazzyParticipantStatus(String jid, String roomName, Date joinDate, int status) {
         this.jid = jid;
         this.roomName = roomName;
         this.joinDate = joinDate;
-        this.active = active;
+        this.status = status;
     }
 
     /**
@@ -73,17 +76,17 @@ public class ParticipantStatus {
     }
 
     /**
-     * @return the active
+     * @return the participantStatus
      */
-    public Boolean getActive() {
-        return active;
+    public int getStatus() {
+        return status;
     }
 
     /**
-     * @param active the active to set
+     * @param participantStatus the participantStatus to set
      */
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**

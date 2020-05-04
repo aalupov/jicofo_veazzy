@@ -24,14 +24,14 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public class VeazzyMainScreenParticipantIq
+public class VeazzyRoomFocalParticipantIq
         extends IQ {
 
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-            = Logger.getLogger(VeazzyMainScreenParticipantIq.class);
+            = Logger.getLogger(VeazzyRoomFocalParticipantIq.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
@@ -43,12 +43,13 @@ public class VeazzyMainScreenParticipantIq
     /**
      * Name space of participantId packet extension.
      */
-    public static final String NAMESPACE = "http://jitsi.org/jitmeet/participant";
+    public static final String NAMESPACE = "http://jitsi.org/jitmeet/roomfocalparticipant";
+    public static final String ELEMENT_CHECK_VALUE = "get";
 
     /**
      * XML element name of participantId packet extension.
      */
-    public static final String ELEMENT_NAME = "participantId";
+    public static final String ELEMENT_NAME = "roomFocalParticipant";
 
     /**
      * Attribute name of "jid".
@@ -61,11 +62,6 @@ public class VeazzyMainScreenParticipantIq
     public static final String ACTOR_ATTR_NAME = "actor";
 
     /**
-     * Attribute name of "with_me".
-     */
-    public static final String WITH_ME_ATTR_NAME = "withMe";
-
-    /**
      * Muted peer MUC jid.
      */
     private Jid jid;
@@ -76,19 +72,19 @@ public class VeazzyMainScreenParticipantIq
     private Jid actor;
 
     /**
-     * participantId.
+     * The Focal Participant Id.
      */
-    private String participantId;
+    private String roomFocalParticipantId;
 
     /**
-     * Translation with moderator or without.
+     * Check Room Manager Id
      */
-    private Boolean withMe;
-
+    private Boolean checkRoomFocalParticipantIdRequest;
+    
     /**
      * Creates a new instance of this class.
      */
-    public VeazzyMainScreenParticipantIq() {
+    public VeazzyRoomFocalParticipantIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
@@ -104,14 +100,10 @@ public class VeazzyMainScreenParticipantIq
             xml.attribute(ACTOR_ATTR_NAME, actor);
         }
 
-        if (withMe != null) {
-            xml.attribute(WITH_ME_ATTR_NAME, withMe);
-        }
-
         xml.rightAngleBracket()
-                .append(participantId);
+                .append(roomFocalParticipantId);
 
-        logger.warn("Building xml ParticipantId " + xml.toString());
+        logger.warn("Building xml FocalParticipantId " + xml.toString());
 
         return xml;
     }
@@ -137,18 +129,26 @@ public class VeazzyMainScreenParticipantIq
      * The action contained in the text part of 'participantId' XML element
      * body.
      *
-     * @param participantId
+     * @param roomFocalParticipantId
      */
-    public void setParticipantId(String participantId) {
-        this.participantId = participantId;
+    public void setRoomFocalParticipantId(String roomFocalParticipantId) {
+        this.roomFocalParticipantId = roomFocalParticipantId;
     }
 
     /**
-     * Returns participantId or <tt>null</tt> if the action has not been
+     * Returns roomFocalParticipantId or <tt>null</tt> if the action has not been
      * specified(which is invalid).
      */
-    public String getParticipantId() {
-        return participantId;
+    public String getRoomFocalParticipantId() {
+        return roomFocalParticipantId;
+    }
+
+    public void setCheckRoomFocalParticipantIdRequest(Boolean checkRoomFocalParticipantIdRequest) {
+        this.checkRoomFocalParticipantIdRequest = checkRoomFocalParticipantIdRequest;
+    }
+
+    public Boolean isCheckRoomFocalParticipantIdRequest() {
+        return checkRoomFocalParticipantIdRequest;
     }
 
     /**
@@ -169,23 +169,4 @@ public class VeazzyMainScreenParticipantIq
         this.actor = actor;
     }
 
-    /**
-     * The action contained in the text part of 'participantId' XML element
-     * body.
-     *
-     * @param with_me <tt>true</tt> to translate with moderator. <tt>null</tt>
-     * means no action is included in result XML.
-     */
-    public void setWithMe(Boolean withMe) {
-        this.withMe = withMe;
-    }
-
-    /**
-     * Returns <tt>true</tt> to translate with moderato, <tt>false</tt> to
-     * translate the one participant only or <tt>null</tt> if the action has not
-     * been specified(which is invalid).
-     */
-    public Boolean getWithMe() {
-        return withMe;
-    }
 }

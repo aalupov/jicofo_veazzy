@@ -33,7 +33,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Playground for testing {@link VeazzyMuteIq} parsing.
+ * Playground for testing {@link MuteIq} parsing.
  *
  * @author Pawel Domas
  */
@@ -47,48 +47,44 @@ public class MuteIqProviderTest {
                 = "<iq to='t' from='f' type='set'>"
                 + "<mute xmlns='http://jitsi.org/jitmeet/audio'"
                 + " jid='somejid'"
-                + " block='true'"
-                + " video='true' >"
+                + " blockaudiocontrol='true' >"
                 + "true"
                 + "</mute>"
                 + "</iq>";
 
-        VeazzyMuteIqProvider provider = new VeazzyMuteIqProvider();
-        VeazzyMuteIq mute
-                = (VeazzyMuteIq) IQUtils.parse(iqXml, provider);
+        MuteIqProvider provider = new MuteIqProvider();
+        MuteIq mute
+                = (MuteIq) IQUtils.parse(iqXml, provider);
 
         assertEquals("f", mute.getFrom().toString());
         assertEquals("t", mute.getTo().toString());
 
         assertEquals("somejid", mute.getJid().toString());
-        assertEquals("true", mute.getBlock().toString());
-        assertEquals("true", mute.getVideo().toString());
+        assertEquals("true", mute.getBlockAudioControl().toString());
 
-        assertEquals(true, mute.getMute());
+        assertEquals(true, mute.getDoMute());
     }
 
     @Test
     public void testToXml()
             throws IOException, SAXException {
-        VeazzyMuteIq muteIq = new VeazzyMuteIq();
+        MuteIq muteIq = new MuteIq();
 
         muteIq.setStanzaId("123xyz");
         muteIq.setTo(JidCreate.from("toJid"));
         muteIq.setFrom(JidCreate.from("fromJid"));
 
         muteIq.setJid(JidCreate.from("mucjid1234"));
-        muteIq.setBlock(true);
-        muteIq.setVideo(true);
+        muteIq.setBlockAudioControl(true);
 
-        muteIq.setMute(true);
+        muteIq.setDoMute(true);
 
         assertXMLEqual(new Diff("<iq to='tojid' from='fromjid' "
                 + "type='get' id='123xyz'>"
                 + "<mute "
                 + "xmlns='http://jitsi.org/jitmeet/audio' "
                 + "jid='mucjid1234' "
-                + "block='true' "
-                + "video='true' "
+                + "blockaudiocontrol='true' "
                 + ">true</mute>"
                 + "</iq>",
                 muteIq.toXML().toString()), true);

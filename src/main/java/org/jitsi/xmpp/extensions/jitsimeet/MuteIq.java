@@ -24,7 +24,7 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public class VeazzyMuteIq
+public class MuteIq
         extends IQ {
 
     /**
@@ -50,12 +50,7 @@ public class VeazzyMuteIq
     /**
      * Attribute name of "block".
      */
-    public static final String BLOCK_ATTR_NAME = "block";
-
-    /**
-     * Attribute name of "video".
-     */
-    public static final String VIDEO_ATTR_NAME = "video";
+    public static final String BLOCK_AUDIO_CONTROL_ATTR_NAME = "blockaudiocontrol";
 
     /**
      * Muted peer MUC jid.
@@ -63,29 +58,24 @@ public class VeazzyMuteIq
     private Jid jid;
 
     /**
-     * The jid of the peer tha initiated the mute, optional.
+     * The jid of the peer that initiated the mute, optional.
      */
     private Jid actor;
 
     /**
      * To mute or unmute.
      */
-    private Boolean mute;
+    private Boolean doMute;
 
     /**
      * To block microphone or display microphone.
      */
-    private Boolean block;
-
-    /**
-     * To block microphone or display microphone.
-     */
-    private Boolean video;
+    private Boolean blockAudioControl;
 
     /**
      * Creates a new instance of this class.
      */
-    public VeazzyMuteIq() {
+    public MuteIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
@@ -100,16 +90,12 @@ public class VeazzyMuteIq
             xml.attribute(ACTOR_ATTR_NAME, actor);
         }
 
-        if (block != null) {
-            xml.attribute(BLOCK_ATTR_NAME, block);
-        }
-
-        if (video != null) {
-            xml.attribute(VIDEO_ATTR_NAME, video);
+        if (blockAudioControl != null) {
+            xml.attribute(BLOCK_AUDIO_CONTROL_ATTR_NAME, blockAudioControl);
         }
 
         xml.rightAngleBracket()
-                .append(mute.toString());
+                .append(doMute.toString());
 
         return xml;
     }
@@ -134,19 +120,19 @@ public class VeazzyMuteIq
     /**
      * The action contained in the text part of 'mute' XML element body.
      *
-     * @param mute <tt>true</tt> to mute the participant. <tt>null</tt> means no
+     * @param doMute <tt>true</tt> to mute the participant. <tt>null</tt> means no
      * action is included in result XML.
      */
-    public void setMute(Boolean mute) {
-        this.mute = mute;
+    public void setDoMute(Boolean doMute) {
+        this.doMute = doMute;
     }
 
     /**
      * Returns <tt>true</tt> to mute the participant, <tt>false</tt> to unmute
      * or <tt>null</tt> if the action has not been specified(which is invalid).
      */
-    public Boolean getMute() {
-        return mute;
+    public Boolean getDoMute() {
+        return doMute;
     }
 
     /**
@@ -170,11 +156,11 @@ public class VeazzyMuteIq
     /**
      * The action contained in the text part of 'mute' XML element body.
      *
-     * @param block <tt>true</tt> to block the microphone of the participant.
+     * @param blockAudioControl <tt>true</tt> to block the microphone of the participant.
      * <tt>null</tt> means no action is included in result XML.
      */
-    public void setBlock(Boolean block) {
-        this.block = block;
+    public void setBlockAudioControl(Boolean blockAudioControl) {
+        this.blockAudioControl = blockAudioControl;
     }
 
     /**
@@ -182,26 +168,8 @@ public class VeazzyMuteIq
      * <tt>false</tt> to show the microphone button or <tt>null</tt> if the
      * action has not been specified(which is invalid).
      */
-    public Boolean getBlock() {
-        return block;
+    public Boolean getBlockAudioControl() {
+        return blockAudioControl;
     }
 
-    /**
-     * The action contained in the text part of 'mute' XML element body.
-     *
-     * @param video <tt>true</tt> to block the microphone of the participant.
-     * <tt>null</tt> means no action is included in result XML.
-     */
-    public void setVideo(Boolean video) {
-        this.video = video;
-    }
-
-    /**
-     * Returns <tt>true</tt> to block the microphone of the participant,
-     * <tt>false</tt> to show the microphone button or <tt>null</tt> if the
-     * action has not been specified(which is invalid).
-     */
-    public Boolean getVideo() {
-        return video;
-    }
 }

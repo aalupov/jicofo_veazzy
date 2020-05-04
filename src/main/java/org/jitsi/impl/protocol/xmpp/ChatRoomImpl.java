@@ -41,7 +41,7 @@ import org.jxmpp.stringprep.*;
 
 import java.util.*;
 import java.util.concurrent.*;
-import org.jitsi.jicofo.db.ParticipantStatus;
+import org.jitsi.jicofo.db.VeazzyParticipantStatus;
 
 /**
  * Stripped implementation of <tt>ChatRoom</tt> using Smack library.
@@ -805,7 +805,7 @@ public class ChatRoomImpl extends AbstractChatRoom
                         ChatRoomMemberPresenceChangeEvent.MEMBER_LEFT, null);
 
         JDBCPostgreSQL clientSql = new JDBCPostgreSQL();
-        clientSql.participantLeavesRoom(member.getJid().toString(), ParticipantStatus.REASON_LEFT);
+        clientSql.participantLeavesRoom(member.getJid().toString(), VeazzyParticipantStatus.REASON_LEFT);
         
         listeners.forEach(l -> l.memberPresenceChanged(event));
     }
@@ -817,7 +817,7 @@ public class ChatRoomImpl extends AbstractChatRoom
                         ChatRoomMemberPresenceChangeEvent.MEMBER_KICKED, null);
 
         JDBCPostgreSQL clientSql = new JDBCPostgreSQL();
-        clientSql.participantLeavesRoom(member.getJid().toString(), ParticipantStatus.REASON_KICKED);
+        clientSql.participantLeavesRoom(member.getJid().toString(), VeazzyParticipantStatus.REASON_KICKED);
 
         listeners.forEach(l -> l.memberPresenceChanged(event));
     }

@@ -44,8 +44,12 @@ public class VeazzyRoomStatusIq
     /**
      * Name space of roomStatus packet extension.
      */
-    public static final String NAMESPACE = "http://jitsi.org/jitmeet/room";
+    public static final String NAMESPACE = "http://jitsi.org/jitmeet/roomstatus";
+    public static final String ELEMENT_CHECK_VALUE = "check";
 
+    public static final int ROOM_STATUS_CLOSED = 0;
+    public static final int ROOM_STATUS_OPENED = 1;
+    
     /**
      * XML element name of roomStatus packet extension.
      */
@@ -74,12 +78,12 @@ public class VeazzyRoomStatusIq
     /**
      * To roomStatus or unroomStatus.
      */
-    private Boolean roomStatus;
+    private int roomStatus = ROOM_STATUS_OPENED;
 
     /**
-     * To roomStatus or unroomStatus.
+     * Check Room Status
      */
-    private Boolean checkRequest;
+    private Boolean checkRoomStatusRequest;
 
     /**
      * Creates a new instance of this class.
@@ -100,8 +104,7 @@ public class VeazzyRoomStatusIq
             xml.attribute(ACTOR_ATTR_NAME, actor);
         }
 
-        xml.rightAngleBracket()
-                .append(roomStatus.toString());
+        xml.rightAngleBracket().append(String.valueOf(roomStatus));
 
         logger.warn("Building xml roomStatus " + xml.toString());
 
@@ -131,7 +134,7 @@ public class VeazzyRoomStatusIq
      * @param roomStatus <tt>true</tt> to roomStatus the participant.
      * <tt>null</tt> means no action is included in result XML.
      */
-    public void setRoomStatus(Boolean roomStatus) {
+    public void setRoomStatus(int roomStatus) {
         this.roomStatus = roomStatus;
     }
 
@@ -140,16 +143,16 @@ public class VeazzyRoomStatusIq
      * unroomStatus or <tt>null</tt> if the action has not been specified(which
      * is invalid).
      */
-    public Boolean getRoomStatus() {
+    public int getRoomStatus() {
         return roomStatus;
     }
 
-    public void setCheckRequest(Boolean checkRequest) {
-        this.checkRequest = checkRequest;
+    public void setCheckRoomStatusRequest(Boolean checkRoomStatusRequest) {
+        this.checkRoomStatusRequest = checkRoomStatusRequest;
     }
 
-    public Boolean getCheckRequest() {
-        return checkRequest;
+    public Boolean isCheckRoomStatusRequest() {
+        return checkRoomStatusRequest;
     }
 
     /**

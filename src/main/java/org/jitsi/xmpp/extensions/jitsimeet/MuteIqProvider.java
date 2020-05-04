@@ -22,58 +22,58 @@ import org.jxmpp.jid.impl.*;
 import org.xmlpull.v1.*;
 
 /**
- * The parser of {@link VeazzyMainScreenParticipantIq}.
+ * The parser of {@link MuteIq}.
  *
  * @author Pawel Domas
  */
-public class VeazzyMainScreenParticipantIqProvider
-        extends IQProvider<VeazzyMainScreenParticipantIq> {
+public class MuteIqProvider
+        extends IQProvider<MuteIq> {
 
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerVeazzyMainScreenParticipantIqProvider() {
-        ProviderManager.addIQProvider(VeazzyMainScreenParticipantIq.ELEMENT_NAME,
-                VeazzyMainScreenParticipantIq.NAMESPACE,
-                new VeazzyMainScreenParticipantIqProvider());
+    public static void registerMuteIqProvider() {
+        ProviderManager.addIQProvider(MuteIq.ELEMENT_NAME,
+                MuteIq.NAMESPACE,
+                new MuteIqProvider());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public VeazzyMainScreenParticipantIq parse(XmlPullParser parser, int initialDepth)
+    public MuteIq parse(XmlPullParser parser, int initialDepth)
             throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!VeazzyMainScreenParticipantIq.NAMESPACE.equals(namespace)) {
+        if (!MuteIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
         String rootElement = parser.getName();
 
-        VeazzyMainScreenParticipantIq iq;
+        MuteIq iq;
 
-        if (VeazzyMainScreenParticipantIq.ELEMENT_NAME.equals(rootElement)) {
-            iq = new VeazzyMainScreenParticipantIq();
-            String jidStr = parser.getAttributeValue("", VeazzyMainScreenParticipantIq.JID_ATTR_NAME);
+        if (MuteIq.ELEMENT_NAME.equals(rootElement)) {
+            iq = new MuteIq();
+            String jidStr = parser.getAttributeValue("", MuteIq.JID_ATTR_NAME);
             if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                    = parser.getAttributeValue("", VeazzyMainScreenParticipantIq.ACTOR_ATTR_NAME);
+                    = parser.getAttributeValue("", MuteIq.ACTOR_ATTR_NAME);
             if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
             }
 
-            String withMeStr
-                    = parser.getAttributeValue("", VeazzyMainScreenParticipantIq.WITH_ME_ATTR_NAME);
-            if (withMeStr != null) {
-                iq.setWithMe(Boolean.valueOf(withMeStr));
+            String blockAudioControlStr
+                    = parser.getAttributeValue("", MuteIq.BLOCK_AUDIO_CONTROL_ATTR_NAME);
+            if (blockAudioControlStr != null) {
+                iq.setBlockAudioControl(Boolean.valueOf(blockAudioControlStr));
             }
 
         } else {
@@ -94,8 +94,10 @@ public class VeazzyMainScreenParticipantIqProvider
                 }
 
                 case XmlPullParser.TEXT: {
-                    String participantId = parser.getText();
-                    iq.setParticipantId(participantId);
+                    if (parser.getText() != null && parser.getText().length() > 0) {
+                        Boolean doMute = Boolean.parseBoolean(parser.getText());
+                        iq.setDoMute(doMute);
+                    }
                     break;
                 }
             }

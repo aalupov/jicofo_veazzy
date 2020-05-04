@@ -22,7 +22,7 @@ import net.java.sip.communicator.service.protocol.*;
 
 import org.jitsi.xmpp.extensions.jitsimeet.*;
 import org.jitsi.jicofo.jigasi.*;
-import org.jitsi.jicofo.db.RoomStatus;
+import org.jitsi.jicofo.db.VeazzyRoomStatus;
 import org.jitsi.protocol.xmpp.*;
 import org.jitsi.utils.logging.*;
 import org.jivesoftware.smack.iqrequest.*;
@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Class handles various Jitsi Meet extensions IQs like {@link VeazzyMuteIq}.
+ * Class handles various Jitsi Meet extensions IQs like {@link MuteIq}.
  *
  * @author Pawel Domas
  * @author Boris Grozev
@@ -58,20 +58,22 @@ public class MeetExtensionsHandler {
      */
     private XmppConnection connection;
 
-    private VeazzyMuteIqHandler veazzyMuteIqHandler;
+    private MuteIqHandler muteIqHandler;
+    private DialIqHandler dialIqHandler;
+    
+    private VeazzyBlindIqHandler veazzyBlindIqHandler;
     private VeazzyRoomStatusIqHandler veazzyRoomStatusIqHandler;
     private VeazzyRoomManagerIqHandler veazzyRoomManagerIqHandler;
-    private VeazzyMainScreenParticipantIqHandler veazzyMainScreenParticipantIqHandler;
-    private VeazzyStreamIqHandler veazzyStreamIqHandler;
+    private VeazzyRoomFocalParticipantIqHandler veazzyRoomFocalParticipantIqHandler;
+    private VeazzyAdvertisingStreamIqHandler veazzyAdvertisingStreamIqHandler;
     
-    private DialIqHandler dialIqHandler;
 
     /**
      * The currently used DB connection.
      */
     private JDBCPostgreSQL clientSql;
 
-    private Boolean roomStatusFromDb;
+    private int veazzyRoomStatusFromDb;
 
     /**
      * Creates new instance of {@link MeetExtensionsHandler}.
@@ -82,11 +84,13 @@ public class MeetExtensionsHandler {
     public MeetExtensionsHandler(FocusManager focusManager) {
         this.focusManager = focusManager;
 
-        VeazzyMuteIqProvider.registerVeazzyMuteIqProvider();
+        MuteIqProvider.registerMuteIqProvider();
+        
+        VeazzyBlindIqProvider.registerVeazzyBlindIqProvider();
         VeazzyRoomStatusIqProvider.registerVeazzyRoomStatusIqProvider();
         VeazzyRoomManagerIqProvider.registerVeazzyRoomManagerIqProvider();
-        VeazzyMainScreenParticipantIqProvider.registerVeazzyMainScreenParticipantIqProvider();
-        VeazzyStreamIqProvider.registerVeazzyStreamIqProvider();
+        VeazzyRoomFocalParticipantIqProvider.registerVeazzyRoomFocalParticipantIqProvider();
+        VeazzyAdvertisingStreamIqProvider.registerVeazzyAdvertisingStreamIqProvider();
         
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
@@ -100,41 +104,58 @@ public class MeetExtensionsHandler {
                 = focusManager.getOperationSet(
                         OperationSetDirectSmackXmpp.class).getXmppConnection();
 
-        veazzyMuteIqHandler = new VeazzyMuteIqHandler();
-        veazzyRoomStatusIqHandler = new VeazzyRoomStatusIqHandler();
-        veazzyRoomManagerIqHandler = new VeazzyRoomManagerIqHandler();
-        veazzyMainScreenParticipantIqHandler = new VeazzyMainScreenParticipantIqHandler();
-        veazzyStreamIqHandler = new VeazzyStreamIqHandler();
-        
+        muteIqHandler = new MuteIqHandler();
         dialIqHandler = new DialIqHandler();
         
+        veazzyBlindIqHandler = new VeazzyBlindIqHandler();
+        veazzyRoomStatusIqHandler = new VeazzyRoomStatusIqHandler();
+        veazzyRoomManagerIqHandler = new VeazzyRoomManagerIqHandler();
+        veazzyRoomFocalParticipantIqHandler = new VeazzyRoomFocalParticipantIqHandler();
+        veazzyAdvertisingStreamIqHandler = new VeazzyAdvertisingStreamIqHandler();
+                
         clientSql = new JDBCPostgreSQL();
-        roomStatusFromDb = true;
+        veazzyRoomStatusFromDb = VeazzyRoomStatus.ROOM_STATUS_OPENED;
         
-        connection.registerIQRequestHandler(veazzyMuteIqHandler);
+        connection.registerIQRequestHandler(muteIqHandler);
+        connection.registerIQRequestHandler(dialIqHandler);
+        
+        connection.registerIQRequestHandler(veazzyBlindIqHandler);
         connection.registerIQRequestHandler(veazzyRoomStatusIqHandler);
         connection.registerIQRequestHandler(veazzyRoomManagerIqHandler);
-        connection.registerIQRequestHandler(veazzyMainScreenParticipantIqHandler);
-        connection.registerIQRequestHandler(veazzyStreamIqHandler);
-        
-        connection.registerIQRequestHandler(dialIqHandler);
+        connection.registerIQRequestHandler(veazzyRoomFocalParticipantIqHandler);
+        connection.registerIQRequestHandler(veazzyAdvertisingStreamIqHandler);
     }
 
-    private class VeazzyMuteIqHandler extends AbstractIqRequestHandler {
+    private class MuteIqHandler extends AbstractIqRequestHandler {
 
-        VeazzyMuteIqHandler() {
-            super(VeazzyMuteIq.ELEMENT_NAME,
-                    VeazzyMuteIq.NAMESPACE,
+        MuteIqHandler() {
+            super(MuteIq.ELEMENT_NAME,
+                    MuteIq.NAMESPACE,
                     IQ.Type.set,
                     Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleMuteIq((VeazzyMuteIq) iqRequest);
+            return handleMuteIq((MuteIq) iqRequest);
         }
     }
 
+    private class VeazzyBlindIqHandler extends AbstractIqRequestHandler {
+
+        VeazzyBlindIqHandler() {
+            super(VeazzyBlindIq.ELEMENT_NAME,
+                    VeazzyBlindIq.NAMESPACE,
+                    IQ.Type.set,
+                    IQRequestHandler.Mode.sync);
+        }
+
+        @Override
+        public IQ handleIQRequest(IQ iqRequest) {
+            return handleVeazzyBlindIq((VeazzyBlindIq) iqRequest);
+        }
+    }
+    
     private class VeazzyRoomStatusIqHandler extends AbstractIqRequestHandler {
 
         VeazzyRoomStatusIqHandler() {
@@ -163,39 +184,39 @@ public class MeetExtensionsHandler {
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleModeratorIdIq((VeazzyRoomManagerIq) iqRequest);
+            return handleRoomManagerIq((VeazzyRoomManagerIq) iqRequest);
         }
     }
 
-    private class VeazzyMainScreenParticipantIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyRoomFocalParticipantIqHandler extends AbstractIqRequestHandler {
 
-        VeazzyMainScreenParticipantIqHandler() {
+        VeazzyRoomFocalParticipantIqHandler() {
             super(
-                    VeazzyMainScreenParticipantIq.ELEMENT_NAME,
-                    VeazzyMainScreenParticipantIq.NAMESPACE,
+                    VeazzyRoomFocalParticipantIq.ELEMENT_NAME,
+                    VeazzyRoomFocalParticipantIq.NAMESPACE,
                     IQ.Type.set,
                     IQRequestHandler.Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleParticipantIdIq((VeazzyMainScreenParticipantIq) iqRequest);
+            return handleRoomFocalParticipantIq((VeazzyRoomFocalParticipantIq) iqRequest);
         }
     }
 
-    private class VeazzyStreamIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyAdvertisingStreamIqHandler extends AbstractIqRequestHandler {
 
-        VeazzyStreamIqHandler() {
+        VeazzyAdvertisingStreamIqHandler() {
             super(
-                    VeazzyStreamIq.ELEMENT_NAME,
-                    VeazzyStreamIq.NAMESPACE,
+                    VeazzyAdvertisingStreamIq.ELEMENT_NAME,
+                    VeazzyAdvertisingStreamIq.NAMESPACE,
                     IQ.Type.set,
                     IQRequestHandler.Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleStreamIq((VeazzyStreamIq) iqRequest);
+            return handleAdvertisingStreamIq((VeazzyAdvertisingStreamIq) iqRequest);
         }
     }
     
@@ -223,13 +244,15 @@ public class MeetExtensionsHandler {
     public void dispose() {
         if (connection != null) {
             
-            connection.unregisterIQRequestHandler(veazzyMuteIqHandler);
+            connection.unregisterIQRequestHandler(muteIqHandler);
+            connection.unregisterIQRequestHandler(dialIqHandler);
+            
+            connection.unregisterIQRequestHandler(veazzyBlindIqHandler);
             connection.unregisterIQRequestHandler(veazzyRoomStatusIqHandler);
             connection.unregisterIQRequestHandler(veazzyRoomManagerIqHandler);
-            connection.unregisterIQRequestHandler(veazzyMainScreenParticipantIqHandler);
-            connection.unregisterIQRequestHandler(veazzyStreamIqHandler);
+            connection.unregisterIQRequestHandler(veazzyRoomFocalParticipantIqHandler);
+            connection.unregisterIQRequestHandler(veazzyAdvertisingStreamIqHandler);
             
-            connection.unregisterIQRequestHandler(dialIqHandler);
             connection = null;
         }
     }
@@ -250,12 +273,12 @@ public class MeetExtensionsHandler {
         return roomName;
     }
 
-    private IQ handleMuteIq(VeazzyMuteIq muteIq) {
-        Boolean doMute = muteIq.getMute();
-        Boolean blockStatus = muteIq.getBlock();
-        logger.info("Block status is " + blockStatus);
-        Boolean videoMute = muteIq.getVideo();
-        logger.info("video to mute is " + videoMute);
+    private IQ handleMuteIq(MuteIq muteIq) {
+        
+        Boolean doMute = muteIq.getDoMute();
+        Boolean blockAudioControl = muteIq.getBlockAudioControl();
+        logger.info("Block Audio Control is " + blockAudioControl);
+
         Jid jid = muteIq.getJid();
 
         if (doMute == null || jid == null) {
@@ -273,19 +296,18 @@ public class MeetExtensionsHandler {
 
         IQ result;
 
-        if (conference.handleMuteRequest(muteIq.getFrom(), jid, doMute)) {
+        if (conference.handleMuteRequest(muteIq.getFrom(), jid, doMute, blockAudioControl)) {
             result = IQ.createResultIQ(muteIq);
 
             if (!muteIq.getFrom().equals(jid)) {
-                logger.info(doMute);
-                VeazzyMuteIq muteStatusUpdate = new VeazzyMuteIq();
+                logger.info("Mute: " + doMute);
+                MuteIq muteStatusUpdate = new MuteIq();
                 muteStatusUpdate.setActor(from);
                 muteStatusUpdate.setType(IQ.Type.set);
                 muteStatusUpdate.setTo(jid);
-                muteStatusUpdate.setBlock(blockStatus);
-                muteStatusUpdate.setVideo(videoMute);
+                muteStatusUpdate.setBlockAudioControl(blockAudioControl);
 
-                muteStatusUpdate.setMute(doMute);
+                muteStatusUpdate.setDoMute(doMute);
 
                 connection.sendStanza(muteStatusUpdate);
             }
@@ -297,27 +319,60 @@ public class MeetExtensionsHandler {
 
         return result;
     }
+    
+    private IQ handleVeazzyBlindIq(VeazzyBlindIq blindIq) {
+        
+        Boolean doBlind = blindIq.getDoBlind();
+        Boolean blockVideoControl = blindIq.getBlockVideoControl();
+        logger.info("Block Video Control is " + blockVideoControl);
+        
+        Jid jid = blindIq.getJid();
+
+        if (doBlind == null || jid == null) {
+            return IQ.createErrorResponse(blindIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        Jid from = blindIq.getFrom();
+        JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
+        if (conference == null) {
+            logger.debug("Blind error: room not found for JID: " + from);
+            return IQ.createErrorResponse(blindIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        IQ result;
+
+        if (conference.handleBlindRequest(blindIq.getFrom(), jid, doBlind, blockVideoControl)) {
+            result = IQ.createResultIQ(blindIq);
+
+            if (!blindIq.getFrom().equals(jid)) {
+                logger.info("Blind: " + doBlind);
+                VeazzyBlindIq blindStatusUpdate = new VeazzyBlindIq();
+                blindStatusUpdate.setActor(from);
+                blindStatusUpdate.setType(IQ.Type.set);
+                blindStatusUpdate.setTo(jid);
+                blindStatusUpdate.setBlockVideoControl(blockVideoControl);
+
+                blindStatusUpdate.setDoBlind(doBlind);
+
+                connection.sendStanza(blindStatusUpdate);
+            }
+        } else {
+            result = IQ.createErrorResponse(
+                    blindIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+        }
+
+        return result;
+    }
 
     private IQ handleRoomStatusIq(VeazzyRoomStatusIq roomStatusIq) {
         
-        Boolean doRoomStatusOpen = roomStatusIq.getRoomStatus();
-        Boolean checkRequest = roomStatusIq.getCheckRequest();
+        int veazzyRoomStatus = roomStatusIq.getRoomStatus();
+        Boolean checkRequest = roomStatusIq.isCheckRoomStatusRequest();
 
         Jid jid = roomStatusIq.getJid();
-
-        String confName = getConferenceName(jid).toString();
-        logger.info("Room Name is " + confName);
-
-        if (confName != null) {
-            RoomStatus roomStatus = clientSql.getRoomStatusFromDB(confName);
-            if(roomStatus != null) {
-                roomStatusFromDb = roomStatus.getStatus();
-                logger.info("Room Status From DB is " + roomStatusFromDb);
-            }
-            else {
-                logger.info("Room Status From DB not found");
-            }
-        }
 
         if (jid == null) {
             logger.debug("jid null");
@@ -325,10 +380,32 @@ public class MeetExtensionsHandler {
                     XMPPError.Condition.item_not_found));
         }
 
-        if (checkRequest == null && doRoomStatusOpen == null) {
-            logger.debug("checkRequest and doRoomStatusOpen null");
+        String confName = getConferenceName(jid).toString();
+        logger.info("Room Name is " + confName);
+        
+        boolean check = false;
+        if (checkRequest == null) {
+            logger.debug("checkRequest null");
             return IQ.createErrorResponse(roomStatusIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
+        }
+        else {
+            check = checkRequest;
+            logger.info("Asking for room status checkRequest: " + check);
+            
+            if(check) {
+                
+                if (confName != null) {
+                    VeazzyRoomStatus roomStatus = clientSql.getRoomStatusFromDB(confName);
+                    if(roomStatus != null) {
+                        veazzyRoomStatusFromDb = roomStatus.getStatus();
+                        logger.info("Room Status From DB is " + veazzyRoomStatusFromDb);
+                    }
+                    else {
+                        logger.info("Room Status From DB not found");
+                    }
+                }
+            }
         }
 
         Jid from = roomStatusIq.getFrom();
@@ -341,15 +418,9 @@ public class MeetExtensionsHandler {
 
         IQ result;
 
-        boolean check = false;
-        if (checkRequest != null) {
-            check = checkRequest;
-            logger.info("Asking for room status checkRequest: " + check);
-        }
-
         if (!check) {
-            //if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), jid, doRoomStatusOpen))
-            if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), doRoomStatusOpen)) {
+            
+            if (conference.handleRoomStatusRequest(roomStatusIq.getFrom(), veazzyRoomStatus)) {
                 result = IQ.createResultIQ(roomStatusIq);
 
                 if (roomStatusIq.getFrom().equals(jid)) {
@@ -358,22 +429,22 @@ public class MeetExtensionsHandler {
                     roomStatusUpdate.setType(IQ.Type.set);
                     roomStatusUpdate.setTo(jid);
 
-                    roomStatusUpdate.setRoomStatus(doRoomStatusOpen);
+                    roomStatusUpdate.setRoomStatus(veazzyRoomStatus);
 
                     connection.sendStanza(roomStatusUpdate);
 
                     //update DB
                     if (confName != null) {
-                        RoomStatus roomStatus = clientSql.getRoomStatusFromDB(confName);
+                        VeazzyRoomStatus roomStatus = clientSql.getRoomStatusFromDB(confName);
                         if(roomStatus != null) {
                             //update
-                            roomStatus.setStatus(doRoomStatusOpen);
+                            roomStatus.setStatus(veazzyRoomStatus);
                             clientSql.updateRoomStatusToDB(roomStatus);
                             logger.info("Room Status updated for room " + roomStatus.getRoomName());
                         }
                         else {
                             //create
-                            roomStatus = new RoomStatus(confName, doRoomStatusOpen);
+                            roomStatus = new VeazzyRoomStatus(confName, veazzyRoomStatus);
                             clientSql.insertRoomStatusToDB(roomStatus);
                             logger.info("Room Status created for room " + roomStatus.getRoomName());
                         }
@@ -385,7 +456,8 @@ public class MeetExtensionsHandler {
                         XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
             }
         } else {
-            boolean roomStatus = roomStatusFromDb;
+            
+            int roomStatus = veazzyRoomStatusFromDb;
             result = IQ.createResultIQ(roomStatusIq);
 
             VeazzyRoomStatusIq roomStatusUpdate = new VeazzyRoomStatusIq();
@@ -401,156 +473,178 @@ public class MeetExtensionsHandler {
         return result;
     }
 
-    private IQ handleModeratorIdIq(VeazzyRoomManagerIq moderatorIdIq) {
-        String doModeratorIdOpen = moderatorIdIq.getModeratorId();
-        logger.info("ModeratorId is " + doModeratorIdOpen);
-        Boolean moderatorIdRequest = moderatorIdIq.getModeratorIdRequest();
+    private IQ handleRoomManagerIq(VeazzyRoomManagerIq roomManagerIq) {
+        
+        String roomManagerId = roomManagerIq.getRoomManagerId();
+        logger.info("RoomManagerId is " + roomManagerId);
+        
+        Boolean roomManagerIdRequest = roomManagerIq.isCheckRoomManagerIdRequest();
 
-        Jid jid = moderatorIdIq.getJid();
+        Jid jid = roomManagerIq.getJid();
 
         if (jid == null) {
             logger.debug("jid null");
-            return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
+            return IQ.createErrorResponse(roomManagerIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
-        if (moderatorIdRequest == null && doModeratorIdOpen == null) {
-            logger.debug("moderatorIdRequest and doModeratorIdOpen null");
-            return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
+        if (roomManagerId == null && roomManagerIdRequest == null) {
+            logger.debug("roomManagerId and roomManagerIdRequest null");
+            return IQ.createErrorResponse(roomManagerIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
-        Jid from = moderatorIdIq.getFrom();
+        Jid from = roomManagerIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
         if (conference == null) {
-            logger.debug("Moderator Id error: ID not found for JID: " + from);
-            return IQ.createErrorResponse(moderatorIdIq, XMPPError.getBuilder(
+            logger.debug("Room Manager Id error: ID not found for JID: " + from);
+            return IQ.createErrorResponse(roomManagerIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
         IQ result;
 
         boolean check = false;
-        if (moderatorIdRequest != null) {
-            check = moderatorIdRequest;
-            logger.info("Asking for moderator id moderatorIdRequest: " + check);
+        if (roomManagerIdRequest != null) {
+            check = roomManagerIdRequest;
+            logger.info("Asking for Room Manager id roomManagerIdRequest: " + check);
         }
 
         if (!check) {
 
-            if (conference.handleModeratorIdRequest(moderatorIdIq.getFrom(), doModeratorIdOpen)) {
-                result = IQ.createResultIQ(moderatorIdIq);
+            if (conference.handleRoomManagerIdRequest(roomManagerIq.getFrom(), roomManagerId)) {
+                result = IQ.createResultIQ(roomManagerIq);
 
-                if (moderatorIdIq.getFrom().equals(jid)) {
-                    VeazzyRoomManagerIq moderatorIdUpdate = new VeazzyRoomManagerIq();
-                    moderatorIdUpdate.setActor(from);
-                    moderatorIdUpdate.setType(IQ.Type.set);
-                    moderatorIdUpdate.setTo(jid);
+                if (roomManagerIq.getFrom().equals(jid)) {
+                    VeazzyRoomManagerIq roomManagerUpdate = new VeazzyRoomManagerIq();
+                    roomManagerUpdate.setActor(from);
+                    roomManagerUpdate.setType(IQ.Type.set);
+                    roomManagerUpdate.setTo(jid);
 
-                    moderatorIdUpdate.setModeratorId(doModeratorIdOpen);
+                    roomManagerUpdate.setRoomManagerId(roomManagerId);
 
-                    connection.sendStanza(moderatorIdUpdate);
+                    connection.sendStanza(roomManagerUpdate);
 
                 }
             } else {
                 result = IQ.createErrorResponse(
-                        moderatorIdIq,
+                        roomManagerIq,
                         XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
             }
         } else {
-            String moderatorId = conference.getVeazzyRoomManagerId();
-            result = IQ.createResultIQ(moderatorIdIq);
+            
+            String managerId = conference.getVeazzyRoomManagerId();
+            result = IQ.createResultIQ(roomManagerIq);
 
-            VeazzyRoomManagerIq moderatorIdUpdate = new VeazzyRoomManagerIq();
-            moderatorIdUpdate.setActor(from);
-            moderatorIdUpdate.setType(IQ.Type.set);
-            moderatorIdUpdate.setTo(jid);
+            VeazzyRoomManagerIq roomManagerUpdate = new VeazzyRoomManagerIq();
+            roomManagerUpdate.setActor(from);
+            roomManagerUpdate.setType(IQ.Type.set);
+            roomManagerUpdate.setTo(jid);
 
-            moderatorIdUpdate.setModeratorId(moderatorId);
+            roomManagerUpdate.setRoomManagerId(managerId);
 
-            connection.sendStanza(moderatorIdUpdate);
+            connection.sendStanza(roomManagerUpdate);
         }
 
         return result;
     }
 
-    private IQ handleParticipantIdIq(VeazzyMainScreenParticipantIq participantIdIq) {
-        String doParticipantIdOpen = participantIdIq.getParticipantId();
-        logger.info("ParticipantId is " + doParticipantIdOpen);
-        Boolean withMe = participantIdIq.getWithMe();
+    private IQ handleRoomFocalParticipantIq(VeazzyRoomFocalParticipantIq roomFocalParticipantIq) {
+        
+        String roomFocalParticipantId = roomFocalParticipantIq.getRoomFocalParticipantId();
+        logger.info("RoomFocalParticipantId is " + roomFocalParticipantId);
+        
+        Boolean roomFocalParticipantIdRequest = roomFocalParticipantIq.isCheckRoomFocalParticipantIdRequest();
 
-        Jid jid = participantIdIq.getJid();
+        Jid jid = roomFocalParticipantIq.getJid();
 
         if (jid == null) {
             logger.debug("jid null");
-            return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
+            return IQ.createErrorResponse(roomFocalParticipantIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
-        if (doParticipantIdOpen == null) {
-            logger.debug("doParticipantIdOpen is null");
-            return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
+        if (roomFocalParticipantId == null && roomFocalParticipantIdRequest == null) {
+            logger.debug("roomFocalParticipantId and roomFocalParticipantIdRequest null");
+            return IQ.createErrorResponse(roomFocalParticipantIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
-        Jid from = participantIdIq.getFrom();
+        Jid from = roomFocalParticipantIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
         if (conference == null) {
-            logger.debug("Participant Id error: ID not found for JID: " + from);
-            return IQ.createErrorResponse(participantIdIq, XMPPError.getBuilder(
+            logger.debug("Room Focal Participant Id error: ID not found for JID: " + from);
+            return IQ.createErrorResponse(roomFocalParticipantIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
         IQ result;
 
-        if (conference.handleParticipantIdRequest(participantIdIq.getFrom(), doParticipantIdOpen)) {
-            result = IQ.createResultIQ(participantIdIq);
+        boolean check = false;
+        if (roomFocalParticipantIdRequest != null) {
+            check = roomFocalParticipantIdRequest;
+            logger.info("Asking for Room Focal Participant id roomFocalParticipantIdRequest: " + check);
+        }
 
-            if (!participantIdIq.getFrom().equals(jid)) {
-                VeazzyMainScreenParticipantIq participantIdUpdate = new VeazzyMainScreenParticipantIq();
-                participantIdUpdate.setActor(from);
-                participantIdUpdate.setType(IQ.Type.set);
-                participantIdUpdate.setTo(jid);
-                participantIdUpdate.setWithMe(withMe);
+        if (!check) {
 
-                participantIdUpdate.setParticipantId(doParticipantIdOpen);
+            if (conference.handleFocalParticipantIdRequest(roomFocalParticipantIq.getFrom(), roomFocalParticipantId)) {
+                
+                result = IQ.createResultIQ(roomFocalParticipantIq);
 
-                connection.sendStanza(participantIdUpdate);
+                if (!roomFocalParticipantIq.getFrom().equals(jid)) {
+                    VeazzyRoomFocalParticipantIq roomFocalParticipantUpdate = new VeazzyRoomFocalParticipantIq();
+                    roomFocalParticipantUpdate.setActor(from);
+                    roomFocalParticipantUpdate.setType(IQ.Type.set);
+                    roomFocalParticipantUpdate.setTo(jid);
 
+                    roomFocalParticipantUpdate.setRoomFocalParticipantId(roomFocalParticipantId);
+
+                    connection.sendStanza(roomFocalParticipantUpdate);
+
+                }
+            } else {
+                result = IQ.createErrorResponse(
+                        roomFocalParticipantIq,
+                        XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
             }
         } else {
-            result = IQ.createErrorResponse(
-                    participantIdIq,
-                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+            
+            String focalParticipantId = conference.getVeazzyRoomFocalParticipantId();
+            result = IQ.createResultIQ(roomFocalParticipantIq);
+
+            VeazzyRoomFocalParticipantIq roomFocalParticipantUpdate = new VeazzyRoomFocalParticipantIq();
+            roomFocalParticipantUpdate.setActor(from);
+            roomFocalParticipantUpdate.setType(IQ.Type.set);
+            roomFocalParticipantUpdate.setTo(jid);
+
+            roomFocalParticipantUpdate.setRoomFocalParticipantId(focalParticipantId);
+
+            connection.sendStanza(roomFocalParticipantUpdate);
         }
 
         return result;
     }
 
     
-    private IQ handleStreamIq(VeazzyStreamIq streamIq) {
+    private IQ handleAdvertisingStreamIq(VeazzyAdvertisingStreamIq advertisingStreamIq) {
         
         logger.info("handleStreamIq");
-        Boolean stream = streamIq.getStream();
+        int streamStatus = advertisingStreamIq.getAdvertisingStreamStatus();
 
-        Jid jid = streamIq.getJid();
+        Jid jid = advertisingStreamIq.getJid();
 
         if (jid == null) {
             logger.debug("jid null");
-            return IQ.createErrorResponse(streamIq, XMPPError.getBuilder(
-                    XMPPError.Condition.item_not_found));
-        }
-        if (stream == null) {
-            logger.debug("stream  null");
-            return IQ.createErrorResponse(streamIq, XMPPError.getBuilder(
+            return IQ.createErrorResponse(advertisingStreamIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
-        Jid from = streamIq.getFrom();
+        Jid from = advertisingStreamIq.getFrom();
         JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
         if (conference == null) {
             logger.debug("Stream Id error: room not found for JID: " + from);
-            return IQ.createErrorResponse(streamIq, XMPPError.getBuilder(
+            return IQ.createErrorResponse(advertisingStreamIq, XMPPError.getBuilder(
                     XMPPError.Condition.item_not_found));
         }
 
@@ -558,23 +652,23 @@ public class MeetExtensionsHandler {
 
         logger.info("handleStreamIq condition OK");
         
-        if (conference.handleStreamIdRequest(jid, streamIq.getFrom(), stream)) {
+        if (conference.handleAdvertisingStreamIdRequest(jid, advertisingStreamIq.getFrom(), streamStatus)) {
             
-            result = IQ.createResultIQ(streamIq);
+            result = IQ.createResultIQ(advertisingStreamIq);
 
-            if (!streamIq.getFrom().equals(jid)) {
+            if (!advertisingStreamIq.getFrom().equals(jid)) {
                 
-                VeazzyStreamIq streamIdUpdate = new VeazzyStreamIq();
+                VeazzyAdvertisingStreamIq streamIdUpdate = new VeazzyAdvertisingStreamIq();
                 streamIdUpdate.setActor(from);
                 streamIdUpdate.setType(IQ.Type.set);
                 streamIdUpdate.setTo(jid);
-                streamIdUpdate.setStream(stream);
+                streamIdUpdate.setAdvertisingStreamStatus(streamStatus);
 
                 connection.sendStanza(streamIdUpdate);
             }
         } else {
             result = IQ.createErrorResponse(
-                    streamIq,
+                    advertisingStreamIq,
                     XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
         }
 

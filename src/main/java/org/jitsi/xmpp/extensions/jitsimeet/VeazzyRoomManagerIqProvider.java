@@ -102,16 +102,15 @@ public class VeazzyRoomManagerIqProvider
 
                 case XmlPullParser.TEXT: {
                     if (parser.getText() != null && parser.getText().length() > 0) {
-                        if (parser.getText().equals("get")) {
-                            logger.warn("Getting moderatorId request");
-                            iq.setModeratorIdRequest(true);
+                        if (parser.getText().equals(VeazzyRoomManagerIq.ELEMENT_CHECK_VALUE)) {
+                            iq.setCheckRoomManagerIdRequest(true);
                         } else {
-                            String moderatorId = parser.getText();
-                            iq.setModeratorId(moderatorId);
-                            iq.setModeratorIdRequest(false);
+                            String roomManagerId = parser.getText();
+                            iq.setRoomManagerId(roomManagerId);
+                            iq.setCheckRoomManagerIdRequest(false);
                         }
                     } else {
-                        logger.warn("Getting moderatorId request without value");
+                        logger.warn("Getting roomManagerId request without value");
                     }
                     break;
                 }

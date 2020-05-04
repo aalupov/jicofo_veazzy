@@ -23,18 +23,18 @@ import org.jxmpp.jid.impl.*;
 import org.xmlpull.v1.*;
 
 /**
- * The parser of {@link VeazzyRoomStatusIq}.
+ * The parser of {@link VeazzyAdvertisingStreamIq}.
  *
  * @author Pawel Domas
  */
-public class VeazzyRoomStatusIqProvider
-        extends IQProvider<VeazzyRoomStatusIq> {
+public class VeazzyAdvertisingStreamIqProvider
+        extends IQProvider<VeazzyAdvertisingStreamIq> {
 
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-            = Logger.getLogger(VeazzyRoomStatusIqProvider.class);
+            = Logger.getLogger(VeazzyAdvertisingStreamIqProvider.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
@@ -46,39 +46,39 @@ public class VeazzyRoomStatusIqProvider
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerVeazzyRoomStatusIqProvider() {
-        ProviderManager.addIQProvider(VeazzyRoomStatusIq.ELEMENT_NAME,
-                VeazzyRoomStatusIq.NAMESPACE,
-                new VeazzyRoomStatusIqProvider());
+    public static void registerVeazzyAdvertisingStreamIqProvider() {
+        ProviderManager.addIQProvider(VeazzyAdvertisingStreamIq.ELEMENT_NAME,
+                VeazzyAdvertisingStreamIq.NAMESPACE,
+                new VeazzyAdvertisingStreamIqProvider());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public VeazzyRoomStatusIq parse(XmlPullParser parser, int initialDepth)
+    public VeazzyAdvertisingStreamIq parse(XmlPullParser parser, int initialDepth)
             throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!VeazzyRoomStatusIq.NAMESPACE.equals(namespace)) {
+        if (!VeazzyAdvertisingStreamIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
         String rootElement = parser.getName();
 
-        VeazzyRoomStatusIq iq;
+        VeazzyAdvertisingStreamIq iq;
 
-        if (VeazzyRoomStatusIq.ELEMENT_NAME.equals(rootElement)) {
-            iq = new VeazzyRoomStatusIq();
-            String jidStr = parser.getAttributeValue("", VeazzyRoomStatusIq.JID_ATTR_NAME);
+        if (VeazzyAdvertisingStreamIq.ELEMENT_NAME.equals(rootElement)) {
+            iq = new VeazzyAdvertisingStreamIq();
+            String jidStr = parser.getAttributeValue("", VeazzyAdvertisingStreamIq.JID_ATTR_NAME);
             if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                    = parser.getAttributeValue("", VeazzyRoomStatusIq.ACTOR_ATTR_NAME);
+                    = parser.getAttributeValue("", VeazzyAdvertisingStreamIq.ACTOR_ATTR_NAME);
             if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
@@ -102,21 +102,17 @@ public class VeazzyRoomStatusIqProvider
 
                 case XmlPullParser.TEXT: {
                     if (parser.getText() != null && parser.getText().length() > 0) {
-                        if (parser.getText().equals(VeazzyRoomStatusIq.ELEMENT_CHECK_VALUE)) {
-                            iq.setCheckRoomStatusRequest(true);
-                        } else {
-                            int roomStatus = VeazzyRoomStatusIq.ROOM_STATUS_OPENED;
-                            try {
-                                roomStatus = Integer.parseInt(parser.getText());
-                            }
-                            catch(NumberFormatException e) {
-                                
-                            }
-                            iq.setRoomStatus(roomStatus);
-                            iq.setCheckRoomStatusRequest(false);
+                        int advertisingStreamStatus = VeazzyAdvertisingStreamIq.STREAM_STATUS_STOP;
+                        try {
+                            advertisingStreamStatus = Integer.parseInt(parser.getText());
                         }
+                        catch(NumberFormatException e) {
+                                
+                        }
+                        iq.setAdvertisingStreamStatus(advertisingStreamStatus);
+                        
                     } else {
-                        logger.warn("Getting roomStatus request without value");
+                        logger.warn("Getting advertisingRoomStatus request without value");
                     }
                     break;
                 }

@@ -105,6 +105,13 @@ public class Participant
      * Remembers participant's muted status.
      */
     private boolean mutedStatus;
+    private boolean blockAudioStatus;
+    /**
+     * Remembers participant's blinded status.
+     */
+    private boolean blindedStatus;
+    private boolean blockVideoStatus;
+
 
     /**
      * Participant's display name.
@@ -285,7 +292,38 @@ public class Participant
     public boolean isMuted() {
         return mutedStatus;
     }
+    
+    public void setBlockAudioStatus(boolean blockAudioStatus) {
+        this.blockAudioStatus = blockAudioStatus;
+    }
+    public boolean getBlockAudioStatus() {
+        return blockAudioStatus;
+    }
+    
+    /**
+     * Sets blinded status of this participant.
+     *
+     * @param blindedStatus new blinded status to set.
+     */
+    public void setBlinded(boolean blindedStatus) {
+        this.blindedStatus = blindedStatus;
+    }
 
+    /**
+     * Returns <tt>true</tt> if this participant is blinded or <tt>false</tt>
+     * otherwise.
+     */
+    public boolean isBlinded() {
+        return blindedStatus;
+    }
+
+    public void setBlockVideoStatus(boolean blockVideoStatus) {
+        this.blockVideoStatus = blockVideoStatus;
+    }
+    public boolean getBlockVideoStatus() {
+        return blockVideoStatus;
+    }
+    
     /**
      * Return a <tt>Boolean</tt> which informs about this participant's video
      * muted status. The <tt>null</tt> value stands for 'unknown'/not signalled,

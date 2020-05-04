@@ -9,8 +9,8 @@ import java.sql.ResultSet;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jitsi.jicofo.db.ParticipantStatus;
-import org.jitsi.jicofo.db.RoomStatus;
+import org.jitsi.jicofo.db.VeazzyParticipantStatus;
+import org.jitsi.jicofo.db.VeazzyRoomStatus;
 
 public class JDBCPostgreSQL {
 
@@ -182,16 +182,16 @@ public class JDBCPostgreSQL {
         return  "'" + value + "'";
     }
 
-    public RoomStatus getRoomStatusFromDB(String roomName) {
+    public VeazzyRoomStatus getRoomStatusFromDB(String roomName) {
 
         int queryLimit = 1;
-        String queryString = "SELECT " + RoomStatus.COLUMN_STATUS + " FROM " + RoomStatus.TABLE_ROOM_STATUS
-                + " WHERE " + RoomStatus.COLUMN_NAME + "=" + getStringValue(roomName);
+        String queryString = "SELECT " + VeazzyRoomStatus.COLUMN_STATUS + " FROM " + VeazzyRoomStatus.TABLE_ROOM_STATUS
+                + " WHERE " + VeazzyRoomStatus.COLUMN_NAME + "=" + getStringValue(roomName);
         if (queryLimit > 0) {
             queryString += " LIMIT " + String.valueOf(queryLimit);
         }
 
-        RoomStatus roomStatus = null;
+        VeazzyRoomStatus roomStatus = null;
         Connection connection = getConnection();
         Statement statement = getReadStatement(connection);
 
@@ -203,8 +203,8 @@ public class JDBCPostgreSQL {
                 if (resulSet != null) {
                     try {
                         while (resulSet.next()) {
-                            Boolean status = resulSet.getBoolean(RoomStatus.COLUMN_STATUS);
-                            roomStatus = new RoomStatus(roomName, status);
+                            int status = resulSet.getInt(VeazzyRoomStatus.COLUMN_STATUS);
+                            roomStatus = new VeazzyRoomStatus(roomName, status);
                         }
                     } catch (SQLException ex) {
                         Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -230,11 +230,11 @@ public class JDBCPostgreSQL {
         return roomStatus;
     }
 
-    public void insertRoomStatusToDB(RoomStatus roomStatus) {
+    public void insertRoomStatusToDB(VeazzyRoomStatus roomStatus) {
 
-        String queryString = "INSERT INTO " + RoomStatus.TABLE_ROOM_STATUS + "("
-                + RoomStatus.COLUMN_NAME + ", "
-                + RoomStatus.COLUMN_STATUS + ")"
+        String queryString = "INSERT INTO " + VeazzyRoomStatus.TABLE_ROOM_STATUS + "("
+                + VeazzyRoomStatus.COLUMN_NAME + ", "
+                + VeazzyRoomStatus.COLUMN_STATUS + ")"
                 + " VALUES (?,?)";
 
         Connection connection = getConnection();
@@ -242,7 +242,7 @@ public class JDBCPostgreSQL {
         if(pStatement != null) {
             try {
                 pStatement.setString(1, roomStatus.getRoomName());
-                pStatement.setBoolean(2, roomStatus.getStatus());
+                pStatement.setInt(2, roomStatus.getStatus());
                 pStatement.addBatch();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -263,17 +263,17 @@ public class JDBCPostgreSQL {
         }
     }
 
-    public void updateRoomStatusToDB(RoomStatus roomStatus) {
+    public void updateRoomStatusToDB(VeazzyRoomStatus roomStatus) {
 
-        String queryString = "UPDATE " + RoomStatus.TABLE_ROOM_STATUS + " SET "
-                + RoomStatus.COLUMN_STATUS + "= ?"
-                + " WHERE " + RoomStatus.COLUMN_NAME + "=" + getStringValue(roomStatus.getRoomName());
+        String queryString = "UPDATE " + VeazzyRoomStatus.TABLE_ROOM_STATUS + " SET "
+                + VeazzyRoomStatus.COLUMN_STATUS + "= ?"
+                + " WHERE " + VeazzyRoomStatus.COLUMN_NAME + "=" + getStringValue(roomStatus.getRoomName());
 
         Connection connection = getConnection();
         PreparedStatement pStatement = getWriteUpdateStatement(connection, queryString);
         if(pStatement != null) {
             try {
-                pStatement.setBoolean(1, roomStatus.getStatus());
+                pStatement.setInt(1, roomStatus.getStatus());
                 pStatement.addBatch();
             } catch (SQLException ex) {
                 Logger.getLogger(JDBCPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -294,16 +294,16 @@ public class JDBCPostgreSQL {
         }
     }
 
-    private ParticipantStatus getParticantStatusFromDB(String participantJid) {
+    private VeazzyParticipantStatus getParticantStatusFromDB(String participantJid) {
 
         int queryLimit = 1;
-        String queryString = "SELECT " + "*" + " FROM " + ParticipantStatus.TABLE_PARTICIPANT_STATUS
-                + " WHERE " + ParticipantStatus.COLUMN_JID + "=" + getStringValue(participantJid);
+        String queryString = "SELECT " + "*" + " FROM " + VeazzyParticipantStatus.TABLE_PARTICIPANT_STATUS
+                + " WHERE " + VeazzyParticipantStatus.COLUMN_JID + "=" + getStringValue(participantJid);
         if (queryLimit > 0) {
             queryString += " LIMIT " + String.valueOf(queryLimit);
         }
 
-        ParticipantStatus participantStatus = null;
+        VeazzyParticipantStatus participantStatus = null;
         Connection connection = getConnection();
         Statement statement = getReadStatement(connection);
 
@@ -316,14 +316,14 @@ public class JDBCPostgreSQL {
                     try {
                         while (resulSet.next()) {
                             
-                            String roomName = resulSet.getString(ParticipantStatus.COLUMN_ROOM_NAME);
-                            Date joinDate = resulSet.getDate(ParticipantStatus.COLUMN_JOIN_DATE);
-                            Boolean active = resulSet.getBoolean(ParticipantStatus.COLUMN_ACTIVE);
+                            String roomName = resulSet.getString(VeazzyParticipantStatus.COLUMN_ROOM_NAME);
+                            Date joinDate = resulSet.getDate(VeazzyParticipantStatus.COLUMN_JOIN_DATE);
+                            int status = resulSet.getInt(VeazzyParticipantStatus.COLUMN_STATUS);
                             
-                            Date leaveDate = resulSet.getDate(ParticipantStatus.COLUMN_LEAVE_DATE);
-                            String leaveReason = resulSet.getString(ParticipantStatus.COLUMN_LEAVE_REASON);
+                            Date leaveDate = resulSet.getDate(VeazzyParticipantStatus.COLUMN_LEAVE_DATE);
+                            String leaveReason = resulSet.getString(VeazzyParticipantStatus.COLUMN_LEAVE_REASON);
                             
-                            participantStatus = new ParticipantStatus(participantJid, roomName, joinDate, active);
+                            participantStatus = new VeazzyParticipantStatus(participantJid, roomName, joinDate, status);
                             participantStatus.setLeaveDate(leaveDate);
                             participantStatus.setLeaveReason(leaveReason);
     
@@ -351,15 +351,15 @@ public class JDBCPostgreSQL {
         return participantStatus;
     }
     
-    private void insertParticipantStatusToDB(ParticipantStatus participantStatus) {
+    private void insertParticipantStatusToDB(VeazzyParticipantStatus participantStatus) {
 
-        String queryString = "INSERT INTO " + ParticipantStatus.TABLE_PARTICIPANT_STATUS + "("
-                + ParticipantStatus.COLUMN_JID + ", "
-                + ParticipantStatus.COLUMN_ROOM_NAME + ", "
-                + ParticipantStatus.COLUMN_ACTIVE + ", "
-                + ParticipantStatus.COLUMN_JOIN_DATE + ", "
-                + ParticipantStatus.COLUMN_LEAVE_DATE + ", "
-                + ParticipantStatus.COLUMN_LEAVE_REASON + ")"
+        String queryString = "INSERT INTO " + VeazzyParticipantStatus.TABLE_PARTICIPANT_STATUS + "("
+                + VeazzyParticipantStatus.COLUMN_JID + ", "
+                + VeazzyParticipantStatus.COLUMN_ROOM_NAME + ", "
+                + VeazzyParticipantStatus.COLUMN_STATUS + ", "
+                + VeazzyParticipantStatus.COLUMN_JOIN_DATE + ", "
+                + VeazzyParticipantStatus.COLUMN_LEAVE_DATE + ", "
+                + VeazzyParticipantStatus.COLUMN_LEAVE_REASON + ")"
                 + " VALUES (?,?,?,?,?,?)";
 
         Connection connection = getConnection();
@@ -368,7 +368,7 @@ public class JDBCPostgreSQL {
             try {
                 pStatement.setString(1, participantStatus.getJid());
                 pStatement.setString(2, participantStatus.getRoomName());
-                pStatement.setBoolean(3, participantStatus.getActive());
+                pStatement.setInt(3, participantStatus.getStatus());
                 pStatement.setTimestamp(4, participantStatus.getJoinDate() != null ? getTimestamp(participantStatus.getJoinDate()) : null);
                 pStatement.setTimestamp(5, participantStatus.getLeaveDate() != null ? getTimestamp(participantStatus.getLeaveDate()) : null);
                 pStatement.setString(6, participantStatus.getLeaveReason());
@@ -393,31 +393,32 @@ public class JDBCPostgreSQL {
     }
 
     public void participantEntersRoom(String participantJid, String roomName) {
-        ParticipantStatus participantStatus = new ParticipantStatus(participantJid, roomName, new Date(), Boolean.TRUE);
+        VeazzyParticipantStatus participantStatus = new VeazzyParticipantStatus(participantJid, roomName, 
+                new Date(), VeazzyParticipantStatus.PARTICIPANT_STATUS_ACTIVE);
         insertParticipantStatusToDB(participantStatus);
         
     }
     public void participantLeavesRoom(String participantJid, String reason) {
         
-        ParticipantStatus participantStatus = getParticantStatusFromDB(participantJid);
+        VeazzyParticipantStatus participantStatus = getParticantStatusFromDB(participantJid);
         
         if(participantStatus != null) {
-            participantStatus.setActive(Boolean.FALSE);
+            participantStatus.setStatus(VeazzyParticipantStatus.PARTICIPANT_STATUS_INACTIVE);
             participantStatus.setLeaveDate(new Date());
             participantStatus.setLeaveReason(reason);
 
-            String queryString = "UPDATE " + ParticipantStatus.TABLE_PARTICIPANT_STATUS + " SET "
-                    + ParticipantStatus.COLUMN_ACTIVE + "= ?" + ", "
-                    + ParticipantStatus.COLUMN_LEAVE_DATE + "= ?" + ", "
-                    + ParticipantStatus.COLUMN_LEAVE_REASON + "= ?"
-                    + " WHERE " + ParticipantStatus.COLUMN_JID + "=" + getStringValue(participantStatus.getJid());
+            String queryString = "UPDATE " + VeazzyParticipantStatus.TABLE_PARTICIPANT_STATUS + " SET "
+                    + VeazzyParticipantStatus.COLUMN_STATUS + "= ?" + ", "
+                    + VeazzyParticipantStatus.COLUMN_LEAVE_DATE + "= ?" + ", "
+                    + VeazzyParticipantStatus.COLUMN_LEAVE_REASON + "= ?"
+                    + " WHERE " + VeazzyParticipantStatus.COLUMN_JID + "=" + getStringValue(participantStatus.getJid());
 
             Connection connection = getConnection();
             PreparedStatement pStatement = getWriteUpdateStatement(connection, queryString);
             
             if(pStatement != null) {
                 try {
-                    pStatement.setBoolean(1, participantStatus.getActive());
+                    pStatement.setInt(1, participantStatus.getStatus());
                     pStatement.setTimestamp(2, participantStatus.getLeaveDate() != null ? getTimestamp(participantStatus.getLeaveDate()) : null);
                     pStatement.setString(3, participantStatus.getLeaveReason());
                     pStatement.addBatch();

@@ -23,18 +23,18 @@ import org.jxmpp.jid.impl.*;
 import org.xmlpull.v1.*;
 
 /**
- * The parser of {@link VeazzyRoomStatusIq}.
+ * The parser of {@link VeazzyRoomFocalParticipantIq}.
  *
  * @author Pawel Domas
  */
-public class VeazzyRoomStatusIqProvider
-        extends IQProvider<VeazzyRoomStatusIq> {
+public class VeazzyRoomFocalParticipantIqProvider
+        extends IQProvider<VeazzyRoomFocalParticipantIq> {
 
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-            = Logger.getLogger(VeazzyRoomStatusIqProvider.class);
+            = Logger.getLogger(VeazzyRoomFocalParticipantIqProvider.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
@@ -46,43 +46,44 @@ public class VeazzyRoomStatusIqProvider
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerVeazzyRoomStatusIqProvider() {
-        ProviderManager.addIQProvider(VeazzyRoomStatusIq.ELEMENT_NAME,
-                VeazzyRoomStatusIq.NAMESPACE,
-                new VeazzyRoomStatusIqProvider());
+    public static void registerVeazzyRoomFocalParticipantIqProvider() {
+        ProviderManager.addIQProvider(VeazzyRoomFocalParticipantIq.ELEMENT_NAME,
+                VeazzyRoomFocalParticipantIq.NAMESPACE,
+                new VeazzyRoomFocalParticipantIqProvider());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public VeazzyRoomStatusIq parse(XmlPullParser parser, int initialDepth)
+    public VeazzyRoomFocalParticipantIq parse(XmlPullParser parser, int initialDepth)
             throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!VeazzyRoomStatusIq.NAMESPACE.equals(namespace)) {
+        if (!VeazzyRoomFocalParticipantIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
         String rootElement = parser.getName();
 
-        VeazzyRoomStatusIq iq;
+        VeazzyRoomFocalParticipantIq iq;
 
-        if (VeazzyRoomStatusIq.ELEMENT_NAME.equals(rootElement)) {
-            iq = new VeazzyRoomStatusIq();
-            String jidStr = parser.getAttributeValue("", VeazzyRoomStatusIq.JID_ATTR_NAME);
+        if (VeazzyRoomFocalParticipantIq.ELEMENT_NAME.equals(rootElement)) {
+            iq = new VeazzyRoomFocalParticipantIq();
+            String jidStr = parser.getAttributeValue("", VeazzyRoomFocalParticipantIq.JID_ATTR_NAME);
             if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                    = parser.getAttributeValue("", VeazzyRoomStatusIq.ACTOR_ATTR_NAME);
+                    = parser.getAttributeValue("", VeazzyRoomFocalParticipantIq.ACTOR_ATTR_NAME);
             if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);
             }
+            
         } else {
             return null;
         }
@@ -102,21 +103,15 @@ public class VeazzyRoomStatusIqProvider
 
                 case XmlPullParser.TEXT: {
                     if (parser.getText() != null && parser.getText().length() > 0) {
-                        if (parser.getText().equals(VeazzyRoomStatusIq.ELEMENT_CHECK_VALUE)) {
-                            iq.setCheckRoomStatusRequest(true);
+                        if (parser.getText().equals(VeazzyRoomManagerIq.ELEMENT_CHECK_VALUE)) {
+                            iq.setCheckRoomFocalParticipantIdRequest(true);
                         } else {
-                            int roomStatus = VeazzyRoomStatusIq.ROOM_STATUS_OPENED;
-                            try {
-                                roomStatus = Integer.parseInt(parser.getText());
-                            }
-                            catch(NumberFormatException e) {
-                                
-                            }
-                            iq.setRoomStatus(roomStatus);
-                            iq.setCheckRoomStatusRequest(false);
+                            String roomFocalParticipantId = parser.getText();
+                            iq.setRoomFocalParticipantId(roomFocalParticipantId);
+                            iq.setCheckRoomFocalParticipantIdRequest(false);
                         }
                     } else {
-                        logger.warn("Getting roomStatus request without value");
+                        logger.warn("Getting roomManagerId request without value");
                     }
                     break;
                 }
