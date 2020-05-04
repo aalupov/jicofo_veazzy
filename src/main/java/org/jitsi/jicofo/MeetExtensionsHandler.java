@@ -83,7 +83,7 @@ public class MeetExtensionsHandler {
         this.focusManager = focusManager;
 
         VeazzyMuteIqProvider.registerVeazzyMuteIqProvider();
-        VeazzyRoomStatusIqProvider.registerRoomStatusIqProvider();
+        VeazzyRoomStatusIqProvider.registerVeazzyRoomStatusIqProvider();
         VeazzyRoomManagerIqProvider.registerVeazzyRoomManagerIqProvider();
         VeazzyMainScreenParticipantIqProvider.registerVeazzyMainScreenParticipantIqProvider();
         VeazzyStreamIqProvider.registerVeazzyStreamIqProvider();

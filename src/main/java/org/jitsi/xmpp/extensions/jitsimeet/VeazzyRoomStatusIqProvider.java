@@ -46,7 +46,7 @@ public class VeazzyRoomStatusIqProvider
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerRoomStatusIqProvider() {
+    public static void registerVeazzyRoomStatusIqProvider() {
         ProviderManager.addIQProvider(VeazzyRoomStatusIq.ELEMENT_NAME,
                 VeazzyRoomStatusIq.NAMESPACE,
                 new VeazzyRoomStatusIqProvider());
