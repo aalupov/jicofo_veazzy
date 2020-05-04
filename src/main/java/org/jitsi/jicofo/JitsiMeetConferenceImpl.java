@@ -1103,7 +1103,8 @@ public class JitsiMeetConferenceImpl
                         if(shortRoomName.contains("@")) {
                             shortRoomName = shortRoomName.substring(0, shortRoomName.indexOf("@"));
                         }
-                        if(contactAddress != null && contactAddress.toString() != null) {
+                        if(contactAddress != null && contactAddress.toString() != null
+                                && chatRoom != null) { //&& chatRoom.getVeazzyRoomManagerId() != null
                             
                             logger.debug("Terminating" + " checking isVeazzyRoomManager for " 
                                     + shortRoomName + " - " + contactAddress.toString());  
@@ -1116,16 +1117,19 @@ public class JitsiMeetConferenceImpl
                                 participantShortId = participantShortId.substring(ind);
                             }
                             
-                            if(chatRoom != null && chatRoom.getVeazzyRoomManagerId() != null) {
+                            //String roomManagerId = chatRoom.getVeazzyRoomManagerId();
+                            String roomManagerId = "000000";
+                            
+                            if(chatRoom != null && roomManagerId != null) { 
                                 
                                 logger.debug("Check isVeazzyRoomManager() for participantShortId " 
                                         + participantShortId + " (" + contactAddress.toString() + ")"
-                                        + " - Manager " + chatRoom.getVeazzyRoomManagerId());
+                                        + " - Manager " + roomManagerId);
                                 
-                                if(chatRoom.getVeazzyRoomManagerId().equals(participantShortId)) {
+                                if(roomManagerId.equals(participantShortId)) {
                                     String cmd = "/usr/share/jitsi-meet/stream.sh " + shortRoomName + " 1";
                                     logger.info("Participant was terminate running cmd " + cmd);
-                                    //runScriptCmd(cmd);
+                                    runScriptCmd(cmd);
                                 }
                             }
                             
