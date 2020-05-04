@@ -1108,21 +1108,21 @@ public class JitsiMeetConferenceImpl
                             logger.debug("Terminating" + " checking isVeazzyRoomManager for " 
                                     + shortRoomName + " - " + contactAddress.toString());  
                             
-                            String participantShortId = contactAddress.toString();
+                            /*String participantShortId = contactAddress.toString();
                             
                             if(participantShortId.contains("/")) {
                                 int ind = participantShortId.lastIndexOf("/");
                                 ind += 1;
                                 participantShortId = participantShortId.substring(ind);
-                            }
+                            }*/
                             
                             if(chatRoom != null && chatRoom.getVeazzyRoomManagerId() != null) {
                                 
                                 logger.debug("Check isVeazzyRoomManager() for participantShortId " 
-                                        + participantShortId + " (" + contactAddress.toString() + ")"
+                                        + "" + " (" + contactAddress.toString() + ")" //participantShortId
                                         + " - Manager " + chatRoom.getVeazzyRoomManagerId());
                                 
-                                if(chatRoom.getVeazzyRoomManagerId().equals(participantShortId)) {
+                                if(chatRoom.getVeazzyRoomManagerId().equals(contactAddress.toString())) { //participantShortId
                                     String cmd = "/usr/share/jitsi-meet/stream.sh " + shortRoomName + " 1";
                                     logger.info("Participant was terminate running cmd " + cmd);
                                     runScriptCmd(cmd);
