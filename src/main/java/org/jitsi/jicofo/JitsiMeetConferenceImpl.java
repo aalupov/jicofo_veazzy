@@ -2908,8 +2908,10 @@ public class JitsiMeetConferenceImpl
         if(participantId != null) {
             
             String participantShortId = participantId;
-            if(participantId.contains("/")) {
-                participantShortId = participantId.substring(participantId.lastIndexOf("/") + 1);
+            if(participantId.contains("//")) {
+                int ind = participantId.lastIndexOf("//");
+                ind += 1;
+                participantShortId = participantId.substring(ind);
             }
             if(room != null && room.getVeazzyRoomManagerId() != null) {
                 logger.debug("Check isVeazzyRoomManager() for participantShortId " 
