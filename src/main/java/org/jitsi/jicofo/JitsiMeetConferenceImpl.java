@@ -1064,9 +1064,9 @@ public class JitsiMeetConferenceImpl
                 if (participants.size() == 1) {
                     rescheduleSingleParticipantTimeout();
                 }
-            } else if (participants.size() == 0) {
+            } else if (participants.isEmpty()) {
                 
-                /*String room_name = chatRoom.getRoomJid().toString();
+                String room_name = chatRoom.getRoomJid().toString();
                 //String room_name = fromJid.toString();
 
                 if(room_name.contains("@")) {
@@ -1075,7 +1075,7 @@ public class JitsiMeetConferenceImpl
             
                 String cmd = "/usr/share/jitsi-meet/stream.sh " + room_name + " 0";
                 logger.info("All participant left running cmd " + cmd);
-                runScriptCmd(cmd);*/
+                runScriptCmd(cmd);
                 
                 stop();
             }
@@ -1093,19 +1093,32 @@ public class JitsiMeetConferenceImpl
                 JingleSession jingleSession = participant.getJingleSession();
                 logger.info("Terminating: " + contactAddress);
                 
-                /*if(participants.size() > 1) {
+                if(participants != null && participants.size() > 1) {
                     
                     logger.info("There is more than one participant left before terminating");
                     String shortRoomName = chatRoom.getRoomJid().toString();
-                    if(shortRoomName.contains("@")) {
-                            shortRoomName = shortRoomName.substring(0, shortRoomName.indexOf("@"));
+                    if(chatRoom != null && chatRoom.getRoomJid() != null) {
+                        if(shortRoomName.contains("@")) {
+                                shortRoomName = shortRoomName.substring(0, shortRoomName.indexOf("@"));
+                        }
+                        if(contactAddress != null) {
+                            if(isVeazzyRoomManager(chatRoom, contactAddress.toString())) {
+                                String cmd = "/usr/share/jitsi-meet/stream.sh " + shortRoomName + " 1";
+                                logger.info("Participant was terminate running cmd " + cmd);
+                                runScriptCmd(cmd);
+                            }
+                        }
+                        else if(chatRoom == null) {
+                            logger.debug("Terminating" + " but contactAddress is null");  
+                        }
                     }
-                    if(isVeazzyRoomManager(contactAddress.toString())) {
-                        String cmd = "/usr/share/jitsi-meet/stream.sh " + shortRoomName + " 1";
-                        logger.info("Participant was terminate running cmd " + cmd);
-                        runScriptCmd(cmd);
+                    else if(chatRoom == null) {
+                        logger.debug("Terminating" + " but chatRoom is null");  
                     }
-                }*/
+                }
+                else if(participants == null) {
+                    logger.debug("Terminating" + " but participants is null");  
+                }
                 
                 jingle.terminateSession(jingleSession, reason, message);
 
@@ -2091,7 +2104,7 @@ public class JitsiMeetConferenceImpl
             // if false
             // /usr/share/jitsi-meet/stream.sh $room_name 0
             
-            /*String room_name = jid.toString();
+            String room_name = jid.toString();
             //String room_name = fromJid.toString();
             
             if(room_name.contains("@")) {
@@ -2119,7 +2132,7 @@ public class JitsiMeetConferenceImpl
                 else {
                     logger.info("handleStreamId " + stream + " running cmd " + cmd);
                 }
-            }*/
+            }
             return true;
         }
         logger.info("handleStreamId but stream NULL");
@@ -2890,23 +2903,32 @@ public class JitsiMeetConferenceImpl
         }
     }
     
-    public boolean isVeazzyRoomManager(String participantId) {//boolean isVeazzyRoomManager
+    public boolean isVeazzyRoomManager(ChatRoom2 room, String participantId) {//boolean isVeazzyRoomManager
+        
         if(participantId != null) {
+            
             String participantShortId = participantId;
             if(participantId.contains("/")) {
                 participantShortId = participantId.substring(participantId.lastIndexOf("/") + 1);
             }
-            logger.debug("Check isVeazzyRoomManager() for participantShortId " 
-                    + participantShortId + " (" + participantId + ") - Manager " + chatRoom.getVeazzyRoomManagerId());
-            if(chatRoom.getVeazzyRoomManagerId() != null) {
-                return chatRoom.getVeazzyRoomManagerId().equals(participantShortId);
+            if(room != null && room.getVeazzyRoomManagerId() != null) {
+                logger.debug("Check isVeazzyRoomManager() for participantShortId " 
+                        + participantShortId + " (" + participantId + ") - Manager " + room.getVeazzyRoomManagerId());
+                return room.getVeazzyRoomManagerId().equals(participantShortId);
             }
-            else {
-                return false;
+            else if(room == null) {
+                logger.debug("Check isVeazzyRoomManager() for participantShortId " 
+                        + participantShortId + " but chatRoom is null");  
             }
+            return false;
         }
         else {
-            logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + chatRoom.getVeazzyRoomManagerId());
+            if(room != null) {
+                logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + room.getVeazzyRoomManagerId());
+            }
+            else {
+                logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager null");
+            }
             return false;
         }
     }
