@@ -653,7 +653,7 @@ public class MockMultiUserChat
         return findMember(mucJid.getResourceOrNull());
     }
 
-    @Override
+    /*@Override
     public void setVeazzyRoomStatus(boolean veazzyRoomStatus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -681,6 +681,6 @@ public class MockMultiUserChat
     @Override
     public String getVeazzyMainScreenParticipantId() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    }*/
 
 }

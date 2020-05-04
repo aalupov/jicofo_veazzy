@@ -84,7 +84,7 @@ public interface ChatRoomExtension extends ChatRoom {
 
     void setConference(JitsiMeetConference conference);
 
-    void setVeazzyRoomStatus(boolean veazzyRoomStatus);
+    /*void setVeazzyRoomStatus(boolean veazzyRoomStatus);
 
     boolean getVeazzyRoomStatus();
 
@@ -94,6 +94,6 @@ public interface ChatRoomExtension extends ChatRoom {
 
     void setVeazzyMainScreenParticipantId(String veazzyParticipantId);
 
-    String getVeazzyMainScreenParticipantId();
+    String getVeazzyMainScreenParticipantId();*/
 
 }

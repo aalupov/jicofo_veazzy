@@ -138,10 +138,6 @@ public class ChatRoomImpl extends AbstractChatRoom
      */
     private JitsiMeetConference conference;
 
-    private boolean veazzyRoomRoomStatus = true;
-    private String veazzyRoomManagerId = "ZZZZZZZZ";
-    private String veazzyMainScreenParticipantId = "ZZZZZZZZ";
-
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.
      *
@@ -745,54 +741,6 @@ public class ChatRoomImpl extends AbstractChatRoom
     @Override
     public void revokeVoice(String nickname) {
 
-    }
-
-    /**
-     * @return the veazzyRoomRoomStatus
-     */
-    @Override
-    public boolean getVeazzyRoomStatus() {
-        return veazzyRoomRoomStatus;
-    }
-
-    /**
-     * @param veazzyRoomRoomStatus the veazzyRoomRoomStatus to set
-     */
-    @Override
-    public void setVeazzyRoomStatus(boolean veazzyRoomRoomStatus) {
-        this.veazzyRoomRoomStatus = veazzyRoomRoomStatus;
-    }
-
-    /**
-     * @return the veazzyRoomManagerId
-     */
-    @Override
-    public String getVeazzyRoomManagerId() {
-        return veazzyRoomManagerId;
-    }
-
-    /**
-     * @param veazzyRoomManagerId to set
-     */
-    @Override
-    public void setVeazzyRoomManagerId(String veazzyRoomManagerId) {
-        this.veazzyRoomManagerId = veazzyRoomManagerId;
-    }
-
-    /**
-     * @return the veazzyMainScreenParticipantId
-     */
-    @Override
-    public String getVeazzyMainScreenParticipantId() {
-        return veazzyMainScreenParticipantId;
-    }
-
-    /**
-     * @param veazzyMainScreenParticipantId to set
-     */
-    @Override
-    public void setVeazzyMainScreenParticipantId(String veazzyMainScreenParticipantId) {
-        this.veazzyMainScreenParticipantId = veazzyMainScreenParticipantId;
     }
 
     @Override

@@ -274,6 +274,11 @@ public class JitsiMeetConferenceImpl
      */
     private final boolean includeInStatistics;
 
+    
+    private boolean veazzyRoomRoomStatus = true;
+    private String veazzyRoomManagerId = "00000000";
+    private String veazzyMainScreenParticipantId = "00000000";
+    
     /**
      * Creates new instance of {@link JitsiMeetConferenceImpl}.
      *
@@ -1116,7 +1121,7 @@ public class JitsiMeetConferenceImpl
                                 participantShortId = participantShortId.substring(ind);
                             }
                             
-                            String roomManagerId = chatRoom.getVeazzyRoomManagerId();
+                            String roomManagerId = getVeazzyRoomManagerId();
                             //String roomManagerId = "000000";
                             
                             if(chatRoom != null && roomManagerId != null) { 
@@ -2042,13 +2047,14 @@ public class JitsiMeetConferenceImpl
 
         logger.info("Will " + (doRoomStatusOpen ? "open room" : "close room") + " on behalf of " + fromJid);
 
-        chatRoom.setVeazzyRoomStatus(doRoomStatusOpen);
+        //chatRoom.setVeazzyRoomStatus(doRoomStatusOpen);
+        setVeazzyRoomStatus(doRoomStatusOpen);
         return true;
     }
 
-    boolean getVeazzyRoomStatus() {
-        return chatRoom.getVeazzyRoomStatus();
-    }
+    //boolean getVeazzyRoomStatus() {
+    //    return chatRoom.getVeazzyRoomStatus();
+    //}
 
     boolean handleModeratorIdRequest(Jid fromJid,
             // Jid toBeMutedJid,
@@ -2113,13 +2119,14 @@ public class JitsiMeetConferenceImpl
             }
         }
 
-        chatRoom.setVeazzyRoomManagerId(doModeratorIdOpen);
+        //chatRoom.setVeazzyRoomManagerId(doModeratorIdOpen);
+        setVeazzyRoomManagerId(doModeratorIdOpen);
         return true;
     }
 
-    String getVeazzyRoomManagerId() {
-        return chatRoom.getVeazzyRoomManagerId();
-    }
+    //String getVeazzyRoomManagerId() {
+    //    return chatRoom.getVeazzyRoomManagerId();
+    //}
 
     boolean handleStreamIdRequest(Jid jid, Jid fromJid,
             Boolean stream) {
@@ -2232,7 +2239,8 @@ public class JitsiMeetConferenceImpl
             }
         }
 
-        chatRoom.setVeazzyMainScreenParticipantId(doParticipantIdOpen);
+        //chatRoom.setVeazzyMainScreenParticipantId(doParticipantIdOpen);
+        setVeazzyMainScreenParticipantId(doParticipantIdOpen);
         
         return true;
     }
@@ -2943,10 +2951,10 @@ public class JitsiMeetConferenceImpl
                 ind += 1;
                 participantShortId = participantId.substring(ind);
             }
-            if(room != null && room.getVeazzyRoomManagerId() != null) {
+            if(room != null && getVeazzyRoomManagerId() != null) {
                 logger.debug("Check isVeazzyRoomManager() for participantShortId " 
-                        + participantShortId + " (" + participantId + ") - Manager " + room.getVeazzyRoomManagerId());
-                return room.getVeazzyRoomManagerId().equals(participantShortId);
+                        + participantShortId + " (" + participantId + ") - Manager " + getVeazzyRoomManagerId());
+                return getVeazzyRoomManagerId().equals(participantShortId);
             }
             else if(room == null) {
                 logger.debug("Check isVeazzyRoomManager() for participantShortId " 
@@ -2956,12 +2964,61 @@ public class JitsiMeetConferenceImpl
         }
         else {
             if(room != null) {
-                logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + room.getVeazzyRoomManagerId());
+                logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager " + getVeazzyRoomManagerId());
             }
             else {
                 logger.debug("Check isVeazzyRoomManager() but  participantId in null - Manager null");
             }
             return false;
         }
+    }
+    
+    
+    /**
+     * @return the veazzyRoomRoomStatus
+     */
+    //@Override
+    public boolean getVeazzyRoomStatus() {
+        return veazzyRoomRoomStatus;
+    }
+
+    /**
+     * @param veazzyRoomRoomStatus the veazzyRoomRoomStatus to set
+     */
+    //@Override
+    public void setVeazzyRoomStatus(boolean veazzyRoomRoomStatus) {
+        this.veazzyRoomRoomStatus = veazzyRoomRoomStatus;
+    }
+
+    /**
+     * @return the veazzyRoomManagerId
+     */
+    //@Override
+    public String getVeazzyRoomManagerId() {
+        return veazzyRoomManagerId;
+    }
+
+    /**
+     * @param veazzyRoomManagerId to set
+     */
+    //@Override
+    public void setVeazzyRoomManagerId(String veazzyRoomManagerId) {
+        this.veazzyRoomManagerId = veazzyRoomManagerId;
+    }
+
+    /**
+     * @return the veazzyMainScreenParticipantId
+     */
+    //@Override
+    public String getVeazzyMainScreenParticipantId() {
+        return veazzyMainScreenParticipantId;
+    }
+
+    /**
+     * @param veazzyMainScreenParticipantId to set
+     */
+    //@Override
+    public void setVeazzyMainScreenParticipantId(String veazzyMainScreenParticipantId) {
+        this.veazzyMainScreenParticipantId = veazzyMainScreenParticipantId;
     }
 }
