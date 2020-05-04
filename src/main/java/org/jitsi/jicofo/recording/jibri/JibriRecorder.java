@@ -255,7 +255,7 @@ public class JibriRecorder
                 + recordingStatus.toXML()
                 + " in: " + conference.getRoomName());
 
-        ChatRoom2 chatRoom2 = conference.getChatRoom();
+        ChatRoomExtension chatRoom2 = conference.getChatRoom();
 
         if (chatRoom2 != null) {
             meetTools.sendPresenceExtension(chatRoom2, recordingStatus);

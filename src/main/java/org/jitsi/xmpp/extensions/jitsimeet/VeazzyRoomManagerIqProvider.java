@@ -23,18 +23,18 @@ import org.jxmpp.jid.impl.*;
 import org.xmlpull.v1.*;
 
 /**
- * The parser of {@link ModeratorIdIq}.
+ * The parser of {@link VeazzyRoomManagerIq}.
  *
  * @author Pawel Domas
  */
-public class ModeratorIdIqProvider
-        extends IQProvider<ModeratorIdIq> {
+public class VeazzyRoomManagerIqProvider
+        extends IQProvider<VeazzyRoomManagerIq> {
 
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-            = Logger.getLogger(ModeratorIdIqProvider.class);
+            = Logger.getLogger(VeazzyRoomManagerIqProvider.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
@@ -46,39 +46,39 @@ public class ModeratorIdIqProvider
     /**
      * Registers this IQ provider into given <tt>ProviderManager</tt>.
      */
-    public static void registerModeratorIdIqProvider() {
-        ProviderManager.addIQProvider(ModeratorIdIq.ELEMENT_NAME,
-                ModeratorIdIq.NAMESPACE,
-                new ModeratorIdIqProvider());
+    public static void registerVeazzyRoomManagerIqProvider() {
+        ProviderManager.addIQProvider(VeazzyRoomManagerIq.ELEMENT_NAME,
+                VeazzyRoomManagerIq.NAMESPACE,
+                new VeazzyRoomManagerIqProvider());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ModeratorIdIq parse(XmlPullParser parser, int initialDepth)
+    public VeazzyRoomManagerIq parse(XmlPullParser parser, int initialDepth)
             throws Exception {
         String namespace = parser.getNamespace();
 
         // Check the namespace
-        if (!ModeratorIdIq.NAMESPACE.equals(namespace)) {
+        if (!VeazzyRoomManagerIq.NAMESPACE.equals(namespace)) {
             return null;
         }
 
         String rootElement = parser.getName();
 
-        ModeratorIdIq iq;
+        VeazzyRoomManagerIq iq;
 
-        if (ModeratorIdIq.ELEMENT_NAME.equals(rootElement)) {
-            iq = new ModeratorIdIq();
-            String jidStr = parser.getAttributeValue("", ModeratorIdIq.JID_ATTR_NAME);
+        if (VeazzyRoomManagerIq.ELEMENT_NAME.equals(rootElement)) {
+            iq = new VeazzyRoomManagerIq();
+            String jidStr = parser.getAttributeValue("", VeazzyRoomManagerIq.JID_ATTR_NAME);
             if (jidStr != null) {
                 Jid jid = JidCreate.from(jidStr);
                 iq.setJid(jid);
             }
 
             String actorStr
-                    = parser.getAttributeValue("", ModeratorIdIq.ACTOR_ATTR_NAME);
+                    = parser.getAttributeValue("", VeazzyRoomManagerIq.ACTOR_ATTR_NAME);
             if (actorStr != null) {
                 Jid actor = JidCreate.from(actorStr);
                 iq.setActor(actor);

@@ -52,7 +52,6 @@ import java.util.concurrent.*;
 import java.util.logging.*;
 import java.util.stream.*;
 import org.jitsi.protocol.xmpp.colibri.exception.RoomClosedException;
-import sun.tools.jar.CommandLine;
 
 /**
  * Represents a Jitsi Meet conference. Manages the Jingle sessions with the
@@ -148,7 +147,7 @@ public class JitsiMeetConferenceImpl
     /**
      * Conference room chat instance.
      */
-    private volatile ChatRoom2 chatRoom;
+    private volatile ChatRoomExtension chatRoom;
 
     /**
      * Operation set used to handle Jingle sessions with conference
@@ -476,7 +475,7 @@ public class JitsiMeetConferenceImpl
     private void joinTheRoom() throws Exception {
         logger.info("Joining the room: " + roomName);
 
-        chatRoom = (ChatRoom2) chatOpSet.findRoom(roomName.toString());
+        chatRoom = (ChatRoomExtension) chatOpSet.findRoom(roomName.toString());
         chatRoom.setConference(this);
 
         // terminateParticipant
@@ -953,7 +952,7 @@ public class JitsiMeetConferenceImpl
      */
     @Override
     public boolean isFocusMember(Jid mucJid) {
-        ChatRoom2 chatRoom = this.chatRoom;
+        ChatRoomExtension chatRoom = this.chatRoom;
         return mucJid != null && chatRoom != null && mucJid.equals(chatRoom.getLocalOccupantJid());
     }
 
@@ -1117,8 +1116,8 @@ public class JitsiMeetConferenceImpl
                                 participantShortId = participantShortId.substring(ind);
                             }
                             
-                            //String roomManagerId = chatRoom.getVeazzyRoomManagerId();
-                            String roomManagerId = "000000";
+                            String roomManagerId = chatRoom.getVeazzyRoomManagerId();
+                            //String roomManagerId = "000000";
                             
                             if(chatRoom != null && roomManagerId != null) { 
                                 
@@ -2350,7 +2349,7 @@ public class JitsiMeetConferenceImpl
      * {@inheritDoc}
      */
     @Override
-    public ChatRoom2 getChatRoom() {
+    public ChatRoomExtension getChatRoom() {
         return chatRoom;
     }
 
@@ -2934,7 +2933,7 @@ public class JitsiMeetConferenceImpl
         }
     }
     
-    public boolean isVeazzyRoomManager(ChatRoom2 room, String participantId) {//boolean isVeazzyRoomManager
+    public boolean isVeazzyRoomManager(ChatRoomExtension room, String participantId) {//boolean isVeazzyRoomManager
         
         if(participantId != null) {
             

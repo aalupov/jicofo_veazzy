@@ -220,7 +220,7 @@ public class JibriSipGateway
                 "Publishing new jibri-sip-call-state: " + session.getSipAddress()
                 + sipCallState.toXML() + " in: " + conference.getRoomName());
 
-        ChatRoom2 chatRoom2 = conference.getChatRoom();
+        ChatRoomExtension chatRoom2 = conference.getChatRoom();
 
         // Publish that in the presence
         if (chatRoom2 != null) {

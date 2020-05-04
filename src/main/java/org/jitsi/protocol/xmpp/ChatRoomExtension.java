@@ -30,8 +30,7 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public interface ChatRoom2
-        extends ChatRoom {
+public interface ChatRoomExtension extends ChatRoom {
 
     /**
      * Gets the name of this chat room as a JID.

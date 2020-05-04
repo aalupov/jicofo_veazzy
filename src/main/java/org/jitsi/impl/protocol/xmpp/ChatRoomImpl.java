@@ -48,9 +48,8 @@ import org.jitsi.jicofo.db.ParticipantStatus;
  *
  * @author Pawel Domas
  */
-public class ChatRoomImpl
-        extends AbstractChatRoom
-        implements ChatRoom2, PresenceListener {
+public class ChatRoomImpl extends AbstractChatRoom
+        implements ChatRoomExtension, PresenceListener {
 
     /**
      * The logger used by this class.
@@ -140,8 +139,8 @@ public class ChatRoomImpl
     private JitsiMeetConference conference;
 
     private boolean veazzyRoomRoomStatus = true;
-    private String veazzyRoomManagerId = "00000000";
-    private String veazzyMainScreenParticipantId = "00000000";
+    private String veazzyRoomManagerId = "ZZZZZZZZ";
+    private String veazzyMainScreenParticipantId = "ZZZZZZZZ";
 
     /**
      * Creates new instance of <tt>ChatRoomImpl</tt>.

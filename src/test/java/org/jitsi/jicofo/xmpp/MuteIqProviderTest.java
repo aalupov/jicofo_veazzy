@@ -33,7 +33,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Playground for testing {@link MuteIq} parsing.
+ * Playground for testing {@link VeazzyMuteIq} parsing.
  *
  * @author Pawel Domas
  */
@@ -53,9 +53,9 @@ public class MuteIqProviderTest {
                 + "</mute>"
                 + "</iq>";
 
-        MuteIqProvider provider = new MuteIqProvider();
-        MuteIq mute
-                = (MuteIq) IQUtils.parse(iqXml, provider);
+        VeazzyMuteIqProvider provider = new VeazzyMuteIqProvider();
+        VeazzyMuteIq mute
+                = (VeazzyMuteIq) IQUtils.parse(iqXml, provider);
 
         assertEquals("f", mute.getFrom().toString());
         assertEquals("t", mute.getTo().toString());
@@ -70,7 +70,7 @@ public class MuteIqProviderTest {
     @Test
     public void testToXml()
             throws IOException, SAXException {
-        MuteIq muteIq = new MuteIq();
+        VeazzyMuteIq muteIq = new VeazzyMuteIq();
 
         muteIq.setStanzaId("123xyz");
         muteIq.setTo(JidCreate.from("toJid"));

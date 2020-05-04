@@ -78,7 +78,7 @@ public interface JitsiMeetConference {
      * Returns <tt>ChatRoom2</tt> instance for the MUC this instance is
      * currently in or <tt>null</tt> if it isn't in any.
      */
-    public ChatRoom2 getChatRoom();
+    public ChatRoomExtension getChatRoom();
 
     /**
      * Sets the value of the <tt>startMuted</tt> property of this instance.

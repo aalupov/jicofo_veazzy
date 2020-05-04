@@ -58,6 +58,7 @@ public class ChatMemberImpl
      * The chat room of the member.
      */
     private final ChatRoomImpl chatRoom;
+    //private final ChatRoomExtension chatRoom;
 
     /**
      * Join order number

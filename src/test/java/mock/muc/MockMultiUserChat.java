@@ -41,7 +41,7 @@ import java.util.concurrent.*;
  */
 public class MockMultiUserChat
         extends AbstractChatRoom
-        implements ChatRoom2 {
+        implements ChatRoomExtension {
 
     /**
      * The logger
@@ -664,7 +664,7 @@ public class MockMultiUserChat
     }
 
     @Override
-    public void setVeazzyRoomManagerId(String moderatorId) {
+    public void setVeazzyRoomManagerId(String veazzyRoomManagerId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -674,7 +674,7 @@ public class MockMultiUserChat
     }
 
     @Override
-    public void setVeazzyMainScreenParticipantId(String participantId) {
+    public void setVeazzyMainScreenParticipantId(String veazzyMainScreenParticipantId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

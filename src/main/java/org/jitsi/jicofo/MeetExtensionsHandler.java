@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Class handles various Jitsi Meet extensions IQs like {@link MuteIq}.
+ * Class handles various Jitsi Meet extensions IQs like {@link VeazzyMuteIq}.
  *
  * @author Pawel Domas
  * @author Boris Grozev
@@ -58,12 +58,13 @@ public class MeetExtensionsHandler {
      */
     private XmppConnection connection;
 
-    private MuteIqHandler muteIqHandler;
-    private RoomStatusIqHandler roomStatusIqHandler;
-    private ModeratorIdIqHandler moderatorIdIqHandler;
-    private ParticipantIdIqHandler participantIdIqHandler;
+    private VeazzyMuteIqHandler veazzyMuteIqHandler;
+    private VeazzyRoomStatusIqHandler veazzyRoomStatusIqHandler;
+    private VeazzyRoomManagerIqHandler veazzyRoomManagerIqHandler;
+    private VeazzyMainScreenParticipantIqHandler veazzyMainScreenParticipantIqHandler;
+    private VeazzyStreamIqHandler veazzyStreamIqHandler;
+    
     private DialIqHandler dialIqHandler;
-    private StreamIqHandler streamIqHandler;
 
     /**
      * The currently used DB connection.
@@ -81,11 +82,12 @@ public class MeetExtensionsHandler {
     public MeetExtensionsHandler(FocusManager focusManager) {
         this.focusManager = focusManager;
 
-        MuteIqProvider.registerMuteIqProvider();
-        RoomStatusIqProvider.registerRoomStatusIqProvider();
-        ModeratorIdIqProvider.registerModeratorIdIqProvider();
-        ParticipantIdIqProvider.registerParticipantIdIqProvider();
-        StreamIqProvider.registerStreamIqProvider();
+        VeazzyMuteIqProvider.registerVeazzyMuteIqProvider();
+        VeazzyRoomStatusIqProvider.registerRoomStatusIqProvider();
+        VeazzyRoomManagerIqProvider.registerVeazzyRoomManagerIqProvider();
+        VeazzyMainScreenParticipantIqProvider.registerVeazzyMainScreenParticipantIqProvider();
+        VeazzyStreamIqProvider.registerVeazzyStreamIqProvider();
+        
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
     }
@@ -98,101 +100,102 @@ public class MeetExtensionsHandler {
                 = focusManager.getOperationSet(
                         OperationSetDirectSmackXmpp.class).getXmppConnection();
 
-        muteIqHandler = new MuteIqHandler();
-        roomStatusIqHandler = new RoomStatusIqHandler();
-        moderatorIdIqHandler = new ModeratorIdIqHandler();
-        participantIdIqHandler = new ParticipantIdIqHandler();
+        veazzyMuteIqHandler = new VeazzyMuteIqHandler();
+        veazzyRoomStatusIqHandler = new VeazzyRoomStatusIqHandler();
+        veazzyRoomManagerIqHandler = new VeazzyRoomManagerIqHandler();
+        veazzyMainScreenParticipantIqHandler = new VeazzyMainScreenParticipantIqHandler();
+        veazzyStreamIqHandler = new VeazzyStreamIqHandler();
+        
         dialIqHandler = new DialIqHandler();
-        streamIqHandler = new StreamIqHandler();
         
         clientSql = new JDBCPostgreSQL();
         roomStatusFromDb = true;
         
-        connection.registerIQRequestHandler(muteIqHandler);
-        connection.registerIQRequestHandler(roomStatusIqHandler);
-        connection.registerIQRequestHandler(moderatorIdIqHandler);
-        connection.registerIQRequestHandler(participantIdIqHandler);
+        connection.registerIQRequestHandler(veazzyMuteIqHandler);
+        connection.registerIQRequestHandler(veazzyRoomStatusIqHandler);
+        connection.registerIQRequestHandler(veazzyRoomManagerIqHandler);
+        connection.registerIQRequestHandler(veazzyMainScreenParticipantIqHandler);
+        connection.registerIQRequestHandler(veazzyStreamIqHandler);
+        
         connection.registerIQRequestHandler(dialIqHandler);
-        connection.registerIQRequestHandler(streamIqHandler);
     }
 
-    private class MuteIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyMuteIqHandler extends AbstractIqRequestHandler {
 
-        MuteIqHandler() {
-            super(
-                    MuteIq.ELEMENT_NAME,
-                    MuteIq.NAMESPACE,
+        VeazzyMuteIqHandler() {
+            super(VeazzyMuteIq.ELEMENT_NAME,
+                    VeazzyMuteIq.NAMESPACE,
                     IQ.Type.set,
                     Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleMuteIq((MuteIq) iqRequest);
+            return handleMuteIq((VeazzyMuteIq) iqRequest);
         }
     }
 
-    private class RoomStatusIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyRoomStatusIqHandler extends AbstractIqRequestHandler {
 
-        RoomStatusIqHandler() {
+        VeazzyRoomStatusIqHandler() {
             super(
-                    RoomStatusIq.ELEMENT_NAME,
-                    RoomStatusIq.NAMESPACE,
+                    VeazzyRoomStatusIq.ELEMENT_NAME,
+                    VeazzyRoomStatusIq.NAMESPACE,
                     IQ.Type.set,
                     IQRequestHandler.Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleRoomStatusIq((RoomStatusIq) iqRequest);
+            return handleRoomStatusIq((VeazzyRoomStatusIq) iqRequest);
         }
     }
 
-    private class ModeratorIdIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyRoomManagerIqHandler extends AbstractIqRequestHandler {
 
-        ModeratorIdIqHandler() {
+        VeazzyRoomManagerIqHandler() {
             super(
-                    ModeratorIdIq.ELEMENT_NAME,
-                    ModeratorIdIq.NAMESPACE,
+                    VeazzyRoomManagerIq.ELEMENT_NAME,
+                    VeazzyRoomManagerIq.NAMESPACE,
                     IQ.Type.set,
                     IQRequestHandler.Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleModeratorIdIq((ModeratorIdIq) iqRequest);
+            return handleModeratorIdIq((VeazzyRoomManagerIq) iqRequest);
         }
     }
 
-    private class ParticipantIdIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyMainScreenParticipantIqHandler extends AbstractIqRequestHandler {
 
-        ParticipantIdIqHandler() {
+        VeazzyMainScreenParticipantIqHandler() {
             super(
-                    ParticipantIdIq.ELEMENT_NAME,
-                    ParticipantIdIq.NAMESPACE,
+                    VeazzyMainScreenParticipantIq.ELEMENT_NAME,
+                    VeazzyMainScreenParticipantIq.NAMESPACE,
                     IQ.Type.set,
                     IQRequestHandler.Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleParticipantIdIq((ParticipantIdIq) iqRequest);
+            return handleParticipantIdIq((VeazzyMainScreenParticipantIq) iqRequest);
         }
     }
 
-    private class StreamIqHandler extends AbstractIqRequestHandler {
+    private class VeazzyStreamIqHandler extends AbstractIqRequestHandler {
 
-        StreamIqHandler() {
+        VeazzyStreamIqHandler() {
             super(
-                    StreamIq.ELEMENT_NAME,
-                    StreamIq.NAMESPACE,
+                    VeazzyStreamIq.ELEMENT_NAME,
+                    VeazzyStreamIq.NAMESPACE,
                     IQ.Type.set,
                     IQRequestHandler.Mode.sync);
         }
 
         @Override
         public IQ handleIQRequest(IQ iqRequest) {
-            return handleStreamIq((StreamIq) iqRequest);
+            return handleStreamIq((VeazzyStreamIq) iqRequest);
         }
     }
     
@@ -219,12 +222,14 @@ public class MeetExtensionsHandler {
      */
     public void dispose() {
         if (connection != null) {
-            connection.unregisterIQRequestHandler(muteIqHandler);
-            connection.unregisterIQRequestHandler(roomStatusIqHandler);
-            connection.unregisterIQRequestHandler(moderatorIdIqHandler);
-            connection.unregisterIQRequestHandler(participantIdIqHandler);
+            
+            connection.unregisterIQRequestHandler(veazzyMuteIqHandler);
+            connection.unregisterIQRequestHandler(veazzyRoomStatusIqHandler);
+            connection.unregisterIQRequestHandler(veazzyRoomManagerIqHandler);
+            connection.unregisterIQRequestHandler(veazzyMainScreenParticipantIqHandler);
+            connection.unregisterIQRequestHandler(veazzyStreamIqHandler);
+            
             connection.unregisterIQRequestHandler(dialIqHandler);
-            connection.unregisterIQRequestHandler(streamIqHandler);
             connection = null;
         }
     }
@@ -245,7 +250,7 @@ public class MeetExtensionsHandler {
         return roomName;
     }
 
-    private IQ handleMuteIq(MuteIq muteIq) {
+    private IQ handleMuteIq(VeazzyMuteIq muteIq) {
         Boolean doMute = muteIq.getMute();
         Boolean blockStatus = muteIq.getBlock();
         logger.info("Block status is " + blockStatus);
@@ -273,7 +278,7 @@ public class MeetExtensionsHandler {
 
             if (!muteIq.getFrom().equals(jid)) {
                 logger.info(doMute);
-                MuteIq muteStatusUpdate = new MuteIq();
+                VeazzyMuteIq muteStatusUpdate = new VeazzyMuteIq();
                 muteStatusUpdate.setActor(from);
                 muteStatusUpdate.setType(IQ.Type.set);
                 muteStatusUpdate.setTo(jid);
@@ -293,7 +298,7 @@ public class MeetExtensionsHandler {
         return result;
     }
 
-    private IQ handleRoomStatusIq(RoomStatusIq roomStatusIq) {
+    private IQ handleRoomStatusIq(VeazzyRoomStatusIq roomStatusIq) {
         
         Boolean doRoomStatusOpen = roomStatusIq.getRoomStatus();
         Boolean checkRequest = roomStatusIq.getCheckRequest();
@@ -348,7 +353,7 @@ public class MeetExtensionsHandler {
                 result = IQ.createResultIQ(roomStatusIq);
 
                 if (roomStatusIq.getFrom().equals(jid)) {
-                    RoomStatusIq roomStatusUpdate = new RoomStatusIq();
+                    VeazzyRoomStatusIq roomStatusUpdate = new VeazzyRoomStatusIq();
                     roomStatusUpdate.setActor(from);
                     roomStatusUpdate.setType(IQ.Type.set);
                     roomStatusUpdate.setTo(jid);
@@ -383,7 +388,7 @@ public class MeetExtensionsHandler {
             boolean roomStatus = roomStatusFromDb;
             result = IQ.createResultIQ(roomStatusIq);
 
-            RoomStatusIq roomStatusUpdate = new RoomStatusIq();
+            VeazzyRoomStatusIq roomStatusUpdate = new VeazzyRoomStatusIq();
             roomStatusUpdate.setActor(from);
             roomStatusUpdate.setType(IQ.Type.set);
             roomStatusUpdate.setTo(jid);
@@ -396,7 +401,7 @@ public class MeetExtensionsHandler {
         return result;
     }
 
-    private IQ handleModeratorIdIq(ModeratorIdIq moderatorIdIq) {
+    private IQ handleModeratorIdIq(VeazzyRoomManagerIq moderatorIdIq) {
         String doModeratorIdOpen = moderatorIdIq.getModeratorId();
         logger.info("ModeratorId is " + doModeratorIdOpen);
         Boolean moderatorIdRequest = moderatorIdIq.getModeratorIdRequest();
@@ -437,7 +442,7 @@ public class MeetExtensionsHandler {
                 result = IQ.createResultIQ(moderatorIdIq);
 
                 if (moderatorIdIq.getFrom().equals(jid)) {
-                    ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
+                    VeazzyRoomManagerIq moderatorIdUpdate = new VeazzyRoomManagerIq();
                     moderatorIdUpdate.setActor(from);
                     moderatorIdUpdate.setType(IQ.Type.set);
                     moderatorIdUpdate.setTo(jid);
@@ -456,7 +461,7 @@ public class MeetExtensionsHandler {
             String moderatorId = conference.getVeazzyRoomManagerId();
             result = IQ.createResultIQ(moderatorIdIq);
 
-            ModeratorIdIq moderatorIdUpdate = new ModeratorIdIq();
+            VeazzyRoomManagerIq moderatorIdUpdate = new VeazzyRoomManagerIq();
             moderatorIdUpdate.setActor(from);
             moderatorIdUpdate.setType(IQ.Type.set);
             moderatorIdUpdate.setTo(jid);
@@ -469,7 +474,7 @@ public class MeetExtensionsHandler {
         return result;
     }
 
-    private IQ handleParticipantIdIq(ParticipantIdIq participantIdIq) {
+    private IQ handleParticipantIdIq(VeazzyMainScreenParticipantIq participantIdIq) {
         String doParticipantIdOpen = participantIdIq.getParticipantId();
         logger.info("ParticipantId is " + doParticipantIdOpen);
         Boolean withMe = participantIdIq.getWithMe();
@@ -502,7 +507,7 @@ public class MeetExtensionsHandler {
             result = IQ.createResultIQ(participantIdIq);
 
             if (!participantIdIq.getFrom().equals(jid)) {
-                ParticipantIdIq participantIdUpdate = new ParticipantIdIq();
+                VeazzyMainScreenParticipantIq participantIdUpdate = new VeazzyMainScreenParticipantIq();
                 participantIdUpdate.setActor(from);
                 participantIdUpdate.setType(IQ.Type.set);
                 participantIdUpdate.setTo(jid);
@@ -523,7 +528,7 @@ public class MeetExtensionsHandler {
     }
 
     
-    private IQ handleStreamIq(StreamIq streamIq) {
+    private IQ handleStreamIq(VeazzyStreamIq streamIq) {
         
         logger.info("handleStreamIq");
         Boolean stream = streamIq.getStream();
@@ -559,7 +564,7 @@ public class MeetExtensionsHandler {
 
             if (!streamIq.getFrom().equals(jid)) {
                 
-                StreamIq streamIdUpdate = new StreamIq();
+                VeazzyStreamIq streamIdUpdate = new VeazzyStreamIq();
                 streamIdUpdate.setActor(from);
                 streamIdUpdate.setType(IQ.Type.set);
                 streamIdUpdate.setTo(jid);

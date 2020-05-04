@@ -24,7 +24,7 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public class MuteIq
+public class VeazzyMuteIq
         extends IQ {
 
     /**
@@ -85,7 +85,7 @@ public class MuteIq
     /**
      * Creates a new instance of this class.
      */
-    public MuteIq() {
+    public VeazzyMuteIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 

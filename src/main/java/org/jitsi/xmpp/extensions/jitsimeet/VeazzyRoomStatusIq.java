@@ -20,18 +20,19 @@ import org.jivesoftware.smack.packet.*;
 import org.jxmpp.jid.*;
 
 /**
- * IQ used for the signaling of moderator ID in Jitsi Meet conferences.
+ * IQ used for the signaling of audio muting functionality in Jitsi Meet
+ * conferences.
  *
  * @author Pawel Domas
  */
-public class ModeratorIdIq
+public class VeazzyRoomStatusIq
         extends IQ {
 
     /**
      * The classLogger instance used by this class.
      */
     private final static Logger classLogger
-            = Logger.getLogger(ModeratorIdIq.class);
+            = Logger.getLogger(VeazzyRoomStatusIq.class);
 
     /**
      * The logger for this instance. Uses the logging level either the one of
@@ -41,14 +42,14 @@ public class ModeratorIdIq
     private final Logger logger = Logger.getLogger(classLogger, null);
 
     /**
-     * Name space of moderatorId packet extension.
+     * Name space of roomStatus packet extension.
      */
-    public static final String NAMESPACE = "http://jitsi.org/jitmeet/moderator";
+    public static final String NAMESPACE = "http://jitsi.org/jitmeet/room";
 
     /**
-     * XML element name of moderatorId packet extension.
+     * XML element name of roomStatus packet extension.
      */
-    public static final String ELEMENT_NAME = "moderatorId";
+    public static final String ELEMENT_NAME = "roomStatus";
 
     /**
      * Attribute name of "jid".
@@ -66,24 +67,24 @@ public class ModeratorIdIq
     private Jid jid;
 
     /**
-     * The jid of the peer tha initiated the moderatorId, optional.
+     * The jid of the peer tha initiated the roomStatus, optional.
      */
     private Jid actor;
 
     /**
-     * moderatorId.
+     * To roomStatus or unroomStatus.
      */
-    private String moderatorId;
+    private Boolean roomStatus;
 
     /**
-     * ModeratorIdRequest.
+     * To roomStatus or unroomStatus.
      */
-    private Boolean moderatorIdRequest;
+    private Boolean checkRequest;
 
     /**
      * Creates a new instance of this class.
      */
-    public ModeratorIdIq() {
+    public VeazzyRoomStatusIq() {
         super(ELEMENT_NAME, NAMESPACE);
     }
 
@@ -100,15 +101,15 @@ public class ModeratorIdIq
         }
 
         xml.rightAngleBracket()
-                .append(moderatorId);
+                .append(roomStatus.toString());
 
-        logger.warn("Building xml ModeratorId " + xml.toString());
+        logger.warn("Building xml roomStatus " + xml.toString());
 
         return xml;
     }
 
     /**
-     * Sets the MUC jid of the user.
+     * Sets the MUC jid of the user to be roomStatusd/unroomStatusd.
      *
      * @param jid muc jid in the form of room_name@muc.server.net/nickname.
      */
@@ -125,43 +126,45 @@ public class ModeratorIdIq
     }
 
     /**
-     * The action contained in the text part of 'moderatorId' XML element body.
+     * The action contained in the text part of 'roomStatus' XML element body.
      *
-     * @param moderatorId
+     * @param roomStatus <tt>true</tt> to roomStatus the participant.
+     * <tt>null</tt> means no action is included in result XML.
      */
-    public void setModeratorId(String moderatorId) {
-        this.moderatorId = moderatorId;
+    public void setRoomStatus(Boolean roomStatus) {
+        this.roomStatus = roomStatus;
     }
 
     /**
-     * Returns moderatorId or <tt>null</tt> if the action has not been
-     * specified(which is invalid).
+     * Returns <tt>true</tt> to roomStatus the participant, <tt>false</tt> to
+     * unroomStatus or <tt>null</tt> if the action has not been specified(which
+     * is invalid).
      */
-    public String getModeratorId() {
-        return moderatorId;
+    public Boolean getRoomStatus() {
+        return roomStatus;
     }
 
-    public void setModeratorIdRequest(Boolean moderatorIdRequest) {
-        this.moderatorIdRequest = moderatorIdRequest;
+    public void setCheckRequest(Boolean checkRequest) {
+        this.checkRequest = checkRequest;
     }
 
-    public Boolean getModeratorIdRequest() {
-        return moderatorIdRequest;
+    public Boolean getCheckRequest() {
+        return checkRequest;
     }
 
     /**
-     * Returns the peer jid that initiated the moderatorId, if any.
+     * Returns the peer jid that initiated the roomStatus, if any.
      *
-     * @return the peer jid that initiated the moderatorId.
+     * @return the peer jid that initiated the roomStatus.
      */
     public Jid getActor() {
         return actor;
     }
 
     /**
-     * Sets jid for the peer that initiated the moderatorId.
+     * Sets jid for the peer that initiated the roomStatus.
      *
-     * @param actor the jid of the peer doing the moderatorId.
+     * @param actor the jid of the peer doing the roomStatus.
      */
     public void setActor(Jid actor) {
         this.actor = actor;
