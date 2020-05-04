@@ -1096,17 +1096,20 @@ public class JitsiMeetConferenceImpl
                 if(participants != null && participants.size() > 1) {
                     
                     logger.info("There is more than one participant left before terminating");
-                    String shortRoomName = chatRoom.getRoomJid().toString();
+                    
                     if(chatRoom != null && chatRoom.getRoomJid() != null) {
+                        
+                        String shortRoomName = chatRoom.getRoomJid().toString();
                         if(shortRoomName.contains("@")) {
-                                shortRoomName = shortRoomName.substring(0, shortRoomName.indexOf("@"));
+                            shortRoomName = shortRoomName.substring(0, shortRoomName.indexOf("@"));
                         }
                         if(contactAddress != null) {
-                            if(isVeazzyRoomManager(chatRoom, contactAddress.toString())) {
-                                String cmd = "/usr/share/jitsi-meet/stream.sh " + shortRoomName + " 1";
-                                logger.info("Participant was terminate running cmd " + cmd);
-                                runScriptCmd(cmd);
-                            }
+                            logger.debug("Terminating" + " checking isVeazzyRoomManager for " + shortRoomName);  
+                            //if(isVeazzyRoomManager(chatRoom, contactAddress.toString())) {
+                            //    String cmd = "/usr/share/jitsi-meet/stream.sh " + shortRoomName + " 1";
+                            //    logger.info("Participant was terminate running cmd " + cmd);
+                            //    runScriptCmd(cmd);
+                            //}
                         }
                         else if(chatRoom == null) {
                             logger.debug("Terminating" + " but contactAddress is null");  
