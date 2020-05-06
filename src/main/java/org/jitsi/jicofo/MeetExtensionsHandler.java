@@ -66,6 +66,7 @@ public class MeetExtensionsHandler {
     private VeazzyRoomManagerIqHandler veazzyRoomManagerIqHandler;
     private VeazzyRoomFocalParticipantIqHandler veazzyRoomFocalParticipantIqHandler;
     private VeazzyAdvertisingStreamIqHandler veazzyAdvertisingStreamIqHandler;
+    private VeazzyQuizIqHandler veazzyQuizIqHandler;
     
 
     /**
@@ -91,6 +92,7 @@ public class MeetExtensionsHandler {
         VeazzyRoomManagerIqProvider.registerVeazzyRoomManagerIqProvider();
         VeazzyRoomFocalParticipantIqProvider.registerVeazzyRoomFocalParticipantIqProvider();
         VeazzyAdvertisingStreamIqProvider.registerVeazzyAdvertisingStreamIqProvider();
+        VeazzyQuizIqProvider.registerVeazzyQuizIqProvider();
         
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
@@ -112,6 +114,7 @@ public class MeetExtensionsHandler {
         veazzyRoomManagerIqHandler = new VeazzyRoomManagerIqHandler();
         veazzyRoomFocalParticipantIqHandler = new VeazzyRoomFocalParticipantIqHandler();
         veazzyAdvertisingStreamIqHandler = new VeazzyAdvertisingStreamIqHandler();
+        veazzyQuizIqHandler = new VeazzyQuizIqHandler();
                 
         clientSql = new JDBCPostgreSQL();
         veazzyRoomStatusFromDb = VeazzyRoomStatus.ROOM_STATUS_OPENED;
@@ -124,6 +127,7 @@ public class MeetExtensionsHandler {
         connection.registerIQRequestHandler(veazzyRoomManagerIqHandler);
         connection.registerIQRequestHandler(veazzyRoomFocalParticipantIqHandler);
         connection.registerIQRequestHandler(veazzyAdvertisingStreamIqHandler);
+        connection.registerIQRequestHandler(veazzyQuizIqHandler);
     }
 
     private class MuteIqHandler extends AbstractIqRequestHandler {
@@ -219,6 +223,21 @@ public class MeetExtensionsHandler {
             return handleAdvertisingStreamIq((VeazzyAdvertisingStreamIq) iqRequest);
         }
     }
+    private class VeazzyQuizIqHandler extends AbstractIqRequestHandler {
+
+        VeazzyQuizIqHandler() {
+            super(
+                    VeazzyQuizIq.ELEMENT_NAME,
+                    VeazzyQuizIq.NAMESPACE,
+                    IQ.Type.set,
+                    IQRequestHandler.Mode.sync);
+        }
+
+        @Override
+        public IQ handleIQRequest(IQ iqRequest) {
+            return handleQuizIq((VeazzyQuizIq) iqRequest);
+        }
+    }
     
     private class DialIqHandler extends AbstractIqRequestHandler {
 
@@ -252,6 +271,7 @@ public class MeetExtensionsHandler {
             connection.unregisterIQRequestHandler(veazzyRoomManagerIqHandler);
             connection.unregisterIQRequestHandler(veazzyRoomFocalParticipantIqHandler);
             connection.unregisterIQRequestHandler(veazzyAdvertisingStreamIqHandler);
+            connection.unregisterIQRequestHandler(veazzyQuizIqHandler);
             
             connection = null;
         }
@@ -674,8 +694,60 @@ public class MeetExtensionsHandler {
 
         return result;
     }
-
     
+    
+    private IQ handleQuizIq(VeazzyQuizIq veazzyQuizIq) {
+        
+        logger.info("veazzyQuizIq");
+
+        Jid jid = veazzyQuizIq.getJid();
+
+        if (jid == null) {
+            logger.debug("jid null");
+            return IQ.createErrorResponse(veazzyQuizIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        Jid from = veazzyQuizIq.getFrom();
+        JitsiMeetConferenceImpl conference = getConferenceForMucJid(from);
+        if (conference == null) {
+            logger.debug("Quiz Id error: room not found for JID: " + from);
+            return IQ.createErrorResponse(veazzyQuizIq, XMPPError.getBuilder(
+                    XMPPError.Condition.item_not_found));
+        }
+
+        IQ result;
+
+        logger.info("handleQuizIq condition OK");
+        
+        if (conference.handleQuizIdRequest(jid, veazzyQuizIq.getFrom())) {
+            
+            result = IQ.createResultIQ(veazzyQuizIq);
+
+            if (!veazzyQuizIq.getFrom().equals(jid)) {
+                
+                VeazzyQuizIq quizUpdate = new VeazzyQuizIq();
+                quizUpdate.setActor(from);
+                quizUpdate.setType(IQ.Type.set);
+                quizUpdate.setTo(jid);
+                
+                quizUpdate.setQuestion(veazzyQuizIq.getQuestion());
+                quizUpdate.setAnswerA(veazzyQuizIq.getAnswerA());
+                quizUpdate.setAnswerB(veazzyQuizIq.getAnswerB());
+                quizUpdate.setAnswerC(veazzyQuizIq.getAnswerC());
+                quizUpdate.setAnswerD(veazzyQuizIq.getAnswerD());
+
+                connection.sendStanza(veazzyQuizIq);
+            }
+        } else {
+            result = IQ.createErrorResponse(
+                    veazzyQuizIq,
+                    XMPPError.getBuilder(XMPPError.Condition.internal_server_error));
+        }
+
+        return result;
+    }
+
     /**
      * Checks whether sending the rayo message is ok (checks member, moderators)
      * and sends the message to the selected jigasi (from brewery muc or to the
