@@ -93,6 +93,7 @@ public class MeetExtensionsHandler {
         VeazzyRoomFocalParticipantIqProvider.registerVeazzyRoomFocalParticipantIqProvider();
         VeazzyAdvertisingStreamIqProvider.registerVeazzyAdvertisingStreamIqProvider();
         VeazzyQuizIqProvider.registerVeazzyQuizIqProvider();
+        VeazzyAnswerIqProvider.registerVeazzyAnswerIqProvider();
         
         new RayoIqProvider().registerRayoIQs();
         StartMutedProvider.registerStartMutedProvider();
