@@ -2269,6 +2269,12 @@ public class JitsiMeetConferenceImpl
         
         return true;
     }
+    boolean handleAnswerIdRequest(Jid jid, Jid fromJid) {
+        
+        logger.info("handleAnswerIdRequest");
+        
+        return true;
+    }
     
     //int getVeazzyRoomStatus() {
     //    return chatRoom.getVeazzyRoomStatus();
