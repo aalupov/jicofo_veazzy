@@ -2263,15 +2263,15 @@ public class JitsiMeetConferenceImpl
         return true;
     }
     
-    boolean handleQuizIdRequest(Jid jid, Jid fromJid) {
+    boolean handleQuizQuestionIdRequest(Jid jid, Jid fromJid) {
         
-        logger.info("handleQuizIdRequest");
+        logger.info("handleQuizQuestionIdRequest");
         
         return true;
     }
-    boolean handleAnswerIdRequest(Jid jid, Jid fromJid) {
+    boolean handleQuizAnswerIdRequest(Jid jid, Jid fromJid) {
         
-        logger.info("handleAnswerIdRequest");
+        logger.info("handleQuizAnswerIdRequest");
         
         return true;
     }
